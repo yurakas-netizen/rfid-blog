@@ -20,11 +20,8 @@ SortBy              = "default"
 [sidebar]
 emoji = "📡"
 subtitle = "UHF RFID, RTLS & IIoT Engineering Platform · Kyiv"
+avatar = "img/avatar.png"
 
-[sidebar.avatar]
-enabled = true
-local = true
-src = "img/avatar.png"
 
 
 [article]
