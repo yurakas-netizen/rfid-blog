@@ -5,6 +5,43 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>RFID Ukraine — CMS</title>
 </head>
-<body><script src="https://unpkg.com/decap-cms@3.3.3/dist/decap-cms.js"></script>
+<body>
+  <script src="https://unpkg.com/decap-cms@3.3.3/dist/decap-cms.js"></script>
+  <script>
+    if (window.CMS) {
+      window.CMS.registerEditorComponent({
+        id: 'charts-pair',
+        label: 'Два графика / фото в ряд',
+        fields: [
+          { name: 'img1', label: 'Левый график / фото', widget: 'image' },
+          { name: 'alt1', label: 'Подпись слева', widget: 'string', required: false },
+          { name: 'img2', label: 'Правый график / фото', widget: 'image' },
+          { name: 'alt2', label: 'Подпись справа', widget: 'string', required: false }
+        ],
+        pattern: /^!\[([^\]]*)\]\(([^\s")]+)\)\s+!\[([^\]]*)\]\(([^\s")]+)\)$/,
+        fromBlock: function (match) {
+          return {
+            alt1: match[1] || '',
+            img1: match[2] || '',
+            alt2: match[3] || '',
+            img2: match[4] || ''
+          };
+        },
+        toBlock: function (data) {
+          var a1 = (data.alt1 || '').replace(/[\[\]]/g, '');
+          var a2 = (data.alt2 || '').replace(/[\[\]]/g, '');
+          return '![' + a1 + '](' + (data.img1 || '') + ') ![' + a2 + '](' + (data.img2 || '') + ')';
+        },
+        toPreview: function (data) {
+          return (
+            '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0;">' +
+              '<figure style="margin:0;text-align:center;"><img src="' + (data.img1 || '') + '" alt="' + (data.alt1 || '') + '" style="max-width:100%;border-radius:8px;" />' + (data.alt1 ? '<figcaption style="font-size:12px;color:#64748b;margin-top:4px;">' + data.alt1 + '</figcaption>' : '') + '</figure>' +
+              '<figure style="margin:0;text-align:center;"><img src="' + (data.img2 || '') + '" alt="' + (data.alt2 || '') + '" style="max-width:100%;border-radius:8px;" />' + (data.alt2 ? '<figcaption style="font-size:12px;color:#64748b;margin-top:4px;">' + data.alt2 + '</figcaption>' : '') + '</figure>' +
+            '</div>'
+          );
+        }
+      });
+    }
+  </script>
 </body>
 </html>

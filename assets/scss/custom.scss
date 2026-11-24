@@ -462,8 +462,14 @@ html[data-scheme="dark"] .tagCloud-tags a:hover {
 
 .article-content figure img,
 .article-content img {
-    transform: scale(1.03);
+    transform: none;
+    max-width: 100%;
+    width: auto;
+    height: auto;
+    margin: 0 auto;
+    display: block;
     border-radius: 12px;
+    border: 1px solid var(--card-separator-color);
 }
 
 /* =========================================================

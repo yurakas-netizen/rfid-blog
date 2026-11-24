@@ -566,13 +566,15 @@ html[data-scheme="dark"] .brand-icon .logo-secondary {
 }
 
 .article-figure img {
-  width: 100%;
+  width: auto;
   max-width: 100%;
   height: auto;
+  margin: 0 auto;
   border-radius: 12px;
+  border: 1px solid var(--card-separator-color);
   cursor: zoom-in;
   display: block;
-  transform: scale(1.03);
+  transform: none;
 }
 
 .article-figure figcaption {
