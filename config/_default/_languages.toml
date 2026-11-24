@@ -2,35 +2,42 @@
 [uk]
     label = "Українська (UA)"
     direction = "ltr"
-    title = "UA RFID"
+    title = "RFID Ukraine"
+    contentDir = "content/uk"
     weight = 1
 
 [en]
     label = "English (EN)"
     direction = "ltr"
-    title = "UA RFID"
+    title = "RFID Ukraine"
+    contentDir = "content/en"
     weight = 2
 
 [da]
     label = "Dansk (DA)"
     direction = "ltr"
-    title = "UA RFID"
+    title = "RFID Ukraine"
+    contentDir = "content/da"
     weight = 3
 
 [de]
     label = "Deutsch (DE)"
     direction = "ltr"
-    title = "UA RFID"
+    title = "RFID Ukraine"
+    contentDir = "content/de"
     weight = 4
 
 [fr]
     label = "Français (FR)"
     direction = "ltr"
-    title = "UA RFID"
+    title = "RFID Ukraine"
+    contentDir = "content/fr"
     weight = 5
 
 [ru]
     label = "Русский (RU)"
     direction = "ltr"
-    title = "UA RFID"
+    title = "RFID Ukraine"
+    contentDir = "content/ru"
     weight = 6
+
