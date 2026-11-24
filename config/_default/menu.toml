@@ -1,24 +1,23 @@
-# Configure main menu and social menu
-#[[main]]
-#identifier = "home"
-#name = "Home"
-#url = "/"
-#[main.params]
-#icon = "home"
-#newtab = true
+[[main]]
+identifier = "home"
+name = "Головна"
+url = "/"
+weight = -100
+[main.params]
+icon = "home"
 
-[[social]]
-    identifier = "github"
-    name       = "GitHub"
-    url        = "https://github.com/CaiJimmy/hugo-theme-stack"
+[[main]]
+identifier = "archives"
+name = "Архіви"
+url = "/archives/"
+weight = -90
+[main.params]
+icon = "archives"
 
-    [social.params]
-        icon = "brand-github"
-
-[[social]]
-    identifier = "twitter"
-    name       = "Twitter"
-    url        = "https://twitter.com"
-
-    [social.params]
-        icon = "brand-twitter"
+[[main]]
+identifier = "search"
+name = "Пошук"
+url = "/search/"
+weight = -80
+[main.params]
+icon = "search"
