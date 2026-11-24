@@ -56,4 +56,29 @@ html[data-scheme="dark"] .tagCloud-tags a {
     border-radius: 14px !important;
     overflow: hidden;
 }
+/* Прямоугольный логотип вместо круга с неоновой рамкой */
+.sidebar header .site-avatar {
+    width: 180px !important;
+    height: auto !important;
+    aspect-ratio: auto !important;
+}
+
+.sidebar header .site-avatar .site-logo {
+    width: 100% !important;
+    height: auto !important;
+    border-radius: 14px !important;
+    object-fit: contain !important;
+    background: #ffffff;
+    padding: 8px 12px;
+    border: 1.5px solid rgba(56, 189, 248, 0.65) !important;
+    box-shadow: 0 0 18px rgba(14, 165, 233, 0.38), 0 0 4px rgba(56, 189, 248, 0.6) !important;
+}
+
+/* Аккуратная неоновая обводка для кружка с антенной 📡 */
+.sidebar header .site-avatar .emoji {
+    border-radius: 10px !important;
+    border: 1px solid rgba(56, 189, 248, 0.5);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
 
