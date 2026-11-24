@@ -46,6 +46,8 @@ export interface I18nStrings {
   updatedOn: string;
   tableOfContents: string;
   adminCms: string;
+  contactsTitle: string;
+  city: string;
 }
 
 export const SITE_CONFIG = {
@@ -67,6 +69,13 @@ export const SITE_CONFIG = {
     archivesLimit: 5,
     categoriesLimit: 10,
     tagCloudLimit: 10,
+  },
+  contacts: {
+    phoneDisplay: '+380 66 153 60 30',
+    phoneHref: 'tel:+380661536030',
+    email: 'info@rfid.org.ua',
+    telegramUrl: 'https://t.me/+380661536030',
+    whatsappUrl: 'https://wa.me/380661536030',
   },
 };
 
@@ -173,6 +182,8 @@ export const I18N: Record<LangCode, I18nStrings> = {
     updatedOn: 'Оновлено',
     tableOfContents: 'Зміст статті',
     adminCms: 'Адмінка (CMS)',
+    contactsTitle: 'Контакти',
+    city: 'м. Київ',
   },
   ru: {
     subtitle: 'Инженерная платформа UHF RFID, RTLS и IIoT',
@@ -209,6 +220,8 @@ export const I18N: Record<LangCode, I18nStrings> = {
     updatedOn: 'Обновлено',
     tableOfContents: 'Содержание статьи',
     adminCms: 'Админка (CMS)',
+    contactsTitle: 'Контакты',
+    city: 'г. Киев',
   },
   en: {
     subtitle: 'UHF RFID, RTLS & IIoT Engineering Platform',
@@ -245,6 +258,8 @@ export const I18N: Record<LangCode, I18nStrings> = {
     updatedOn: 'Updated',
     tableOfContents: 'Table of Contents',
     adminCms: 'Admin (CMS)',
+    contactsTitle: 'Contacts',
+    city: 'Kyiv, Ukraine',
   },
   da: {
     subtitle: 'UHF RFID, RTLS & IIoT-ingeniørplatform',
@@ -281,6 +296,8 @@ export const I18N: Record<LangCode, I18nStrings> = {
     updatedOn: 'Opdateret',
     tableOfContents: 'Indholdsfortegnelse',
     adminCms: 'Admin (CMS)',
+    contactsTitle: 'Kontakt',
+    city: 'Kyiv, Ukraine',
   },
   de: {
     subtitle: 'Ingenieurplattform für UHF RFID, RTLS & IIoT',
@@ -317,6 +334,8 @@ export const I18N: Record<LangCode, I18nStrings> = {
     updatedOn: 'Aktualisiert',
     tableOfContents: 'Inhaltsverzeichnis',
     adminCms: 'Admin (CMS)',
+    contactsTitle: 'Kontakt',
+    city: 'Kiew, Ukraine',
   },
   fr: {
     subtitle: 'Plateforme d’ingénierie UHF RFID, RTLS & IIoT',
@@ -353,6 +372,8 @@ export const I18N: Record<LangCode, I18nStrings> = {
     updatedOn: 'Mis à jour',
     tableOfContents: 'Table des matières',
     adminCms: 'Admin (CMS)',
+    contactsTitle: 'Contacts',
+    city: 'Kyiv, Ukraine',
   },
 };
 
