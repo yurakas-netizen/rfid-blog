@@ -99,12 +99,238 @@
       color: #64748b;
       margin-left: 4px;
     }
+
+    /* Top bar Import / Export group */
+    .rfid-io-group {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin: 0 10px;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    .rfid-io-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      height: 36px;
+      padding: 0 12px;
+      border-radius: 6px;
+      border: 1px solid #cbd5e1;
+      background: #ffffff;
+      color: #1e293b;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+    }
+
+    .rfid-io-btn:hover {
+      background: #f1f5f9;
+      border-color: #0284c7;
+      color: #0284c7;
+    }
+
+    .rfid-io-btn svg {
+      width: 15px;
+      height: 15px;
+      flex-shrink: 0;
+    }
+
+    /* Modal */
+    .rfid-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 99999;
+      background: rgba(15, 23, 42, 0.58);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    .rfid-modal-backdrop.is-open {
+      display: flex;
+    }
+
+    .rfid-modal {
+      width: 100%;
+      max-width: 720px;
+      max-height: 90vh;
+      background: #ffffff;
+      color: #0f172a;
+      border-radius: 12px;
+      box-shadow: 0 24px 64px rgba(15, 23, 42, 0.32);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .rfid-modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 20px;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .rfid-modal-title {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .rfid-modal-close {
+      border: 0;
+      background: transparent;
+      font-size: 22px;
+      line-height: 1;
+      color: #64748b;
+      cursor: pointer;
+      padding: 2px 6px;
+    }
+
+    .rfid-modal-close:hover {
+      color: #0f172a;
+    }
+
+    .rfid-modal-body {
+      padding: 16px 20px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .rfid-modal-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .rfid-modal-tabs {
+      display: inline-flex;
+      border: 1px solid #cbd5e1;
+      border-radius: 7px;
+      overflow: hidden;
+    }
+
+    .rfid-modal-tab {
+      border: 0;
+      background: #f8fafc;
+      color: #475569;
+      padding: 6px 14px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .rfid-modal-tab.is-active {
+      background: #0284c7;
+      color: #ffffff;
+    }
+
+    .rfid-modal-check {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      color: #334155;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .rfid-modal-textarea {
+      width: 100%;
+      min-height: 290px;
+      padding: 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 12.5px;
+      line-height: 1.5;
+      color: #0f172a;
+      background: #f8fafc;
+      resize: vertical;
+      box-sizing: border-box;
+      outline: none;
+    }
+
+    .rfid-modal-textarea:focus {
+      border-color: #0284c7;
+      background: #ffffff;
+    }
+
+    .rfid-modal-summary {
+      padding: 9px 12px;
+      border-radius: 7px;
+      background: #f1f5f9;
+      border: 1px solid #e2e8f0;
+      font-size: 12.5px;
+      color: #334155;
+      line-height: 1.45;
+    }
+
+    .rfid-modal-footer {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 12px 20px;
+      border-top: 1px solid #e2e8f0;
+      background: #f8fafc;
+    }
+
+    .rfid-btn-primary {
+      height: 36px;
+      padding: 0 16px;
+      border-radius: 7px;
+      border: 0;
+      background: #0284c7;
+      color: #ffffff;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .rfid-btn-primary:hover {
+      background: #0369a1;
+    }
+
+    .rfid-btn-secondary {
+      height: 36px;
+      padding: 0 14px;
+      border-radius: 7px;
+      border: 1px solid #cbd5e1;
+      background: #ffffff;
+      color: #334155;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .rfid-btn-secondary:hover {
+      background: #f1f5f9;
+    }
+
+    .rfid-modal-status {
+      font-size: 12.5px;
+      color: #0369a1;
+      font-weight: 600;
+    }
   </style>
 </head>
 <body>
   <script src="https://unpkg.com/decap-cms@3.3.3/dist/decap-cms.js"></script>
   <script>
     (function () {
+      /* =========================================================
+         1. Two-Charts Side-by-Side Component
+         ========================================================= */
       if (window.CMS) {
         window.CMS.registerEditorComponent({
           id: 'charts-pair',
@@ -140,6 +366,9 @@
         });
       }
 
+      /* =========================================================
+         2. React Fiber Helpers
+         ========================================================= */
       function getFiber(el) {
         if (!el) return null;
         var keys = Object.keys(el);
@@ -182,6 +411,69 @@
         return null;
       }
 
+      function findEditorContext() {
+        var nodes = document.querySelectorAll('[class*="ToolbarContainer"], [class*="EditorContainer"], [data-slate-editor="true"], input[id^="title-field-"]');
+        for (var k = 0; k < nodes.length; k++) {
+          var fiber = getFiber(nodes[k]);
+          var steps = 0;
+          while (fiber && steps < 60) {
+            var p = fiber.memoizedProps || fiber.pendingProps;
+            if (p && p.entry && p.fields && typeof p.onChange === 'function' && typeof p.entry.get === 'function') {
+              return { props: p };
+            }
+            if (fiber.stateNode && typeof fiber.stateNode.handleChangeDraftField === 'function' && fiber.stateNode.props && fiber.stateNode.props.entryDraft) {
+              var ep = fiber.stateNode.props;
+              return {
+                props: {
+                  entry: ep.entryDraft.get('entry'),
+                  fields: ep.fields,
+                  collection: ep.collection,
+                  onChange: fiber.stateNode.handleChangeDraftField
+                }
+              };
+            }
+            fiber = fiber.return;
+            steps++;
+          }
+        }
+        return null;
+      }
+
+      function findMarkdownControlInstances() {
+        var result = [];
+        var editors = document.querySelectorAll('[data-slate-editor="true"]');
+        for (var i = 0; i < editors.length; i++) {
+          var fiber = getFiber(editors[i]);
+          var steps = 0;
+          while (fiber && steps < 40) {
+            var inst = fiber.stateNode;
+            if (inst && typeof inst.handleMode === 'function' && inst.state && inst.state.mode) {
+              result.push(inst);
+              break;
+            }
+            fiber = fiber.return;
+            steps++;
+          }
+        }
+        return result;
+      }
+
+      function findListControlInstance(fieldName) {
+        var input = document.querySelector('input[id^="' + fieldName + '-field-"]');
+        if (!input) return null;
+        var fiber = getFiber(input);
+        var steps = 0;
+        while (fiber && steps < 20) {
+          var inst = fiber.stateNode;
+          if (inst && typeof inst.handleChange === 'function' && typeof inst.valueToString === 'function') {
+            return { inst: inst, input: input };
+          }
+          fiber = fiber.return;
+          steps++;
+        }
+        return { inst: null, input: input };
+      }
+
       function getPlugin(toolbarProps, id) {
         if (!toolbarProps || !toolbarProps.plugins) return null;
         var plugins = toolbarProps.plugins;
@@ -195,6 +487,9 @@
         return null;
       }
 
+      /* =========================================================
+         3. Enhanced Markdown / Rich-Text Toolbar
+         ========================================================= */
       function makeBtn(opts) {
         var btn = document.createElement('button');
         btn.type = 'button';
@@ -245,7 +540,8 @@
         findStatus.className = 'rfid-cms-find-status';
 
         function focusSlate() {
-          slateEl.focus();
+          var liveSlate = wrapper.querySelector('[data-slate-editor="true"]') || slateEl;
+          liveSlate.focus();
         }
 
         function getCtx() {
@@ -378,7 +674,7 @@
             if (!ctx.editor) return;
             ctx.slateEl.focus();
             if (ctx.tb && ctx.tb.rawMode) {
-              ctx.editor.insertText('\n| Параметр | Значение A | Значение B |\n| :--- | :--- | :--- |\n| Пункт 1 | — | — |\n| Пункт 2 | — | — |\n');
+              ctx.editor.insertText('\n| Параметр | Вариант A | Вариант B |\n| :--- | :--- | :--- |\n| Пункт 1 | — | — |\n| Пункт 2 | — | — |\n');
             } else {
               try {
                 ctx.editor.insertNode({
@@ -610,16 +906,593 @@
         setTimeout(refreshState, 100);
       }
 
-      function scanToolbars() {
+      /* =========================================================
+         4. Article Import / Export (All Fields Except Images)
+         ========================================================= */
+      function stripBodyImages(md) {
+        return String(md || '')
+          .replace(/!\[[^\]]*\]\([^)]*\)\s*/g, '')
+          .replace(/\n{3,}/g, '\n\n')
+          .trim();
+      }
+
+      function stripQuotes(s) {
+        var str = String(s || '').trim();
+        if (str.length >= 2 && str[0] === '"' && str[str.length - 1] === '"') {
+          try {
+            return JSON.parse(str);
+          } catch (_) {
+            return str.slice(1, -1).replace(/\\"/g, '"').replace(/\\n/g, '\n');
+          }
+        }
+        if (str.length >= 2 && str[0] === "'" && str[str.length - 1] === "'") {
+          return str.slice(1, -1).replace(/''/g, "'");
+        }
+        return str;
+      }
+
+      function serializeMarkdownArticle(data, stripInlineImages) {
+        var lines = ['---'];
+        lines.push('title: ' + JSON.stringify(String(data.title || '')));
+        if (data.description) {
+          lines.push('description: ' + JSON.stringify(String(data.description)));
+        }
+        if (data.date) {
+          lines.push('date: ' + String(data.date));
+        }
+        if (Array.isArray(data.categories) && data.categories.length > 0) {
+          lines.push('categories:');
+          data.categories.forEach(function (c) {
+            lines.push('  - ' + (/[:"'#\[\]{},]|^\s|\s$/.test(c) ? JSON.stringify(c) : c));
+          });
+        }
+        if (Array.isArray(data.tags) && data.tags.length > 0) {
+          lines.push('tags:');
+          data.tags.forEach(function (t) {
+            lines.push('  - ' + (/[:"'#\[\]{},]|^\s|\s$/.test(t) ? JSON.stringify(t) : t));
+          });
+        }
+        lines.push('---');
+        var body = stripInlineImages ? stripBodyImages(data.body) : String(data.body || '');
+        if (body) lines.push(body);
+        return lines.join('\n') + '\n';
+      }
+
+      function serializeJsonArticle(data, stripInlineImages) {
+        var payload = {
+          title: String(data.title || ''),
+          description: String(data.description || ''),
+          date: data.date ? String(data.date) : '',
+          categories: Array.isArray(data.categories) ? data.categories : [],
+          tags: Array.isArray(data.tags) ? data.tags : [],
+          body: stripInlineImages ? stripBodyImages(data.body) : String(data.body || '')
+        };
+        return JSON.stringify(payload, null, 2) + '\n';
+      }
+
+      function parseYamlFrontmatter(yamlText) {
+        var lines = yamlText.replace(/\r\n/g, '\n').split('\n');
+        var out = {};
+        var i = 0;
+
+        while (i < lines.length) {
+          var line = lines[i];
+          if (!line.trim() || line.trim()[0] === '#') {
+            i++;
+            continue;
+          }
+          var m = line.match(/^([A-Za-z0-9_-]+)\s*:\s*(.*)$/);
+          if (!m) {
+            i++;
+            continue;
+          }
+          var key = m[1];
+          var rest = m[2];
+
+          if (rest === '|' || rest === '|-' || rest === '>' || rest === '>-') {
+            var block = [];
+            i++;
+            while (i < lines.length && (/^\s+/.test(lines[i]) || lines[i] === '')) {
+              block.push(lines[i].replace(/^\s{2}/, ''));
+              i++;
+            }
+            out[key] = block.join(rest[0] === '>' ? ' ' : '\n').trim();
+            continue;
+          }
+
+          if (rest.trim() === '') {
+            var arr = [];
+            var j = i + 1;
+            while (j < lines.length && /^\s*-\s+/.test(lines[j])) {
+              arr.push(stripQuotes(lines[j].replace(/^\s*-\s+/, '')));
+              j++;
+            }
+            if (arr.length > 0) {
+              out[key] = arr;
+              i = j;
+              continue;
+            }
+            out[key] = '';
+            i++;
+            continue;
+          }
+
+          var trimmed = rest.trim();
+          if (trimmed[0] === '[' && trimmed[trimmed.length - 1] === ']') {
+            var inner = trimmed.slice(1, -1).trim();
+            out[key] = inner
+              ? inner.split(',').map(function (x) { return stripQuotes(x); }).filter(Boolean)
+              : [];
+            i++;
+            continue;
+          }
+
+          // Handle multi-line quoted or folded scalar continuation
+          var valParts = [rest];
+          var k = i + 1;
+          var startsQuote = trimmed[0] === '"' && !(trimmed.length > 1 && trimmed[trimmed.length - 1] === '"' && trimmed[trimmed.length - 2] !== '\\');
+          while (k < lines.length && /^\s+/.test(lines[k]) && !/^\s*-\s+/.test(lines[k])) {
+            valParts.push(lines[k].trim());
+            var joined = valParts.join(' ');
+            k++;
+            if (startsQuote && /[^\\]"$/.test(joined.trim())) break;
+          }
+          out[key] = stripQuotes(valParts.join(' '));
+          i = k;
+        }
+        return out;
+      }
+
+      function parseImportedArticle(rawText) {
+        var text = String(rawText || '').replace(/^\uFEFF/, '');
+        var trimmed = text.trim();
+        if (!trimmed) {
+          throw new Error('Пустой файл или текст');
+        }
+
+        if (trimmed[0] === '{') {
+          var obj = JSON.parse(trimmed);
+          return {
+            hasTitle: typeof obj.title === 'string',
+            title: typeof obj.title === 'string' ? obj.title : '',
+            hasDescription: typeof obj.description === 'string',
+            description: typeof obj.description === 'string' ? obj.description : '',
+            hasDate: Boolean(obj.date),
+            date: obj.date ? String(obj.date) : '',
+            hasCategories: Array.isArray(obj.categories),
+            categories: Array.isArray(obj.categories) ? obj.categories.map(String).filter(Boolean) : [],
+            hasTags: Array.isArray(obj.tags),
+            tags: Array.isArray(obj.tags) ? obj.tags.map(String).filter(Boolean) : [],
+            hasBody: typeof obj.body === 'string',
+            body: typeof obj.body === 'string' ? obj.body : ''
+          };
+        }
+
+        var fmMatch = text.match(/^\s*---\r?\n([\s\S]*?)\r?\n---\r?\n?([\s\S]*)$/);
+        if (fmMatch) {
+          var meta = parseYamlFrontmatter(fmMatch[1]);
+          var body = (fmMatch[2] || '').replace(/^\r?\n/, '');
+          var cats = Array.isArray(meta.categories)
+            ? meta.categories
+            : (typeof meta.categories === 'string' && meta.categories ? meta.categories.split(',').map(function (s) { return s.trim(); }).filter(Boolean) : []);
+          var tags = Array.isArray(meta.tags)
+            ? meta.tags
+            : (typeof meta.tags === 'string' && meta.tags ? meta.tags.split(',').map(function (s) { return s.trim(); }).filter(Boolean) : []);
+          return {
+            hasTitle: typeof meta.title === 'string' && meta.title.length > 0,
+            title: typeof meta.title === 'string' ? meta.title : '',
+            hasDescription: typeof meta.description === 'string',
+            description: typeof meta.description === 'string' ? meta.description : '',
+            hasDate: Boolean(meta.date),
+            date: meta.date ? String(meta.date) : '',
+            hasCategories: 'categories' in meta,
+            categories: cats,
+            hasTags: 'tags' in meta,
+            tags: tags,
+            hasBody: true,
+            body: body
+          };
+        }
+
+        // Plain markdown fallback (extract optional # H1 if first line)
+        return {
+          hasTitle: false,
+          title: '',
+          hasDescription: false,
+          description: '',
+          hasDate: false,
+          date: '',
+          hasCategories: false,
+          categories: [],
+          hasTags: false,
+          tags: [],
+          hasBody: true,
+          body: text
+        };
+      }
+
+      function slugFileName(title, ext) {
+        var base = String(title || 'article')
+          .toLowerCase()
+          .replace(/[^\p{L}\p{N}\s-]+/gu, '')
+          .trim()
+          .replace(/\s+/g, '-')
+          .slice(0, 60) || 'article';
+        return base + '.' + ext;
+      }
+
+      function readCurrentEntryData() {
+        var ctx = findEditorContext();
+        if (!ctx || !ctx.props || !ctx.props.entry) return null;
+        var raw = ctx.props.entry.get('data');
+        var js = raw && typeof raw.toJS === 'function' ? raw.toJS() : {};
+        return {
+          ctx: ctx.props,
+          data: {
+            title: js.title || '',
+            description: js.description || '',
+            date: js.date || new Date().toISOString(),
+            categories: Array.isArray(js.categories) ? js.categories : [],
+            tags: Array.isArray(js.tags) ? js.tags : [],
+            body: js.body || ''
+          }
+        };
+      }
+
+      function applyImportedData(parsed, opts) {
+        var ctxWrap = findEditorContext();
+        if (!ctxWrap) {
+          throw new Error('Редактор статьи не найден');
+        }
+        var props = ctxWrap.props;
+        var fields = props.fields;
+        var onChange = props.onChange;
+
+        function getField(name) {
+          return fields.find(function (f) { return f.get('name') === name; });
+        }
+
+        if (opts.title && parsed.hasTitle) {
+          var fTitle = getField('title');
+          if (fTitle) onChange(fTitle, parsed.title);
+        }
+
+        if (opts.description && parsed.hasDescription) {
+          var fDesc = getField('description');
+          if (fDesc) onChange(fDesc, parsed.description);
+        }
+
+        if (opts.date && parsed.hasDate) {
+          var fDate = getField('date');
+          if (fDate) {
+            var dt = new Date(parsed.date);
+            onChange(fDate, isNaN(dt.getTime()) ? parsed.date : dt.toISOString());
+          }
+        }
+
+        if (opts.categories && parsed.hasCategories) {
+          var fCat = getField('categories');
+          var catList = fields.clear().push.apply(fields.clear(), parsed.categories);
+          var catCtrl = findListControlInstance('categories');
+          if (catCtrl && catCtrl.inst) {
+            catCtrl.inst.handleChange({ target: { value: parsed.categories.join(', ') } });
+          } else if (fCat) {
+            onChange(fCat, catList);
+          }
+        }
+
+        if (opts.tags && parsed.hasTags) {
+          var fTag = getField('tags');
+          var tagList = fields.clear().push.apply(fields.clear(), parsed.tags);
+          var tagCtrl = findListControlInstance('tags');
+          if (tagCtrl && tagCtrl.inst) {
+            tagCtrl.inst.handleChange({ target: { value: parsed.tags.join(', ') } });
+          } else if (fTag) {
+            onChange(fTag, tagList);
+          }
+        }
+
+        if (opts.body && parsed.hasBody) {
+          var fBody = getField('body');
+          var bodyText = opts.stripImages ? stripBodyImages(parsed.body) : parsed.body;
+          if (fBody) onChange(fBody, bodyText);
+          var mdInsts = findMarkdownControlInstances();
+          mdInsts.forEach(function (inst) {
+            var origMode = inst.state.mode || 'rich_text';
+            var tempMode = origMode === 'rich_text' ? 'raw' : 'rich_text';
+            try {
+              inst.handleMode(tempMode);
+              setTimeout(function () {
+                try { inst.handleMode(origMode); } catch (_) {}
+              }, 35);
+            } catch (_) {}
+          });
+        }
+      }
+
+      /* =========================================================
+         5. Import / Export Modal UI
+         ========================================================= */
+      var modalEl = null;
+
+      function ensureModal() {
+        if (modalEl) return modalEl;
+
+        var backdrop = document.createElement('div');
+        backdrop.className = 'rfid-modal-backdrop';
+        backdrop.innerHTML =
+          '<div class="rfid-modal" role="dialog" aria-modal="true">' +
+            '<div class="rfid-modal-header">' +
+              '<h3 class="rfid-modal-title"></h3>' +
+              '<button type="button" class="rfid-modal-close" aria-label="Закрыть">&times;</button>' +
+            '</div>' +
+            '<div class="rfid-modal-body">' +
+              '<div class="rfid-modal-row rfid-export-controls">' +
+                '<div class="rfid-modal-tabs">' +
+                  '<button type="button" class="rfid-modal-tab is-active" data-fmt="md">Markdown + YAML (.md)</button>' +
+                  '<button type="button" class="rfid-modal-tab" data-fmt="json">JSON (.json)</button>' +
+                '</div>' +
+                '<label class="rfid-modal-check">' +
+                  '<input type="checkbox" class="rfid-strip-images" />' +
+                  '<span>Удалить ссылки на картинки в тексте</span>' +
+                '</label>' +
+              '</div>' +
+              '<div class="rfid-modal-row rfid-import-controls" style="display:none;">' +
+                '<input type="file" accept=".md,.markdown,.txt,.json" class="rfid-file-input" />' +
+                '<label class="rfid-modal-check">' +
+                  '<input type="checkbox" class="rfid-import-strip-images" />' +
+                  '<span>Вырезать картинки из текста при импорте</span>' +
+                '</label>' +
+              '</div>' +
+              '<div class="rfid-modal-row rfid-import-fields" style="display:none;">' +
+                '<label class="rfid-modal-check"><input type="checkbox" data-field="title" checked /><span>Заголовок</span></label>' +
+                '<label class="rfid-modal-check"><input type="checkbox" data-field="description" checked /><span>Описание</span></label>' +
+                '<label class="rfid-modal-check"><input type="checkbox" data-field="date" checked /><span>Дата</span></label>' +
+                '<label class="rfid-modal-check"><input type="checkbox" data-field="categories" checked /><span>Категории</span></label>' +
+                '<label class="rfid-modal-check"><input type="checkbox" data-field="tags" checked /><span>Теги</span></label>' +
+                '<label class="rfid-modal-check"><input type="checkbox" data-field="body" checked /><span>Текст статьи</span></label>' +
+              '</div>' +
+              '<textarea class="rfid-modal-textarea" spellcheck="false"></textarea>' +
+              '<div class="rfid-modal-summary"></div>' +
+            '</div>' +
+            '<div class="rfid-modal-footer">' +
+              '<span class="rfid-modal-status"></span>' +
+              '<div class="rfid-modal-row">' +
+                '<button type="button" class="rfid-btn-secondary rfid-copy-btn">Скопировать</button>' +
+                '<button type="button" class="rfid-btn-primary rfid-download-btn">Скачать файл</button>' +
+                '<button type="button" class="rfid-btn-primary rfid-apply-btn" style="display:none;">Применить в редактор</button>' +
+              '</div>' +
+            '</div>' +
+          '</div>';
+
+        document.body.appendChild(backdrop);
+
+        var titleEl = backdrop.querySelector('.rfid-modal-title');
+        var closeBtn = backdrop.querySelector('.rfid-modal-close');
+        var exportControls = backdrop.querySelector('.rfid-export-controls');
+        var importControls = backdrop.querySelector('.rfid-import-controls');
+        var importFields = backdrop.querySelector('.rfid-import-fields');
+        var textarea = backdrop.querySelector('.rfid-modal-textarea');
+        var summary = backdrop.querySelector('.rfid-modal-summary');
+        var status = backdrop.querySelector('.rfid-modal-status');
+        var stripExportCb = backdrop.querySelector('.rfid-strip-images');
+        var stripImportCb = backdrop.querySelector('.rfid-import-strip-images');
+        var fileInput = backdrop.querySelector('.rfid-file-input');
+        var copyBtn = backdrop.querySelector('.rfid-copy-btn');
+        var downloadBtn = backdrop.querySelector('.rfid-download-btn');
+        var applyBtn = backdrop.querySelector('.rfid-apply-btn');
+        var tabBtns = backdrop.querySelectorAll('.rfid-modal-tab');
+
+        var currentFmt = 'md';
+        var currentTitle = 'article';
+
+        function close() {
+          backdrop.classList.remove('is-open');
+        }
+
+        closeBtn.addEventListener('click', close);
+        backdrop.addEventListener('click', function (e) {
+          if (e.target === backdrop) close();
+        });
+
+        function refreshExport() {
+          var current = readCurrentEntryData();
+          if (!current) {
+            textarea.value = '';
+            summary.textContent = 'Откройте статью для экспорта.';
+            return;
+          }
+          currentTitle = current.data.title || 'article';
+          var strip = stripExportCb.checked;
+          textarea.value = currentFmt === 'json'
+            ? serializeJsonArticle(current.data, strip)
+            : serializeMarkdownArticle(current.data, strip);
+          summary.textContent =
+            'Включены поля: Заголовок, Описание, Дата, Категории (' + current.data.categories.length +
+            '), Теги (' + current.data.tags.length + '), Текст статьи (' + current.data.body.length + ' симв.). Обложка (image) исключена.';
+        }
+
+        function refreshImportSummary() {
+          if (!textarea.value.trim()) {
+            summary.textContent = 'Выберите файл .md / .json или вставьте текст с YAML-шапкой (--- ... ---) или JSON. Обложка (image) при импорте не перезаписывается.';
+            return;
+          }
+          try {
+            var parsed = parseImportedArticle(textarea.value);
+            var parts = [];
+            if (parsed.hasTitle) parts.push('Заголовок');
+            if (parsed.hasDescription) parts.push('Описание');
+            if (parsed.hasDate) parts.push('Дата');
+            if (parsed.hasCategories) parts.push('Категории (' + parsed.categories.length + ')');
+            if (parsed.hasTags) parts.push('Теги (' + parsed.tags.length + ')');
+            if (parsed.hasBody) parts.push('Текст (' + parsed.body.length + ' симв.)');
+            summary.textContent = 'Распознано: ' + (parts.length ? parts.join(' · ') : 'только текст');
+            status.textContent = '';
+          } catch (err) {
+            summary.textContent = 'Ошибка разбора: ' + err.message;
+          }
+        }
+
+        tabBtns.forEach(function (b) {
+          b.addEventListener('click', function () {
+            tabBtns.forEach(function (x) { x.classList.remove('is-active'); });
+            b.classList.add('is-active');
+            currentFmt = b.dataset.fmt || 'md';
+            refreshExport();
+          });
+        });
+
+        stripExportCb.addEventListener('change', refreshExport);
+        textarea.addEventListener('input', function () {
+          if (importControls.style.display !== 'none') refreshImportSummary();
+        });
+
+        fileInput.addEventListener('change', function () {
+          var file = fileInput.files && fileInput.files[0];
+          if (!file) return;
+          var reader = new FileReader();
+          reader.onload = function () {
+            textarea.value = String(reader.result || '');
+            refreshImportSummary();
+          };
+          reader.readAsText(file, 'utf-8');
+        });
+
+        copyBtn.addEventListener('click', function () {
+          navigator.clipboard.writeText(textarea.value).then(function () {
+            status.textContent = 'Скопировано в буфер обмена';
+          }).catch(function () {
+            textarea.select();
+            document.execCommand('copy');
+            status.textContent = 'Скопировано';
+          });
+        });
+
+        downloadBtn.addEventListener('click', function () {
+          var blob = new Blob([textarea.value], { type: currentFmt === 'json' ? 'application/json;charset=utf-8' : 'text/markdown;charset=utf-8' });
+          var url = URL.createObjectURL(blob);
+          var a = document.createElement('a');
+          a.href = url;
+          a.download = slugFileName(currentTitle, currentFmt);
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+          status.textContent = 'Файл скачан';
+        });
+
+        applyBtn.addEventListener('click', function () {
+          try {
+            var parsed = parseImportedArticle(textarea.value);
+            function isChecked(name) {
+              var cb = importFields.querySelector('input[data-field="' + name + '"]');
+              return !cb || cb.checked;
+            }
+            applyImportedData(parsed, {
+              title: isChecked('title'),
+              description: isChecked('description'),
+              date: isChecked('date'),
+              categories: isChecked('categories'),
+              tags: isChecked('tags'),
+              body: isChecked('body'),
+              stripImages: stripImportCb.checked
+            });
+            status.textContent = 'Поля статьи заполнены';
+            setTimeout(close, 350);
+          } catch (err) {
+            status.textContent = 'Ошибка: ' + err.message;
+          }
+        });
+
+        modalEl = {
+          openExport: function () {
+            titleEl.textContent = 'Экспорт статьи (без обложки)';
+            exportControls.style.display = 'flex';
+            importControls.style.display = 'none';
+            importFields.style.display = 'none';
+            copyBtn.style.display = 'inline-flex';
+            downloadBtn.style.display = 'inline-flex';
+            applyBtn.style.display = 'none';
+            textarea.readOnly = true;
+            status.textContent = '';
+            refreshExport();
+            backdrop.classList.add('is-open');
+          },
+          openImport: function () {
+            titleEl.textContent = 'Импорт статьи (.md или .json)';
+            exportControls.style.display = 'none';
+            importControls.style.display = 'flex';
+            importFields.style.display = 'flex';
+            copyBtn.style.display = 'none';
+            downloadBtn.style.display = 'none';
+            applyBtn.style.display = 'inline-flex';
+            textarea.readOnly = false;
+            textarea.value = '';
+            fileInput.value = '';
+            textarea.placeholder = 'Вставьте сюда содержимое .md (с --- YAML ---) или .json, либо выберите файл выше...';
+            status.textContent = '';
+            refreshImportSummary();
+            backdrop.classList.add('is-open');
+            setTimeout(function () { textarea.focus(); }, 30);
+          }
+        };
+        return modalEl;
+      }
+
+      function attachTopImportExport(topBar) {
+        if (!topBar || topBar.dataset.rfidIoAttached === '1') return;
+        topBar.dataset.rfidIoAttached = '1';
+
+        var group = document.createElement('div');
+        group.className = 'rfid-io-group';
+
+        var importBtn = document.createElement('button');
+        importBtn.type = 'button';
+        importBtn.className = 'rfid-io-btn';
+        importBtn.title = 'Импортировать заголовок, описание, дату, категории, теги и текст статьи из .md или .json';
+        importBtn.innerHTML =
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2"/><polyline points="7 9 12 4 17 9"/><line x1="12" y1="4" x2="12" y2="16"/></svg>' +
+          '<span>Импорт</span>';
+        importBtn.addEventListener('click', function () {
+          ensureModal().openImport();
+        });
+
+        var exportBtn = document.createElement('button');
+        exportBtn.type = 'button';
+        exportBtn.className = 'rfid-io-btn';
+        exportBtn.title = 'Экспортировать статью со всеми полями (кроме обложки) в .md или .json';
+        exportBtn.innerHTML =
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2"/><polyline points="7 11 12 16 17 11"/><line x1="12" y1="4" x2="12" y2="16"/></svg>' +
+          '<span>Экспорт</span>';
+        exportBtn.addEventListener('click', function () {
+          ensureModal().openExport();
+        });
+
+        group.appendChild(importBtn);
+        group.appendChild(exportBtn);
+
+        var lastSub = topBar.querySelector('[class*="ToolbarSubSectionLast"]');
+        if (lastSub) {
+          lastSub.insertBefore(group, lastSub.firstChild);
+        } else {
+          topBar.appendChild(group);
+        }
+      }
+
+      function scanDom() {
         var bars = document.querySelectorAll('[class*="EditorControlBar"]');
         for (var i = 0; i < bars.length; i++) {
           attachToolbar(bars[i]);
         }
+        var mainSections = document.querySelectorAll('[class*="ToolbarContainer"] > [class*="ToolbarSectionMain"]');
+        for (var j = 0; j < mainSections.length; j++) {
+          attachTopImportExport(mainSections[j]);
+        }
       }
 
-      var observer = new MutationObserver(scanToolbars);
+      var observer = new MutationObserver(scanDom);
       observer.observe(document.body, { childList: true, subtree: true });
-      scanToolbars();
+      scanDom();
     })();
   </script>
 </body>
