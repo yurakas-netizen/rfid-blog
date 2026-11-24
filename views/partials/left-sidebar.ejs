@@ -35,6 +35,36 @@
     </div>
   </header>
 
+  <div class="mobile-sidebar-widgets">
+    <form action="<%= langPrefix %>/search/" method="get" class="search-form mobile-search-form">
+      <input type="search" name="keyword" required placeholder="<%= t.searchPlaceholder %>" aria-label="<%= t.search %>" />
+      <button type="submit" aria-label="<%= t.searchButton %>" title="<%= t.search %>">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0"></path>
+          <path d="M21 21l-6 -6"></path>
+        </svg>
+      </button>
+    </form>
+
+    <% if (typeof categories !== 'undefined' && categories && categories.length > 0) { %>
+      <nav class="mobile-categories-bar" aria-label="<%= t.categories %>">
+        <span class="mobile-categories-icon" title="<%= t.categories %>" aria-hidden="true">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 4h6v6h-6z"></path>
+            <path d="M14 4h6v6h-6z"></path>
+            <path d="M4 14h6v6h-6z"></path>
+            <path d="M17 17m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"></path>
+          </svg>
+        </span>
+        <div class="mobile-categories-list">
+          <% categories.slice(0, site.widgets.categoriesLimit).forEach(function(cat) { %>
+            <a href="<%= langPrefix %>/categories/<%= encodeURIComponent(cat.slug) %>/"><%= cat.name %> (<%= cat.count %>)</a>
+          <% }); %>
+        </div>
+      </nav>
+    <% } %>
+  </div>
+
   <ol class="menu" id="main-menu">
     <li class="<%= activeNav === 'home' ? 'current' : '' %>">
       <a href="<%= langPrefix || '/' %>">

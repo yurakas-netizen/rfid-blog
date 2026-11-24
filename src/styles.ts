@@ -86,6 +86,9 @@ a:hover {
 .left-sidebar {
   width: 100%;
   flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 @media (min-width: 768px) {
@@ -120,6 +123,17 @@ a:hover {
   display: flex;
   flex-direction: column;
   gap: 20px;
+}
+
+@media (max-width: 1023px) {
+  .right-sidebar > .search-form,
+  .right-sidebar > .widget:not(.widget--toc) {
+    display: none;
+  }
+
+  .right-sidebar:not(:has(.widget--toc)) {
+    display: none;
+  }
 }
 
 @media (min-width: 1024px) {
