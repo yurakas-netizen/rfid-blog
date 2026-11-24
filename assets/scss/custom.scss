@@ -1,3 +1,10 @@
+:root {
+    --menu-icon-separation: 14px;
+    --widget-separation: 20px;
+    --card-border-radius: 14px;
+    --tag-border-radius: 6px;
+}
+
 :root[data-scheme="dark"],
 html[data-scheme="dark"] {
     --body-background: #090d16;
@@ -6,7 +13,7 @@ html[data-scheme="dark"] {
     --card-text-color-main: #f8fafc;
     --card-text-color-secondary: #94a3b8;
     --card-text-color-tertiary: #64748b;
-    --card-separator-color: rgba(56, 189, 248, 0.14);
+    --card-separator-color: rgba(56, 189, 248, 0.16);
     --accent-color: #38bdf8;
     --accent-color-darker: #0ea5e9;
     --accent-color-text: #090d16;
@@ -15,12 +22,83 @@ html[data-scheme="dark"] {
     --card-border-radius: 14px;
 }
 
+/* =========================================================
+   1. Hugo Stack v4 Left Sidebar Brand Logo (Neon Rounded Box)
+   ========================================================= */
+.left-sidebar header:has(> .site-avatar) {
+    @media (min-width: 768px) {
+        flex-direction: row;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .site-avatar {
+        --sidebar-avatar-size: 48px;
+        width: 48px !important;
+        height: 48px !important;
+        border-radius: 12px !important;
+        background: linear-gradient(135deg, rgba(14, 165, 233, 0.18) 0%, rgba(56, 189, 248, 0.06) 100%);
+        border: 1px solid rgba(56, 189, 248, 0.45);
+        box-shadow: 0 4px 16px -4px rgba(14, 165, 233, 0.35), 0 0 12px rgba(56, 189, 248, 0.14);
+        overflow: hidden;
+        flex-shrink: 0;
+
+        > a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            position: relative;
+
+            &::after {
+                content: "";
+                width: 26px;
+                height: 26px;
+                display: block;
+                background-color: var(--accent-color);
+                -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6.62012 16.4414V18H5.46289V13.7168H6.86621C8.03027 13.7168 8.6123 14.1387 8.6123 14.9824C8.6123 15.4785 8.37012 15.8623 7.88574 16.1338L9.13379 18H7.82129L6.91309 16.4414H6.62012ZM6.62012 15.5713H6.83691C7.24121 15.5713 7.44336 15.3926 7.44336 15.0352C7.44336 14.7402 7.24512 14.5928 6.84863 14.5928H6.62012V15.5713Z'/%3E%3Cpath d='M10.6631 18H9.52344V13.7168H12.0547V14.6455H10.6631V15.4629H11.9463V16.3916H10.6631V18Z'/%3E%3Cpath d='M12.7578 18V13.7168H13.9209V18H12.7578Z'/%3E%3Cpath d='M18.4854 15.7676C18.4854 16.4824 18.2881 17.0332 17.8936 17.4199C17.501 17.8066 16.9482 18 16.2354 18H14.8496V13.7168H16.332C17.0195 13.7168 17.5498 13.8926 17.9229 14.2441C18.2979 14.5957 18.4854 15.1035 18.4854 15.7676ZM17.2842 15.8086C17.2842 15.416 17.2061 15.125 17.0498 14.9355C16.8955 14.7461 16.6602 14.6514 16.3438 14.6514H16.0068V17.0508H16.2646C16.6162 17.0508 16.874 16.9492 17.0381 16.7461C17.2021 16.541 17.2842 16.2285 17.2842 15.8086Z'/%3E%3Cpath d='M17 9C17 10.1046 16.1046 11 15 11C13.8954 11 13 10.1046 13 9C13 7.89543 13.8954 7 15 7C16.1046 7 17 7.89543 17 9Z'/%3E%3Cpath d='M10.0588 4L9 2H4C2.89543 2 2 2.89543 2 4V20C2 21.1046 2.89543 22 4 22H20C21.1046 22 22 21.1046 22 20V15L20 13.9412V20H4V4H10.0588Z'/%3E%3Cpath d='M21.9469 12.9698C22.6169 11.7999 22.9998 10.4447 22.9998 9C22.9998 4.58172 19.4181 1 14.9998 1C13.5551 1 12.1999 1.38295 11.03 2.05287L12.0225 3.78965C12.8998 3.28721 13.9163 3 14.9998 3C18.3135 3 20.9998 5.68629 20.9998 9C20.9998 10.0835 20.7126 11.1 20.2102 11.9773L21.9469 12.9698Z'/%3E%3Cpath d='M19.3418 11.4811C19.7605 10.75 19.9998 9.90293 19.9998 9C19.9998 6.23858 17.7612 4 14.9998 4C14.0969 4 13.2498 4.23934 12.5187 4.65804L13.5111 6.39483C13.9498 6.14361 14.458 6 14.9998 6C16.6567 6 17.9998 7.34315 17.9998 9C17.9998 9.54176 17.8562 10.05 17.605 10.4887L19.3418 11.4811Z'/%3E%3C/svg%3E");
+                mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6.62012 16.4414V18H5.46289V13.7168H6.86621C8.03027 13.7168 8.6123 14.1387 8.6123 14.9824C8.6123 15.4785 8.37012 15.8623 7.88574 16.1338L9.13379 18H7.82129L6.91309 16.4414H6.62012ZM6.62012 15.5713H6.83691C7.24121 15.5713 7.44336 15.3926 7.44336 15.0352C7.44336 14.7402 7.24512 14.5928 6.84863 14.5928H6.62012V15.5713Z'/%3E%3Cpath d='M10.6631 18H9.52344V13.7168H12.0547V14.6455H10.6631V15.4629H11.9463V16.3916H10.6631V18Z'/%3E%3Cpath d='M12.7578 18V13.7168H13.9209V18H12.7578Z'/%3E%3Cpath d='M18.4854 15.7676C18.4854 16.4824 18.2881 17.0332 17.8936 17.4199C17.501 17.8066 16.9482 18 16.2354 18H14.8496V13.7168H16.332C17.0195 13.7168 17.5498 13.8926 17.9229 14.2441C18.2979 14.5957 18.4854 15.1035 18.4854 15.7676ZM17.2842 15.8086C17.2842 15.416 17.2061 15.125 17.0498 14.9355C16.8955 14.7461 16.6602 14.6514 16.3438 14.6514H16.0068V17.0508H16.2646C16.6162 17.0508 16.874 16.9492 17.0381 16.7461C17.2021 16.541 17.2842 16.2285 17.2842 15.8086Z'/%3E%3Cpath d='M17 9C17 10.1046 16.1046 11 15 11C13.8954 11 13 10.1046 13 9C13 7.89543 13.8954 7 15 7C16.1046 7 17 7.89543 17 9Z'/%3E%3Cpath d='M10.0588 4L9 2H4C2.89543 2 2 2.89543 2 4V20C2 21.1046 2.89543 22 4 22H20C21.1046 22 22 21.1046 22 20V15L20 13.9412V20H4V4H10.0588Z'/%3E%3Cpath d='M21.9469 12.9698C22.6169 11.7999 22.9998 10.4447 22.9998 9C22.9998 4.58172 19.4181 1 14.9998 1C13.5551 1 12.1999 1.38295 11.03 2.05287L12.0225 3.78965C12.8998 3.28721 13.9163 3 14.9998 3C18.3135 3 20.9998 5.68629 20.9998 9C20.9998 10.0835 20.7126 11.1 20.2102 11.9773L21.9469 12.9698Z'/%3E%3Cpath d='M19.3418 11.4811C19.7605 10.75 19.9998 9.90293 19.9998 9C19.9998 6.23858 17.7612 4 14.9998 4C14.0969 4 13.2498 4.23934 12.5187 4.65804L13.5111 6.39483C13.9498 6.14361 14.458 6 14.9998 6C16.6567 6 17.9998 7.34315 17.9998 9C17.9998 9.54176 17.8562 10.05 17.605 10.4887L19.3418 11.4811Z'/%3E%3C/svg%3E");
+                -webkit-mask-size: contain;
+                mask-size: contain;
+                -webkit-mask-repeat: no-repeat;
+                mask-repeat: no-repeat;
+                -webkit-mask-position: center;
+                mask-position: center;
+            }
+        }
+
+        .site-logo {
+            opacity: 0 !important;
+            position: absolute;
+            inset: 0;
+            border-radius: 12px !important;
+            pointer-events: none;
+        }
+
+        .emoji {
+            display: none !important;
+        }
+    }
+
+    .site-meta .site-name,
+    .site-meta .site-name a {
+        color: var(--card-text-color-main);
+        font-weight: 700;
+        letter-spacing: -0.01em;
+    }
+}
+
+/* =========================================================
+   2. Dark Theme Cards & Neon Borders
+   ========================================================= */
 html[data-scheme="dark"] .article-list article,
 html[data-scheme="dark"] .main-article,
 html[data-scheme="dark"] .section-card,
-html[data-scheme="dark"] .widget {
+html[data-scheme="dark"] .right-sidebar section.widget {
     background: linear-gradient(160deg, #111827 0%, #0d1424 100%);
-    border: 1px solid rgba(56, 189, 248, 0.14);
+    border: 1px solid rgba(56, 189, 248, 0.18);
+    border-radius: 14px;
     box-shadow: 0 10px 28px -12px rgba(0, 0, 0, 0.65);
     transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
 }
@@ -31,26 +109,166 @@ html[data-scheme="dark"] .article-list article:hover {
     transform: translateY(-2px);
 }
 
+/* =========================================================
+   3. Hugo Stack v4 Right Sidebar Widgets (Matches Studio UI)
+   ========================================================= */
+.right-sidebar form.search-form.widget {
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    border-radius: 14px;
+
+    p {
+        margin: 0;
+    }
+
+    label {
+        display: none;
+    }
+
+    input {
+        padding: 13px 46px 13px 16px !important;
+        border-radius: 14px !important;
+        font-size: 1.45rem !important;
+        line-height: 1.4;
+        background: var(--card-background);
+        border: 1px solid var(--card-separator-color);
+        box-shadow: var(--shadow-l1);
+    }
+
+    button {
+        width: 46px;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+}
+
+html[data-scheme="dark"] .right-sidebar form.search-form.widget input {
+    background: linear-gradient(160deg, #111827 0%, #0d1424 100%);
+    border: 1px solid rgba(56, 189, 248, 0.22);
+    color: var(--card-text-color-main);
+
+    &:focus {
+        border-color: rgba(56, 189, 248, 0.55);
+    }
+}
+
+.right-sidebar section.widget:has(> .widget-icon) {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px 8px;
+    padding: 18px 20px;
+    border-radius: 14px;
+    background: var(--card-background);
+    border: 1px solid var(--card-separator-color);
+    box-shadow: var(--shadow-l1);
+
+    > .widget-icon {
+        display: inline-flex;
+        align-items: center;
+        flex: 0 0 auto;
+
+        svg {
+            width: 17px;
+            height: 17px;
+            stroke-width: 1.8;
+            color: var(--accent-color);
+        }
+    }
+
+    > .widget-title,
+    > .section-title {
+        margin: 0;
+        flex: 1 1 calc(100% - 28px);
+        font-size: 1.35rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--card-text-color-main);
+
+        a {
+            color: inherit;
+        }
+    }
+
+    > .widget-archive--list,
+    > .tagCloud-tags,
+    > .widget--toc {
+        flex: 1 0 100%;
+        width: 100%;
+        margin: 0;
+    }
+
+    .widget-archive--list {
+        background: transparent !important;
+        border: 0 !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+
+        .archives-year {
+            border-bottom: 0 !important;
+
+            a {
+                padding: 4px 0 !important;
+                font-size: 1.45rem;
+            }
+        }
+    }
+
+    .tagCloud-tags {
+        gap: 8px;
+
+        a {
+            padding: 5px 11px !important;
+            font-size: 1.3rem !important;
+            border-radius: 6px !important;
+            box-shadow: none !important;
+        }
+    }
+}
+
+/* =========================================================
+   4. Left Sidebar Menu & Category/Tag Chips
+   ========================================================= */
+.left-sidebar:has(> header .site-avatar) .menu > li > a {
+    padding: 8px 12px;
+    border-radius: 9px;
+}
+
+.left-sidebar:has(> header .site-avatar) .menu > li > a:hover,
+.left-sidebar:has(> header .site-avatar) .menu > li.current > a {
+    background: var(--card-background-selected);
+}
+
 html[data-scheme="dark"] .menu li.current a {
     color: #38bdf8;
     font-weight: 600;
 }
 
 html[data-scheme="dark"] .article-category a,
+html[data-scheme="dark"] .article-details .article-category a,
 html[data-scheme="dark"] .tagCloud-tags a {
-    background: rgba(56, 189, 248, 0.1);
-    color: #7dd3fc;
-    border: 1px solid rgba(56, 189, 248, 0.24);
+    background: rgba(56, 189, 248, 0.1) !important;
+    color: #7dd3fc !important;
+    border: 1px solid rgba(56, 189, 248, 0.24) !important;
 }
 
 html[data-scheme="dark"] .article-category a:hover,
+html[data-scheme="dark"] .article-details .article-category a:hover,
 html[data-scheme="dark"] .tagCloud-tags a:hover {
-    background: rgba(56, 189, 248, 0.2);
-    color: #e0f2fe;
-    border-color: rgba(56, 189, 248, 0.5);
+    background: rgba(56, 189, 248, 0.2) !important;
+    color: #e0f2fe !important;
+    border-color: rgba(56, 189, 248, 0.5) !important;
 }
 
-/* Shared image edge-crop (removes baked-in white borders on cover/inline images in both Hugo & Node preview) */
+/* =========================================================
+   5. Shared Image Edge-Crop (Removes Baked-In White Borders)
+   ========================================================= */
 .article-image,
 .article-list article .article-image,
 .article-page .main-article .article-header .article-image {
@@ -76,4 +294,3 @@ html[data-scheme="dark"] .tagCloud-tags a:hover {
     transform: scale(1.03);
     border-radius: 12px;
 }
-
