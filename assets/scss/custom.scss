@@ -1,84 +1,79 @@
 :root[data-scheme="dark"],
 html[data-scheme="dark"] {
-    --body-background: #090d16 !important;
-    --card-background: #111827 !important;
-    --card-background-selected: #1e293b !important;
-    --card-text-color-main: #f8fafc !important;
-    --card-text-color-secondary: #94a3b8 !important;
-    --card-text-color-tertiary: #64748b !important;
-    --card-separator-color: rgba(56, 189, 248, 0.12) !important;
-    --accent-color: #0ea5e9 !important;
-    --accent-color-darker: #0284c7 !important;
-    --accent-color-text: #ffffff !important;
-    --body-text-color: #cbd5e1 !important;
+    --body-background: #090d16;
+    --card-background: #111827;
+    --card-background-selected: #1e293b;
+    --card-text-color-main: #f8fafc;
+    --card-text-color-secondary: #94a3b8;
+    --card-text-color-tertiary: #64748b;
+    --card-separator-color: rgba(56, 189, 248, 0.14);
+    --accent-color: #38bdf8;
+    --accent-color-darker: #0ea5e9;
+    --accent-color-text: #090d16;
+    --body-text-color: #cbd5e1;
     --tag-border-radius: 6px;
     --card-border-radius: 14px;
 }
 
-/* Стилизация карточек статей и виджетов под технический даташит */
 html[data-scheme="dark"] .article-list article,
 html[data-scheme="dark"] .main-article,
+html[data-scheme="dark"] .section-card,
 html[data-scheme="dark"] .widget {
-    background: linear-gradient(145deg, #111827 0%, #0f172a 100%) !important;
-    border: 1px solid rgba(56, 189, 248, 0.18) !important;
-    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.7) !important;
-    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    background: linear-gradient(160deg, #111827 0%, #0d1424 100%);
+    border: 1px solid rgba(56, 189, 248, 0.14);
+    box-shadow: 0 10px 28px -12px rgba(0, 0, 0, 0.65);
+    transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
 }
 
 html[data-scheme="dark"] .article-list article:hover {
-    border-color: rgba(14, 165, 233, 0.55) !important;
-    box-shadow: 0 12px 35px -8px rgba(14, 165, 233, 0.22) !important;
+    border-color: rgba(56, 189, 248, 0.42);
+    box-shadow: 0 14px 34px -10px rgba(14, 165, 233, 0.18);
     transform: translateY(-2px);
 }
 
-/* Неоновый акцент на активном пункте меню и тегах */
 html[data-scheme="dark"] .menu li.current a {
-    color: #38bdf8 !important;
+    color: #38bdf8;
     font-weight: 600;
 }
 
 html[data-scheme="dark"] .article-category a,
 html[data-scheme="dark"] .tagCloud-tags a {
-    background: rgba(14, 165, 233, 0.14) !important;
-    color: #38bdf8 !important;
-    border: 1px solid rgba(56, 189, 248, 0.3) !important;
+    background: rgba(56, 189, 248, 0.1);
+    color: #7dd3fc;
+    border: 1px solid rgba(56, 189, 248, 0.24);
 }
 
-/* Аватарка в стиле технологического логотипа */
-.sidebar header .site-avatar .site-logo {
-    border: 2px solid rgba(56, 189, 248, 0.4);
-    box-shadow: 0 0 20px rgba(14, 165, 233, 0.25);
+html[data-scheme="dark"] .article-category a:hover,
+html[data-scheme="dark"] .tagCloud-tags a:hover {
+    background: rgba(56, 189, 248, 0.2);
+    color: #e0f2fe;
+    border-color: rgba(56, 189, 248, 0.5);
 }
 
-/* Скругление углов у виджетов справа и формы поиска */
-.widget,
-.search-form input {
-    border-radius: 14px !important;
+/* Shared image edge-crop (removes baked-in white borders on cover/inline images in both Hugo & Node preview) */
+.article-image,
+.article-list article .article-image,
+.article-page .main-article .article-header .article-image {
     overflow: hidden;
 }
-/* Прямоугольный логотип вместо круга с неоновой рамкой */
-.sidebar header .site-avatar {
-    width: 180px !important;
-    height: auto !important;
-    aspect-ratio: auto !important;
+
+.article-image img,
+.article-list article .article-image img,
+.article-page .main-article .article-header .article-image img {
+    transform: scale(1.065);
+    object-fit: cover;
+    object-position: center;
+    display: block;
 }
 
-.sidebar header .site-avatar .site-logo {
-    width: 100% !important;
-    height: auto !important;
-    border-radius: 14px !important;
-    object-fit: contain !important;
-    background: #ffffff;
-    padding: 8px 12px;
-    border: 1.5px solid rgba(56, 189, 248, 0.65) !important;
-    box-shadow: 0 0 18px rgba(14, 165, 233, 0.38), 0 0 4px rgba(56, 189, 248, 0.6) !important;
+.article-content figure {
+    overflow: hidden;
+    border-radius: 12px;
 }
 
-/* Аккуратная неоновая обводка для кружка с антенной 📡 */
-.sidebar header .site-avatar .emoji {
-    border-radius: 10px !important;
-    border: 1px solid rgba(56, 189, 248, 0.5);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+.article-content figure img,
+.article-content img {
+    transform: scale(1.03);
+    border-radius: 12px;
 }
-
 

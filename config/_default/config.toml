@@ -1,19 +1,9 @@
-# Change baseurl before deploy
 baseurl = "https://ua-rfid.netlify.app"
 defaultContentLanguage = "uk"
 defaultContentLanguageInSubdir = false
 locale = "uk-UA"
-title = "RFID Ukraine — UHF RFID, RTLS & IIoT Engineering Platform"
-
-# Theme i18n support
-# See all available values at https://github.com/CaiJimmy/hugo-theme-stack/tree/master/i18n
-
-# Set hasCJKLanguage to true if DefaultContentLanguage is in [zh-cn ja ko]
-# This will make .Summary and .WordCount behave correctly for CJK languages.
+title = "RFID Docs"
 hasCJKLanguage = false
-
-# Change it to your Disqus shortname before using
-disqusShortname = "hugo-theme-stack"
 
 [pagination]
     pagerSize = 5

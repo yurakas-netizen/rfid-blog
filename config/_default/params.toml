@@ -1,37 +1,29 @@
-# Pages placed under these sections will be shown on homepage and archive page.
 mainSections = ["post"]
-# Output page's full content in RSS.
 rssFullContent = true
-favicon        = "img/favicon.svg"
-
-# Accepted values: "default", "lastmod"
-# default = see https://gohugo.io/quick-reference/glossary/#default-sort-order
-# lastmod = sort by last modified date, in descending order
-SortBy              = "default"
+favicon = "img/favicon.svg"
+SortBy = "default"
 
 [footer]
-    since      = 2020
+    since = 2026
     customText = ""
 
 [dateFormat]
-    published   = ":date_full"
+    published = ":date_full"
     lastUpdated = ":date_full"
 
 [sidebar]
-emoji = "📡"
-subtitle = "UHF RFID, RTLS & IIoT Engineering Platform · Kyiv"
-avatar = "img/avatar.png"
-
-
+    emoji = ""
+    subtitle = ""
+    avatar = "img/avatar.png"
 
 [article]
     headingAnchor = false
-    math          = false
-    readingTime   = true
+    math = false
+    readingTime = true
 
     [article.license]
         enabled = true
-        default = "Licensed under CC BY-NC-SA 4.0"
+        default = "MIT License"
 
 [widgets]
     homepage = [
@@ -42,19 +34,9 @@ avatar = "img/avatar.png"
     ]
     page = [{ type = "toc" }]
 
-[opengraph.twitter]
-    site = ""
-    card = "summary_large_image"
-
 [colorScheme]
 toggle = true
 default = "dark"
 
-
-## Comments
 [comments]
-    enabled  = true
-    provider = "disqus"
-
-    # See all the available configurations at https://github.com/CaiJimmy/hugo-theme-stack/blob/master/config/_default/params.toml
-    # Copy the configurations you need from there and paste it here.
+    enabled = false

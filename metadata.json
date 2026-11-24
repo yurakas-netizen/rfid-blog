@@ -1,0 +1,5 @@
+{
+  "name": "RFID Ukraine — UHF RFID, RTLS & IIoT Engineering Platform",
+  "description": "Multilingual engineering blog and knowledge base on UHF RFID, RTLS, and IIoT technologies, migrated from Hugo Theme Stack to Node.js and Express.",
+  "requestFramePermissions": []
+}

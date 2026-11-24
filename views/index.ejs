@@ -1,0 +1,72 @@
+<%- include('partials/head') %>
+<%- include('partials/left-sidebar') %>
+
+<main class="main full-width">
+  <% if (typeof filterHeading !== 'undefined' && filterHeading) { %>
+    <header class="section-card">
+      <h2 class="section-title" style="margin: 0;"><%= filterHeading %></h2>
+    </header>
+  <% } %>
+
+  <section class="article-list">
+    <% if (posts.length === 0) { %>
+      <div class="section-card">
+        <p style="margin: 0 0 8px; font-weight: 600; color: var(--card-text-color-main);"><%= t.noPostsInLang %></p>
+        <p style="margin: 0; font-size: 0.92rem; color: var(--card-text-color-secondary);"><%= t.emptyDocsHint %></p>
+        <% const populatedLangs = orderedLanguages.filter(function(l) { return l.code !== lang && langPostCounts[l.code] > 0; }); %>
+        <% if (populatedLangs.length > 0) { %>
+          <div style="margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--card-separator-color); display: flex; flex-wrap: wrap; align-items: center; gap: 10px;">
+            <span style="font-size: 0.86rem; color: var(--card-text-color-tertiary);"><%= t.availableLangs %></span>
+            <% populatedLangs.forEach(function(l) { %>
+              <a href="<%= l.urlPrefix || '/' %>" class="page-link" style="font-size: 0.84rem; padding: 5px 11px;">
+                <%= l.label %> (<%= langPostCounts[l.code] %>) &rarr;
+              </a>
+            <% }); %>
+          </div>
+        <% } %>
+      </div>
+    <% } %>
+
+    <% posts.forEach(function(post) { %>
+      <article class="<%= post.imageUrl ? 'has-image' : '' %>">
+        <% if (post.imageUrl) { %>
+          <div class="article-image">
+            <a href="<%= post.permalink %>">
+              <img src="<%= post.imageUrl %>" loading="lazy" alt="<%= post.title %>" />
+            </a>
+          </div>
+        <% } %>
+        <div class="article-details">
+          <% if (post.categories && post.categories.length > 0) { %>
+            <div class="article-category">
+              <% post.categories.forEach(function(cat) { %>
+                <a href="<%= langPrefix %>/categories/<%= encodeURIComponent(slugify(cat)) %>/"><%= cat %></a>
+              <% }); %>
+            </div>
+          <% } %>
+          <h2 class="article-title">
+            <a href="<%= post.permalink %>"><%= post.title %></a>
+          </h2>
+          <% if (post.summary) { %>
+            <h3 class="article-subtitle"><%= post.summary %></h3>
+          <% } %>
+          <footer class="article-time">
+            <div>
+              <time datetime="<%= post.date.toISOString() %>"><%= formatDate(post.date, lang) %></time>
+            </div>
+            <div><%= post.readingTime %> <%= t.minRead %></div>
+          </footer>
+        </div>
+      </article>
+    <% }); %>
+  </section>
+
+  <% if (totalPages > 1) { %>
+    <nav class="pagination">
+      <% for (let p = 1; p <= totalPages; p++) { %>
+        <a class="page-link <%= p === currentPage ? 'current' : '' %>" href="<%= p === 1 ? basePath : `${basePath}page/${p}/` %>"><%= p %></a>
+      <% } %>
+    </nav>
+  <% } %>
+
+<%- include('partials/footer') %>

@@ -1,0 +1,23 @@
+[[main]]
+identifier = "home"
+name = "Startseite"
+url = "/"
+weight = -100
+[main.params]
+icon = "home"
+
+[[main]]
+identifier = "archives"
+name = "Archiv"
+url = "/archives/"
+weight = -90
+[main.params]
+icon = "archives"
+
+[[main]]
+identifier = "search"
+name = "Suche"
+url = "/search/"
+weight = -80
+[main.params]
+icon = "search"

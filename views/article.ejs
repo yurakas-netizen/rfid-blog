@@ -1,0 +1,65 @@
+<%- include('partials/head') %>
+<%- include('partials/left-sidebar') %>
+
+<main class="main full-width">
+  <article class="main-article">
+    <header class="article-header">
+      <% if (post.imageUrl) { %>
+        <div class="article-image">
+          <img src="<%= post.imageUrl %>" alt="<%= post.title %>" />
+        </div>
+      <% } %>
+      <div class="article-details">
+        <div class="article-category">
+          <span class="lang-badge"><%= post.lang %></span>
+          <% post.categories.forEach(function(cat) { %>
+            <a href="<%= langPrefix %>/categories/<%= encodeURIComponent(slugify(cat)) %>/"><%= cat %></a>
+          <% }); %>
+        </div>
+        <h1 class="article-title"><%= post.title %></h1>
+        <% if (post.description) { %>
+          <h2 class="article-subtitle"><%= post.description %></h2>
+        <% } %>
+        <footer class="article-time">
+          <div>
+            <time datetime="<%= post.date.toISOString() %>"><%= formatDate(post.date, lang) %></time>
+          </div>
+          <div><%= post.readingTime %> <%= t.minRead %> (<%= post.wordCount %> <%= t.wordsLabel %>)</div>
+        </footer>
+      </div>
+    </header>
+
+    <section class="article-content">
+      <%- post.html %>
+    </section>
+
+    <footer class="article-footer">
+      <% if (post.tags.length > 0) { %>
+        <section class="article-tags">
+          <% post.tags.forEach(function(tag) { %>
+            <a href="<%= langPrefix %>/tags/<%= encodeURIComponent(slugify(tag)) %>/">#<%= tag %></a>
+          <% }); %>
+        </section>
+      <% } %>
+
+      <section class="article-copyright">
+        <%= site.license %>
+      </section>
+    </footer>
+  </article>
+
+  <% if (relatedPosts && relatedPosts.length > 0) { %>
+    <section class="related-section">
+      <h2 class="widget-title" style="margin-bottom: 0;"><%= t.relatedPosts %></h2>
+      <div class="related-grid">
+        <% relatedPosts.forEach(function(rp) { %>
+          <a href="<%= rp.permalink %>" class="related-card">
+            <div class="compact-item-title"><%= rp.title %></div>
+            <div class="compact-item-date" style="margin-top: 6px;"><%= formatDate(rp.date, lang) %></div>
+          </a>
+        <% }); %>
+      </div>
+    </section>
+  <% } %>
+
+<%- include('partials/footer') %>

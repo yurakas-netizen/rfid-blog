@@ -1,0 +1,13 @@
+<%- include('partials/head') %>
+<%- include('partials/left-sidebar') %>
+
+<main class="main full-width">
+  <section class="section-card">
+    <h1 class="section-title"><%= t.pageNotFound %></h1>
+    <p><%= t.pageNotFoundDesc %></p>
+    <p style="margin-top: 18px;">
+      <a href="<%= langPrefix || '/' %>" class="page-link" style="display: inline-block;"><%= t.backToHome %></a>
+    </p>
+  </section>
+
+<%- include('partials/footer') %>

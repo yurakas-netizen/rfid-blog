@@ -1,0 +1,89 @@
+<aside class="sidebar right-sidebar">
+  <% if (typeof toc !== 'undefined' && toc && toc.length > 0) { %>
+    <section class="widget widget--toc">
+      <div class="widget-header">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 6l16 0"></path>
+          <path d="M4 12l16 0"></path>
+          <path d="M4 18l12 0"></path>
+        </svg>
+        <h2 class="widget-title"><%= t.tableOfContents %></h2>
+      </div>
+      <div class="widget--toc-list">
+        <ol>
+          <% toc.forEach(function(item) { %>
+            <li class="toc-level-<%= item.level %>">
+              <a href="#<%= encodeURIComponent(item.id) %>"><%= item.text %></a>
+            </li>
+          <% }); %>
+        </ol>
+      </div>
+    </section>
+  <% } else { %>
+    <form action="<%= langPrefix %>/search/" method="get" class="search-form">
+      <input type="search" name="keyword" placeholder="<%= t.searchPlaceholder %>" aria-label="<%= t.search %>" />
+      <button type="submit" aria-label="<%= t.searchButton %>">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0"></path>
+          <path d="M21 21l-6 -6"></path>
+        </svg>
+      </button>
+    </form>
+
+    <% if (archivesByYear && archivesByYear.length > 0) { %>
+      <section class="widget archives">
+        <div class="widget-header">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 8l0 4l2 2"></path>
+            <path d="M3.05 11a9 9 0 1 1 .5 4m-.5 5v-5h5"></path>
+          </svg>
+          <h2 class="widget-title"><%= t.archives %></h2>
+        </div>
+        <div class="widget-archive-list">
+          <% archivesByYear.slice(0, site.widgets.archivesLimit).forEach(function(group) { %>
+            <a href="<%= langPrefix %>/archives/#year-<%= group.year %>" class="widget-archive-item">
+              <span><%= group.year %></span>
+              <span class="count"><%= group.posts.length %></span>
+            </a>
+          <% }); %>
+        </div>
+      </section>
+    <% } %>
+
+    <% if (categories && categories.length > 0) { %>
+      <section class="widget tagCloud">
+        <div class="widget-header">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 4h6v6h-6z"></path>
+            <path d="M14 4h6v6h-6z"></path>
+            <path d="M4 14h6v6h-6z"></path>
+            <path d="M17 17m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"></path>
+          </svg>
+          <h2 class="widget-title"><%= t.categories %></h2>
+        </div>
+        <div class="tagCloud-tags">
+          <% categories.slice(0, site.widgets.categoriesLimit).forEach(function(cat) { %>
+            <a href="<%= langPrefix %>/categories/<%= encodeURIComponent(cat.slug) %>/"><%= cat.name %> (<%= cat.count %>)</a>
+          <% }); %>
+        </div>
+      </section>
+    <% } %>
+
+    <% if (tags && tags.length > 0) { %>
+      <section class="widget tagCloud">
+        <div class="widget-header">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M7.5 7.5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
+            <path d="M3 6v5.172a2 2 0 0 0 .586 1.414l7.71 7.71a2.41 2.41 0 0 0 3.408 0l5.592 -5.592a2.41 2.41 0 0 0 0 -3.408l-7.71 -7.71a2 2 0 0 0 -1.414 -.586h-5.172a3 3 0 0 0 -3 3z"></path>
+          </svg>
+          <h2 class="widget-title"><%= t.tagCloud %></h2>
+        </div>
+        <div class="tagCloud-tags">
+          <% tags.slice(0, site.widgets.tagCloudLimit).forEach(function(tag) { %>
+            <a href="<%= langPrefix %>/tags/<%= encodeURIComponent(tag.slug) %>/"><%= tag.name %></a>
+          <% }); %>
+        </div>
+      </section>
+    <% } %>
+  <% } %>
+</aside>

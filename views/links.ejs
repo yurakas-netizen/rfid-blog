@@ -1,0 +1,35 @@
+<%- include('partials/head') %>
+<%- include('partials/left-sidebar') %>
+
+<main class="main full-width">
+  <section class="section-card">
+    <h1 class="section-title"><%= page ? page.title : t.links %></h1>
+
+    <% if (page && page.links && page.links.length > 0) { %>
+      <div class="links-grid">
+        <% page.links.forEach(function(link) { %>
+          <a href="<%= link.website %>" target="_blank" rel="noopener noreferrer" class="link-card">
+            <% if (link.image) { %>
+              <img src="<%= link.image %>" alt="<%= link.title %>" />
+            <% } %>
+            <div>
+              <div class="compact-item-title"><%= link.title %></div>
+              <% if (link.description) { %>
+                <div style="font-size: 0.85rem; color: var(--card-text-color-secondary);"><%= link.description %></div>
+              <% } %>
+            </div>
+          </a>
+        <% }); %>
+      </div>
+    <% } else if (!page || !page.html) { %>
+      <p style="margin: 0; color: var(--card-text-color-secondary);"><%= t.noLinks %></p>
+    <% } %>
+
+    <% if (page && page.html) { %>
+      <div class="article-content" style="padding: 0;">
+        <%- page.html %>
+      </div>
+    <% } %>
+  </section>
+
+<%- include('partials/footer') %>

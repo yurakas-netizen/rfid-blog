@@ -1,0 +1,46 @@
+<%- include('partials/head') %>
+<%- include('partials/left-sidebar') %>
+
+<main class="main full-width">
+  <section class="section-card">
+    <h1 class="section-title"><%= typeof sectionTitle !== 'undefined' ? sectionTitle : t.search %></h1>
+
+    <form action="<%= langPrefix %>/search/" method="get" class="search-form" style="margin-bottom: 22px;">
+      <input name="keyword" placeholder="<%= t.searchPlaceholder %>" value="<%= typeof searchQuery !== 'undefined' ? searchQuery : '' %>" />
+      <button title="<%= t.searchButton %>" type="submit">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0"></path>
+          <path d="M21 21l-6 -6"></path>
+        </svg>
+      </button>
+    </form>
+
+    <% if (typeof searchQuery !== 'undefined' && searchQuery) { %>
+      <p style="font-size: 0.9rem; color: var(--card-text-color-secondary); margin-bottom: 16px;">
+        <%= t.resultsFound %> <strong><%= results.length %></strong>
+      </p>
+    <% } else { %>
+      <p style="font-size: 0.9rem; color: var(--card-text-color-secondary); margin-bottom: 16px;">
+        <%= t.searchHint %>
+      </p>
+    <% } %>
+
+    <div class="article-list--compact">
+      <% if (results.length === 0) { %>
+        <p><%= t.noResults %></p>
+      <% } %>
+      <% results.forEach(function(post) { %>
+        <a href="<%= post.permalink %>" class="compact-item">
+          <div>
+            <div class="compact-item-title"><%= post.title %></div>
+            <% if (post.summary) { %>
+              <div style="font-size: 0.86rem; color: var(--card-text-color-secondary); margin-top: 4px;"><%= post.summary %></div>
+            <% } %>
+          </div>
+          <span class="compact-item-date"><%= formatDate(post.date, lang) %></span>
+        </a>
+      <% }); %>
+    </div>
+  </section>
+
+<%- include('partials/footer') %>
