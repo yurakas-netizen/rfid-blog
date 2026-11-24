@@ -50,8 +50,9 @@ src = "img/avatar.png"
     card = "summary_large_image"
 
 [colorScheme]
-    toggle  = true
-    default = "auto"
+toggle = true
+default = "dark"
+
 
 ## Comments
 [comments]
