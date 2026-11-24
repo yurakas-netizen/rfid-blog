@@ -1,31 +1,51 @@
-/* Тёмная фирменная тема (по умолчанию и при переключении) */
-[data-scheme="dark"] {
-    --body-background: #0b0f17;
-    --card-background: #131a26;
-    --card-background-selected: #1b2536;
-    --card-text-color-main: #f1f5f9;
-    --card-text-color-secondary: #94a3b8;
-    --card-text-color-tertiary: #64748b;
-    --card-separator-color: rgba(255, 255, 255, 0.08);
-    --accent-color: #0ea5e9;
-    --accent-color-darker: #0284c7;
-    --accent-color-text: #ffffff;
-    --body-text-color: #cbd5e1;
+:root[data-scheme="dark"],
+html[data-scheme="dark"] {
+    --body-background: #090d16 !important;
+    --card-background: #111827 !important;
+    --card-background-selected: #1e293b !important;
+    --card-text-color-main: #f8fafc !important;
+    --card-text-color-secondary: #94a3b8 !important;
+    --card-text-color-tertiary: #64748b !important;
+    --card-separator-color: rgba(56, 189, 248, 0.12) !important;
+    --accent-color: #0ea5e9 !important;
+    --accent-color-darker: #0284c7 !important;
+    --accent-color-text: #ffffff !important;
+    --body-text-color: #cbd5e1 !important;
+    --tag-border-radius: 6px;
+    --card-border-radius: 14px;
 }
 
-/* Светлая тема ("Папір / світла тема") */
-[data-scheme="light"] {
-    --body-background: #f4f6f9;
-    --card-background: #ffffff;
-    --card-text-color-main: #0f172a;
-    --accent-color: #0284c7;
-    --accent-color-darker: #0369a1;
+/* Стилизация карточек статей и виджетов под технический даташит */
+html[data-scheme="dark"] .article-list article,
+html[data-scheme="dark"] .main-article,
+html[data-scheme="dark"] .widget {
+    background: linear-gradient(145deg, #111827 0%, #0f172a 100%) !important;
+    border: 1px solid rgba(56, 189, 248, 0.18) !important;
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.7) !important;
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* Аккуратная рамка вокруг карточек в тёмной теме в стиле technical datasheet */
-[data-scheme="dark"] .article-list article,
-[data-scheme="dark"] .main-article,
-[data-scheme="dark"] .widget {
-    border: 1px solid rgba(56, 189, 248, 0.14);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+html[data-scheme="dark"] .article-list article:hover {
+    border-color: rgba(14, 165, 233, 0.55) !important;
+    box-shadow: 0 12px 35px -8px rgba(14, 165, 233, 0.22) !important;
+    transform: translateY(-2px);
+}
+
+/* Неоновый акцент на активном пункте меню и тегах */
+html[data-scheme="dark"] .menu li.current a {
+    color: #38bdf8 !important;
+    font-weight: 600;
+}
+
+html[data-scheme="dark"] .article-category a,
+html[data-scheme="dark"] .tagCloud-tags a {
+    background: rgba(14, 165, 233, 0.14) !important;
+    color: #38bdf8 !important;
+    border: 1px solid rgba(56, 189, 248, 0.3) !important;
+}
+
+/* Аватарка в стиле технологического логотипа */
+.sidebar header .site-avatar .site-logo {
+    border: 2px solid rgba(56, 189, 248, 0.4);
+    box-shadow: 0 0 20px rgba(14, 165, 233, 0.25);
 }
