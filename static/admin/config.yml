@@ -1,0 +1,25 @@
+backend:
+  name: github
+  repo: yurakas-netizen/rfid-blog
+  branch: main
+
+media_folder: "static/images"
+public_folder: "/images"
+
+collections:
+  - name: "post"
+    label: "Статьи"
+    folder: "content/post"
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    path: "{{slug}}/index"
+    media_folder: ""
+    public_folder: ""
+    fields:
+      - { label: "Заголовок", name: "title", widget: "string" }
+      - { label: "Описание", name: "description", widget: "string", required: false }
+      - { label: "Дата", name: "date", widget: "datetime" }
+      - { label: "Обложка", name: "image", widget: "image", required: false }
+      - { label: "Категории", name: "categories", widget: "list", required: false }
+      - { label: "Теги", name: "tags", widget: "list", required: false }
+      - { label: "Текст статьи", name: "body", widget: "markdown" }
