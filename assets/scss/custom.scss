@@ -1,3 +1,31 @@
-/*
-    You can add your own custom styles here.
-*/
+/* Тёмная фирменная тема (по умолчанию и при переключении) */
+[data-scheme="dark"] {
+    --body-background: #0b0f17;
+    --card-background: #131a26;
+    --card-background-selected: #1b2536;
+    --card-text-color-main: #f1f5f9;
+    --card-text-color-secondary: #94a3b8;
+    --card-text-color-tertiary: #64748b;
+    --card-separator-color: rgba(255, 255, 255, 0.08);
+    --accent-color: #0ea5e9;
+    --accent-color-darker: #0284c7;
+    --accent-color-text: #ffffff;
+    --body-text-color: #cbd5e1;
+}
+
+/* Светлая тема ("Папір / світла тема") */
+[data-scheme="light"] {
+    --body-background: #f4f6f9;
+    --card-background: #ffffff;
+    --card-text-color-main: #0f172a;
+    --accent-color: #0284c7;
+    --accent-color-darker: #0369a1;
+}
+
+/* Аккуратная рамка вокруг карточек в тёмной теме в стиле technical datasheet */
+[data-scheme="dark"] .article-list article,
+[data-scheme="dark"] .main-article,
+[data-scheme="dark"] .widget {
+    border: 1px solid rgba(56, 189, 248, 0.14);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+}
