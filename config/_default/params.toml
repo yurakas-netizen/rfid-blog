@@ -13,7 +13,7 @@ SortBy = "default"
 
 [sidebar]
     emoji = ""
-    subtitle = ""
+    subtitle = "Інженерна платформа UHF RFID, RTLS та IIoT"
     avatar = "img/avatar.png"
 
 [article]

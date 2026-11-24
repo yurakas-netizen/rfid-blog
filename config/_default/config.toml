@@ -2,7 +2,7 @@ baseurl = "https://ua-rfid.netlify.app"
 defaultContentLanguage = "uk"
 defaultContentLanguageInSubdir = false
 locale = "uk-UA"
-title = "RFID Docs"
+title = "RFID Ukraine"
 hasCJKLanguage = false
 
 [pagination]

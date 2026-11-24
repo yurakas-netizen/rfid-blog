@@ -177,27 +177,48 @@ a:hover {
 }
 
 .brand-icon {
-  width: 44px;
-  height: 44px;
-  border-radius: 11px;
+  width: 68px;
+  height: 46px;
+  padding: 6px 9px;
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, rgba(14, 165, 233, 0.16) 0%, rgba(56, 189, 248, 0.06) 100%);
-  border: 1px solid rgba(56, 189, 248, 0.35);
-  color: var(--accent-color);
-  box-shadow: 0 4px 16px -4px rgba(14, 165, 233, 0.25);
+  background: linear-gradient(135deg, rgba(14, 165, 233, 0.16) 0%, rgba(56, 189, 248, 0.05) 100%);
+  border: 1px solid rgba(56, 189, 248, 0.45);
+  box-shadow: 0 4px 16px -4px rgba(14, 165, 233, 0.3), 0 0 12px rgba(56, 189, 248, 0.14);
   flex-shrink: 0;
 }
 
 .brand-icon svg {
-  width: 24px;
-  height: 24px;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.brand-icon .logo-primary {
+  fill: #2c2b27;
+}
+
+.brand-icon .logo-secondary {
+  fill: #3f3b33;
+}
+
+.brand-icon .logo-accent {
+  fill: #e94539;
+}
+
+html[data-scheme="dark"] .brand-icon .logo-primary {
+  fill: #f8fafc;
+}
+
+html[data-scheme="dark"] .brand-icon .logo-secondary {
+  fill: #cbd5e1;
 }
 
 .site-meta .site-name {
   margin: 0;
-  font-size: 1.25rem;
+  font-size: 1.15rem;
   font-weight: 700;
   letter-spacing: -0.01em;
   color: var(--card-text-color-main);
@@ -210,7 +231,7 @@ a:hover {
 
 .site-meta .site-description {
   margin: 2px 0 0;
-  font-size: 0.86rem;
+  font-size: 0.84rem;
   font-weight: 400;
   color: var(--card-text-color-secondary);
   line-height: 1.45;
