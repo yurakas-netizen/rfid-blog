@@ -1,7 +1,7 @@
 backend:
   name: github
   repo: yurakas-netizen/rfid-blog
-  branch: main
+  branch: master
 
 media_folder: "static/images"
 public_folder: "/images"
