@@ -4,44 +4,623 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>RFID Ukraine — CMS</title>
+  <style>
+    .rfid-cms-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 3px;
+      padding: 6px 10px;
+      background: #f8fafc;
+      border-top: 1px solid #dfdfe3;
+      border-bottom: 1px solid #dfdfe3;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    .rfid-cms-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      height: 28px;
+      padding: 0 8px;
+      border: 1px solid transparent;
+      border-radius: 5px;
+      background: transparent;
+      color: #475569;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.14s ease, color 0.14s ease, border-color 0.14s ease;
+    }
+
+    .rfid-cms-btn:hover:not(:disabled) {
+      background: #e2e8f0;
+      color: #0f172a;
+      border-color: #cbd5e1;
+    }
+
+    .rfid-cms-btn.is-active {
+      background: #e0f2fe;
+      color: #0369a1;
+      border-color: #7dd3fc;
+    }
+
+    .rfid-cms-btn:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+
+    .rfid-cms-btn svg {
+      width: 15px;
+      height: 15px;
+      flex-shrink: 0;
+    }
+
+    .rfid-cms-sep {
+      width: 1px;
+      height: 18px;
+      background: #cbd5e1;
+      margin: 0 4px;
+    }
+
+    .rfid-cms-findbar {
+      display: none;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 10px;
+      background: #f1f5f9;
+      border-bottom: 1px solid #dfdfe3;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    .rfid-cms-findbar.is-open {
+      display: flex;
+    }
+
+    .rfid-cms-findbar input {
+      height: 28px;
+      padding: 0 9px;
+      border: 1px solid #cbd5e1;
+      border-radius: 5px;
+      font-size: 12.5px;
+      color: #0f172a;
+      background: #ffffff;
+      outline: none;
+      min-width: 150px;
+    }
+
+    .rfid-cms-findbar input:focus {
+      border-color: #0284c7;
+    }
+
+    .rfid-cms-find-status {
+      font-size: 11.5px;
+      color: #64748b;
+      margin-left: 4px;
+    }
+  </style>
 </head>
 <body>
   <script src="https://unpkg.com/decap-cms@3.3.3/dist/decap-cms.js"></script>
   <script>
-    if (window.CMS) {
-      window.CMS.registerEditorComponent({
-        id: 'charts-pair',
-        label: 'Два графика / фото в ряд',
-        fields: [
-          { name: 'img1', label: 'Левый график / фото', widget: 'image' },
-          { name: 'alt1', label: 'Подпись слева', widget: 'string', required: false },
-          { name: 'img2', label: 'Правый график / фото', widget: 'image' },
-          { name: 'alt2', label: 'Подпись справа', widget: 'string', required: false }
-        ],
-        pattern: /^!\[([^\]]*)\]\(([^\s")]+)\)\s+!\[([^\]]*)\]\(([^\s")]+)\)$/,
-        fromBlock: function (match) {
-          return {
-            alt1: match[1] || '',
-            img1: match[2] || '',
-            alt2: match[3] || '',
-            img2: match[4] || ''
-          };
-        },
-        toBlock: function (data) {
-          var a1 = (data.alt1 || '').replace(/[\[\]]/g, '');
-          var a2 = (data.alt2 || '').replace(/[\[\]]/g, '');
-          return '![' + a1 + '](' + (data.img1 || '') + ') ![' + a2 + '](' + (data.img2 || '') + ')';
-        },
-        toPreview: function (data) {
-          return (
-            '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0;">' +
-              '<figure style="margin:0;text-align:center;"><img src="' + (data.img1 || '') + '" alt="' + (data.alt1 || '') + '" style="max-width:100%;border-radius:8px;" />' + (data.alt1 ? '<figcaption style="font-size:12px;color:#64748b;margin-top:4px;">' + data.alt1 + '</figcaption>' : '') + '</figure>' +
-              '<figure style="margin:0;text-align:center;"><img src="' + (data.img2 || '') + '" alt="' + (data.alt2 || '') + '" style="max-width:100%;border-radius:8px;" />' + (data.alt2 ? '<figcaption style="font-size:12px;color:#64748b;margin-top:4px;">' + data.alt2 + '</figcaption>' : '') + '</figure>' +
-            '</div>'
-          );
+    (function () {
+      if (window.CMS) {
+        window.CMS.registerEditorComponent({
+          id: 'charts-pair',
+          label: 'Два графика / фото в ряд',
+          fields: [
+            { name: 'img1', label: 'Левый график / фото', widget: 'image' },
+            { name: 'alt1', label: 'Подпись слева', widget: 'string', required: false },
+            { name: 'img2', label: 'Правый график / фото', widget: 'image' },
+            { name: 'alt2', label: 'Подпись справа', widget: 'string', required: false }
+          ],
+          pattern: /^!\[([^\]]*)\]\(([^\s")]+)\)\s+!\[([^\]]*)\]\(([^\s")]+)\)$/,
+          fromBlock: function (match) {
+            return {
+              alt1: match[1] || '',
+              img1: match[2] || '',
+              alt2: match[3] || '',
+              img2: match[4] || ''
+            };
+          },
+          toBlock: function (data) {
+            var a1 = (data.alt1 || '').replace(/[\[\]]/g, '');
+            var a2 = (data.alt2 || '').replace(/[\[\]]/g, '');
+            return '![' + a1 + '](' + (data.img1 || '') + ') ![' + a2 + '](' + (data.img2 || '') + ')';
+          },
+          toPreview: function (data) {
+            return (
+              '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0;">' +
+                '<figure style="margin:0;text-align:center;"><img src="' + (data.img1 || '') + '" alt="' + (data.alt1 || '') + '" style="max-width:100%;border-radius:8px;" />' + (data.alt1 ? '<figcaption style="font-size:12px;color:#64748b;margin-top:4px;">' + data.alt1 + '</figcaption>' : '') + '</figure>' +
+                '<figure style="margin:0;text-align:center;"><img src="' + (data.img2 || '') + '" alt="' + (data.alt2 || '') + '" style="max-width:100%;border-radius:8px;" />' + (data.alt2 ? '<figcaption style="font-size:12px;color:#64748b;margin-top:4px;">' + data.alt2 + '</figcaption>' : '') + '</figure>' +
+              '</div>'
+            );
+          }
+        });
+      }
+
+      function getFiber(el) {
+        if (!el) return null;
+        var keys = Object.keys(el);
+        for (var i = 0; i < keys.length; i++) {
+          if (keys[i].indexOf('__reactFiber$') === 0 || keys[i].indexOf('__reactInternalInstance$') === 0) {
+            return el[keys[i]];
+          }
         }
-      });
-    }
+        return null;
+      }
+
+      function findSlateEditor(slateEl) {
+        var fiber = getFiber(slateEl);
+        var steps = 0;
+        while (fiber && steps < 30) {
+          var p = fiber.memoizedProps || fiber.pendingProps;
+          if (p) {
+            if (p.editor && typeof p.editor.undo === 'function') return p.editor;
+            if (p.value && typeof p.value.undo === 'function') return p.value;
+          }
+          fiber = fiber.return;
+          steps++;
+        }
+        return null;
+      }
+
+      function findToolbarProps(controlBar) {
+        if (!controlBar) return null;
+        var candidate = controlBar.querySelector('button') || controlBar.firstElementChild || controlBar;
+        var fiber = getFiber(candidate);
+        var steps = 0;
+        while (fiber && steps < 30) {
+          var p = fiber.memoizedProps || fiber.pendingProps;
+          if (p && typeof p.onToggleMode === 'function' && ('rawMode' in p || 'onMarkClick' in p)) {
+            return p;
+          }
+          fiber = fiber.return;
+          steps++;
+        }
+        return null;
+      }
+
+      function getPlugin(toolbarProps, id) {
+        if (!toolbarProps || !toolbarProps.plugins) return null;
+        var plugins = toolbarProps.plugins;
+        if (typeof plugins.get === 'function' && plugins.get(id)) {
+          return plugins.get(id);
+        }
+        var list = typeof plugins.toArray === 'function' ? plugins.toArray() : Array.isArray(plugins) ? plugins : [];
+        for (var i = 0; i < list.length; i++) {
+          if (list[i] && list[i].id === id) return list[i];
+        }
+        return null;
+      }
+
+      function makeBtn(opts) {
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'rfid-cms-btn';
+        btn.title = opts.title;
+        btn.setAttribute('aria-label', opts.title);
+        btn.innerHTML = opts.icon + (opts.label ? '<span>' + opts.label + '</span>' : '');
+        btn.addEventListener('mousedown', function (e) {
+          e.preventDefault();
+        });
+        btn.addEventListener('click', function (e) {
+          e.preventDefault();
+          opts.onClick(e, btn);
+        });
+        return btn;
+      }
+
+      function makeSep() {
+        var sep = document.createElement('span');
+        sep.className = 'rfid-cms-sep';
+        return sep;
+      }
+
+      function attachToolbar(controlBar) {
+        if (!controlBar || controlBar.dataset.rfidToolbarAttached === '1') return;
+        var wrapper = controlBar.parentElement;
+        if (!wrapper) return;
+        var slateEl = wrapper.querySelector('[data-slate-editor="true"]');
+        if (!slateEl) return;
+
+        controlBar.dataset.rfidToolbarAttached = '1';
+
+        var bar = document.createElement('div');
+        bar.className = 'rfid-cms-toolbar';
+
+        var findBar = document.createElement('div');
+        findBar.className = 'rfid-cms-findbar';
+
+        var findInput = document.createElement('input');
+        findInput.type = 'text';
+        findInput.placeholder = 'Найти в тексте...';
+
+        var replaceInput = document.createElement('input');
+        replaceInput.type = 'text';
+        replaceInput.placeholder = 'Заменить на...';
+
+        var findStatus = document.createElement('span');
+        findStatus.className = 'rfid-cms-find-status';
+
+        function focusSlate() {
+          slateEl.focus();
+        }
+
+        function getCtx() {
+          var liveSlate = wrapper.querySelector('[data-slate-editor="true"]') || slateEl;
+          return {
+            slateEl: liveSlate,
+            editor: findSlateEditor(liveSlate),
+            tb: findToolbarProps(controlBar)
+          };
+        }
+
+        function refreshState() {
+          var ctx = getCtx();
+          var ed = ctx.editor;
+          var tb = ctx.tb;
+          var isRaw = !!(tb && tb.rawMode);
+
+          if (ed && ed.history) {
+            undoBtn.disabled = !(ed.history.undos && ed.history.undos.length > 0);
+            redoBtn.disabled = !(ed.history.redos && ed.history.redos.length > 0);
+          } else {
+            undoBtn.disabled = true;
+            redoBtn.disabled = true;
+          }
+
+          clearBtn.disabled = isRaw;
+          imgBtn.disabled = isRaw;
+          pairBtn.disabled = isRaw;
+          if (tb && typeof tb.hasMark === 'function' && !isRaw) {
+            strikeBtn.classList.toggle('is-active', !!tb.hasMark('delete'));
+          } else {
+            strikeBtn.classList.remove('is-active');
+          }
+        }
+
+        var undoBtn = makeBtn({
+          title: 'Отменить (Ctrl+Z)',
+          label: 'Отменить',
+          icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14l-4 -4l4 -4"/><path d="M5 10h11a4 4 0 1 1 0 8h-1"/></svg>',
+          onClick: function () {
+            var ctx = getCtx();
+            if (ctx.editor && typeof ctx.editor.undo === 'function') {
+              ctx.slateEl.focus();
+              ctx.editor.undo();
+              requestAnimationFrame(refreshState);
+            }
+          }
+        });
+
+        var redoBtn = makeBtn({
+          title: 'Повторить (Ctrl+Y)',
+          label: 'Повторить',
+          icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14l4 -4l-4 -4"/><path d="M19 10h-11a4 4 0 1 0 0 8h1"/></svg>',
+          onClick: function () {
+            var ctx = getCtx();
+            if (ctx.editor && typeof ctx.editor.redo === 'function') {
+              ctx.slateEl.focus();
+              ctx.editor.redo();
+              requestAnimationFrame(refreshState);
+            }
+          }
+        });
+
+        var strikeBtn = makeBtn({
+          title: 'Зачёркнутый текст',
+          icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M16 6.5a4 2 0 0 0 -4 -1.5h-1a3.5 3.5 0 0 0 0 7h2a3.5 3.5 0 0 1 0 7h-1.5a4 2 0 0 1 -4 -1.5"/></svg>',
+          onClick: function () {
+            var ctx = getCtx();
+            if (ctx.tb && !ctx.tb.rawMode && typeof ctx.tb.onMarkClick === 'function') {
+              ctx.tb.onMarkClick('delete');
+            } else if (ctx.editor) {
+              ctx.slateEl.focus();
+              var sel = window.getSelection();
+              var txt = sel ? sel.toString() : '';
+              ctx.editor.insertText('~~' + (txt || 'текст') + '~~');
+            }
+            requestAnimationFrame(refreshState);
+          }
+        });
+
+        var clearBtn = makeBtn({
+          title: 'Убрать форматирование (жирный, курсив, код)',
+          icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 15l4 4m0 -4l-4 4"/><path d="M7 6v-1h11v1"/><path d="M7 19l4 0"/><path d="M13 5l-4 14"/></svg>',
+          onClick: function () {
+            var ctx = getCtx();
+            if (ctx.editor && typeof ctx.editor.removeMark === 'function') {
+              ctx.slateEl.focus();
+              ['bold', 'italic', 'delete', 'code'].forEach(function (m) {
+                try { ctx.editor.removeMark(m); } catch (_) {}
+              });
+              requestAnimationFrame(refreshState);
+            }
+          }
+        });
+
+        var imgBtn = makeBtn({
+          title: 'Вставить изображение или график в это место текста',
+          label: 'График / фото',
+          icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5 -5l-11 11"/></svg>',
+          onClick: function () {
+            var ctx = getCtx();
+            var plugin = getPlugin(ctx.tb, 'image');
+            if (plugin && ctx.tb && typeof ctx.tb.onSubmit === 'function') {
+              ctx.slateEl.focus();
+              ctx.tb.onSubmit(plugin);
+            }
+          }
+        });
+
+        var pairBtn = makeBtn({
+          title: 'Вставить два графика или фото рядом в одну строку',
+          label: '2 в ряд',
+          icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="8" height="14" rx="1.5"/><rect x="13" y="5" width="8" height="14" rx="1.5"/></svg>',
+          onClick: function () {
+            var ctx = getCtx();
+            var plugin = getPlugin(ctx.tb, 'charts-pair');
+            if (plugin && ctx.tb && typeof ctx.tb.onSubmit === 'function') {
+              ctx.slateEl.focus();
+              ctx.tb.onSubmit(plugin);
+            }
+          }
+        });
+
+        var tableBtn = makeBtn({
+          title: 'Вставить таблицу 3×3',
+          label: 'Таблица',
+          icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18"/><path d="M10 4v16"/></svg>',
+          onClick: function () {
+            var ctx = getCtx();
+            if (!ctx.editor) return;
+            ctx.slateEl.focus();
+            if (ctx.tb && ctx.tb.rawMode) {
+              ctx.editor.insertText('\n| Параметр | Значение A | Значение B |\n| :--- | :--- | :--- |\n| Пункт 1 | — | — |\n| Пункт 2 | — | — |\n');
+            } else {
+              try {
+                ctx.editor.insertNode({
+                  type: 'table',
+                  data: { align: [null, null, null] },
+                  children: [
+                    {
+                      type: 'table-row',
+                      children: [
+                        { type: 'table-cell', children: [{ text: 'Параметр' }] },
+                        { type: 'table-cell', children: [{ text: 'Вариант A' }] },
+                        { type: 'table-cell', children: [{ text: 'Вариант B' }] }
+                      ]
+                    },
+                    {
+                      type: 'table-row',
+                      children: [
+                        { type: 'table-cell', children: [{ text: 'Значение 1' }] },
+                        { type: 'table-cell', children: [{ text: '—' }] },
+                        { type: 'table-cell', children: [{ text: '—' }] }
+                      ]
+                    },
+                    {
+                      type: 'table-row',
+                      children: [
+                        { type: 'table-cell', children: [{ text: 'Значение 2' }] },
+                        { type: 'table-cell', children: [{ text: '—' }] },
+                        { type: 'table-cell', children: [{ text: '—' }] }
+                      ]
+                    }
+                  ]
+                });
+                ctx.editor.insertNode({ type: 'paragraph', children: [{ text: '' }] });
+              } catch (_) {
+                ctx.editor.insertText('\n| Параметр | Вариант A | Вариант B |\n| :--- | :--- | :--- |\n| Значение 1 | — | — |\n');
+              }
+            }
+            requestAnimationFrame(refreshState);
+          }
+        });
+
+        var hrBtn = makeBtn({
+          title: 'Вставить горизонтальный разделитель',
+          icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h16"/></svg>',
+          onClick: function () {
+            var ctx = getCtx();
+            if (!ctx.editor) return;
+            ctx.slateEl.focus();
+            if (ctx.tb && ctx.tb.rawMode) {
+              ctx.editor.insertText('\n---\n');
+            } else {
+              try {
+                ctx.editor.insertNode({ type: 'thematic-break', children: [{ text: '' }] });
+                ctx.editor.insertNode({ type: 'paragraph', children: [{ text: '' }] });
+              } catch (_) {
+                ctx.editor.insertText('\n---\n');
+              }
+            }
+            requestAnimationFrame(refreshState);
+          }
+        });
+
+        var findToggleBtn = makeBtn({
+          title: 'Найти и заменить в тексте',
+          label: 'Поиск',
+          icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="7"/><path d="M21 21l-6 -6"/></svg>',
+          onClick: function () {
+            var open = findBar.classList.toggle('is-open');
+            findToggleBtn.classList.toggle('is-active', open);
+            if (open) {
+              findInput.focus();
+              findInput.select();
+            }
+          }
+        });
+
+        function selectMatch(fromStart) {
+          var q = findInput.value;
+          if (!q) {
+            findStatus.textContent = '';
+            return false;
+          }
+          var ctx = getCtx();
+          var walker = document.createTreeWalker(ctx.slateEl, NodeFilter.SHOW_TEXT);
+          var qLower = q.toLowerCase();
+          var nodes = [];
+          var n;
+          while ((n = walker.nextNode())) {
+            if (n.nodeValue && n.nodeValue.length > 0) nodes.push(n);
+          }
+
+          var sel = window.getSelection();
+          var startIdx = 0;
+          var startOffset = 0;
+          if (!fromStart && sel && sel.rangeCount > 0) {
+            var cur = sel.getRangeAt(0);
+            for (var i = 0; i < nodes.length; i++) {
+              if (nodes[i] === cur.endContainer) {
+                startIdx = i;
+                startOffset = cur.endOffset;
+                break;
+              }
+            }
+          }
+
+          for (var pass = 0; pass < 2; pass++) {
+            var iBegin = pass === 0 ? startIdx : 0;
+            var iEnd = pass === 0 ? nodes.length : startIdx + 1;
+            for (var j = iBegin; j < iEnd; j++) {
+              var text = nodes[j].nodeValue;
+              var offset = pass === 0 && j === startIdx ? startOffset : 0;
+              var hit = text.toLowerCase().indexOf(qLower, offset);
+              if (hit !== -1) {
+                ctx.slateEl.focus({ preventScroll: true });
+                var range = document.createRange();
+                range.setStart(nodes[j], hit);
+                range.setEnd(nodes[j], hit + q.length);
+                sel.removeAllRanges();
+                sel.addRange(range);
+                if (nodes[j].parentElement) {
+                  nodes[j].parentElement.scrollIntoView({ block: 'center', behavior: 'smooth' });
+                }
+                findStatus.textContent = 'Найдено';
+                return true;
+              }
+            }
+          }
+          findStatus.textContent = 'Не найдено';
+          return false;
+        }
+
+        var findNextBtn = document.createElement('button');
+        findNextBtn.type = 'button';
+        findNextBtn.className = 'rfid-cms-btn';
+        findNextBtn.textContent = 'Найти далее';
+        findNextBtn.addEventListener('click', function () {
+          selectMatch(false);
+        });
+
+        var replaceOneBtn = document.createElement('button');
+        replaceOneBtn.type = 'button';
+        replaceOneBtn.className = 'rfid-cms-btn';
+        replaceOneBtn.textContent = 'Заменить';
+        replaceOneBtn.addEventListener('click', function () {
+          var q = findInput.value;
+          if (!q) return;
+          var sel = window.getSelection();
+          var current = sel ? sel.toString() : '';
+          if (current.toLowerCase() !== q.toLowerCase()) {
+            if (!selectMatch(false)) return;
+          } else {
+            focusSlate();
+          }
+          document.execCommand('insertText', false, replaceInput.value);
+          requestAnimationFrame(function () {
+            refreshState();
+            selectMatch(false);
+          });
+        });
+
+        var replaceAllBtn = document.createElement('button');
+        replaceAllBtn.type = 'button';
+        replaceAllBtn.className = 'rfid-cms-btn';
+        replaceAllBtn.textContent = 'Заменить всё';
+        replaceAllBtn.addEventListener('click', function () {
+          var q = findInput.value;
+          if (!q) return;
+          var rep = replaceInput.value;
+          if (q.toLowerCase() === rep.toLowerCase() && q === rep) return;
+          var count = 0;
+          var guard = 0;
+          while (guard < 200 && selectMatch(true)) {
+            document.execCommand('insertText', false, rep);
+            count++;
+            guard++;
+            if (rep.toLowerCase().indexOf(q.toLowerCase()) !== -1) break;
+          }
+          findStatus.textContent = count > 0 ? 'Заменено: ' + count : 'Не найдено';
+          requestAnimationFrame(refreshState);
+        });
+
+        var closeFindBtn = document.createElement('button');
+        closeFindBtn.type = 'button';
+        closeFindBtn.className = 'rfid-cms-btn';
+        closeFindBtn.textContent = '×';
+        closeFindBtn.title = 'Закрыть поиск';
+        closeFindBtn.addEventListener('click', function () {
+          findBar.classList.remove('is-open');
+          findToggleBtn.classList.remove('is-active');
+        });
+
+        findInput.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            selectMatch(false);
+          }
+        });
+
+        findBar.appendChild(findInput);
+        findBar.appendChild(replaceInput);
+        findBar.appendChild(findNextBtn);
+        findBar.appendChild(replaceOneBtn);
+        findBar.appendChild(replaceAllBtn);
+        findBar.appendChild(findStatus);
+        findBar.appendChild(closeFindBtn);
+
+        bar.appendChild(undoBtn);
+        bar.appendChild(redoBtn);
+        bar.appendChild(makeSep());
+        bar.appendChild(strikeBtn);
+        bar.appendChild(clearBtn);
+        bar.appendChild(makeSep());
+        bar.appendChild(imgBtn);
+        bar.appendChild(pairBtn);
+        bar.appendChild(tableBtn);
+        bar.appendChild(hrBtn);
+        bar.appendChild(makeSep());
+        bar.appendChild(findToggleBtn);
+
+        controlBar.appendChild(bar);
+        controlBar.appendChild(findBar);
+
+        wrapper.addEventListener('keyup', refreshState);
+        wrapper.addEventListener('mouseup', refreshState);
+        wrapper.addEventListener('input', refreshState);
+        controlBar.addEventListener('click', function () {
+          setTimeout(refreshState, 30);
+        });
+        setTimeout(refreshState, 100);
+      }
+
+      function scanToolbars() {
+        var bars = document.querySelectorAll('[class*="EditorControlBar"]');
+        for (var i = 0; i < bars.length; i++) {
+          attachToolbar(bars[i]);
+        }
+      }
+
+      var observer = new MutationObserver(scanToolbars);
+      observer.observe(document.body, { childList: true, subtree: true });
+      scanToolbars();
+    })();
   </script>
 </body>
 </html>
