@@ -8,7 +8,7 @@ description: "Technische Analyse von UHF-RFID in deutschen Sortier- und
   Ferrit, Wirbelstrom-Störungen in WEEE-Linien sowie Hybrid-TCO für 100.000
   Tonnen Jahresdurchsatz."
 date: 2026-06-08T22:00:00.000Z
-image: industrial_uhf_rfid_applications-2_3.jpg
+image: industry_4.0_identification-2_3.jpg
 categories:
   - RFID Solutions
 tags:
