@@ -6,4 +6,4 @@ title = "RFID Ukraine"
 hasCJKLanguage = false
 
 [pagination]
-    pagerSize = 5
+    pagerSize = 10
