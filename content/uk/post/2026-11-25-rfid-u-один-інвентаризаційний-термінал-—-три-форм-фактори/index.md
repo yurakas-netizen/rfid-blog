@@ -14,7 +14,7 @@ tags:
   - WebSocket міст
 translationKey: rfid-u-web-app
 ---
-
+Статья
 
 {{< rawhtml >}}
 <div class="rfid-u-article" style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; color: #1e293b; line-height: 1.7;">
