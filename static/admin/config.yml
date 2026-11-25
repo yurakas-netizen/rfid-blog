@@ -9,7 +9,7 @@ public_folder: "/images"
 
 collections:
   - name: "post_uk"
-    label: "Статьи (UA)"
+    label: "Статьи (UA) · Українська"
     folder: "content/uk/post"
     create: true
     slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
@@ -26,7 +26,7 @@ collections:
       - { label: "Текст статьи", name: "body", widget: "markdown", modes: ["rich_text", "raw"], hint: "Чтобы вставить график, схему или фото в нужное место текста: нажмите «+» → «Изображение» (или «Два графика в ряд»), либо просто перетащите файл в текст." }
 
   - name: "post_en"
-    label: "Статьи (EN)"
+    label: "Статьи (EN) · English"
     folder: "content/en/post"
     create: true
     slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
@@ -42,9 +42,9 @@ collections:
       - { label: "Теги", name: "tags", widget: "list", required: false }
       - { label: "Текст статьи", name: "body", widget: "markdown", modes: ["rich_text", "raw"], hint: "Чтобы вставить график, схему или фото в нужное место текста: нажмите «+» → «Изображение» (или «Два графика в ряд»), либо просто перетащите файл в текст." }
 
-  - name: "post_ru"
-    label: "Статьи (RU)"
-    folder: "content/ru/post"
+  - name: "post_da"
+    label: "Статьи (DA) · Dansk"
+    folder: "content/da/post"
     create: true
     slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
     path: "{{slug}}/index"
@@ -60,7 +60,7 @@ collections:
       - { label: "Текст статьи", name: "body", widget: "markdown", modes: ["rich_text", "raw"], hint: "Чтобы вставить график, схему или фото в нужное место текста: нажмите «+» → «Изображение» (или «Два графика в ряд»), либо просто перетащите файл в текст." }
 
   - name: "post_de"
-    label: "Статьи (DE)"
+    label: "Статьи (DE) · Deutsch"
     folder: "content/de/post"
     create: true
     slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
@@ -77,7 +77,7 @@ collections:
       - { label: "Текст статьи", name: "body", widget: "markdown", modes: ["rich_text", "raw"], hint: "Чтобы вставить график, схему или фото в нужное место текста: нажмите «+» → «Изображение» (или «Два графика в ряд»), либо просто перетащите файл в текст." }
 
   - name: "post_fr"
-    label: "Статьи (FR)"
+    label: "Статьи (FR) · Français"
     folder: "content/fr/post"
     create: true
     slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
@@ -93,9 +93,247 @@ collections:
       - { label: "Теги", name: "tags", widget: "list", required: false }
       - { label: "Текст статьи", name: "body", widget: "markdown", modes: ["rich_text", "raw"], hint: "Чтобы вставить график, схему или фото в нужное место текста: нажмите «+» → «Изображение» (или «Два графика в ряд»), либо просто перетащите файл в текст." }
 
-  - name: "post_da"
-    label: "Статьи (DA)"
-    folder: "content/da/post"
+  - name: "post_ru"
+    label: "Статьи (RU) · Русский"
+    folder: "content/ru/post"
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    path: "{{slug}}/index"
+    media_folder: ""
+    public_folder: ""
+    fields:
+      - { label: "Заголовок", name: "title", widget: "string" }
+      - { label: "Описание", name: "description", widget: "string", required: false }
+      - { label: "Дата", name: "date", widget: "datetime" }
+      - { label: "Обложка (верхний баннер)", name: "image", widget: "image", required: false, hint: "Только для карточки и шапки статьи. Графики, схемы и фото внутри текста добавляйте ниже в редакторе." }
+      - { label: "Категории", name: "categories", widget: "list", required: false }
+      - { label: "Теги", name: "tags", widget: "list", required: false }
+      - { label: "Текст статьи", name: "body", widget: "markdown", modes: ["rich_text", "raw"], hint: "Чтобы вставить график, схему или фото в нужное место текста: нажмите «+» → «Изображение» (или «Два графика в ряд»), либо просто перетащите файл в текст." }
+
+  - name: "post_pl"
+    label: "Статьи (PL) · Polski"
+    folder: "content/pl/post"
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    path: "{{slug}}/index"
+    media_folder: ""
+    public_folder: ""
+    fields:
+      - { label: "Заголовок", name: "title", widget: "string" }
+      - { label: "Описание", name: "description", widget: "string", required: false }
+      - { label: "Дата", name: "date", widget: "datetime" }
+      - { label: "Обложка (верхний баннер)", name: "image", widget: "image", required: false, hint: "Только для карточки и шапки статьи. Графики, схемы и фото внутри текста добавляйте ниже в редакторе." }
+      - { label: "Категории", name: "categories", widget: "list", required: false }
+      - { label: "Теги", name: "tags", widget: "list", required: false }
+      - { label: "Текст статьи", name: "body", widget: "markdown", modes: ["rich_text", "raw"], hint: "Чтобы вставить график, схему или фото в нужное место текста: нажмите «+» → «Изображение» (или «Два графика в ряд»), либо просто перетащите файл в текст." }
+
+  - name: "post_es"
+    label: "Статьи (ES) · Español"
+    folder: "content/es/post"
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    path: "{{slug}}/index"
+    media_folder: ""
+    public_folder: ""
+    fields:
+      - { label: "Заголовок", name: "title", widget: "string" }
+      - { label: "Описание", name: "description", widget: "string", required: false }
+      - { label: "Дата", name: "date", widget: "datetime" }
+      - { label: "Обложка (верхний баннер)", name: "image", widget: "image", required: false, hint: "Только для карточки и шапки статьи. Графики, схемы и фото внутри текста добавляйте ниже в редакторе." }
+      - { label: "Категории", name: "categories", widget: "list", required: false }
+      - { label: "Теги", name: "tags", widget: "list", required: false }
+      - { label: "Текст статьи", name: "body", widget: "markdown", modes: ["rich_text", "raw"], hint: "Чтобы вставить график, схему или фото в нужное место текста: нажмите «+» → «Изображение» (или «Два графика в ряд»), либо просто перетащите файл в текст." }
+
+  - name: "post_it"
+    label: "Статьи (IT) · Italiano"
+    folder: "content/it/post"
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    path: "{{slug}}/index"
+    media_folder: ""
+    public_folder: ""
+    fields:
+      - { label: "Заголовок", name: "title", widget: "string" }
+      - { label: "Описание", name: "description", widget: "string", required: false }
+      - { label: "Дата", name: "date", widget: "datetime" }
+      - { label: "Обложка (верхний баннер)", name: "image", widget: "image", required: false, hint: "Только для карточки и шапки статьи. Графики, схемы и фото внутри текста добавляйте ниже в редакторе." }
+      - { label: "Категории", name: "categories", widget: "list", required: false }
+      - { label: "Теги", name: "tags", widget: "list", required: false }
+      - { label: "Текст статьи", name: "body", widget: "markdown", modes: ["rich_text", "raw"], hint: "Чтобы вставить график, схему или фото в нужное место текста: нажмите «+» → «Изображение» (или «Два графика в ряд»), либо просто перетащите файл в текст." }
+
+  - name: "post_nl"
+    label: "Статьи (NL) · Nederlands"
+    folder: "content/nl/post"
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    path: "{{slug}}/index"
+    media_folder: ""
+    public_folder: ""
+    fields:
+      - { label: "Заголовок", name: "title", widget: "string" }
+      - { label: "Описание", name: "description", widget: "string", required: false }
+      - { label: "Дата", name: "date", widget: "datetime" }
+      - { label: "Обложка (верхний баннер)", name: "image", widget: "image", required: false, hint: "Только для карточки и шапки статьи. Графики, схемы и фото внутри текста добавляйте ниже в редакторе." }
+      - { label: "Категории", name: "categories", widget: "list", required: false }
+      - { label: "Теги", name: "tags", widget: "list", required: false }
+      - { label: "Текст статьи", name: "body", widget: "markdown", modes: ["rich_text", "raw"], hint: "Чтобы вставить график, схему или фото в нужное место текста: нажмите «+» → «Изображение» (или «Два графика в ряд»), либо просто перетащите файл в текст." }
+
+  - name: "post_pt"
+    label: "Статьи (PT) · Português"
+    folder: "content/pt/post"
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    path: "{{slug}}/index"
+    media_folder: ""
+    public_folder: ""
+    fields:
+      - { label: "Заголовок", name: "title", widget: "string" }
+      - { label: "Описание", name: "description", widget: "string", required: false }
+      - { label: "Дата", name: "date", widget: "datetime" }
+      - { label: "Обложка (верхний баннер)", name: "image", widget: "image", required: false, hint: "Только для карточки и шапки статьи. Графики, схемы и фото внутри текста добавляйте ниже в редакторе." }
+      - { label: "Категории", name: "categories", widget: "list", required: false }
+      - { label: "Теги", name: "tags", widget: "list", required: false }
+      - { label: "Текст статьи", name: "body", widget: "markdown", modes: ["rich_text", "raw"], hint: "Чтобы вставить график, схему или фото в нужное место текста: нажмите «+» → «Изображение» (или «Два графика в ряд»), либо просто перетащите файл в текст." }
+
+  - name: "post_sv"
+    label: "Статьи (SV) · Svenska"
+    folder: "content/sv/post"
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    path: "{{slug}}/index"
+    media_folder: ""
+    public_folder: ""
+    fields:
+      - { label: "Заголовок", name: "title", widget: "string" }
+      - { label: "Описание", name: "description", widget: "string", required: false }
+      - { label: "Дата", name: "date", widget: "datetime" }
+      - { label: "Обложка (верхний баннер)", name: "image", widget: "image", required: false, hint: "Только для карточки и шапки статьи. Графики, схемы и фото внутри текста добавляйте ниже в редакторе." }
+      - { label: "Категории", name: "categories", widget: "list", required: false }
+      - { label: "Теги", name: "tags", widget: "list", required: false }
+      - { label: "Текст статьи", name: "body", widget: "markdown", modes: ["rich_text", "raw"], hint: "Чтобы вставить график, схему или фото в нужное место текста: нажмите «+» → «Изображение» (или «Два графика в ряд»), либо просто перетащите файл в текст." }
+
+  - name: "post_no"
+    label: "Статьи (NO) · Norsk"
+    folder: "content/no/post"
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    path: "{{slug}}/index"
+    media_folder: ""
+    public_folder: ""
+    fields:
+      - { label: "Заголовок", name: "title", widget: "string" }
+      - { label: "Описание", name: "description", widget: "string", required: false }
+      - { label: "Дата", name: "date", widget: "datetime" }
+      - { label: "Обложка (верхний баннер)", name: "image", widget: "image", required: false, hint: "Только для карточки и шапки статьи. Графики, схемы и фото внутри текста добавляйте ниже в редакторе." }
+      - { label: "Категории", name: "categories", widget: "list", required: false }
+      - { label: "Теги", name: "tags", widget: "list", required: false }
+      - { label: "Текст статьи", name: "body", widget: "markdown", modes: ["rich_text", "raw"], hint: "Чтобы вставить график, схему или фото в нужное место текста: нажмите «+» → «Изображение» (или «Два графика в ряд»), либо просто перетащите файл в текст." }
+
+  - name: "post_fi"
+    label: "Статьи (FI) · Suomi"
+    folder: "content/fi/post"
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    path: "{{slug}}/index"
+    media_folder: ""
+    public_folder: ""
+    fields:
+      - { label: "Заголовок", name: "title", widget: "string" }
+      - { label: "Описание", name: "description", widget: "string", required: false }
+      - { label: "Дата", name: "date", widget: "datetime" }
+      - { label: "Обложка (верхний баннер)", name: "image", widget: "image", required: false, hint: "Только для карточки и шапки статьи. Графики, схемы и фото внутри текста добавляйте ниже в редакторе." }
+      - { label: "Категории", name: "categories", widget: "list", required: false }
+      - { label: "Теги", name: "tags", widget: "list", required: false }
+      - { label: "Текст статьи", name: "body", widget: "markdown", modes: ["rich_text", "raw"], hint: "Чтобы вставить график, схему или фото в нужное место текста: нажмите «+» → «Изображение» (или «Два графика в ряд»), либо просто перетащите файл в текст." }
+
+  - name: "post_cs"
+    label: "Статьи (CS) · Čeština"
+    folder: "content/cs/post"
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    path: "{{slug}}/index"
+    media_folder: ""
+    public_folder: ""
+    fields:
+      - { label: "Заголовок", name: "title", widget: "string" }
+      - { label: "Описание", name: "description", widget: "string", required: false }
+      - { label: "Дата", name: "date", widget: "datetime" }
+      - { label: "Обложка (верхний баннер)", name: "image", widget: "image", required: false, hint: "Только для карточки и шапки статьи. Графики, схемы и фото внутри текста добавляйте ниже в редакторе." }
+      - { label: "Категории", name: "categories", widget: "list", required: false }
+      - { label: "Теги", name: "tags", widget: "list", required: false }
+      - { label: "Текст статьи", name: "body", widget: "markdown", modes: ["rich_text", "raw"], hint: "Чтобы вставить график, схему или фото в нужное место текста: нажмите «+» → «Изображение» (или «Два графика в ряд»), либо просто перетащите файл в текст." }
+
+  - name: "post_sk"
+    label: "Статьи (SK) · Slovenčina"
+    folder: "content/sk/post"
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    path: "{{slug}}/index"
+    media_folder: ""
+    public_folder: ""
+    fields:
+      - { label: "Заголовок", name: "title", widget: "string" }
+      - { label: "Описание", name: "description", widget: "string", required: false }
+      - { label: "Дата", name: "date", widget: "datetime" }
+      - { label: "Обложка (верхний баннер)", name: "image", widget: "image", required: false, hint: "Только для карточки и шапки статьи. Графики, схемы и фото внутри текста добавляйте ниже в редакторе." }
+      - { label: "Категории", name: "categories", widget: "list", required: false }
+      - { label: "Теги", name: "tags", widget: "list", required: false }
+      - { label: "Текст статьи", name: "body", widget: "markdown", modes: ["rich_text", "raw"], hint: "Чтобы вставить график, схему или фото в нужное место текста: нажмите «+» → «Изображение» (или «Два графика в ряд»), либо просто перетащите файл в текст." }
+
+  - name: "post_ro"
+    label: "Статьи (RO) · Română"
+    folder: "content/ro/post"
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    path: "{{slug}}/index"
+    media_folder: ""
+    public_folder: ""
+    fields:
+      - { label: "Заголовок", name: "title", widget: "string" }
+      - { label: "Описание", name: "description", widget: "string", required: false }
+      - { label: "Дата", name: "date", widget: "datetime" }
+      - { label: "Обложка (верхний баннер)", name: "image", widget: "image", required: false, hint: "Только для карточки и шапки статьи. Графики, схемы и фото внутри текста добавляйте ниже в редакторе." }
+      - { label: "Категории", name: "categories", widget: "list", required: false }
+      - { label: "Теги", name: "tags", widget: "list", required: false }
+      - { label: "Текст статьи", name: "body", widget: "markdown", modes: ["rich_text", "raw"], hint: "Чтобы вставить график, схему или фото в нужное место текста: нажмите «+» → «Изображение» (или «Два графика в ряд»), либо просто перетащите файл в текст." }
+
+  - name: "post_bg"
+    label: "Статьи (BG) · Български"
+    folder: "content/bg/post"
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    path: "{{slug}}/index"
+    media_folder: ""
+    public_folder: ""
+    fields:
+      - { label: "Заголовок", name: "title", widget: "string" }
+      - { label: "Описание", name: "description", widget: "string", required: false }
+      - { label: "Дата", name: "date", widget: "datetime" }
+      - { label: "Обложка (верхний баннер)", name: "image", widget: "image", required: false, hint: "Только для карточки и шапки статьи. Графики, схемы и фото внутри текста добавляйте ниже в редакторе." }
+      - { label: "Категории", name: "categories", widget: "list", required: false }
+      - { label: "Теги", name: "tags", widget: "list", required: false }
+      - { label: "Текст статьи", name: "body", widget: "markdown", modes: ["rich_text", "raw"], hint: "Чтобы вставить график, схему или фото в нужное место текста: нажмите «+» → «Изображение» (или «Два графика в ряд»), либо просто перетащите файл в текст." }
+
+  - name: "post_et"
+    label: "Статьи (ET) · Eesti"
+    folder: "content/et/post"
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    path: "{{slug}}/index"
+    media_folder: ""
+    public_folder: ""
+    fields:
+      - { label: "Заголовок", name: "title", widget: "string" }
+      - { label: "Описание", name: "description", widget: "string", required: false }
+      - { label: "Дата", name: "date", widget: "datetime" }
+      - { label: "Обложка (верхний баннер)", name: "image", widget: "image", required: false, hint: "Только для карточки и шапки статьи. Графики, схемы и фото внутри текста добавляйте ниже в редакторе." }
+      - { label: "Категории", name: "categories", widget: "list", required: false }
+      - { label: "Теги", name: "tags", widget: "list", required: false }
+      - { label: "Текст статьи", name: "body", widget: "markdown", modes: ["rich_text", "raw"], hint: "Чтобы вставить график, схему или фото в нужное место текста: нажмите «+» → «Изображение» (или «Два графика в ряд»), либо просто перетащите файл в текст." }
+
+  - name: "post_lt"
+    label: "Статьи (LT) · Lietuvių"
+    folder: "content/lt/post"
     create: true
     slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
     path: "{{slug}}/index"

@@ -1,0 +1,47 @@
+toggleMenu = "Vaihda valikko"
+darkMode = "Tumma tila"
+
+[list]
+    section = "Osio"
+    [list.page]
+        one = "{{ .Count }} sivu"
+        other = "{{ .Count }} sivua"
+    [list.subsection]
+        one = "Alaosio"
+        other = "Alaosiot"
+
+[article]
+    back = "Takaisin"
+    tableOfContents = "Sisällysluettelo"
+    relatedContent = "Liittyvä sisältö"
+    lastUpdatedOn = "Päivitetty"
+    [article.readingTime]
+        one = "{{ .Count }} minuutin luku"
+        other = "{{ .Count }} minuutin luku"
+    [article.alert]
+        note = "Huomautus"
+        tip = "Vinkki"
+        important = "Tärkeää"
+        warning = "Varoitus"
+        caution = "Huomio"
+    [article.codeblock]
+        copy = "Kopioi"
+        copied = "Kopioitu!"
+
+[notFound]
+    title = "Ei löytynyt"
+    subtitle = "Tätä sivua ei ole olemassa"
+
+[widget]
+    [widget.archives]
+        title = "Arkisto"
+        more = "Lisää"
+    [widget.tagCloud]
+        title = "Avainsanat"
+    [widget.categoriesCloud]
+        title = "Kategoriat"
+
+[search]
+    title = "Haku"
+    placeholder = "Kirjoita hakusana..."
+    resultTitle = "#PAGES_COUNT sivua (#TIME_SECONDS sekuntia)"

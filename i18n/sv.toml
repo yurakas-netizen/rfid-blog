@@ -1,0 +1,47 @@
+toggleMenu = "Växla meny"
+darkMode = "Mörkt läge"
+
+[list]
+    section = "Avsnitt"
+    [list.page]
+        one = "{{ .Count }} sida"
+        other = "{{ .Count }} sidor"
+    [list.subsection]
+        one = "Underavsnitt"
+        other = "Underavsnitt"
+
+[article]
+    back = "Tillbaka"
+    tableOfContents = "Innehållsförteckning"
+    relatedContent = "Relaterat innehåll"
+    lastUpdatedOn = "Uppdaterad"
+    [article.readingTime]
+        one = "{{ .Count }} minuts läsning"
+        other = "{{ .Count }} minuters läsning"
+    [article.alert]
+        note = "Notera"
+        tip = "Tips"
+        important = "Viktigt"
+        warning = "Varning"
+        caution = "Försiktighet"
+    [article.codeblock]
+        copy = "Kopiera"
+        copied = "Kopierad!"
+
+[notFound]
+    title = "Hittades inte"
+    subtitle = "Den här sidan finns inte"
+
+[widget]
+    [widget.archives]
+        title = "Arkiv"
+        more = "Mer"
+    [widget.tagCloud]
+        title = "Taggar"
+    [widget.categoriesCloud]
+        title = "Kategorier"
+
+[search]
+    title = "Sök"
+    placeholder = "Skriv något..."
+    resultTitle = "#PAGES_COUNT sidor (#TIME_SECONDS sekunder)"

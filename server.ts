@@ -111,14 +111,11 @@ const CLIENT_JS = `
 `;
 
 function getLangPostCounts(siteContent: SiteContent): Record<LangCode, number> {
-  return {
-    uk: siteContent.postsByLang.uk.length,
-    en: siteContent.postsByLang.en.length,
-    da: siteContent.postsByLang.da.length,
-    de: siteContent.postsByLang.de.length,
-    fr: siteContent.postsByLang.fr.length,
-    ru: siteContent.postsByLang.ru.length,
-  };
+  const counts = {} as Record<LangCode, number>;
+  for (const l of ORDERED_LANGUAGES) {
+    counts[l.code] = siteContent.postsByLang[l.code]?.length || 0;
+  }
+  return counts;
 }
 
 function buildViewContext(

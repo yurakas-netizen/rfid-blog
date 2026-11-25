@@ -364,6 +364,68 @@
             );
           }
         });
+
+        /* Preserve $...$ and $$...$$ LaTeX math verbatim across Rich Text <-> Markdown */
+        if (typeof window.CMS.registerRemarkPlugin === 'function') {
+          window.CMS.registerRemarkPlugin(function rfidMathRemarkPlugin() {
+            var Parser = this.Parser;
+            if (!Parser || !Parser.prototype || !Parser.prototype.inlineTokenizers) return;
+            var inlineTokenizers = Parser.prototype.inlineTokenizers;
+            var inlineMethods = Parser.prototype.inlineMethods;
+
+            function mathInlineTokenizer(eat, value, silent) {
+              if (!value || value.charAt(0) !== '$') return;
+              var isDouble = value.charAt(1) === '$';
+              var delim = isDouble ? '$$' : '$';
+              var start = delim.length;
+              if (!isDouble) {
+                if (value.length <= 1 || /\s/.test(value.charAt(1))) return;
+              }
+              var end = -1;
+              for (var i = start; i < value.length; i++) {
+                if (value.charAt(i) === '\\') {
+                  i++;
+                  continue;
+                }
+                if (isDouble) {
+                  if (value.charAt(i) === '$' && value.charAt(i + 1) === '$') {
+                    end = i;
+                    break;
+                  }
+                } else {
+                  if (value.charAt(i) === '\n') return;
+                  if (value.charAt(i) === '$' && !/\s/.test(value.charAt(i - 1))) {
+                    end = i;
+                    break;
+                  }
+                }
+              }
+              if (end === -1 || end === start) return;
+              var fullMatch = value.slice(0, end + delim.length);
+              var inner = value.slice(start, end);
+              if (!isDouble && /^\d[\d.,\s]*$/.test(inner.trim())) return;
+              if (silent) return true;
+              return eat(fullMatch)({
+                type: 'text',
+                value: fullMatch
+              });
+            }
+
+            mathInlineTokenizer.locator = function (value, fromIndex) {
+              return value.indexOf('$', fromIndex);
+            };
+
+            inlineTokenizers.rfidMath = mathInlineTokenizer;
+            if (Array.isArray(inlineMethods) && inlineMethods.indexOf('rfidMath') === -1) {
+              var escapeIdx = inlineMethods.indexOf('escape');
+              if (escapeIdx !== -1) {
+                inlineMethods.splice(escapeIdx, 0, 'rfidMath');
+              } else {
+                inlineMethods.unshift('rfidMath');
+              }
+            }
+          });
+        }
       }
 
       /* =========================================================
@@ -931,25 +993,54 @@
         return str;
       }
 
+      function normalizeIsoDate(val) {
+        if (!val) return '';
+        if (val instanceof Date) {
+          return isNaN(val.getTime()) ? '' : val.toISOString();
+        }
+        if (typeof val === 'object') {
+          if (typeof val.toDate === 'function') {
+            var dObj = val.toDate();
+            return dObj && !isNaN(dObj.getTime()) ? dObj.toISOString() : '';
+          }
+          if (typeof val.toISOString === 'function') {
+            try { return val.toISOString(); } catch (_) {}
+          }
+        }
+        var str = String(val).trim();
+        if (!str) return '';
+        var parsed = new Date(str);
+        if (!isNaN(parsed.getTime())) {
+          return parsed.toISOString();
+        }
+        return str;
+      }
+
+      function formatYamlListItem(val) {
+        var str = String(val);
+        return /[:#\[\]{}&*!|>'"%@`,?]|^-|^\s|\s$/.test(str) ? JSON.stringify(str) : str;
+      }
+
       function serializeMarkdownArticle(data, stripInlineImages) {
         var lines = ['---'];
         lines.push('title: ' + JSON.stringify(String(data.title || '')));
         if (data.description) {
           lines.push('description: ' + JSON.stringify(String(data.description)));
         }
-        if (data.date) {
-          lines.push('date: ' + String(data.date));
+        var isoDate = normalizeIsoDate(data.date);
+        if (isoDate) {
+          lines.push('date: ' + isoDate);
         }
         if (Array.isArray(data.categories) && data.categories.length > 0) {
           lines.push('categories:');
           data.categories.forEach(function (c) {
-            lines.push('  - ' + (/[:"'#\[\]{},]|^\s|\s$/.test(c) ? JSON.stringify(c) : c));
+            lines.push('  - ' + formatYamlListItem(c));
           });
         }
         if (Array.isArray(data.tags) && data.tags.length > 0) {
           lines.push('tags:');
           data.tags.forEach(function (t) {
-            lines.push('  - ' + (/[:"'#\[\]{},]|^\s|\s$/.test(t) ? JSON.stringify(t) : t));
+            lines.push('  - ' + formatYamlListItem(t));
           });
         }
         lines.push('---');
@@ -962,7 +1053,7 @@
         var payload = {
           title: String(data.title || ''),
           description: String(data.description || ''),
-          date: data.date ? String(data.date) : '',
+          date: normalizeIsoDate(data.date),
           categories: Array.isArray(data.categories) ? data.categories : [],
           tags: Array.isArray(data.tags) ? data.tags : [],
           body: stripInlineImages ? stripBodyImages(data.body) : String(data.body || '')
@@ -1131,7 +1222,7 @@
           data: {
             title: js.title || '',
             description: js.description || '',
-            date: js.date || new Date().toISOString(),
+            date: normalizeIsoDate(js.date) || new Date().toISOString(),
             categories: Array.isArray(js.categories) ? js.categories : [],
             tags: Array.isArray(js.tags) ? js.tags : [],
             body: js.body || ''
@@ -1165,8 +1256,7 @@
         if (opts.date && parsed.hasDate) {
           var fDate = getField('date');
           if (fDate) {
-            var dt = new Date(parsed.date);
-            onChange(fDate, isNaN(dt.getTime()) ? parsed.date : dt.toISOString());
+            onChange(fDate, normalizeIsoDate(parsed.date) || parsed.date);
           }
         }
 

@@ -1,0 +1,47 @@
+toggleMenu = "Bytt meny"
+darkMode = "Mørk modus"
+
+[list]
+    section = "Seksjon"
+    [list.page]
+        one = "{{ .Count }} side"
+        other = "{{ .Count }} sider"
+    [list.subsection]
+        one = "Underseksjon"
+        other = "Underseksjoner"
+
+[article]
+    back = "Tilbake"
+    tableOfContents = "Innholdsfortegnelse"
+    relatedContent = "Relatert innhold"
+    lastUpdatedOn = "Oppdatert"
+    [article.readingTime]
+        one = "{{ .Count }} minutts lesing"
+        other = "{{ .Count }} minutters lesing"
+    [article.alert]
+        note = "Merk"
+        tip = "Tips"
+        important = "Viktig"
+        warning = "Advarsel"
+        caution = "Forsiktig"
+    [article.codeblock]
+        copy = "Kopier"
+        copied = "Kopiert!"
+
+[notFound]
+    title = "Ikke funnet"
+    subtitle = "Denne siden finnes ikke"
+
+[widget]
+    [widget.archives]
+        title = "Arkiv"
+        more = "Mer"
+    [widget.tagCloud]
+        title = "Stikkord"
+    [widget.categoriesCloud]
+        title = "Kategorier"
+
+[search]
+    title = "Søk"
+    placeholder = "Skriv noe..."
+    resultTitle = "#PAGES_COUNT sider (#TIME_SECONDS sekunder)"

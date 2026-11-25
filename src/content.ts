@@ -4,7 +4,7 @@ import matter from 'gray-matter';
 import { marked, Renderer, Tokens } from 'marked';
 import katex from 'katex';
 import hljs from 'highlight.js';
-import { LANGUAGES, LangCode } from './config.js';
+import { LANGUAGES, ORDERED_LANGUAGES, LangCode } from './config.js';
 
 export interface TocItem {
   level: number;
@@ -188,13 +188,17 @@ function renderMarkdownWithMath(
   processed = processShortcodes(processed);
 
   // 3. Render block math $$...$$ and \[...\]
+  const mathPlainLabels: string[] = [];
+
   processed = processed.replace(/\$\$([\s\S]+?)\$\$/g, (_, expr: string) => {
     const idx = mathPlaceholders.length;
+    mathPlainLabels[idx] = expr.trim();
     try {
       mathPlaceholders.push(
         `<div class="katex-block">${katex.renderToString(expr.trim(), {
           displayMode: true,
           throwOnError: false,
+          strict: false,
         })}</div>`
       );
     } catch {
@@ -205,11 +209,13 @@ function renderMarkdownWithMath(
 
   processed = processed.replace(/\\\[([\s\S]+?)\\\]/g, (_, expr: string) => {
     const idx = mathPlaceholders.length;
+    mathPlainLabels[idx] = expr.trim();
     try {
       mathPlaceholders.push(
         `<div class="katex-block">${katex.renderToString(expr.trim(), {
           displayMode: true,
           throwOnError: false,
+          strict: false,
         })}</div>`
       );
     } catch {
@@ -227,11 +233,13 @@ function renderMarkdownWithMath(
         return full;
       }
       const idx = mathPlaceholders.length;
+      mathPlainLabels[idx] = expr.trim();
       try {
         mathPlaceholders.push(
           katex.renderToString(expr.trim(), {
             displayMode: false,
             throwOnError: false,
+            strict: false,
           })
         );
       } catch {
@@ -243,11 +251,13 @@ function renderMarkdownWithMath(
 
   processed = processed.replace(/\\\(([\s\S]+?)\\\)/g, (_, expr: string) => {
     const idx = mathPlaceholders.length;
+    mathPlainLabels[idx] = expr.trim();
     try {
       mathPlaceholders.push(
         katex.renderToString(expr.trim(), {
           displayMode: false,
           throwOnError: false,
+          strict: false,
         })
       );
     } catch {
@@ -269,7 +279,10 @@ function renderMarkdownWithMath(
 
   renderer.heading = function ({ tokens, depth }: Tokens.Heading): string {
     const text = this.parser.parseInline(tokens);
-    const plain = text.replace(/<[^>]+>/g, '').trim();
+    const plain = text
+      .replace(/<[^>]+>/g, '')
+      .replace(/@@MATH_(?:INLINE|BLOCK)_(\d+)@@/g, (_, idxStr: string) => mathPlainLabels[Number(idxStr)] ?? '')
+      .trim();
     let id = slugify(plain);
     const count = usedIds.get(id) ?? 0;
     usedIds.set(id, count + 1);
@@ -525,13 +538,6 @@ export interface SiteContent {
 export function loadSiteContent(): SiteContent {
   const categoryStyles = loadCategoryMetadata();
 
-  const ukPosts = scanPostsInDir(path.join(CONTENT_ROOT, 'uk', 'post'), 'uk');
-  const ruPosts = scanPostsInDir(path.join(CONTENT_ROOT, 'ru', 'post'), 'ru');
-  const enPosts = scanPostsInDir(path.join(CONTENT_ROOT, 'en', 'post'), 'en');
-  const daPosts = scanPostsInDir(path.join(CONTENT_ROOT, 'da', 'post'), 'da');
-  const dePosts = scanPostsInDir(path.join(CONTENT_ROOT, 'de', 'post'), 'de');
-  const frPosts = scanPostsInDir(path.join(CONTENT_ROOT, 'fr', 'post'), 'fr');
-
   const sortPosts = (arr: PostItem[]) =>
     arr.sort((a, b) => {
       if (a.weight !== b.weight) {
@@ -542,38 +548,25 @@ export function loadSiteContent(): SiteContent {
       return b.date.getTime() - a.date.getTime();
     });
 
-  const postsByLang: Record<LangCode, PostItem[]> = {
-    uk: sortPosts([...ukPosts]),
-    ru: sortPosts([...ruPosts]),
-    en: sortPosts([...enPosts]),
-    da: sortPosts([...daPosts]),
-    de: sortPosts([...dePosts]),
-    fr: sortPosts([...frPosts]),
-  };
-
-  const allPosts = sortPosts([
-    ...ukPosts,
-    ...ruPosts,
-    ...enPosts,
-    ...daPosts,
-    ...dePosts,
-    ...frPosts,
-  ]);
-
   const buildPageMap = (pages: PageItem[]) => {
     const rec: Record<string, PageItem> = {};
     for (const p of pages) rec[p.slug] = p;
     return rec;
   };
 
-  const pagesByLang: Record<LangCode, Record<string, PageItem>> = {
-    uk: buildPageMap(scanPagesInDir(path.join(CONTENT_ROOT, 'uk', 'page'), 'uk')),
-    ru: buildPageMap(scanPagesInDir(path.join(CONTENT_ROOT, 'ru', 'page'), 'ru')),
-    en: buildPageMap(scanPagesInDir(path.join(CONTENT_ROOT, 'en', 'page'), 'en')),
-    da: buildPageMap(scanPagesInDir(path.join(CONTENT_ROOT, 'da', 'page'), 'da')),
-    de: buildPageMap(scanPagesInDir(path.join(CONTENT_ROOT, 'de', 'page'), 'de')),
-    fr: buildPageMap(scanPagesInDir(path.join(CONTENT_ROOT, 'fr', 'page'), 'fr')),
-  };
+  const postsByLang = {} as Record<LangCode, PostItem[]>;
+  const pagesByLang = {} as Record<LangCode, Record<string, PageItem>>;
+  const allCollected: PostItem[] = [];
+
+  for (const langCfg of ORDERED_LANGUAGES) {
+    const code = langCfg.code;
+    const scanned = sortPosts(scanPostsInDir(path.join(CONTENT_ROOT, code, 'post'), code));
+    postsByLang[code] = scanned;
+    allCollected.push(...scanned);
+    pagesByLang[code] = buildPageMap(scanPagesInDir(path.join(CONTENT_ROOT, code, 'page'), code));
+  }
+
+  const allPosts = sortPosts(allCollected);
 
   return {
     allPosts,

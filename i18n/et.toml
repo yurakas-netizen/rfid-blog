@@ -1,0 +1,47 @@
+toggleMenu = "Lülita menüü"
+darkMode = "Tume režiim"
+
+[list]
+    section = "Jaotis"
+    [list.page]
+        one = "{{ .Count }} leht"
+        other = "{{ .Count }} lehte"
+    [list.subsection]
+        one = "Alamjaotis"
+        other = "Alamjaotised"
+
+[article]
+    back = "Tagasi"
+    tableOfContents = "Sisukord"
+    relatedContent = "Seotud sisu"
+    lastUpdatedOn = "Uuendatud"
+    [article.readingTime]
+        one = "{{ .Count }} min lugemist"
+        other = "{{ .Count }} min lugemist"
+    [article.alert]
+        note = "Märkus"
+        tip = "Nõuanne"
+        important = "Tähtis"
+        warning = "Hoiatus"
+        caution = "Ettevaatust"
+    [article.codeblock]
+        copy = "Kopeeri"
+        copied = "Kopeeritud!"
+
+[notFound]
+    title = "Ei leitud"
+    subtitle = "Seda lehte ei ole olemas"
+
+[widget]
+    [widget.archives]
+        title = "Arhiiv"
+        more = "Rohkem"
+    [widget.tagCloud]
+        title = "Sildid"
+    [widget.categoriesCloud]
+        title = "Kategooriad"
+
+[search]
+    title = "Otsing"
+    placeholder = "Sisesta otsingusõna..."
+    resultTitle = "#PAGES_COUNT lehte (#TIME_SECONDS sekundit)"

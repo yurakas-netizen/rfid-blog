@@ -1,0 +1,47 @@
+toggleMenu = "Perjungti meniu"
+darkMode = "Tamsus režimas"
+
+[list]
+    section = "Skyrius"
+    [list.page]
+        one = "{{ .Count }} puslapis"
+        other = "{{ .Count }} puslapiai"
+    [list.subsection]
+        one = "Poskyris"
+        other = "Poskyriai"
+
+[article]
+    back = "Atgal"
+    tableOfContents = "Turinys"
+    relatedContent = "Susijęs turinys"
+    lastUpdatedOn = "Atnaujinta"
+    [article.readingTime]
+        one = "{{ .Count }} min. skaitymo"
+        other = "{{ .Count }} min. skaitymo"
+    [article.alert]
+        note = "Pastaba"
+        tip = "Patarimas"
+        important = "Svarbu"
+        warning = "Įspėjimas"
+        caution = "Atsargiai"
+    [article.codeblock]
+        copy = "Kopijuoti"
+        copied = "Nukopijuota!"
+
+[notFound]
+    title = "Nerasta"
+    subtitle = "Šis puslapis neegzistuoja"
+
+[widget]
+    [widget.archives]
+        title = "Archyvas"
+        more = "Daugiau"
+    [widget.tagCloud]
+        title = "Žymos"
+    [widget.categoriesCloud]
+        title = "Kategorijos"
+
+[search]
+    title = "Paieška"
+    placeholder = "Įveskite užklausą..."
+    resultTitle = "#PAGES_COUNT puslapiai (#TIME_SECONDS sek.)"

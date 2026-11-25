@@ -1,0 +1,47 @@
+toggleMenu = "Skift menu"
+darkMode = "Mørkt tema"
+
+[list]
+    section = "Sektion"
+    [list.page]
+        one = "{{ .Count }} side"
+        other = "{{ .Count }} sider"
+    [list.subsection]
+        one = "Undersektion"
+        other = "Undersektioner"
+
+[article]
+    back = "Tilbage"
+    tableOfContents = "Indholdsfortegnelse"
+    relatedContent = "Relateret indhold"
+    lastUpdatedOn = "Opdateret den"
+    [article.readingTime]
+        one = "{{ .Count }} minuts læsning"
+        other = "{{ .Count }} minutters læsning"
+    [article.alert]
+        note = "Bemærk"
+        tip = "Tip"
+        important = "Vigtigt"
+        warning = "Advarsel"
+        caution = "Forsigtig"
+    [article.codeblock]
+        copy = "Kopiér"
+        copied = "Kopieret!"
+
+[notFound]
+    title = "Ikke fundet"
+    subtitle = "Denne side findes ikke"
+
+[widget]
+    [widget.archives]
+        title = "Arkiv"
+        more = "Mere"
+    [widget.tagCloud]
+        title = "Tags"
+    [widget.categoriesCloud]
+        title = "Kategorier"
+
+[search]
+    title = "Søg"
+    placeholder = "Skriv søgeord..."
+    resultTitle = "#PAGES_COUNT sider (#TIME_SECONDS sekunder)"

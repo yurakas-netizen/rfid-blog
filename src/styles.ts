@@ -685,8 +685,22 @@ html[data-scheme="dark"] .brand-icon .logo-secondary {
   font-weight: 600;
 }
 
-.katex-block {
+.article-content .katex {
+  font-size: 1.06em;
+  line-height: 1.25;
+}
+
+.article-content td .katex,
+.article-content th .katex {
+  font-size: 1.02em;
+  white-space: nowrap;
+}
+
+.katex-block,
+.article-content .katex-display {
   overflow-x: auto;
+  overflow-y: hidden;
+  max-width: 100%;
   padding: 10px 0;
 }
 

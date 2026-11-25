@@ -1,0 +1,32 @@
+{{- partial "helper/external" (dict "Context" . "Namespace" "KaTeX") -}}
+<script>
+    (function () {
+        function renderAllMath() {
+            if (typeof renderMathInElement !== "function") return;
+            var elementsToRender = [".main-article", ".widget--toc"];
+            elementsToRender.forEach(function (selector) {
+                var element = document.querySelector(selector);
+                if (element) {
+                    renderMathInElement(element, {
+                        delimiters: [
+                            { left: "$$", right: "$$", display: true },
+                            { left: "$", right: "$", display: false },
+                            { left: "\\(", right: "\\)", display: false },
+                            { left: "\\[", right: "\\]", display: true }
+                        ],
+                        ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code", "option"],
+                        ignoredClasses: ["gist"],
+                        throwOnError: false,
+                        strict: false
+                    });
+                }
+            });
+        }
+        if (document.readyState === "loading") {
+            window.addEventListener("DOMContentLoaded", renderAllMath);
+        } else {
+            renderAllMath();
+        }
+        window.addEventListener("load", renderAllMath);
+    })();
+</script>

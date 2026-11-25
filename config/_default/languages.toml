@@ -51,3 +51,130 @@
     weight = 6
     [ru.params.sidebar]
         subtitle = "Инженерная платформа UHF RFID, RTLS и IIoT"
+
+[pl]
+    label = "Polski (PL)"
+    direction = "ltr"
+    title = "RFID Ukraine"
+    contentDir = "content/pl"
+    weight = 7
+    [pl.params.sidebar]
+        subtitle = "Platforma inżynieryjna UHF RFID, RTLS i IIoT"
+
+[es]
+    label = "Español (ES)"
+    direction = "ltr"
+    title = "RFID Ukraine"
+    contentDir = "content/es"
+    weight = 8
+    [es.params.sidebar]
+        subtitle = "Plataforma de ingeniería UHF RFID, RTLS e IIoT"
+
+[it]
+    label = "Italiano (IT)"
+    direction = "ltr"
+    title = "RFID Ukraine"
+    contentDir = "content/it"
+    weight = 9
+    [it.params.sidebar]
+        subtitle = "Piattaforma ingegneristica UHF RFID, RTLS e IIoT"
+
+[nl]
+    label = "Nederlands (NL)"
+    direction = "ltr"
+    title = "RFID Ukraine"
+    contentDir = "content/nl"
+    weight = 10
+    [nl.params.sidebar]
+        subtitle = "Engineeringplatform voor UHF RFID, RTLS & IIoT"
+
+[pt]
+    label = "Português (PT)"
+    languageCode = "pt-PT"
+    direction = "ltr"
+    title = "RFID Ukraine"
+    contentDir = "content/pt"
+    weight = 11
+    [pt.params.sidebar]
+        subtitle = "Plataforma de engenharia UHF RFID, RTLS e IIoT"
+
+[sv]
+    label = "Svenska (SV)"
+    direction = "ltr"
+    title = "RFID Ukraine"
+    contentDir = "content/sv"
+    weight = 12
+    [sv.params.sidebar]
+        subtitle = "Ingenjörsplattform för UHF RFID, RTLS och IIoT"
+
+[no]
+    label = "Norsk (NO)"
+    direction = "ltr"
+    title = "RFID Ukraine"
+    contentDir = "content/no"
+    weight = 13
+    [no.params.sidebar]
+        subtitle = "Ingeniørplattform for UHF RFID, RTLS og IIoT"
+
+[fi]
+    label = "Suomi (FI)"
+    direction = "ltr"
+    title = "RFID Ukraine"
+    contentDir = "content/fi"
+    weight = 14
+    [fi.params.sidebar]
+        subtitle = "UHF RFID-, RTLS- ja IIoT-suunnittelualusta"
+
+[cs]
+    label = "Čeština (CS)"
+    direction = "ltr"
+    title = "RFID Ukraine"
+    contentDir = "content/cs"
+    weight = 15
+    [cs.params.sidebar]
+        subtitle = "Inženýrská platforma UHF RFID, RTLS a IIoT"
+
+[sk]
+    label = "Slovenčina (SK)"
+    direction = "ltr"
+    title = "RFID Ukraine"
+    contentDir = "content/sk"
+    weight = 16
+    [sk.params.sidebar]
+        subtitle = "Inžinierska platforma UHF RFID, RTLS a IIoT"
+
+[ro]
+    label = "Română (RO)"
+    direction = "ltr"
+    title = "RFID Ukraine"
+    contentDir = "content/ro"
+    weight = 17
+    [ro.params.sidebar]
+        subtitle = "Platformă de inginerie UHF RFID, RTLS și IIoT"
+
+[bg]
+    label = "Български (BG)"
+    direction = "ltr"
+    title = "RFID Ukraine"
+    contentDir = "content/bg"
+    weight = 18
+    [bg.params.sidebar]
+        subtitle = "Инженерна платформа за UHF RFID, RTLS и IIoT"
+
+[et]
+    label = "Eesti (ET)"
+    direction = "ltr"
+    title = "RFID Ukraine"
+    contentDir = "content/et"
+    weight = 19
+    [et.params.sidebar]
+        subtitle = "UHF RFID, RTLS ja IIoT inseneriplatvorm"
+
+[lt]
+    label = "Lietuvių (LT)"
+    direction = "ltr"
+    title = "RFID Ukraine"
+    contentDir = "content/lt"
+    weight = 20
+    [lt.params.sidebar]
+        subtitle = "UHF RFID, RTLS ir IIoT inžinerinė platforma"

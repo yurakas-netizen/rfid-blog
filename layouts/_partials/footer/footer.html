@@ -5,6 +5,10 @@
     {{- $city = "г. Киев" -}}
 {{- else if eq .Language.Lang "de" -}}
     {{- $city = "Kiew, Ukraine" -}}
+{{- else if eq .Language.Lang "pl" -}}
+    {{- $city = "Kijów, Ukraina" -}}
+{{- else if eq .Language.Lang "bg" -}}
+    {{- $city = "Киев, Украйна" -}}
 {{- end -}}
 <footer class="site-footer">
     <div class="footer-contacts">

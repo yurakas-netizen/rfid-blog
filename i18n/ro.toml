@@ -1,0 +1,47 @@
+toggleMenu = "Comută meniul"
+darkMode = "Mod întunecat"
+
+[list]
+    section = "Secțiune"
+    [list.page]
+        one = "{{ .Count }} pagină"
+        other = "{{ .Count }} pagini"
+    [list.subsection]
+        one = "Subsecțiune"
+        other = "Subsecțiuni"
+
+[article]
+    back = "Înapoi"
+    tableOfContents = "Cuprins"
+    relatedContent = "Conținut asociat"
+    lastUpdatedOn = "Actualizat la"
+    [article.readingTime]
+        one = "{{ .Count }} minut de citit"
+        other = "{{ .Count }} minute de citit"
+    [article.alert]
+        note = "Notă"
+        tip = "Sfat"
+        important = "Important"
+        warning = "Avertisment"
+        caution = "Atenție"
+    [article.codeblock]
+        copy = "Copiază"
+        copied = "Copiat!"
+
+[notFound]
+    title = "Pagina nu a fost găsită"
+    subtitle = "Această pagină nu există"
+
+[widget]
+    [widget.archives]
+        title = "Arhivă"
+        more = "Mai mult"
+    [widget.tagCloud]
+        title = "Etichete"
+    [widget.categoriesCloud]
+        title = "Categorii"
+
+[search]
+    title = "Căutare"
+    placeholder = "Tastează ceva..."
+    resultTitle = "#PAGES_COUNT pagini (#TIME_SECONDS secunde)"

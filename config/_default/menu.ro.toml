@@ -1,0 +1,23 @@
+[[main]]
+identifier = "home"
+name = "Acasă"
+url = "/"
+weight = -100
+[main.params]
+icon = "home"
+
+[[main]]
+identifier = "archives"
+name = "Arhivă"
+url = "/archives/"
+weight = -90
+[main.params]
+icon = "archives"
+
+[[main]]
+identifier = "search"
+name = "Căutare"
+url = "/search/"
+weight = -80
+[main.params]
+icon = "search"
