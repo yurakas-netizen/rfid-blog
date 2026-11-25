@@ -9,7 +9,7 @@ description: "Technische Analyse von batterieloser Ambient-IoT-Sensorik in der
   für 10.000 Messpunkte, EU-Batterieverordnung 2023/1542, ElektroG (WEEE
   2012/19/EU) und 3GPP Release 18/19."
 date: 2026-06-08T22:00:00.000Z
-image: industrial_uhf_rfid_applications-4_1.jpg
+image: industry_4.0_identification-4_1.jpg
 categories:
   - RFID Solutions
 tags:
