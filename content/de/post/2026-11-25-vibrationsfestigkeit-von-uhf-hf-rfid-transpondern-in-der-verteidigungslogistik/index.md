@@ -7,7 +7,7 @@ description: "Technische Analyse der Vibrations- und Schockfestigkeit von
   302 208, Q = 8, Miller M=4, keramische Al₂O₃-On-Metal-Transponder mit
   Sandwich-Dämpfung, IP69K und TCO für 2.500 Fahrzeuge."
 date: 2026-06-08T22:00:00.000Z
-image: industrial_uhf_rfid_applications-3_3.jpg
+image: industry_4.0_identification-3_3.jpg
 categories:
   - RFID Solutions
 tags:
