@@ -9,6 +9,7 @@ tags:
   - UHF RFID
   - Тест связки
   - translationKey
+translationKey: test-rfid-antenna-bench
 ---
 Это русская версия тестовой заметки. На странице должны появиться плашки переключения на другие языки, у которых прописан тот же `translationKey: test-rfid-antenna-bench`.
 

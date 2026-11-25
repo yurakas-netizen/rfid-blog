@@ -9,6 +9,7 @@ tags:
   - UHF RFID
   - Тест зв'язку
   - translationKey
+translationKey: test-rfid-antenna-bench
 ---
 Це українська версія тестової нотатки. Тут має бути плашка переходу на російську версію за тим самим ключем `translationKey: test-rfid-antenna-bench`.
 
