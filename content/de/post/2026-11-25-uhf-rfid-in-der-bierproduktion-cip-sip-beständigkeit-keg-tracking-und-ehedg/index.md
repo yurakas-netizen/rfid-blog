@@ -7,7 +7,7 @@ description: "Technische Analyse von UHF RFID in der Brauerei: PEEK/PPS-Kapseln
   Gärkeller, GS1 GRAI/EPCIS 2.0 für 50.000 Mehrweg-KEGs, EHEDG, VO (EG)
   1935/2004 und TCO-Vergleich."
 date: 2026-06-09T22:00:00.000Z
-image: industrial_uhf_rfid_applications-1_4.jpg
+image: industry_4.0_identification-1_4.jpg
 categories:
   - RFID Solutions
 tags:
