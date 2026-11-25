@@ -1,4 +1,4 @@
-baseurl = "https://ua-rfid.netlify.app"
+baseurl = "https://rfid.org.ua/"
 defaultContentLanguage = "uk"
 defaultContentLanguageInSubdir = false
 locale = "uk-UA"

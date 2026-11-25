@@ -4,7 +4,7 @@ favicon = "img/favicon.svg"
 SortBy = "default"
 
 [footer]
-    since = 2026
+    since = 2015
     customText = ""
 
 [dateFormat]
@@ -23,7 +23,7 @@ SortBy = "default"
 
     [article.license]
         enabled = true
-        default = "MIT License"
+        default = "2015–2026 RFID Ukraine"
 
 [widgets]
     homepage = [

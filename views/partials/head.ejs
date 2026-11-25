@@ -12,6 +12,9 @@
   <link rel="stylesheet" href="/vendor/katex/katex.min.css" />
   <link rel="stylesheet" href="/vendor/hljs/github-dark.min.css" />
   <link rel="stylesheet" href="/css/stack.css" />
+  <% if (typeof jsonLd !== 'undefined' && jsonLd) { %>
+    <script type="application/ld+json"><%- jsonLd %></script>
+  <% } %>
 </head>
 <body>
 <div class="container main-container">

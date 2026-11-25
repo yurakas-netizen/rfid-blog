@@ -22,6 +22,7 @@ import {
   type SiteContent,
 } from './src/content.js';
 import { buildStylesheet } from './src/styles.js';
+import { buildSchemaJsonLd } from './src/schema.js';
 
 const ROOT_DIR = process.cwd();
 const PORT = 3000;
@@ -160,7 +161,22 @@ async function renderView(
   status = 200
 ): Promise<void> {
   const ctx = buildViewContext(siteContent, lang, data);
-  const html = await ejs.renderFile(path.join(viewsDir, `${viewName}.ejs`), ctx);
+  const reqUrlPath =
+    typeof res.req?.originalUrl === 'string'
+      ? res.req.originalUrl.split('?')[0]
+      : LANGUAGES[lang].urlPrefix
+      ? `${LANGUAGES[lang].urlPrefix}/`
+      : '/';
+  const jsonLd = buildSchemaJsonLd({
+    lang,
+    isHome: Boolean((data as Record<string, unknown>).isHome),
+    isArticle: Boolean(ctx.isArticle),
+    pageUrlPath: (ctx as { post?: PostItem }).post?.permalink || reqUrlPath,
+    pageTitle: String(ctx.pageTitle || LANGUAGES[lang].title),
+    post: (ctx as { post?: PostItem }).post,
+    translatedPosts: (ctx as { translatedPosts?: PostItem[] }).translatedPosts,
+  });
+  const html = await ejs.renderFile(path.join(viewsDir, `${viewName}.ejs`), { ...ctx, jsonLd });
   res.status(status).type('html').send(html);
 }
 
@@ -430,6 +446,7 @@ async function handleHome(res: Response, lang: LangCode, pageNum: number) {
 
   await renderView(res, siteContent, 'index', lang, {
     activeNav: 'home',
+    isHome: true,
     pageTitle: `${LANGUAGES[lang].title} — ${I18N[lang].subtitle}`,
     pageDescription: I18N[lang].subtitle,
     posts,

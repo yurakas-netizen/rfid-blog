@@ -18,6 +18,7 @@ collections:
     public_folder: ""
     fields:
       - { label: "Заголовок", name: "title", widget: "string" }
+      - { label: "URL-слаг (латиницей)", name: "slug", widget: "string", required: false, pattern: ['^[a-z0-9]+(?:-[a-z0-9]+)*$', 'Только строчная латиница, цифры и дефисы (например: uhf-rfid-antenna-guide)'], hint: "Короткий ЧПУ для URL статьи на латинице (например: uhf-rfid-antenna-guide). Если оставить пустым — URL построится из заголовка." }
       - { label: "Описание", name: "description", widget: "string", required: false }
       - { label: "Дата", name: "date", widget: "datetime" }
       - { label: "Обложка (верхний баннер)", name: "image", widget: "image", required: false, hint: "Только для карточки и шапки статьи. Графики, схемы и фото внутри текста добавляйте ниже в редакторе." }
@@ -36,6 +37,7 @@ collections:
     public_folder: ""
     fields:
       - { label: "Заголовок", name: "title", widget: "string" }
+      - { label: "URL-слаг (латиницей)", name: "slug", widget: "string", required: false, pattern: ['^[a-z0-9]+(?:-[a-z0-9]+)*$', 'Только строчная латиница, цифры и дефисы (например: uhf-rfid-antenna-guide)'], hint: "Короткий ЧПУ для URL статьи на латинице (например: uhf-rfid-antenna-guide). Если оставить пустым — URL построится из заголовка." }
       - { label: "Описание", name: "description", widget: "string", required: false }
       - { label: "Дата", name: "date", widget: "datetime" }
       - { label: "Обложка (верхний баннер)", name: "image", widget: "image", required: false, hint: "Только для карточки и шапки статьи. Графики, схемы и фото внутри текста добавляйте ниже в редакторе." }
@@ -54,6 +56,7 @@ collections:
     public_folder: ""
     fields:
       - { label: "Заголовок", name: "title", widget: "string" }
+      - { label: "URL-слаг (латиницей)", name: "slug", widget: "string", required: false, pattern: ['^[a-z0-9]+(?:-[a-z0-9]+)*$', 'Только строчная латиница, цифры и дефисы (например: uhf-rfid-antenna-guide)'], hint: "Короткий ЧПУ для URL статьи на латинице (например: uhf-rfid-antenna-guide). Если оставить пустым — URL построится из заголовка." }
       - { label: "Описание", name: "description", widget: "string", required: false }
       - { label: "Дата", name: "date", widget: "datetime" }
       - { label: "Обложка (верхний баннер)", name: "image", widget: "image", required: false, hint: "Только для карточки и шапки статьи. Графики, схемы и фото внутри текста добавляйте ниже в редакторе." }
@@ -72,6 +75,7 @@ collections:
     public_folder: ""
     fields:
       - { label: "Заголовок", name: "title", widget: "string" }
+      - { label: "URL-слаг (латиницей)", name: "slug", widget: "string", required: false, pattern: ['^[a-z0-9]+(?:-[a-z0-9]+)*$', 'Только строчная латиница, цифры и дефисы (например: uhf-rfid-antenna-guide)'], hint: "Короткий ЧПУ для URL статьи на латинице (например: uhf-rfid-antenna-guide). Если оставить пустым — URL построится из заголовка." }
       - { label: "Описание", name: "description", widget: "string", required: false }
       - { label: "Дата", name: "date", widget: "datetime" }
       - { label: "Обложка (верхний баннер)", name: "image", widget: "image", required: false, hint: "Только для карточки и шапки статьи. Графики, схемы и фото внутри текста добавляйте ниже в редакторе." }
@@ -90,6 +94,7 @@ collections:
     public_folder: ""
     fields:
       - { label: "Заголовок", name: "title", widget: "string" }
+      - { label: "URL-слаг (латиницей)", name: "slug", widget: "string", required: false, pattern: ['^[a-z0-9]+(?:-[a-z0-9]+)*$', 'Только строчная латиница, цифры и дефисы (например: uhf-rfid-antenna-guide)'], hint: "Короткий ЧПУ для URL статьи на латинице (например: uhf-rfid-antenna-guide). Если оставить пустым — URL построится из заголовка." }
       - { label: "Описание", name: "description", widget: "string", required: false }
       - { label: "Дата", name: "date", widget: "datetime" }
       - { label: "Обложка (верхний баннер)", name: "image", widget: "image", required: false, hint: "Только для карточки и шапки статьи. Графики, схемы и фото внутри текста добавляйте ниже в редакторе." }
@@ -108,6 +113,7 @@ collections:
     public_folder: ""
     fields:
       - { label: "Заголовок", name: "title", widget: "string" }
+      - { label: "URL-слаг (латиницей)", name: "slug", widget: "string", required: false, pattern: ['^[a-z0-9]+(?:-[a-z0-9]+)*$', 'Только строчная латиница, цифры и дефисы (например: uhf-rfid-antenna-guide)'], hint: "Короткий ЧПУ для URL статьи на латинице (например: uhf-rfid-antenna-guide). Если оставить пустым — URL построится из заголовка." }
       - { label: "Описание", name: "description", widget: "string", required: false }
       - { label: "Дата", name: "date", widget: "datetime" }
       - { label: "Обложка (верхний баннер)", name: "image", widget: "image", required: false, hint: "Только для карточки и шапки статьи. Графики, схемы и фото внутри текста добавляйте ниже в редакторе." }
@@ -126,6 +132,7 @@ collections:
     public_folder: ""
     fields:
       - { label: "Заголовок", name: "title", widget: "string" }
+      - { label: "URL-слаг (латиницей)", name: "slug", widget: "string", required: false, pattern: ['^[a-z0-9]+(?:-[a-z0-9]+)*$', 'Только строчная латиница, цифры и дефисы (например: uhf-rfid-antenna-guide)'], hint: "Короткий ЧПУ для URL статьи на латинице (например: uhf-rfid-antenna-guide). Если оставить пустым — URL построится из заголовка." }
       - { label: "Описание", name: "description", widget: "string", required: false }
       - { label: "Дата", name: "date", widget: "datetime" }
       - { label: "Обложка (верхний баннер)", name: "image", widget: "image", required: false, hint: "Только для карточки и шапки статьи. Графики, схемы и фото внутри текста добавляйте ниже в редакторе." }
@@ -144,6 +151,7 @@ collections:
     public_folder: ""
     fields:
       - { label: "Заголовок", name: "title", widget: "string" }
+      - { label: "URL-слаг (латиницей)", name: "slug", widget: "string", required: false, pattern: ['^[a-z0-9]+(?:-[a-z0-9]+)*$', 'Только строчная латиница, цифры и дефисы (например: uhf-rfid-antenna-guide)'], hint: "Короткий ЧПУ для URL статьи на латинице (например: uhf-rfid-antenna-guide). Если оставить пустым — URL построится из заголовка." }
       - { label: "Описание", name: "description", widget: "string", required: false }
       - { label: "Дата", name: "date", widget: "datetime" }
       - { label: "Обложка (верхний баннер)", name: "image", widget: "image", required: false, hint: "Только для карточки и шапки статьи. Графики, схемы и фото внутри текста добавляйте ниже в редакторе." }
@@ -162,6 +170,7 @@ collections:
     public_folder: ""
     fields:
       - { label: "Заголовок", name: "title", widget: "string" }
+      - { label: "URL-слаг (латиницей)", name: "slug", widget: "string", required: false, pattern: ['^[a-z0-9]+(?:-[a-z0-9]+)*$', 'Только строчная латиница, цифры и дефисы (например: uhf-rfid-antenna-guide)'], hint: "Короткий ЧПУ для URL статьи на латинице (например: uhf-rfid-antenna-guide). Если оставить пустым — URL построится из заголовка." }
       - { label: "Описание", name: "description", widget: "string", required: false }
       - { label: "Дата", name: "date", widget: "datetime" }
       - { label: "Обложка (верхний баннер)", name: "image", widget: "image", required: false, hint: "Только для карточки и шапки статьи. Графики, схемы и фото внутри текста добавляйте ниже в редакторе." }
@@ -180,6 +189,7 @@ collections:
     public_folder: ""
     fields:
       - { label: "Заголовок", name: "title", widget: "string" }
+      - { label: "URL-слаг (латиницей)", name: "slug", widget: "string", required: false, pattern: ['^[a-z0-9]+(?:-[a-z0-9]+)*$', 'Только строчная латиница, цифры и дефисы (например: uhf-rfid-antenna-guide)'], hint: "Короткий ЧПУ для URL статьи на латинице (например: uhf-rfid-antenna-guide). Если оставить пустым — URL построится из заголовка." }
       - { label: "Описание", name: "description", widget: "string", required: false }
       - { label: "Дата", name: "date", widget: "datetime" }
       - { label: "Обложка (верхний баннер)", name: "image", widget: "image", required: false, hint: "Только для карточки и шапки статьи. Графики, схемы и фото внутри текста добавляйте ниже в редакторе." }
@@ -198,6 +208,7 @@ collections:
     public_folder: ""
     fields:
       - { label: "Заголовок", name: "title", widget: "string" }
+      - { label: "URL-слаг (латиницей)", name: "slug", widget: "string", required: false, pattern: ['^[a-z0-9]+(?:-[a-z0-9]+)*$', 'Только строчная латиница, цифры и дефисы (например: uhf-rfid-antenna-guide)'], hint: "Короткий ЧПУ для URL статьи на латинице (например: uhf-rfid-antenna-guide). Если оставить пустым — URL построится из заголовка." }
       - { label: "Описание", name: "description", widget: "string", required: false }
       - { label: "Дата", name: "date", widget: "datetime" }
       - { label: "Обложка (верхний баннер)", name: "image", widget: "image", required: false, hint: "Только для карточки и шапки статьи. Графики, схемы и фото внутри текста добавляйте ниже в редакторе." }
@@ -216,6 +227,7 @@ collections:
     public_folder: ""
     fields:
       - { label: "Заголовок", name: "title", widget: "string" }
+      - { label: "URL-слаг (латиницей)", name: "slug", widget: "string", required: false, pattern: ['^[a-z0-9]+(?:-[a-z0-9]+)*$', 'Только строчная латиница, цифры и дефисы (например: uhf-rfid-antenna-guide)'], hint: "Короткий ЧПУ для URL статьи на латинице (например: uhf-rfid-antenna-guide). Если оставить пустым — URL построится из заголовка." }
       - { label: "Описание", name: "description", widget: "string", required: false }
       - { label: "Дата", name: "date", widget: "datetime" }
       - { label: "Обложка (верхний баннер)", name: "image", widget: "image", required: false, hint: "Только для карточки и шапки статьи. Графики, схемы и фото внутри текста добавляйте ниже в редакторе." }
@@ -234,6 +246,7 @@ collections:
     public_folder: ""
     fields:
       - { label: "Заголовок", name: "title", widget: "string" }
+      - { label: "URL-слаг (латиницей)", name: "slug", widget: "string", required: false, pattern: ['^[a-z0-9]+(?:-[a-z0-9]+)*$', 'Только строчная латиница, цифры и дефисы (например: uhf-rfid-antenna-guide)'], hint: "Короткий ЧПУ для URL статьи на латинице (например: uhf-rfid-antenna-guide). Если оставить пустым — URL построится из заголовка." }
       - { label: "Описание", name: "description", widget: "string", required: false }
       - { label: "Дата", name: "date", widget: "datetime" }
       - { label: "Обложка (верхний баннер)", name: "image", widget: "image", required: false, hint: "Только для карточки и шапки статьи. Графики, схемы и фото внутри текста добавляйте ниже в редакторе." }
@@ -252,6 +265,7 @@ collections:
     public_folder: ""
     fields:
       - { label: "Заголовок", name: "title", widget: "string" }
+      - { label: "URL-слаг (латиницей)", name: "slug", widget: "string", required: false, pattern: ['^[a-z0-9]+(?:-[a-z0-9]+)*$', 'Только строчная латиница, цифры и дефисы (например: uhf-rfid-antenna-guide)'], hint: "Короткий ЧПУ для URL статьи на латинице (например: uhf-rfid-antenna-guide). Если оставить пустым — URL построится из заголовка." }
       - { label: "Описание", name: "description", widget: "string", required: false }
       - { label: "Дата", name: "date", widget: "datetime" }
       - { label: "Обложка (верхний баннер)", name: "image", widget: "image", required: false, hint: "Только для карточки и шапки статьи. Графики, схемы и фото внутри текста добавляйте ниже в редакторе." }
@@ -270,6 +284,7 @@ collections:
     public_folder: ""
     fields:
       - { label: "Заголовок", name: "title", widget: "string" }
+      - { label: "URL-слаг (латиницей)", name: "slug", widget: "string", required: false, pattern: ['^[a-z0-9]+(?:-[a-z0-9]+)*$', 'Только строчная латиница, цифры и дефисы (например: uhf-rfid-antenna-guide)'], hint: "Короткий ЧПУ для URL статьи на латинице (например: uhf-rfid-antenna-guide). Если оставить пустым — URL построится из заголовка." }
       - { label: "Описание", name: "description", widget: "string", required: false }
       - { label: "Дата", name: "date", widget: "datetime" }
       - { label: "Обложка (верхний баннер)", name: "image", widget: "image", required: false, hint: "Только для карточки и шапки статьи. Графики, схемы и фото внутри текста добавляйте ниже в редакторе." }
@@ -288,6 +303,7 @@ collections:
     public_folder: ""
     fields:
       - { label: "Заголовок", name: "title", widget: "string" }
+      - { label: "URL-слаг (латиницей)", name: "slug", widget: "string", required: false, pattern: ['^[a-z0-9]+(?:-[a-z0-9]+)*$', 'Только строчная латиница, цифры и дефисы (например: uhf-rfid-antenna-guide)'], hint: "Короткий ЧПУ для URL статьи на латинице (например: uhf-rfid-antenna-guide). Если оставить пустым — URL построится из заголовка." }
       - { label: "Описание", name: "description", widget: "string", required: false }
       - { label: "Дата", name: "date", widget: "datetime" }
       - { label: "Обложка (верхний баннер)", name: "image", widget: "image", required: false, hint: "Только для карточки и шапки статьи. Графики, схемы и фото внутри текста добавляйте ниже в редакторе." }
@@ -306,6 +322,7 @@ collections:
     public_folder: ""
     fields:
       - { label: "Заголовок", name: "title", widget: "string" }
+      - { label: "URL-слаг (латиницей)", name: "slug", widget: "string", required: false, pattern: ['^[a-z0-9]+(?:-[a-z0-9]+)*$', 'Только строчная латиница, цифры и дефисы (например: uhf-rfid-antenna-guide)'], hint: "Короткий ЧПУ для URL статьи на латинице (например: uhf-rfid-antenna-guide). Если оставить пустым — URL построится из заголовка." }
       - { label: "Описание", name: "description", widget: "string", required: false }
       - { label: "Дата", name: "date", widget: "datetime" }
       - { label: "Обложка (верхний баннер)", name: "image", widget: "image", required: false, hint: "Только для карточки и шапки статьи. Графики, схемы и фото внутри текста добавляйте ниже в редакторе." }
@@ -324,6 +341,7 @@ collections:
     public_folder: ""
     fields:
       - { label: "Заголовок", name: "title", widget: "string" }
+      - { label: "URL-слаг (латиницей)", name: "slug", widget: "string", required: false, pattern: ['^[a-z0-9]+(?:-[a-z0-9]+)*$', 'Только строчная латиница, цифры и дефисы (например: uhf-rfid-antenna-guide)'], hint: "Короткий ЧПУ для URL статьи на латинице (например: uhf-rfid-antenna-guide). Если оставить пустым — URL построится из заголовка." }
       - { label: "Описание", name: "description", widget: "string", required: false }
       - { label: "Дата", name: "date", widget: "datetime" }
       - { label: "Обложка (верхний баннер)", name: "image", widget: "image", required: false, hint: "Только для карточки и шапки статьи. Графики, схемы и фото внутри текста добавляйте ниже в редакторе." }
@@ -342,6 +360,7 @@ collections:
     public_folder: ""
     fields:
       - { label: "Заголовок", name: "title", widget: "string" }
+      - { label: "URL-слаг (латиницей)", name: "slug", widget: "string", required: false, pattern: ['^[a-z0-9]+(?:-[a-z0-9]+)*$', 'Только строчная латиница, цифры и дефисы (например: uhf-rfid-antenna-guide)'], hint: "Короткий ЧПУ для URL статьи на латинице (например: uhf-rfid-antenna-guide). Если оставить пустым — URL построится из заголовка." }
       - { label: "Описание", name: "description", widget: "string", required: false }
       - { label: "Дата", name: "date", widget: "datetime" }
       - { label: "Обложка (верхний баннер)", name: "image", widget: "image", required: false, hint: "Только для карточки и шапки статьи. Графики, схемы и фото внутри текста добавляйте ниже в редакторе." }
@@ -360,6 +379,7 @@ collections:
     public_folder: ""
     fields:
       - { label: "Заголовок", name: "title", widget: "string" }
+      - { label: "URL-слаг (латиницей)", name: "slug", widget: "string", required: false, pattern: ['^[a-z0-9]+(?:-[a-z0-9]+)*$', 'Только строчная латиница, цифры и дефисы (например: uhf-rfid-antenna-guide)'], hint: "Короткий ЧПУ для URL статьи на латинице (например: uhf-rfid-antenna-guide). Если оставить пустым — URL построится из заголовка." }
       - { label: "Описание", name: "description", widget: "string", required: false }
       - { label: "Дата", name: "date", widget: "datetime" }
       - { label: "Обложка (верхний баннер)", name: "image", widget: "image", required: false, hint: "Только для карточки и шапки статьи. Графики, схемы и фото внутри текста добавляйте ниже в редакторе." }

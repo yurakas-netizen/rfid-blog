@@ -18,7 +18,11 @@
           </svg>
         </span>
         <div class="site-meta">
-          <h1 class="site-name"><%= langConfig.title %></h1>
+          <% if (typeof isHome !== 'undefined' && isHome) { %>
+            <h1 class="site-name"><%= langConfig.title %></h1>
+          <% } else { %>
+            <div class="site-name"><%= langConfig.title %></div>
+          <% } %>
         </div>
       </a>
       <button id="toggle-menu" class="hamburger" type="button" aria-label="Toggle Menu" aria-expanded="false">
@@ -31,7 +35,7 @@
     </div>
 
     <div class="site-meta">
-      <h2 class="site-description"><%= t.subtitle %></h2>
+      <div class="site-description"><%= t.subtitle %></div>
     </div>
   </header>
 

@@ -26,17 +26,13 @@
         </span>
     </div>
     <section class="copyright">
-        &copy;
-        {{ if and (.Site.Params.footer.since) (ne .Site.Params.footer.since (int (now.Format "2006"))) }}
-            {{ .Site.Params.footer.since }} -
-        {{ end }}
-        {{ now.Format "2006" }} {{ default .Site.Title .Site.Copyright }}
+        &copy; {{- if and (.Site.Params.footer.since) (ne .Site.Params.footer.since (int (now.Format "2006"))) }} {{ .Site.Params.footer.since }}–{{ else }} {{ end -}}{{ now.Format "2006" }} {{ default .Site.Title .Site.Copyright }}
     </section>
     {{ with .Site.Params.footer.customText }}
         <section class="powerby">{{ . | safeHTML }}</section>
     {{ else }}
-        <section class="powerby">
-            {{ with .Site.Params.sidebar.subtitle }}{{ . }} · {{ end }}{{ with .Site.Params.article.license.default }}{{ . }}{{ end }}
-        </section>
+        {{ with .Site.Params.sidebar.subtitle }}
+            <section class="powerby">{{ . }}</section>
+        {{ end }}
     {{ end }}
 </footer>

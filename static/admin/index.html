@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>RFID Ukraine — CMS</title>
-  <link href="/admin/config.yml?v=20261125-tk" type="text/yaml" rel="cms-config-url" />
+  <link href="/admin/config.yml?v=20261125-slug" type="text/yaml" rel="cms-config-url" />
   <style>
     .rfid-cms-toolbar {
       display: flex;
@@ -1025,6 +1025,9 @@
       function serializeMarkdownArticle(data, stripInlineImages) {
         var lines = ['---'];
         lines.push('title: ' + JSON.stringify(String(data.title || '')));
+        if (data.slug) {
+          lines.push('slug: ' + JSON.stringify(String(data.slug).trim()));
+        }
         if (data.description) {
           lines.push('description: ' + JSON.stringify(String(data.description)));
         }
@@ -1056,6 +1059,7 @@
       function serializeJsonArticle(data, stripInlineImages) {
         var payload = {
           title: String(data.title || ''),
+          slug: String(data.slug || '').trim(),
           description: String(data.description || ''),
           date: normalizeIsoDate(data.date),
           translationKey: String(data.translationKey || '').trim(),
@@ -1151,6 +1155,8 @@
           return {
             hasTitle: typeof obj.title === 'string',
             title: typeof obj.title === 'string' ? obj.title : '',
+            hasSlug: typeof obj.slug === 'string' && obj.slug.trim().length > 0,
+            slug: typeof obj.slug === 'string' ? obj.slug.trim() : '',
             hasDescription: typeof obj.description === 'string',
             description: typeof obj.description === 'string' ? obj.description : '',
             hasDate: Boolean(obj.date),
@@ -1179,6 +1185,8 @@
           return {
             hasTitle: typeof meta.title === 'string' && meta.title.length > 0,
             title: typeof meta.title === 'string' ? meta.title : '',
+            hasSlug: typeof meta.slug === 'string' && meta.slug.trim().length > 0,
+            slug: typeof meta.slug === 'string' ? meta.slug.trim() : '',
             hasDescription: typeof meta.description === 'string',
             description: typeof meta.description === 'string' ? meta.description : '',
             hasDate: Boolean(meta.date),
@@ -1198,6 +1206,8 @@
         return {
           hasTitle: false,
           title: '',
+          hasSlug: false,
+          slug: '',
           hasDescription: false,
           description: '',
           hasDate: false,
@@ -1232,6 +1242,7 @@
           ctx: ctx.props,
           data: {
             title: js.title || '',
+            slug: js.slug || '',
             description: js.description || '',
             date: normalizeIsoDate(js.date) || new Date().toISOString(),
             translationKey: js.translationKey || '',
@@ -1258,6 +1269,11 @@
         if (opts.title && parsed.hasTitle) {
           var fTitle = getField('title');
           if (fTitle) onChange(fTitle, parsed.title);
+        }
+
+        if (opts.slug && parsed.hasSlug) {
+          var fSlug = getField('slug');
+          if (fSlug) onChange(fSlug, parsed.slug);
         }
 
         if (opts.description && parsed.hasDescription) {
@@ -1353,6 +1369,7 @@
               '</div>' +
               '<div class="rfid-modal-row rfid-import-fields" style="display:none;">' +
                 '<label class="rfid-modal-check"><input type="checkbox" data-field="title" checked /><span>Заголовок</span></label>' +
+                '<label class="rfid-modal-check"><input type="checkbox" data-field="slug" checked /><span>URL-слаг</span></label>' +
                 '<label class="rfid-modal-check"><input type="checkbox" data-field="description" checked /><span>Описание</span></label>' +
                 '<label class="rfid-modal-check"><input type="checkbox" data-field="date" checked /><span>Дата</span></label>' +
                 '<label class="rfid-modal-check"><input type="checkbox" data-field="translationKey" checked /><span>Ключ перевода</span></label>' +
@@ -1429,6 +1446,7 @@
             var parsed = parseImportedArticle(textarea.value);
             var parts = [];
             if (parsed.hasTitle) parts.push('Заголовок');
+            if (parsed.hasSlug) parts.push('URL-слаг');
             if (parsed.hasDescription) parts.push('Описание');
             if (parsed.hasDate) parts.push('Дата');
             if (parsed.hasTranslationKey) parts.push('Ключ перевода');
@@ -1499,6 +1517,7 @@
             }
             applyImportedData(parsed, {
               title: isChecked('title'),
+              slug: isChecked('slug'),
               description: isChecked('description'),
               date: isChecked('date'),
               translationKey: isChecked('translationKey'),

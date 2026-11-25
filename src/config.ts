@@ -71,7 +71,7 @@ export interface I18nStrings {
 }
 
 export const SITE_CONFIG = {
-  baseUrl: process.env.SITE_URL || 'https://ua-rfid.netlify.app',
+  baseUrl: process.env.SITE_URL || 'https://rfid.org.ua',
   defaultLanguage: 'uk' as LangCode,
   defaultContentLanguageInSubdir: false,
   title: 'RFID Ukraine',
@@ -81,8 +81,8 @@ export const SITE_CONFIG = {
   favicon: '/static/admin/favicon.svg',
   faviconPng: '/assets/img/favicon.png',
   pagerSize: 5,
-  footerSince: 2026,
-  license: 'MIT License',
+  footerSince: 2015,
+  license: '© 2015–2026 RFID Ukraine',
   colorSchemeDefault: 'dark' as 'dark' | 'light',
   colorSchemeToggle: true,
   widgets: {

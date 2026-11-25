@@ -1,0 +1,245 @@
+{{- $page := . -}}
+{{- $homePermalink := .Site.Home.Permalink -}}
+{{- $orgId := "https://rfid.org.ua/#organization" -}}
+{{- $personId := "https://rfid.org.ua/#yurii-kasian" -}}
+{{- $websiteId := printf "%s#website" $homePermalink -}}
+
+{{- $organization := dict
+    "@type" "Organization"
+    "@id" $orgId
+    "name" "RFID Ukraine"
+    "alternateName" (slice "RFID.ORG.UA" "РФІД Україна" "РФИД Украина")
+    "url" "https://rfid.org.ua/"
+    "foundingDate" "2015"
+    "description" "Independent engineering and analytical platform for UHF RFID, RTLS, NFC, and industrial IIoT: ETSI/FCC/ISO/GS1 standards, RF physics, RFID-U cloud PWA terminal, and 5-year TCO/ROI models."
+    "address" (dict
+        "@type" "PostalAddress"
+        "addressLocality" "Kyiv"
+        "addressCountry" "UA"
+    )
+    "contactPoint" (dict
+        "@type" "ContactPoint"
+        "telephone" "+380-66-153-60-30"
+        "contactType" "technical support"
+        "availableLanguage" (slice "English" "Ukrainian" "Russian")
+    )
+    "founder" (dict "@id" $personId)
+-}}
+
+{{- $person := dict
+    "@type" "Person"
+    "@id" $personId
+    "name" "Yurii Kasian"
+    "alternateName" "Юрий Касьян"
+    "jobTitle" "Principal RFID Engineer"
+    "worksFor" (dict "@id" $orgId)
+-}}
+
+{{- $website := dict
+    "@type" "WebSite"
+    "@id" $websiteId
+    "url" $homePermalink
+    "name" "RFID Ukraine — UHF RFID, RTLS & IIoT Engineering Platform"
+    "publisher" (dict "@id" $orgId)
+    "inLanguage" .Site.Language.Lang
+-}}
+
+{{- $graph := slice $organization $person $website -}}
+
+{{- /* TechArticle + workTranslation for blog/engineering articles */ -}}
+{{- $isPost := and .IsPage (or (eq .Type "post") (eq .Type "posts") (in .Site.Params.mainSections .Type)) -}}
+{{- if $isPost -}}
+    {{- $rawSummary := .Summary | plainify | htmlUnescape | replaceRE `\s+` " " | strings.TrimSpace -}}
+    {{- $articleDesc := .Description | default $rawSummary -}}
+    {{- $datePub := .Date.Format "2006-01-02T15:04:05Z07:00" -}}
+    {{- $dateMod := (.Lastmod | default .Date).Format "2006-01-02T15:04:05Z07:00" -}}
+
+    {{- $techArticle := dict
+        "@type" "TechArticle"
+        "@id" (printf "%s#article" .Permalink)
+        "mainEntityOfPage" .Permalink
+        "url" .Permalink
+        "headline" .Title
+        "description" $articleDesc
+        "datePublished" $datePub
+        "dateModified" $dateMod
+        "inLanguage" .Language.Lang
+        "author" (dict "@id" $personId)
+        "publisher" (dict "@id" $orgId)
+        "isPartOf" (dict "@id" $websiteId)
+    -}}
+
+    {{- $keywords := slice -}}
+    {{- with .Params.categories -}}
+        {{- range . -}}
+            {{- $val := strings.TrimSpace (string .) -}}
+            {{- if $val -}}{{- $keywords = $keywords | append $val -}}{{- end -}}
+        {{- end -}}
+    {{- end -}}
+    {{- with .Params.tags -}}
+        {{- range . -}}
+            {{- $val := strings.TrimSpace (string .) -}}
+            {{- if $val -}}{{- $keywords = $keywords | append $val -}}{{- end -}}
+        {{- end -}}
+    {{- end -}}
+    {{- $keywords = $keywords | uniq -}}
+    {{- if gt (len $keywords) 0 -}}
+        {{- $techArticle = merge $techArticle (dict "keywords" $keywords) -}}
+    {{- end -}}
+
+    {{- with .Params.image -}}
+        {{- $imgStr := strings.TrimSpace (string .) -}}
+        {{- if $imgStr -}}
+            {{- $imgUrl := $imgStr -}}
+            {{- if not (or (hasPrefix $imgStr "http://") (hasPrefix $imgStr "https://")) -}}
+                {{- with $page.Resources.GetMatch $imgStr -}}
+                    {{- $imgUrl = .Permalink -}}
+                {{- else -}}
+                    {{- $imgUrl = $imgStr | absURL -}}
+                {{- end -}}
+            {{- end -}}
+            {{- $techArticle = merge $techArticle (dict "image" $imgUrl) -}}
+        {{- end -}}
+    {{- end -}}
+
+    {{- $tk := "" -}}
+    {{- with (.Params.translationkey | default .Params.translationKey) -}}
+        {{- $tk = strings.TrimSpace (string .) -}}
+    {{- end -}}
+    {{- if $tk -}}
+        {{- $currentLang := $page.Language.Lang -}}
+        {{- $currentRel := $page.RelPermalink -}}
+        {{- $seenLangs := dict -}}
+        {{- $translations := slice -}}
+        {{- range hugo.Sites -}}
+            {{- range .RegularPages -}}
+                {{- $otherTk := "" -}}
+                {{- with (.Params.translationkey | default .Params.translationKey) -}}
+                    {{- $otherTk = strings.TrimSpace (string .) -}}
+                {{- end -}}
+                {{- if and (eq $otherTk $tk) (ne .RelPermalink $currentRel) (ne .Language.Lang $currentLang) (not (index $seenLangs .Language.Lang)) -}}
+                    {{- $seenLangs = merge $seenLangs (dict .Language.Lang true) -}}
+                    {{- $translations = $translations | append . -}}
+                {{- end -}}
+            {{- end -}}
+        {{- end -}}
+        {{- if gt (len $translations) 0 -}}
+            {{- $translations = sort $translations "Language.Weight" "asc" -}}
+            {{- $workTranslations := slice -}}
+            {{- range $translations -}}
+                {{- $workTranslations = $workTranslations | append (dict
+                    "@type" "TechArticle"
+                    "inLanguage" .Language.Lang
+                    "url" .Permalink
+                ) -}}
+            {{- end -}}
+            {{- $techArticle = merge $techArticle (dict "workTranslation" $workTranslations) -}}
+        {{- end -}}
+    {{- end -}}
+
+    {{- $graph = $graph | append $techArticle -}}
+{{- end -}}
+
+{{- /* BreadcrumbList for non-home pages */ -}}
+{{- if not .IsHome -}}
+    {{- $breadcrumbs := slice -}}
+    {{- $pos := 1 -}}
+    {{- $breadcrumbs = $breadcrumbs | append (dict
+        "@type" "ListItem"
+        "position" $pos
+        "name" "RFID Ukraine"
+        "item" $homePermalink
+    ) -}}
+    {{- $pos = add $pos 1 -}}
+
+    {{- if $isPost -}}
+        {{- $cats := .GetTerms "categories" -}}
+        {{- if gt (len $cats) 0 -}}
+            {{- $firstCat := index $cats 0 -}}
+            {{- if and $firstCat.LinkTitle $firstCat.Permalink -}}
+                {{- $breadcrumbs = $breadcrumbs | append (dict
+                    "@type" "ListItem"
+                    "position" $pos
+                    "name" $firstCat.LinkTitle
+                    "item" $firstCat.Permalink
+                ) -}}
+                {{- $pos = add $pos 1 -}}
+            {{- end -}}
+        {{- end -}}
+    {{- else if and .Parent (not .Parent.IsHome) .Parent.Title .Parent.Permalink -}}
+        {{- $breadcrumbs = $breadcrumbs | append (dict
+            "@type" "ListItem"
+            "position" $pos
+            "name" .Parent.Title
+            "item" .Parent.Permalink
+        ) -}}
+        {{- $pos = add $pos 1 -}}
+    {{- end -}}
+
+    {{- $currentName := .Title | default .LinkTitle | default .Site.Title -}}
+    {{- $breadcrumbs = $breadcrumbs | append (dict
+        "@type" "ListItem"
+        "position" $pos
+        "name" $currentName
+    ) -}}
+
+    {{- $graph = $graph | append (dict
+        "@type" "BreadcrumbList"
+        "@id" (printf "%s#breadcrumb" .Permalink)
+        "itemListElement" $breadcrumbs
+    ) -}}
+{{- end -}}
+
+{{- /* Automatic FAQPage extraction from <h2> FAQ section and <h3> question blocks */ -}}
+{{- if $isPost -}}
+    {{- $faqItems := slice -}}
+    {{- $h2Chunks := split .Content "<h2" -}}
+    {{- range $idx, $chunk := $h2Chunks -}}
+        {{- if gt $idx 0 -}}
+            {{- $h2Parts := split $chunk "</h2>" -}}
+            {{- if ge (len $h2Parts) 2 -}}
+                {{- $h2Html := printf "<h2%s</h2>" (index $h2Parts 0) -}}
+                {{- $h2Text := $h2Html | plainify | htmlUnescape | replaceRE `\s+` " " | strings.TrimSpace -}}
+                {{- if findRE `(?i)(^|\b)(faq|частые\s+вопросы|часто\s+задаваемые\s+вопросы|питання\s+та\s+відповіді|поширені\s+питання|часті\s+питання|frequently\s+asked\s+questions|häufige\s+fragen|questions\s+fréquentes|preguntas\s+frecuentes|domande\s+frequenti|veelgestelde\s+vragen|perguntas\s+frequentes|najczęściej\s+zadawane\s+pytania|ofte\s+stillede\s+spørgsmål|vanliga\s+frågor|ofte\s+stilte\s+spørsmål|usein\s+kysytyt\s+kysymykset|často\s+kladené\s+otázky|časté\s+otázky|întrebări\s+frecvente|често\s+задавани\s+въпроси|korduma\s+kippuvad\s+küsimused|dažniausiai\s+užduodami\s+klausimai)(\b|$)` $h2Text -}}
+                    {{- $faqBody := index $h2Parts 1 -}}
+                    {{- $h3Chunks := split $faqBody "<h3" -}}
+                    {{- range $qIdx, $qChunk := $h3Chunks -}}
+                        {{- if gt $qIdx 0 -}}
+                            {{- $h3Parts := split $qChunk "</h3>" -}}
+                            {{- if ge (len $h3Parts) 2 -}}
+                                {{- $qHtml := printf "<h3%s</h3>" (index $h3Parts 0) -}}
+                                {{- $qName := $qHtml | plainify | htmlUnescape | replaceRE `\s+` " " | strings.TrimSpace -}}
+                                {{- $aHtml := index $h3Parts 1 -}}
+                                {{- $aPrepared := $aHtml | replaceRE `(?i)</(p|li|tr|div|blockquote|h[4-6])>` "\n" | replaceRE `(?i)<br\s*/?>` "\n" | replaceRE `(?i)</t[dh]>` " " -}}
+                                {{- $aText := $aPrepared | plainify | htmlUnescape | replaceRE `[ \t\r]+` " " | replaceRE `\n[ \t]+` "\n" | replaceRE `[ \t]+\n` "\n" | replaceRE `\n{2,}` "\n" | strings.TrimSpace -}}
+                                {{- if and $qName $aText -}}
+                                    {{- $faqItems = $faqItems | append (dict
+                                        "@type" "Question"
+                                        "name" $qName
+                                        "acceptedAnswer" (dict
+                                            "@type" "Answer"
+                                            "text" $aText
+                                        )
+                                    ) -}}
+                                {{- end -}}
+                            {{- end -}}
+                        {{- end -}}
+                    {{- end -}}
+                {{- end -}}
+            {{- end -}}
+        {{- end -}}
+    {{- end -}}
+    {{- if gt (len $faqItems) 0 -}}
+        {{- $graph = $graph | append (dict
+            "@type" "FAQPage"
+            "@id" (printf "%s#faq" .Permalink)
+            "mainEntity" $faqItems
+        ) -}}
+    {{- end -}}
+{{- end -}}
+
+{{- $schemaPayload := dict
+    "@context" "https://schema.org"
+    "@graph" $graph
+-}}
+<script type="application/ld+json">{{ $schemaPayload | jsonify | safeJS }}</script>
