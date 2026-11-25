@@ -1,7 +1,16 @@
 ---
 title: "RFID-U: один інвентаризаційний термінал — три форм-фактори"
 slug: rfid-u-odin-inventarizatsiyniy-terminal-tri-form-faktori
+description: "RFID-U: PWA-інвентаризація на ПК, смартфоні та планшеті"
 date: 2026-11-25T14:35:00.000Z
+categories:
+  - "RFID-U: три форм-фактори"
+tags:
+  - RFID-U
+  - PWA інвентаризація
+  - UHF RFID
+  - WebSocket міст
+translationKey: rfid-u
 ---
 
 
