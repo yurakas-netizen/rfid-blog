@@ -8,7 +8,7 @@ description: "Technische Analyse validierter RFID-Chargenrückverfolgung in der
   Gammasterilisation, Miller M=4 / Q = 7–8 bei 600 Fläschchen/min, EU-GMP Annex
   1/11, FDA 21 CFR Part 11 und ISPE GAMP 5."
 date: 2026-06-09T22:00:00.000Z
-image: industrial_uhf_rfid_applications-1_3.jpg
+image: industry_4.0_identification-1_3.jpg
 categories:
   - RFID Solutions
 tags:
