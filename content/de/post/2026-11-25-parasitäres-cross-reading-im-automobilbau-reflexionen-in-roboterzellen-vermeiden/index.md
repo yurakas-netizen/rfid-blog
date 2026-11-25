@@ -8,7 +8,7 @@ description: "Technische Analyse von parasitärem UHF-RFID Cross-Reading in
   fünf Gegenmaßnahmen (18–21 dBm ERP, Miller M=4, Q = 4–5, Session S2,
   RF-Shielding) und TCO für 24 Roboterzellen / 120.000 Karosserien pro Jahr."
 date: 2026-06-08T22:00:00.000Z
-image: industrial_uhf_rfid_applications-3_4.jpg
+image: industry_4.0_identification-3_4.jpg
 categories:
   - RFID Solutions
 tags:
