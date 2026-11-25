@@ -91,6 +91,7 @@ function stripMarkdown(md: string): string {
   return md
     .replace(/```[\s\S]*?```/g, ' ')
     .replace(/`[^`]*`/g, ' ')
+    .replace(/\{\{<\s*rawhtml\s*>\}\}[\s\S]*?\{\{<\s*\/rawhtml\s*>\}\}/g, ' ')
     .replace(/\{\{<[\s\S]*?>\}\}/g, ' ')
     .replace(/!\[[^\]]*\]\([^)]*\)/g, ' ')
     .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')
@@ -168,6 +169,7 @@ function renderMarkdownWithMath(
   permalinkBase: string
 ): { html: string; toc: TocItem[] } {
   const codePlaceholders: string[] = [];
+  const rawHtmlPlaceholders: string[] = [];
   const mathPlaceholders: string[] = [];
 
   // 1. Protect fenced code blocks
@@ -177,13 +179,22 @@ function renderMarkdownWithMath(
     return `@@CODE_BLOCK_${idx}@@`;
   });
 
-  // Protect 4-space indented code blocks if preceded by blank line
   // Protect inline code spans
   processed = processed.replace(/`[^`\n]+`/g, (match) => {
     const idx = codePlaceholders.length;
     codePlaceholders.push(match);
     return `@@CODE_BLOCK_${idx}@@`;
   });
+
+  // 1b. Protect {{< rawhtml >}}...{{< /rawhtml >}} blocks before math/marked
+  processed = processed.replace(
+    /\{\{<\s*rawhtml\s*>\}\}([\s\S]*?)\{\{<\s*\/rawhtml\s*>\}\}/g,
+    (_, inner: string) => {
+      const idx = rawHtmlPlaceholders.length;
+      rawHtmlPlaceholders.push(inner.replace(/^\r?\n|\r?\n$/g, ''));
+      return `\n\n@@RAW_HTML_${idx}@@\n\n`;
+    }
+  );
 
   // 2. Process Hugo shortcodes
   processed = processShortcodes(processed);
@@ -357,6 +368,14 @@ function renderMarkdownWithMath(
   });
   html = html.replace(/@@MATH_INLINE_(\d+)@@/g, (_, idxStr: string) => {
     return mathPlaceholders[Number(idxStr)] ?? '';
+  });
+
+  // 8. Restore rawhtml shortcode blocks (unwrapping standalone <p> wrapper)
+  html = html.replace(/<p>\s*@@RAW_HTML_(\d+)@@\s*<\/p>/g, (_, idxStr: string) => {
+    return rawHtmlPlaceholders[Number(idxStr)] ?? '';
+  });
+  html = html.replace(/@@RAW_HTML_(\d+)@@/g, (_, idxStr: string) => {
+    return rawHtmlPlaceholders[Number(idxStr)] ?? '';
   });
 
   // Group consecutive images on same paragraph into gallery grid

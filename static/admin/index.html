@@ -169,6 +169,10 @@
       overflow: hidden;
     }
 
+    .rfid-modal-dialog.is-wide {
+      max-width: 860px;
+    }
+
     .rfid-modal-header {
       display: flex;
       align-items: center;
@@ -263,6 +267,26 @@
     .rfid-modal-textarea:focus {
       border-color: #0284c7;
       background: #ffffff;
+    }
+
+    .rfid-modal-textarea.is-code {
+      min-height: 340px;
+      tab-size: 2;
+      -moz-tab-size: 2;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+
+    .rfid-modal-textarea.is-code.is-nowrap {
+      white-space: pre;
+      overflow-wrap: normal;
+      overflow-x: auto;
+    }
+
+    .rfid-modal-hint {
+      font-size: 12px;
+      color: #64748b;
+      margin-left: auto;
     }
 
     .rfid-modal-summary {
@@ -361,6 +385,58 @@
               '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0;">' +
                 '<figure style="margin:0;text-align:center;"><img src="' + (data.img1 || '') + '" alt="' + (data.alt1 || '') + '" style="max-width:100%;border-radius:8px;" />' + (data.alt1 ? '<figcaption style="font-size:12px;color:#64748b;margin-top:4px;">' + data.alt1 + '</figcaption>' : '') + '</figure>' +
                 '<figure style="margin:0;text-align:center;"><img src="' + (data.img2 || '') + '" alt="' + (data.alt2 || '') + '" style="max-width:100%;border-radius:8px;" />' + (data.alt2 ? '<figcaption style="font-size:12px;color:#64748b;margin-top:4px;">' + data.alt2 + '</figcaption>' : '') + '</figure>' +
+              '</div>'
+            );
+          }
+        });
+
+        /* Raw HTML / CSS / JS shortcode block (Hugo {{< rawhtml >}}...{{< /rawhtml >}}) */
+        window.CMS.registerEditorComponent({
+          id: 'rawhtml',
+          label: 'HTML-блок (rawhtml)',
+          fields: [
+            {
+              name: 'html',
+              label: 'HTML / CSS / JS код',
+              widget: 'text',
+              required: false
+            }
+          ],
+          pattern: /^\{\{<\s*rawhtml\s*>\}\}([\s\S]*?)\{\{<\s*\/rawhtml\s*>\}\}[ \t]*(?=\r?\n|$)/,
+          fromBlock: function (match) {
+            var raw = match && match[1] ? String(match[1]) : '';
+            return {
+              html: raw.replace(/^\r?\n|\r?\n$/g, '')
+            };
+          },
+          toBlock: function (data) {
+            var code = String((data && data.html) || '').replace(/^\r?\n|\r?\n$/g, '');
+            return '{{< rawhtml >}}\n' + code + '\n{{< /rawhtml >}}';
+          },
+          toPreview: function (data) {
+            var code = String((data && data.html) || '').trim();
+            if (!code) {
+              return '<div style="padding:10px 14px;border:1px dashed #94a3b8;border-radius:8px;background:#f8fafc;color:#475569;font-size:12.5px;">&lt;/&gt; Пустой HTML-блок (rawhtml)</div>';
+            }
+            var scriptRe = new RegExp('<script\\b[^>]*>[\\s\\S]*?<\\/' + 'script>', 'gi');
+            var styleRe = new RegExp('<style\\b[^>]*>[\\s\\S]*?<\\/' + 'style>', 'gi');
+            var scriptCount = 0;
+            var safePreview = code.replace(scriptRe, function () {
+              scriptCount++;
+              return '';
+            }).trim();
+            var scriptBadge = scriptCount > 0
+              ? '<div style="margin-top:8px;padding:6px 10px;border-radius:6px;background:#fef3c7;border:1px solid #f59e0b;color:#92400e;font-size:12px;">&lt;script&gt; (' + scriptCount + '): выполнится на опубликованной странице Hugo</div>'
+              : '';
+            var onlyStylesOrHidden = !safePreview.replace(styleRe, '').trim();
+            var fallbackNotice = onlyStylesOrHidden && scriptCount === 0
+              ? '<div style="padding:8px 12px;border-radius:6px;background:#f1f5f9;border:1px dashed #94a3b8;color:#475569;font-size:12px;">&lt;/&gt; Скрытый HTML/CSS-блок (rawhtml)</div>'
+              : '';
+            return (
+              '<div class="rfid-rawhtml-preview" style="margin:10px 0;">' +
+                safePreview +
+                fallbackNotice +
+                scriptBadge +
               '</div>'
             );
           }
@@ -800,6 +876,113 @@
           }
         });
 
+        var htmlBtn = makeBtn({
+          title: 'Вставить или редактировать сырой HTML / CSS / JS блок ({{< rawhtml >}})',
+          label: 'HTML',
+          icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/><line x1="14" y1="4" x2="10" y2="20"/></svg>',
+          onClick: function () {
+            var ctx = getCtx();
+            var isRaw = !!(ctx.tb && ctx.tb.rawMode);
+            var savedSel = null;
+            if (ctx.editor && ctx.editor.selection) {
+              try {
+                savedSel = JSON.parse(JSON.stringify(ctx.editor.selection));
+              } catch (_) {}
+            }
+
+            var initialHtml = '';
+            var editingSlateNode = null;
+
+            if (!isRaw && ctx.editor && savedSel && savedSel.anchor && Array.isArray(savedSel.anchor.path)) {
+              var topIdx = savedSel.anchor.path[0];
+              var candidateNode = ctx.editor.children && ctx.editor.children[topIdx];
+              if (candidateNode && candidateNode.type === 'shortcode' && candidateNode.data && candidateNode.data.shortcode === 'rawhtml') {
+                editingSlateNode = { index: topIdx, node: candidateNode };
+                initialHtml = (candidateNode.data.shortcodeData && candidateNode.data.shortcodeData.html) || '';
+              }
+            } else if (isRaw) {
+              var domSel = window.getSelection();
+              var selectedText = domSel ? domSel.toString() : '';
+              if (selectedText && ctx.slateEl && domSel.anchorNode && ctx.slateEl.contains(domSel.anchorNode)) {
+                var rawMatch = selectedText.match(/^\s*\{\{<\s*rawhtml\s*>\}\}([\s\S]*?)\{\{<\s*\/rawhtml\s*>\}\}\s*$/);
+                initialHtml = rawMatch ? rawMatch[1].replace(/^\r?\n|\r?\n$/g, '') : selectedText;
+              }
+            }
+
+            ensureRawHtmlModal().open({
+              initialValue: initialHtml,
+              isEditing: !!editingSlateNode,
+              onApply: function (rawCode) {
+                var cleanCode = String(rawCode || '').replace(/^\r?\n|\r?\n$/g, '');
+                var liveCtx = getCtx();
+                if (!liveCtx.editor) return;
+
+                liveCtx.slateEl.focus();
+                if (savedSel && typeof liveCtx.editor.apply === 'function') {
+                  try {
+                    liveCtx.editor.apply({
+                      type: 'set_selection',
+                      properties: liveCtx.editor.selection || null,
+                      newProperties: savedSel
+                    });
+                  } catch (_) {}
+                }
+
+                var currentlyRaw = !!(liveCtx.tb && liveCtx.tb.rawMode);
+                if (currentlyRaw) {
+                  liveCtx.editor.insertText('\n{{< rawhtml >}}\n' + cleanCode + '\n{{< /rawhtml >}}\n');
+                } else if (
+                  editingSlateNode &&
+                  liveCtx.editor.children &&
+                  liveCtx.editor.children[editingSlateNode.index] === editingSlateNode.node &&
+                  typeof liveCtx.editor.apply === 'function'
+                ) {
+                  var updatedNode = {
+                    type: 'shortcode',
+                    id: 'rawhtml',
+                    data: {
+                      shortcode: 'rawhtml',
+                      shortcodeNew: false,
+                      shortcodeData: { html: cleanCode }
+                    },
+                    children: [{ text: '' }]
+                  };
+                  liveCtx.editor.apply({
+                    type: 'remove_node',
+                    path: [editingSlateNode.index],
+                    node: editingSlateNode.node
+                  });
+                  liveCtx.editor.apply({
+                    type: 'insert_node',
+                    path: [editingSlateNode.index],
+                    node: updatedNode
+                  });
+                  if (typeof liveCtx.editor.onChange === 'function') {
+                    liveCtx.editor.onChange();
+                  }
+                } else {
+                  try {
+                    liveCtx.editor.insertNode({
+                      type: 'shortcode',
+                      id: 'rawhtml',
+                      data: {
+                        shortcode: 'rawhtml',
+                        shortcodeNew: false,
+                        shortcodeData: { html: cleanCode }
+                      },
+                      children: [{ text: '' }]
+                    });
+                    liveCtx.editor.insertNode({ type: 'paragraph', children: [{ text: '' }] });
+                  } catch (_) {
+                    liveCtx.editor.insertText('\n{{< rawhtml >}}\n' + cleanCode + '\n{{< /rawhtml >}}\n');
+                  }
+                }
+                requestAnimationFrame(refreshState);
+              }
+            });
+          }
+        });
+
         var findToggleBtn = makeBtn({
           title: 'Найти и заменить в тексте',
           label: 'Поиск',
@@ -953,6 +1136,7 @@
         bar.appendChild(imgBtn);
         bar.appendChild(pairBtn);
         bar.appendChild(tableBtn);
+        bar.appendChild(htmlBtn);
         bar.appendChild(hrBtn);
         bar.appendChild(makeSep());
         bar.appendChild(findToggleBtn);
@@ -1604,6 +1788,200 @@
           }
         };
         return modalEl;
+      }
+
+      var rawHtmlModalEl = null;
+
+      function ensureRawHtmlModal() {
+        if (rawHtmlModalEl) return rawHtmlModalEl;
+
+        var currentOnApply = null;
+
+        var backdrop = document.createElement('div');
+        backdrop.className = 'rfid-modal-backdrop';
+
+        var dialog = document.createElement('div');
+        dialog.className = 'rfid-modal-dialog is-wide';
+
+        var header = document.createElement('div');
+        header.className = 'rfid-modal-header';
+        var titleEl = document.createElement('h3');
+        titleEl.className = 'rfid-modal-title';
+        titleEl.textContent = 'Вставка / редактирование HTML-кода';
+        var closeBtn = document.createElement('button');
+        closeBtn.type = 'button';
+        closeBtn.className = 'rfid-modal-close';
+        closeBtn.innerHTML = '&times;';
+        closeBtn.title = 'Закрыть';
+        header.appendChild(titleEl);
+        header.appendChild(closeBtn);
+
+        var body = document.createElement('div');
+        body.className = 'rfid-modal-body';
+
+        var controlsRow = document.createElement('div');
+        controlsRow.className = 'rfid-modal-row';
+
+        var wrapLabel = document.createElement('label');
+        wrapLabel.className = 'rfid-modal-check';
+        var wrapCb = document.createElement('input');
+        wrapCb.type = 'checkbox';
+        wrapCb.checked = true;
+        wrapLabel.appendChild(wrapCb);
+        wrapLabel.appendChild(document.createTextNode('Перенос строк'));
+
+        var hintSpan = document.createElement('span');
+        hintSpan.className = 'rfid-modal-hint';
+        hintSpan.textContent = 'Tab — отступ (2 пробела), Shift+Tab — убрать отступ, Ctrl+Enter — вставить';
+
+        controlsRow.appendChild(wrapLabel);
+        controlsRow.appendChild(hintSpan);
+
+        var codeArea = document.createElement('textarea');
+        codeArea.className = 'rfid-modal-textarea is-code';
+        codeArea.spellcheck = false;
+        codeArea.setAttribute('autocapitalize', 'off');
+        codeArea.setAttribute('autocomplete', 'off');
+        codeArea.setAttribute('autocorrect', 'off');
+        codeArea.placeholder = '<div class="rfid-widget">\n  <!-- HTML, <style> или <script> -->\n</div>';
+
+        wrapCb.addEventListener('change', function () {
+          codeArea.classList.toggle('is-nowrap', !wrapCb.checked);
+        });
+
+        codeArea.addEventListener('keydown', function (e) {
+          if (e.key === 'Tab') {
+            e.preventDefault();
+            var val = codeArea.value;
+            var start = codeArea.selectionStart;
+            var end = codeArea.selectionEnd;
+
+            if (start === end && !e.shiftKey) {
+              codeArea.value = val.slice(0, start) + '  ' + val.slice(end);
+              codeArea.selectionStart = codeArea.selectionEnd = start + 2;
+              return;
+            }
+
+            var lineStart = val.lastIndexOf('\n', start - 1) + 1;
+            var lineEndIdx = val.indexOf('\n', end);
+            var lineEnd = lineEndIdx === -1 ? val.length : lineEndIdx;
+            if (end > start && end > lineStart && val.charAt(end - 1) === '\n') {
+              lineEnd = end - 1;
+            }
+
+            var selectedBlock = val.slice(lineStart, lineEnd);
+            var lines = selectedBlock.split('\n');
+            var firstDelta = 0;
+            var totalDelta = 0;
+
+            var updatedLines = lines.map(function (line, idx) {
+              if (e.shiftKey) {
+                var removed = 0;
+                if (line.indexOf('  ') === 0) {
+                  removed = 2;
+                } else if (line.charAt(0) === '\t' || line.charAt(0) === ' ') {
+                  removed = 1;
+                }
+                if (idx === 0) firstDelta = -removed;
+                totalDelta -= removed;
+                return line.slice(removed);
+              }
+              if (idx === 0) firstDelta = 2;
+              totalDelta += 2;
+              return '  ' + line;
+            });
+
+            codeArea.value = val.slice(0, lineStart) + updatedLines.join('\n') + val.slice(lineEnd);
+            var nextStart = Math.max(lineStart, start + firstDelta);
+            var nextEnd = Math.max(nextStart, end + totalDelta);
+            codeArea.selectionStart = nextStart;
+            codeArea.selectionEnd = nextEnd;
+          } else if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+            e.preventDefault();
+            insertBtn.click();
+          }
+        });
+
+        body.appendChild(controlsRow);
+        body.appendChild(codeArea);
+
+        var footer = document.createElement('div');
+        footer.className = 'rfid-modal-footer';
+
+        var status = document.createElement('span');
+        status.className = 'rfid-modal-status';
+
+        var btnRow = document.createElement('div');
+        btnRow.className = 'rfid-modal-row';
+
+        var cancelBtn = document.createElement('button');
+        cancelBtn.type = 'button';
+        cancelBtn.className = 'rfid-btn-secondary';
+        cancelBtn.textContent = 'Отмена';
+
+        var insertBtn = document.createElement('button');
+        insertBtn.type = 'button';
+        insertBtn.className = 'rfid-btn-primary';
+        insertBtn.textContent = 'Вставить в статью';
+
+        btnRow.appendChild(cancelBtn);
+        btnRow.appendChild(insertBtn);
+        footer.appendChild(status);
+        footer.appendChild(btnRow);
+
+        dialog.appendChild(header);
+        dialog.appendChild(body);
+        dialog.appendChild(footer);
+        backdrop.appendChild(dialog);
+        document.body.appendChild(backdrop);
+
+        function close() {
+          backdrop.classList.remove('is-open');
+          currentOnApply = null;
+        }
+
+        closeBtn.addEventListener('click', close);
+        cancelBtn.addEventListener('click', close);
+        backdrop.addEventListener('click', function (e) {
+          if (e.target === backdrop) close();
+        });
+        document.addEventListener('keydown', function (e) {
+          if (e.key === 'Escape' && backdrop.classList.contains('is-open')) {
+            close();
+          }
+        });
+
+        insertBtn.addEventListener('click', function () {
+          var raw = codeArea.value;
+          if (!String(raw || '').trim()) {
+            status.textContent = 'Введите HTML-код';
+            codeArea.focus();
+            return;
+          }
+          var cb = currentOnApply;
+          close();
+          if (typeof cb === 'function') {
+            cb(raw);
+          }
+        });
+
+        rawHtmlModalEl = {
+          open: function (opts) {
+            var o = opts || {};
+            currentOnApply = typeof o.onApply === 'function' ? o.onApply : null;
+            codeArea.value = o.initialValue ? String(o.initialValue) : '';
+            status.textContent = o.isEditing ? 'Редактирование выбранного HTML-блока' : '';
+            codeArea.classList.toggle('is-nowrap', !wrapCb.checked);
+            backdrop.classList.add('is-open');
+            setTimeout(function () {
+              codeArea.focus();
+              if (!codeArea.value) {
+                codeArea.selectionStart = codeArea.selectionEnd = 0;
+              }
+            }, 30);
+          }
+        };
+        return rawHtmlModalEl;
       }
 
       function attachTopImportExport(topBar) {
