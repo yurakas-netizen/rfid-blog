@@ -716,3 +716,92 @@ html[data-scheme="dark"] .mobile-categories-list a {
     padding: 8px 0;
     margin: 0.9em 0;
 }
+
+/* =========================================================
+   9. Linked Article Translations Badges (translationKey)
+   ========================================================= */
+.article-translations {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin-top: 6px;
+    padding-top: 10px;
+    border-top: 1px solid var(--card-separator-color);
+}
+
+.article-translations__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 26px;
+    flex-shrink: 0;
+    color: var(--accent-color);
+
+    svg {
+        width: 16px;
+        height: 16px;
+        stroke-width: 1.8;
+    }
+}
+
+.article-translations__list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+}
+
+.translation-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 9px 3px 5px;
+    border-radius: 7px;
+    border: 1px solid var(--card-separator-color);
+    background: var(--card-background-selected);
+    color: var(--card-text-color-secondary);
+    font-size: 12.5px;
+    font-weight: 500;
+    line-height: 1.4;
+    text-decoration: none;
+    transition: border-color 0.15s ease, background-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
+
+    &:hover {
+        color: var(--accent-color);
+        border-color: var(--accent-color);
+        transform: translateY(-1px);
+    }
+}
+
+.translation-badge__code {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1px 5px;
+    border-radius: 4px;
+    background: rgba(2, 132, 199, 0.12);
+    color: var(--accent-color);
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    line-height: 1.35;
+}
+
+html[data-scheme="dark"] .translation-badge {
+    background: rgba(56, 189, 248, 0.08);
+    border-color: rgba(56, 189, 248, 0.24);
+    color: #cbd5e1;
+
+    &:hover {
+        background: rgba(56, 189, 248, 0.18);
+        border-color: rgba(56, 189, 248, 0.55);
+        color: #f8fafc;
+    }
+}
+
+html[data-scheme="dark"] .translation-badge__code {
+    background: rgba(56, 189, 248, 0.18);
+    color: #7dd3fc;
+}
+

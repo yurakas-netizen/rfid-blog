@@ -23,6 +23,7 @@ collections:
       - { label: "Обложка (верхний баннер)", name: "image", widget: "image", required: false, hint: "Только для карточки и шапки статьи. Графики, схемы и фото внутри текста добавляйте ниже в редакторе." }
       - { label: "Категории", name: "categories", widget: "list", required: false }
       - { label: "Теги", name: "tags", widget: "list", required: false }
+      - { label: "Ключ связи переводов (тема)", name: "translationKey", widget: "string", required: false, hint: "Одинаковый ключ у статей на разных языках связывает их между собой. Если оставить пустым — статья остаётся автономной." }
       - { label: "Текст статьи", name: "body", widget: "markdown", modes: ["rich_text", "raw"], hint: "Чтобы вставить график, схему или фото в нужное место текста: нажмите «+» → «Изображение» (или «Два графика в ряд»), либо просто перетащите файл в текст." }
 
   - name: "post_en"
@@ -40,6 +41,7 @@ collections:
       - { label: "Обложка (верхний баннер)", name: "image", widget: "image", required: false, hint: "Только для карточки и шапки статьи. Графики, схемы и фото внутри текста добавляйте ниже в редакторе." }
       - { label: "Категории", name: "categories", widget: "list", required: false }
       - { label: "Теги", name: "tags", widget: "list", required: false }
+      - { label: "Ключ связи переводов (тема)", name: "translationKey", widget: "string", required: false, hint: "Одинаковый ключ у статей на разных языках связывает их между собой. Если оставить пустым — статья остаётся автономной." }
       - { label: "Текст статьи", name: "body", widget: "markdown", modes: ["rich_text", "raw"], hint: "Чтобы вставить график, схему или фото в нужное место текста: нажмите «+» → «Изображение» (или «Два графика в ряд»), либо просто перетащите файл в текст." }
 
   - name: "post_da"
@@ -57,6 +59,7 @@ collections:
       - { label: "Обложка (верхний баннер)", name: "image", widget: "image", required: false, hint: "Только для карточки и шапки статьи. Графики, схемы и фото внутри текста добавляйте ниже в редакторе." }
       - { label: "Категории", name: "categories", widget: "list", required: false }
       - { label: "Теги", name: "tags", widget: "list", required: false }
+      - { label: "Ключ связи переводов (тема)", name: "translationKey", widget: "string", required: false, hint: "Одинаковый ключ у статей на разных языках связывает их между собой. Если оставить пустым — статья остаётся автономной." }
       - { label: "Текст статьи", name: "body", widget: "markdown", modes: ["rich_text", "raw"], hint: "Чтобы вставить график, схему или фото в нужное место текста: нажмите «+» → «Изображение» (или «Два графика в ряд»), либо просто перетащите файл в текст." }
 
   - name: "post_de"
@@ -74,6 +77,7 @@ collections:
       - { label: "Обложка (верхний баннер)", name: "image", widget: "image", required: false, hint: "Только для карточки и шапки статьи. Графики, схемы и фото внутри текста добавляйте ниже в редакторе." }
       - { label: "Категории", name: "categories", widget: "list", required: false }
       - { label: "Теги", name: "tags", widget: "list", required: false }
+      - { label: "Ключ связи переводов (тема)", name: "translationKey", widget: "string", required: false, hint: "Одинаковый ключ у статей на разных языках связывает их между собой. Если оставить пустым — статья остаётся автономной." }
       - { label: "Текст статьи", name: "body", widget: "markdown", modes: ["rich_text", "raw"], hint: "Чтобы вставить график, схему или фото в нужное место текста: нажмите «+» → «Изображение» (или «Два графика в ряд»), либо просто перетащите файл в текст." }
 
   - name: "post_fr"
@@ -91,6 +95,7 @@ collections:
       - { label: "Обложка (верхний баннер)", name: "image", widget: "image", required: false, hint: "Только для карточки и шапки статьи. Графики, схемы и фото внутри текста добавляйте ниже в редакторе." }
       - { label: "Категории", name: "categories", widget: "list", required: false }
       - { label: "Теги", name: "tags", widget: "list", required: false }
+      - { label: "Ключ связи переводов (тема)", name: "translationKey", widget: "string", required: false, hint: "Одинаковый ключ у статей на разных языках связывает их между собой. Если оставить пустым — статья остаётся автономной." }
       - { label: "Текст статьи", name: "body", widget: "markdown", modes: ["rich_text", "raw"], hint: "Чтобы вставить график, схему или фото в нужное место текста: нажмите «+» → «Изображение» (или «Два графика в ряд»), либо просто перетащите файл в текст." }
 
   - name: "post_ru"
@@ -108,6 +113,7 @@ collections:
       - { label: "Обложка (верхний баннер)", name: "image", widget: "image", required: false, hint: "Только для карточки и шапки статьи. Графики, схемы и фото внутри текста добавляйте ниже в редакторе." }
       - { label: "Категории", name: "categories", widget: "list", required: false }
       - { label: "Теги", name: "tags", widget: "list", required: false }
+      - { label: "Ключ связи переводов (тема)", name: "translationKey", widget: "string", required: false, hint: "Одинаковый ключ у статей на разных языках связывает их между собой. Если оставить пустым — статья остаётся автономной." }
       - { label: "Текст статьи", name: "body", widget: "markdown", modes: ["rich_text", "raw"], hint: "Чтобы вставить график, схему или фото в нужное место текста: нажмите «+» → «Изображение» (или «Два графика в ряд»), либо просто перетащите файл в текст." }
 
   - name: "post_pl"
@@ -125,6 +131,7 @@ collections:
       - { label: "Обложка (верхний баннер)", name: "image", widget: "image", required: false, hint: "Только для карточки и шапки статьи. Графики, схемы и фото внутри текста добавляйте ниже в редакторе." }
       - { label: "Категории", name: "categories", widget: "list", required: false }
       - { label: "Теги", name: "tags", widget: "list", required: false }
+      - { label: "Ключ связи переводов (тема)", name: "translationKey", widget: "string", required: false, hint: "Одинаковый ключ у статей на разных языках связывает их между собой. Если оставить пустым — статья остаётся автономной." }
       - { label: "Текст статьи", name: "body", widget: "markdown", modes: ["rich_text", "raw"], hint: "Чтобы вставить график, схему или фото в нужное место текста: нажмите «+» → «Изображение» (или «Два графика в ряд»), либо просто перетащите файл в текст." }
 
   - name: "post_es"
@@ -142,6 +149,7 @@ collections:
       - { label: "Обложка (верхний баннер)", name: "image", widget: "image", required: false, hint: "Только для карточки и шапки статьи. Графики, схемы и фото внутри текста добавляйте ниже в редакторе." }
       - { label: "Категории", name: "categories", widget: "list", required: false }
       - { label: "Теги", name: "tags", widget: "list", required: false }
+      - { label: "Ключ связи переводов (тема)", name: "translationKey", widget: "string", required: false, hint: "Одинаковый ключ у статей на разных языках связывает их между собой. Если оставить пустым — статья остаётся автономной." }
       - { label: "Текст статьи", name: "body", widget: "markdown", modes: ["rich_text", "raw"], hint: "Чтобы вставить график, схему или фото в нужное место текста: нажмите «+» → «Изображение» (или «Два графика в ряд»), либо просто перетащите файл в текст." }
 
   - name: "post_it"
@@ -159,6 +167,7 @@ collections:
       - { label: "Обложка (верхний баннер)", name: "image", widget: "image", required: false, hint: "Только для карточки и шапки статьи. Графики, схемы и фото внутри текста добавляйте ниже в редакторе." }
       - { label: "Категории", name: "categories", widget: "list", required: false }
       - { label: "Теги", name: "tags", widget: "list", required: false }
+      - { label: "Ключ связи переводов (тема)", name: "translationKey", widget: "string", required: false, hint: "Одинаковый ключ у статей на разных языках связывает их между собой. Если оставить пустым — статья остаётся автономной." }
       - { label: "Текст статьи", name: "body", widget: "markdown", modes: ["rich_text", "raw"], hint: "Чтобы вставить график, схему или фото в нужное место текста: нажмите «+» → «Изображение» (или «Два графика в ряд»), либо просто перетащите файл в текст." }
 
   - name: "post_nl"
@@ -176,6 +185,7 @@ collections:
       - { label: "Обложка (верхний баннер)", name: "image", widget: "image", required: false, hint: "Только для карточки и шапки статьи. Графики, схемы и фото внутри текста добавляйте ниже в редакторе." }
       - { label: "Категории", name: "categories", widget: "list", required: false }
       - { label: "Теги", name: "tags", widget: "list", required: false }
+      - { label: "Ключ связи переводов (тема)", name: "translationKey", widget: "string", required: false, hint: "Одинаковый ключ у статей на разных языках связывает их между собой. Если оставить пустым — статья остаётся автономной." }
       - { label: "Текст статьи", name: "body", widget: "markdown", modes: ["rich_text", "raw"], hint: "Чтобы вставить график, схему или фото в нужное место текста: нажмите «+» → «Изображение» (или «Два графика в ряд»), либо просто перетащите файл в текст." }
 
   - name: "post_pt"
@@ -193,6 +203,7 @@ collections:
       - { label: "Обложка (верхний баннер)", name: "image", widget: "image", required: false, hint: "Только для карточки и шапки статьи. Графики, схемы и фото внутри текста добавляйте ниже в редакторе." }
       - { label: "Категории", name: "categories", widget: "list", required: false }
       - { label: "Теги", name: "tags", widget: "list", required: false }
+      - { label: "Ключ связи переводов (тема)", name: "translationKey", widget: "string", required: false, hint: "Одинаковый ключ у статей на разных языках связывает их между собой. Если оставить пустым — статья остаётся автономной." }
       - { label: "Текст статьи", name: "body", widget: "markdown", modes: ["rich_text", "raw"], hint: "Чтобы вставить график, схему или фото в нужное место текста: нажмите «+» → «Изображение» (или «Два графика в ряд»), либо просто перетащите файл в текст." }
 
   - name: "post_sv"
@@ -210,6 +221,7 @@ collections:
       - { label: "Обложка (верхний баннер)", name: "image", widget: "image", required: false, hint: "Только для карточки и шапки статьи. Графики, схемы и фото внутри текста добавляйте ниже в редакторе." }
       - { label: "Категории", name: "categories", widget: "list", required: false }
       - { label: "Теги", name: "tags", widget: "list", required: false }
+      - { label: "Ключ связи переводов (тема)", name: "translationKey", widget: "string", required: false, hint: "Одинаковый ключ у статей на разных языках связывает их между собой. Если оставить пустым — статья остаётся автономной." }
       - { label: "Текст статьи", name: "body", widget: "markdown", modes: ["rich_text", "raw"], hint: "Чтобы вставить график, схему или фото в нужное место текста: нажмите «+» → «Изображение» (или «Два графика в ряд»), либо просто перетащите файл в текст." }
 
   - name: "post_no"
@@ -227,6 +239,7 @@ collections:
       - { label: "Обложка (верхний баннер)", name: "image", widget: "image", required: false, hint: "Только для карточки и шапки статьи. Графики, схемы и фото внутри текста добавляйте ниже в редакторе." }
       - { label: "Категории", name: "categories", widget: "list", required: false }
       - { label: "Теги", name: "tags", widget: "list", required: false }
+      - { label: "Ключ связи переводов (тема)", name: "translationKey", widget: "string", required: false, hint: "Одинаковый ключ у статей на разных языках связывает их между собой. Если оставить пустым — статья остаётся автономной." }
       - { label: "Текст статьи", name: "body", widget: "markdown", modes: ["rich_text", "raw"], hint: "Чтобы вставить график, схему или фото в нужное место текста: нажмите «+» → «Изображение» (или «Два графика в ряд»), либо просто перетащите файл в текст." }
 
   - name: "post_fi"
@@ -244,6 +257,7 @@ collections:
       - { label: "Обложка (верхний баннер)", name: "image", widget: "image", required: false, hint: "Только для карточки и шапки статьи. Графики, схемы и фото внутри текста добавляйте ниже в редакторе." }
       - { label: "Категории", name: "categories", widget: "list", required: false }
       - { label: "Теги", name: "tags", widget: "list", required: false }
+      - { label: "Ключ связи переводов (тема)", name: "translationKey", widget: "string", required: false, hint: "Одинаковый ключ у статей на разных языках связывает их между собой. Если оставить пустым — статья остаётся автономной." }
       - { label: "Текст статьи", name: "body", widget: "markdown", modes: ["rich_text", "raw"], hint: "Чтобы вставить график, схему или фото в нужное место текста: нажмите «+» → «Изображение» (или «Два графика в ряд»), либо просто перетащите файл в текст." }
 
   - name: "post_cs"
@@ -261,6 +275,7 @@ collections:
       - { label: "Обложка (верхний баннер)", name: "image", widget: "image", required: false, hint: "Только для карточки и шапки статьи. Графики, схемы и фото внутри текста добавляйте ниже в редакторе." }
       - { label: "Категории", name: "categories", widget: "list", required: false }
       - { label: "Теги", name: "tags", widget: "list", required: false }
+      - { label: "Ключ связи переводов (тема)", name: "translationKey", widget: "string", required: false, hint: "Одинаковый ключ у статей на разных языках связывает их между собой. Если оставить пустым — статья остаётся автономной." }
       - { label: "Текст статьи", name: "body", widget: "markdown", modes: ["rich_text", "raw"], hint: "Чтобы вставить график, схему или фото в нужное место текста: нажмите «+» → «Изображение» (или «Два графика в ряд»), либо просто перетащите файл в текст." }
 
   - name: "post_sk"
@@ -278,6 +293,7 @@ collections:
       - { label: "Обложка (верхний баннер)", name: "image", widget: "image", required: false, hint: "Только для карточки и шапки статьи. Графики, схемы и фото внутри текста добавляйте ниже в редакторе." }
       - { label: "Категории", name: "categories", widget: "list", required: false }
       - { label: "Теги", name: "tags", widget: "list", required: false }
+      - { label: "Ключ связи переводов (тема)", name: "translationKey", widget: "string", required: false, hint: "Одинаковый ключ у статей на разных языках связывает их между собой. Если оставить пустым — статья остаётся автономной." }
       - { label: "Текст статьи", name: "body", widget: "markdown", modes: ["rich_text", "raw"], hint: "Чтобы вставить график, схему или фото в нужное место текста: нажмите «+» → «Изображение» (или «Два графика в ряд»), либо просто перетащите файл в текст." }
 
   - name: "post_ro"
@@ -295,6 +311,7 @@ collections:
       - { label: "Обложка (верхний баннер)", name: "image", widget: "image", required: false, hint: "Только для карточки и шапки статьи. Графики, схемы и фото внутри текста добавляйте ниже в редакторе." }
       - { label: "Категории", name: "categories", widget: "list", required: false }
       - { label: "Теги", name: "tags", widget: "list", required: false }
+      - { label: "Ключ связи переводов (тема)", name: "translationKey", widget: "string", required: false, hint: "Одинаковый ключ у статей на разных языках связывает их между собой. Если оставить пустым — статья остаётся автономной." }
       - { label: "Текст статьи", name: "body", widget: "markdown", modes: ["rich_text", "raw"], hint: "Чтобы вставить график, схему или фото в нужное место текста: нажмите «+» → «Изображение» (или «Два графика в ряд»), либо просто перетащите файл в текст." }
 
   - name: "post_bg"
@@ -312,6 +329,7 @@ collections:
       - { label: "Обложка (верхний баннер)", name: "image", widget: "image", required: false, hint: "Только для карточки и шапки статьи. Графики, схемы и фото внутри текста добавляйте ниже в редакторе." }
       - { label: "Категории", name: "categories", widget: "list", required: false }
       - { label: "Теги", name: "tags", widget: "list", required: false }
+      - { label: "Ключ связи переводов (тема)", name: "translationKey", widget: "string", required: false, hint: "Одинаковый ключ у статей на разных языках связывает их между собой. Если оставить пустым — статья остаётся автономной." }
       - { label: "Текст статьи", name: "body", widget: "markdown", modes: ["rich_text", "raw"], hint: "Чтобы вставить график, схему или фото в нужное место текста: нажмите «+» → «Изображение» (или «Два графика в ряд»), либо просто перетащите файл в текст." }
 
   - name: "post_et"
@@ -329,6 +347,7 @@ collections:
       - { label: "Обложка (верхний баннер)", name: "image", widget: "image", required: false, hint: "Только для карточки и шапки статьи. Графики, схемы и фото внутри текста добавляйте ниже в редакторе." }
       - { label: "Категории", name: "categories", widget: "list", required: false }
       - { label: "Теги", name: "tags", widget: "list", required: false }
+      - { label: "Ключ связи переводов (тема)", name: "translationKey", widget: "string", required: false, hint: "Одинаковый ключ у статей на разных языках связывает их между собой. Если оставить пустым — статья остаётся автономной." }
       - { label: "Текст статьи", name: "body", widget: "markdown", modes: ["rich_text", "raw"], hint: "Чтобы вставить график, схему или фото в нужное место текста: нажмите «+» → «Изображение» (или «Два графика в ряд»), либо просто перетащите файл в текст." }
 
   - name: "post_lt"
@@ -346,4 +365,5 @@ collections:
       - { label: "Обложка (верхний баннер)", name: "image", widget: "image", required: false, hint: "Только для карточки и шапки статьи. Графики, схемы и фото внутри текста добавляйте ниже в редакторе." }
       - { label: "Категории", name: "categories", widget: "list", required: false }
       - { label: "Теги", name: "tags", widget: "list", required: false }
+      - { label: "Ключ связи переводов (тема)", name: "translationKey", widget: "string", required: false, hint: "Одинаковый ключ у статей на разных языках связывает их между собой. Если оставить пустым — статья остаётся автономной." }
       - { label: "Текст статьи", name: "body", widget: "markdown", modes: ["rich_text", "raw"], hint: "Чтобы вставить график, схему или фото в нужное место текста: нажмите «+» → «Изображение» (или «Два графика в ряд»), либо просто перетащите файл в текст." }

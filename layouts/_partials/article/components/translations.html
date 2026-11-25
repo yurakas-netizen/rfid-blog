@@ -1,0 +1,37 @@
+{{- $key := "" -}}
+{{- with .Params.translationKey -}}
+    {{- $key = trim (string .) " " -}}
+{{- end -}}
+{{- if $key -}}
+    {{- $currentPermalink := .Permalink -}}
+    {{- $matches := slice -}}
+    {{- range hugo.Sites -}}
+        {{- range .RegularPages -}}
+            {{- $otherKey := "" -}}
+            {{- with .Params.translationKey -}}
+                {{- $otherKey = trim (string .) " " -}}
+            {{- end -}}
+            {{- if and (eq $otherKey $key) (ne .Permalink $currentPermalink) -}}
+                {{- $matches = $matches | append . -}}
+            {{- end -}}
+        {{- end -}}
+    {{- end -}}
+    {{- if gt (len $matches) 0 -}}
+        {{- $matches = sort $matches "Language.Weight" "asc" -}}
+        <nav class="article-translations" aria-label="Translations">
+            <span class="article-translations__icon" aria-hidden="true">
+                {{ partial "helper/icon" "language" }}
+            </span>
+            <div class="article-translations__list">
+                {{- range $matches -}}
+                    {{- $rawName := .Language.LanguageName | default .Language.Label -}}
+                    {{- $cleanName := replaceRE `\s*\([^)]+\)$` "" $rawName -}}
+                    <a href="{{ .RelPermalink }}" class="translation-badge" title="{{ .Title }}" hreflang="{{ .Language.Lang }}">
+                        <span class="translation-badge__code">{{ .Language.Lang | upper }}</span>
+                        <span class="translation-badge__name">{{ $cleanName }}</span>
+                    </a>
+                {{- end -}}
+            </div>
+        </nav>
+    {{- end -}}
+{{- end -}}

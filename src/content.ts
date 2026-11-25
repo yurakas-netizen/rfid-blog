@@ -41,6 +41,7 @@ export interface PostItem {
   toc: TocItem[];
   bundleDir: string;
   permalink: string;
+  translationKey: string;
 }
 
 export interface PageItem {
@@ -454,6 +455,7 @@ function scanPostsInDir(dir: string, lang: LangCode): PostItem[] {
       const tags = Array.isArray(data.tags)
         ? data.tags.map((t: unknown) => String(t).trim()).filter(Boolean)
         : [];
+      const translationKey = data.translationKey ? String(data.translationKey).trim() : '';
 
       posts.push({
         id: `${lang}:${slug}`,
@@ -477,6 +479,7 @@ function scanPostsInDir(dir: string, lang: LangCode): PostItem[] {
         toc,
         bundleDir,
         permalink,
+        translationKey,
       });
     } catch (err) {
       console.warn(`[content] Failed to parse post ${mdPath}:`, err);
@@ -640,6 +643,13 @@ export function computeTaxonomies(
     .map(([year, yrPosts]) => ({ year, posts: yrPosts }));
 
   return { categories, tags, archivesByYear };
+}
+
+export function getTranslatedPosts(post: PostItem, allPosts: PostItem[]): PostItem[] {
+  if (!post.translationKey) return [];
+  return allPosts
+    .filter((p) => p.translationKey === post.translationKey && p.id !== post.id)
+    .sort((a, b) => LANGUAGES[a.lang].weight - LANGUAGES[b.lang].weight);
 }
 
 export function getRelatedPosts(post: PostItem, pool: PostItem[], limit = 3): PostItem[] {

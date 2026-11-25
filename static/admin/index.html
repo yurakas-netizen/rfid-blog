@@ -1031,6 +1031,9 @@
         if (isoDate) {
           lines.push('date: ' + isoDate);
         }
+        if (data.translationKey) {
+          lines.push('translationKey: ' + JSON.stringify(String(data.translationKey).trim()));
+        }
         if (Array.isArray(data.categories) && data.categories.length > 0) {
           lines.push('categories:');
           data.categories.forEach(function (c) {
@@ -1054,6 +1057,7 @@
           title: String(data.title || ''),
           description: String(data.description || ''),
           date: normalizeIsoDate(data.date),
+          translationKey: String(data.translationKey || '').trim(),
           categories: Array.isArray(data.categories) ? data.categories : [],
           tags: Array.isArray(data.tags) ? data.tags : [],
           body: stripInlineImages ? stripBodyImages(data.body) : String(data.body || '')
@@ -1150,6 +1154,8 @@
             description: typeof obj.description === 'string' ? obj.description : '',
             hasDate: Boolean(obj.date),
             date: obj.date ? String(obj.date) : '',
+            hasTranslationKey: typeof obj.translationKey === 'string',
+            translationKey: typeof obj.translationKey === 'string' ? obj.translationKey : '',
             hasCategories: Array.isArray(obj.categories),
             categories: Array.isArray(obj.categories) ? obj.categories.map(String).filter(Boolean) : [],
             hasTags: Array.isArray(obj.tags),
@@ -1176,6 +1182,8 @@
             description: typeof meta.description === 'string' ? meta.description : '',
             hasDate: Boolean(meta.date),
             date: meta.date ? String(meta.date) : '',
+            hasTranslationKey: typeof meta.translationKey === 'string' && meta.translationKey.length > 0,
+            translationKey: typeof meta.translationKey === 'string' ? meta.translationKey : '',
             hasCategories: 'categories' in meta,
             categories: cats,
             hasTags: 'tags' in meta,
@@ -1193,6 +1201,8 @@
           description: '',
           hasDate: false,
           date: '',
+          hasTranslationKey: false,
+          translationKey: '',
           hasCategories: false,
           categories: [],
           hasTags: false,
@@ -1223,6 +1233,7 @@
             title: js.title || '',
             description: js.description || '',
             date: normalizeIsoDate(js.date) || new Date().toISOString(),
+            translationKey: js.translationKey || '',
             categories: Array.isArray(js.categories) ? js.categories : [],
             tags: Array.isArray(js.tags) ? js.tags : [],
             body: js.body || ''
@@ -1258,6 +1269,11 @@
           if (fDate) {
             onChange(fDate, normalizeIsoDate(parsed.date) || parsed.date);
           }
+        }
+
+        if (opts.translationKey && parsed.hasTranslationKey) {
+          var fTk = getField('translationKey');
+          if (fTk) onChange(fTk, parsed.translationKey);
         }
 
         if (opts.categories && parsed.hasCategories) {
@@ -1338,6 +1354,7 @@
                 '<label class="rfid-modal-check"><input type="checkbox" data-field="title" checked /><span>Заголовок</span></label>' +
                 '<label class="rfid-modal-check"><input type="checkbox" data-field="description" checked /><span>Описание</span></label>' +
                 '<label class="rfid-modal-check"><input type="checkbox" data-field="date" checked /><span>Дата</span></label>' +
+                '<label class="rfid-modal-check"><input type="checkbox" data-field="translationKey" checked /><span>Ключ перевода</span></label>' +
                 '<label class="rfid-modal-check"><input type="checkbox" data-field="categories" checked /><span>Категории</span></label>' +
                 '<label class="rfid-modal-check"><input type="checkbox" data-field="tags" checked /><span>Теги</span></label>' +
                 '<label class="rfid-modal-check"><input type="checkbox" data-field="body" checked /><span>Текст статьи</span></label>' +
@@ -1413,6 +1430,7 @@
             if (parsed.hasTitle) parts.push('Заголовок');
             if (parsed.hasDescription) parts.push('Описание');
             if (parsed.hasDate) parts.push('Дата');
+            if (parsed.hasTranslationKey) parts.push('Ключ перевода');
             if (parsed.hasCategories) parts.push('Категории (' + parsed.categories.length + ')');
             if (parsed.hasTags) parts.push('Теги (' + parsed.tags.length + ')');
             if (parsed.hasBody) parts.push('Текст (' + parsed.body.length + ' симв.)');
@@ -1482,6 +1500,7 @@
               title: isChecked('title'),
               description: isChecked('description'),
               date: isChecked('date'),
+              translationKey: isChecked('translationKey'),
               categories: isChecked('categories'),
               tags: isChecked('tags'),
               body: isChecked('body'),

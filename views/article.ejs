@@ -26,6 +26,28 @@
           </div>
           <div><%= post.readingTime %> <%= t.minRead %> (<%= post.wordCount %> <%= t.wordsLabel %>)</div>
         </footer>
+        <% if (typeof translatedPosts !== 'undefined' && translatedPosts && translatedPosts.length > 0) { %>
+          <nav class="article-translations" aria-label="<%= t.languageLabel %>">
+            <span class="article-translations__icon" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 5h7"></path>
+                <path d="M9 3v2c0 4.418 -2.239 8 -5 8"></path>
+                <path d="M5 9c0 2.144 2.952 3.908 6.7 4"></path>
+                <path d="M12 20l4 -9l4 9"></path>
+                <path d="M19.1 18h-6.2"></path>
+              </svg>
+            </span>
+            <div class="article-translations__list">
+              <% translatedPosts.forEach(function(tp) { %>
+                <% var tpLangCfg = languagesMap[tp.lang]; var cleanLangName = (tpLangCfg ? tpLangCfg.label : tp.lang).replace(/\s*\([^)]+\)$/, ''); %>
+                <a href="<%= tp.permalink %>" class="translation-badge" title="<%= tp.title %>" hreflang="<%= tp.lang %>">
+                  <span class="translation-badge__code"><%= tp.lang.toUpperCase() %></span>
+                  <span class="translation-badge__name"><%= cleanLangName %></span>
+                </a>
+              <% }); %>
+            </div>
+          </nav>
+        <% } %>
       </div>
     </header>
 

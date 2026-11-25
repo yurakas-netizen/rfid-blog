@@ -16,6 +16,7 @@ import {
   getPostsForLanguageView,
   computeTaxonomies,
   getRelatedPosts,
+  getTranslatedPosts,
   slugify,
   type PostItem,
   type SiteContent,
@@ -401,6 +402,7 @@ app.get(
     }
 
     const relatedPosts = getRelatedPosts(post, siteContent.postsByLang[post.lang], 3);
+    const translatedPosts = getTranslatedPosts(post, siteContent.allPosts);
     await renderView(res, siteContent, 'article', post.lang, {
       activeNav: 'home',
       isArticle: true,
@@ -409,6 +411,8 @@ app.get(
       post,
       toc: post.toc,
       relatedPosts,
+      translatedPosts,
+      languagesMap: LANGUAGES,
     });
   }
 );
