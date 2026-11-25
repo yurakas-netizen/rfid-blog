@@ -8,7 +8,7 @@ description: "Technische Analyse kryptografischer RFID-Architekturen für die
   em|echo-V, Avery Dennison) sowie TCO-Vergleich für 100.000 Flaschen gegen
   EU-FMD (2011/62/EU, VO (EU) 2016/161) und securPharm."
 date: 2026-06-08T22:00:00.000Z
-image: industrial_uhf_rfid_applications-3_1.jpg
+image: industry_4.0_identification-3_1.jpg
 categories:
   - RFID Solutions
 tags:
