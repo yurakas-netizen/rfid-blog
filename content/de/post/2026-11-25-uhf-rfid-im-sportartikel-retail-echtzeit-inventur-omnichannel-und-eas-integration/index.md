@@ -8,7 +8,7 @@ description: "Technische Analyse von UHF RFID im deutschen
   Fitting Rooms, ARC-zertifizierte Inlays, Q = 8–9 und TCO-Vergleich Barcode vs.
   RFID-Inlay vs. ARC-Schuh-Inlay."
 date: 2026-06-09T22:00:00.000Z
-image: industrial_uhf_rfid_applications-1_2.jpg
+image: industry_4.0_identification-1_2.jpg
 categories:
   - RFID Solutions
 tags:
