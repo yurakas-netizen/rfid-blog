@@ -21,7 +21,30 @@ translationKey: test-schema-faq-ru
 ## FAQ: частые вопросы по тестовому стенду
 
 ### Как проверяется корректность JSON-LD на этой странице?
+
 После публикации URL статьи прогоняется через валидатор Schema.org или Google Rich Results Test, где должны отобразиться сущности `TechArticle`, `BreadcrumbList` и `FAQPage`.
 
 ### Зачем в статье используется уникальный ключ `translationKey`?
+
 Если переводов на другие языки пока нет, блок переключения языков не рендерится, а в микроразметке остаётся чистый `TechArticle` без лишних связей.
+
+{{< rawhtml >}}
+<div class="rfid-test-block" style="padding: 16px; border: 1px solid #cbd5e1; border-radius: 8px; margin: 16px 0;">
+  <h3 style="margin-top: 0;">Минимальный тест HTML-блока</h3>
+  <p>Проверка базовой вставки HTML через редактор без лишних элементов.</p>
+  <table style="width: 100%; border-collapse: collapse;">
+    <thead>
+      <tr>
+        <th style="text-align: left; border-bottom: 1px solid #cbd5e1; padding: 6px;">Параметр</th>
+        <th style="text-align: left; border-bottom: 1px solid #cbd5e1; padding: 6px;">Значение</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="padding: 6px; border-bottom: 1px solid #e2e8f0;">Частота</td>
+        <td style="padding: 6px; border-bottom: 1px solid #e2e8f0;">865.6–867.6 MHz</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+{{< /rawhtml >}}
