@@ -7,7 +7,7 @@ description: "Technische Analyse hybrider UHF-RFID-Temperatursensorik in der
   5-mm-PE-Schaum-Entkopplung für Aluminium-Blister, EU GDP (2013/C 343/01),
   EU-FMD und GS1 EPCIS 2.0."
 date: 2026-06-08T22:00:00.000Z
-image: industrial_uhf_rfid_applications-2_4.jpg
+image: industry_4.0_identification-2_4.jpg
 categories:
   - RFID Solutions
 tags:
