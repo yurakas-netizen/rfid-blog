@@ -6,6 +6,7 @@ description: Teknisk TCO-analyse af batteribaserede BLE-loggere, semi-passive
   koldekædeforsendelser. Belyser EU-batteriforordning 2023/1542, WEEE
   2012/19/EU, CSRD Scope 3 og GS1 EPCIS 2.0-integration.
 date: 2026-06-08T22:00:00.000Z
+image: industrial_rfid_and_rtls_applications-2_3.jpg
 categories:
   - RFID Solutions
 tags:
