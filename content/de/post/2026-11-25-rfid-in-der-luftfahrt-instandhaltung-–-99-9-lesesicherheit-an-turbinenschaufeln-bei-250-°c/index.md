@@ -8,7 +8,7 @@ description: "Technische Analyse von Hochtemperatur-Keramik-RFID-Transpondern
   100 Schaufeln, SAE AS5678, ATA Spec 2000 Chapter 9-5, EASA Part-145 und TCO
   für 15.000 Inconel-Schaufeln."
 date: 2026-06-08T22:00:00.000Z
-image: industrial_uhf_rfid_applications-3_2.jpg
+image: industry_4.0_identification-3_2.jpg
 categories:
   - RFID Solutions
 tags:
