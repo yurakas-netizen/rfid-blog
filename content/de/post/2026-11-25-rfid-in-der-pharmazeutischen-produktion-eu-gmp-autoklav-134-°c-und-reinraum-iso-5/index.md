@@ -30,7 +30,7 @@ Die regulatorischen Anforderungen an computergestützte Systeme in der Pharmapro
 
 ## Autoklavierbare Transponder: PEEK-Kapselung und Al₂O₃-Resonator
 
-Ein häufiges Missverständnis in älteren Lösungen betrifft die Konstruktion autoklavierbarer Transponder. Anders als oft dargestellt, besteht das Gehäuse nicht aus einem geschlossenen Metallkörper, der das Funksignal abschirmt. Stattdessen wird eine **radioprozesse Kapsel aus biokompatiblem PEEK oder PPS** verwendet, die einen keramischen Resonator aus **Al₂O₃** und eine Ferritunterlage schützt. Die Oberfläche ist glatt und nicht porös, um die Anforderungen an Reinigungs- und Sterilisationsprozesse nach EU-GMP Annex 1 zu erfüllen. Die Biokompatibilität wird nach **USP <87>/<88>** und **ISO 10993** nachgewiesen. Die Montage auf Reaktoren und Behältern aus Edelstahl 316L erfolgt durch Laserschweißen des Halters, Verschraubung oder einen hochtemperaturbeständigen Silikon- bzw. Epoxidverguss – ohne Spalte, in denen sich Mikroorganismen ansiedeln könnten.
+Ein häufiges Missverständnis in älteren Lösungen betrifft die Konstruktion autoklavierbarer Transponder. Anders als oft dargestellt, besteht das Gehäuse nicht aus einem geschlossenen Metallkörper, der das Funksignal abschirmt. Stattdessen wird eine **radiotransparente Kapsel aus biokompatiblem PEEK oder PPS** verwendet, die einen keramischen Resonator aus **Al₂O₃** und eine Ferritunterlage schützt. Die Oberfläche ist glatt und nicht porös, um die Anforderungen an Reinigungs- und Sterilisationsprozesse nach EU-GMP Annex 1 zu erfüllen. Die Biokompatibilität wird nach **USP <87>/<88>** und **ISO 10993** nachgewiesen. Die Montage auf Reaktoren und Behältern aus Edelstahl 316L erfolgt durch Laserschweißen des Halters, Verschraubung oder einen hochtemperaturbeständigen Silikon- bzw. Epoxidverguss – ohne Spalte, in denen sich Mikroorganismen ansiedeln könnten.
 
 Die Xerafy Dot XS Autoclavable-Serie ist beispielsweise für 134 °C und 0,6 MPa über mehr als 1.000 Zyklen spezifiziert, während die X II-Serie eine Überlebenstemperatur von bis zu 250 °C erreicht. Entscheidend ist die Unterscheidung zwischen **Überlebenstemperatur** (der Transponder übersteht den Autoklaven) und **Betriebslesetemperatur** (der Transponder ist bei Raumtemperatur lesbar) – eine Verwechslung dieser beiden Werte führt zu falschen Erwartungen an die Lesbarkeit während des Sterilisationsprozesses.
 
@@ -46,7 +46,7 @@ Auf einer Abfülllinie für sterile Flüssigkeiten, die 600 Fläschchen pro Minu
 
 ### Fehler 1: „Geschlossenes Metallgehäuse" für autoklavierbare Tags
 
-Ein geschlossenes Metallgehäuse würde das UHF-Signal abschirmen und die Lesbarkeit unmöglich machen. Die korrekte Konstruktion ist eine radioprozesse PEEK/PPS-Kapsel mit keramischem Resonator (Al₂O₃) und Ferritunterlage, die biokompatibel (USP <87>/<88>, ISO 10993) und partikelfrei ist.
+Ein geschlossenes Metallgehäuse würde das UHF-Signal abschirmen und die Lesbarkeit unmöglich machen. Die korrekte Konstruktion ist eine radiotransparente PEEK/PPS-Kapsel mit keramischem Resonator (Al₂O₃) und Ferritunterlage, die biokompatibel (USP <87>/<88>, ISO 10993) und partikelfrei ist.
 
 ### Fehler 2: FRAM nur auf Autoklavierung beschränkt
 
@@ -64,13 +64,13 @@ Die RFID-Integration in das MES muss über OPC UA erfolgen und in die GAMP-5-Val
 
 Die folgende Matrix vergleicht drei Identifikationsoptionen für einen deutschen Pharmahersteller mit 300 Mehrwegbehältern aus Edelstahl 316L, die 100 CIP/SIP-Zyklen mit 1 % NaOH bei 80 °C durchlaufen. Die Preise sind gerundete Marktwerte für 2026 und dienen als ingenieurtechnische Orientierung.
 
-| Kostenposition | Manuelle Kennzeichnung (Gravur / Papieretikett) | Standard-UHF-Tag (Kunststoff, nicht autoklavierbar) | Autoklavierbarer PEEK/Keramik-On-Metal-Transponder |
-|---|---|---|---|
-| Kosten pro Behälter | 5–15 € (Arbeitszeit + Material) | 1–3 € | 15–35 € |
-| Haltbarkeit nach 100 CIP/SIP-Zyklen (1 % NaOH, 80 °C) | Gravur bleibt lesbar, aber maschinelles Lesen nicht möglich | Tag zerstört (Kleber angelöst, Antenne verstimmt) | Tag überlebt, Leserate 99,8 % auf 4 m |
-| Autoklavierbarkeit (134 °C, 3 bar) | Nein | Nein | Ja (PEEK-Kapsel, Al₂O₃-Resonator) |
-| Gammasterilisation (25–50 kGy) | Nein | Nein (EEPROM-Datenverlust) | Ja (FRAM-Speicher) |
-| Gesamtkosten (300 Behälter, 3 Jahre) | 1.500–4.500 € + Personal-OPEX | 300–900 € + jährlicher Ersatz | 4.500–10.500 € (einmalig, dann wartungsfrei) |
+| Kostenposition                                        | Manuelle Kennzeichnung (Gravur / Papieretikett)             | Standard-UHF-Tag (Kunststoff, nicht autoklavierbar) | Autoklavierbarer PEEK/Keramik-On-Metal-Transponder |
+| ----------------------------------------------------- | ----------------------------------------------------------- | --------------------------------------------------- | -------------------------------------------------- |
+| Kosten pro Behälter                                   | 5–15 € (Arbeitszeit + Material)                             | 1–3 €                                               | 15–35 €                                            |
+| Haltbarkeit nach 100 CIP/SIP-Zyklen (1 % NaOH, 80 °C) | Gravur bleibt lesbar, aber maschinelles Lesen nicht möglich | Tag zerstört (Kleber angelöst, Antenne verstimmt)   | Tag überlebt, Leserate 99,8 % auf 4 m              |
+| Autoklavierbarkeit (134 °C, 3 bar)                    | Nein                                                        | Nein                                                | Ja (PEEK-Kapsel, Al₂O₃-Resonator)                  |
+| Gammasterilisation (25–50 kGy)                        | Nein                                                        | Nein (EEPROM-Datenverlust)                          | Ja (FRAM-Speicher)                                 |
+| Gesamtkosten (300 Behälter, 3 Jahre)                  | 1.500–4.500 € + Personal-OPEX                               | 300–900 € + jährlicher Ersatz                       | 4.500–10.500 € (einmalig, dann wartungsfrei)       |
 
 Die Matrix zeigt: Die autoklavierbaren PEEK/Keramik-Transponder sind pro Stück deutlich teurer, bieten aber die einzige Möglichkeit, eine lückenlose Chargenrückverfolgung über hunderte CIP/SIP-Zyklen und Gammasterilisationsdosen hinweg zu gewährleisten. Bei einem Behälterwert im vierstelligen Euro-Bereich und den regulatorischen Anforderungen an die Chargendokumentation amortisiert sich die Investition durch die Vermeidung von Nacharbeit und die Erfüllung der EU-GMP-Anforderungen.
 
@@ -82,7 +82,7 @@ Für deutsche Pharmahersteller ist die Kombination aus **autoklavierbaren PEEK/K
 
 ### Warum kein Metallgehäuse für autoklavierbare Tags?
 
-Ein geschlossenes Metallgehäuse würde das UHF-Signal abschirmen. Die korrekte Konstruktion ist eine radioprozesse PEEK/PPS-Kapsel mit keramischem Resonator (Al₂O₃) und Ferritunterlage, die biokompatibel (USP <87>/<88>) und partikelfrei ist.
+Ein geschlossenes Metallgehäuse würde das UHF-Signal abschirmen. Die korrekte Konstruktion ist eine radiotransparentePEEK/PPS-Kapsel mit keramischem Resonator (Al₂O₃) und Ferritunterlage, die biokompatibel (USP <87>/<88>) und partikelfrei ist.
 
 ### Warum FRAM und nicht EEPROM?
 
