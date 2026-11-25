@@ -1223,13 +1223,40 @@
         };
       }
 
+      function toLatinSlug(text) {
+        var map = {
+          'а':'a','б':'b','в':'v','г':'g','ґ':'g','д':'d','е':'e','ё':'yo','є':'ye',
+          'ж':'zh','з':'z','и':'i','і':'i','ї':'yi','й':'y','к':'k','л':'l','м':'m',
+          'н':'n','о':'o','п':'p','р':'r','с':'s','т':'t','у':'u','ф':'f','х':'kh',
+          'ц':'ts','ч':'ch','ш':'sh','щ':'shch','ъ':'','ы':'y','ь':'','э':'e','ю':'yu','я':'ya',
+          'æ':'ae','ø':'o','å':'a','ß':'ss','ł':'l','đ':'d','ð':'d','þ':'th'
+        };
+        var lower = String(text || '').toLowerCase();
+        var out = '';
+        for (var i = 0; i < lower.length; i++) {
+          var ch = lower[i];
+          if (Object.prototype.hasOwnProperty.call(map, ch)) {
+            out += map[ch];
+          } else {
+            out += ch;
+          }
+        }
+        out = out.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        out = out
+          .replace(/['’ʼ`]/g, '')
+          .replace(/[^a-z0-9]+/g, '-')
+          .replace(/^-+|-+$/g, '')
+          .replace(/-{2,}/g, '-');
+        if (out.length > 80) {
+          var cut = out.slice(0, 80);
+          var lastDash = cut.lastIndexOf('-');
+          out = (lastDash > 40 ? cut.slice(0, lastDash) : cut).replace(/-+$/g, '');
+        }
+        return out;
+      }
+
       function slugFileName(title, ext) {
-        var base = String(title || 'article')
-          .toLowerCase()
-          .replace(/[^\p{L}\p{N}\s-]+/gu, '')
-          .trim()
-          .replace(/\s+/g, '-')
-          .slice(0, 60) || 'article';
+        var base = toLatinSlug(title) || 'article';
         return base + '.' + ext;
       }
 
@@ -1271,9 +1298,20 @@
           if (fTitle) onChange(fTitle, parsed.title);
         }
 
-        if (opts.slug && parsed.hasSlug) {
+        if (opts.slug) {
           var fSlug = getField('slug');
-          if (fSlug) onChange(fSlug, parsed.slug);
+          if (fSlug) {
+            if (parsed.hasSlug) {
+              onChange(fSlug, parsed.slug);
+            } else if (parsed.hasTitle) {
+              var currentData = props.entry && props.entry.get('data');
+              var existingSlug = currentData ? String(currentData.get('slug') || '').trim() : '';
+              if (!existingSlug) {
+                var autoSlug = toLatinSlug(parsed.title);
+                if (autoSlug) onChange(fSlug, autoSlug);
+              }
+            }
+          }
         }
 
         if (opts.description && parsed.hasDescription) {
@@ -1597,6 +1635,18 @@
           ensureModal().openExport();
         });
 
+        var slugBtn = document.createElement('button');
+        slugBtn.type = 'button';
+        slugBtn.className = 'rfid-io-btn';
+        slugBtn.title = 'Сгенерировать латинский URL-слаг из заголовка статьи';
+        slugBtn.innerHTML =
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5"/><path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5"/></svg>' +
+          '<span>Slug A-z</span>';
+        slugBtn.addEventListener('click', function () {
+          fillLatinSlugFromTitle(true);
+        });
+
+        group.appendChild(slugBtn);
         group.appendChild(importBtn);
         group.appendChild(exportBtn);
 
@@ -1607,6 +1657,45 @@
           topBar.appendChild(group);
         }
       }
+
+      var lastAutoSlugValue = '';
+
+      function fillLatinSlugFromTitle(force) {
+        var ctxWrap = findEditorContext();
+        if (!ctxWrap || !ctxWrap.props) return false;
+        var props = ctxWrap.props;
+        var entry = props.entry;
+        if (!entry) return false;
+        var data = entry.get('data');
+        if (!data) return false;
+
+        var title = String(data.get('title') || '').trim();
+        var currentSlug = String(data.get('slug') || '').trim();
+        if (!title) return false;
+        if (!force && currentSlug && currentSlug !== lastAutoSlugValue) return false;
+
+        var nextSlug = toLatinSlug(title);
+        if (!nextSlug) return false;
+
+        var fSlug = props.fields && props.fields.find(function (f) { return f.get('name') === 'slug'; });
+        if (fSlug && typeof props.onChange === 'function') {
+          lastAutoSlugValue = nextSlug;
+          props.onChange(fSlug, nextSlug);
+          return true;
+        }
+        return false;
+      }
+
+      document.addEventListener('blur', function (e) {
+        var target = e.target;
+        if (!target || !target.id) return;
+        if (target.id.indexOf('title-field-') === 0) {
+          var ctxWrap = findEditorContext();
+          if (ctxWrap && ctxWrap.props && ctxWrap.props.entry && ctxWrap.props.entry.get('newRecord')) {
+            fillLatinSlugFromTitle(false);
+          }
+        }
+      }, true);
 
       function scanDom() {
         var bars = document.querySelectorAll('[class*="EditorControlBar"]');
