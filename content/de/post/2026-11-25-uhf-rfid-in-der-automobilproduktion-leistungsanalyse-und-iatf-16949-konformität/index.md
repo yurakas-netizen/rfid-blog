@@ -7,7 +7,7 @@ description: "Technische Analyse der Hochgeschwindigkeits-RFID-Erfassung im
   Miller M=4 gegen Doppler (Δf ≈ 48 Hz), ETSI EN 302 208 (2 W ERP), IATF
   16949:2016, VDA 5509 und TCO für 32 Portale / 250.000 Karosserien pro Jahr."
 date: 2026-06-08T22:00:00.000Z
-image: industrial_uhf_rfid_applications-2_2.jpg
+image: industry_4.0_identification-2_2.jpg
 categories:
   - RFID Solutions
 tags:
