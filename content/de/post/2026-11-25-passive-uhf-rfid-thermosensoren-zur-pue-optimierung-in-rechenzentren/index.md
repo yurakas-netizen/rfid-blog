@@ -7,7 +7,7 @@ description: "Technische Analyse batterieloser UHF-RFID-Temperatursensoren
   2026), DIN EN 50600-2-3/4-2, 3×2-Raster pro Rack, ΔT-Auswertung und
   DCIM-Integration über MQTT/BACnet/IP/Modbus TCP."
 date: 2026-06-09T22:00:00.000Z
-image: industrial_uhf_rfid_applications-4_2.jpg
+image: industry_4.0_identification-4_2.jpg
 categories:
   - RFID Solutions
 tags:
