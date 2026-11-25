@@ -1,37 +1,46 @@
+{{- $page := . -}}
 {{- $key := "" -}}
-{{- with .Params.translationKey -}}
+{{- with ($page.Params.translationkey | default $page.Params.translationKey) -}}
     {{- $key = trim (string .) " " -}}
 {{- end -}}
+{{- $allCount := 0 -}}
+{{- $matches := slice -}}
 {{- if $key -}}
-    {{- $currentPermalink := .Permalink -}}
-    {{- $matches := slice -}}
+    {{- $currentLang := $page.Language.Lang -}}
+    {{- $currentRelPermalink := $page.RelPermalink -}}
+    {{- $seenLangs := dict -}}
     {{- range hugo.Sites -}}
         {{- range .RegularPages -}}
             {{- $otherKey := "" -}}
-            {{- with .Params.translationKey -}}
+            {{- with (.Params.translationkey | default .Params.translationKey) -}}
                 {{- $otherKey = trim (string .) " " -}}
             {{- end -}}
-            {{- if and (eq $otherKey $key) (ne .Permalink $currentPermalink) -}}
-                {{- $matches = $matches | append . -}}
+            {{- if eq $otherKey $key -}}
+                {{- $allCount = add $allCount 1 -}}
+                {{- if and (ne .RelPermalink $currentRelPermalink) (ne .Language.Lang $currentLang) (not (index $seenLangs .Language.Lang)) -}}
+                    {{- $seenLangs = merge $seenLangs (dict .Language.Lang true) -}}
+                    {{- $matches = $matches | append . -}}
+                {{- end -}}
             {{- end -}}
         {{- end -}}
     {{- end -}}
-    {{- if gt (len $matches) 0 -}}
-        {{- $matches = sort $matches "Language.Weight" "asc" -}}
-        <nav class="article-translations" aria-label="Translations">
-            <span class="article-translations__icon" aria-hidden="true">
-                {{ partial "helper/icon" "language" }}
-            </span>
-            <div class="article-translations__list">
-                {{- range $matches -}}
-                    {{- $rawName := .Language.LanguageName | default .Language.Label -}}
-                    {{- $cleanName := replaceRE `\s*\([^)]+\)$` "" $rawName -}}
-                    <a href="{{ .RelPermalink }}" class="translation-badge" title="{{ .Title }}" hreflang="{{ .Language.Lang }}">
-                        <span class="translation-badge__code">{{ .Language.Lang | upper }}</span>
-                        <span class="translation-badge__name">{{ $cleanName }}</span>
-                    </a>
-                {{- end -}}
-            </div>
-        </nav>
-    {{- end -}}
+{{- end -}}
+<template hidden data-tk-debug="tk={{ $key }} all={{ $allCount }} matches={{ len $matches }}"></template>
+{{- if gt (len $matches) 0 -}}
+    {{- $matches = sort $matches "Language.Weight" "asc" -}}
+    <nav class="article-translations" aria-label="Translations">
+        <span class="article-translations__icon" aria-hidden="true">
+            {{ partial "helper/icon" "language" }}
+        </span>
+        <div class="article-translations__list">
+            {{- range $matches -}}
+                {{- $rawName := .Language.LanguageName | default (.Language.Lang | upper) -}}
+                {{- $cleanName := replaceRE `\s*\([^)]+\)$` "" $rawName -}}
+                <a href="{{ .RelPermalink }}" class="translation-badge" title="{{ .Title }}" hreflang="{{ .Language.Lang }}">
+                    <span class="translation-badge__code">{{ .Language.Lang | upper }}</span>
+                    <span class="translation-badge__name">{{ $cleanName }}</span>
+                </a>
+            {{- end -}}
+        </div>
+    </nav>
 {{- end -}}
