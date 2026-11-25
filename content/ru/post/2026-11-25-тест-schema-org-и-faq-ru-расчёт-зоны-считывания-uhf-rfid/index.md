@@ -12,21 +12,7 @@ tags:
   - Тест разметки
 translationKey: test-schema-faq-ru
 ---
-Короткий 2 технический материал для проверки микроразметки на продакшене:
 
-* Рабочий диапазон частот ETSI: $865,6\text{–}867,6\text{ МГц}$.
-* Максимальная излучаемая мощность в канале: $2\text{ Вт ERP}$ ($33\text{ дБм}$).
-* Изолированный тестовый ключ `test-schema-faq-ru` без привязки к соседним языкам.
-
-## FAQ: частые вопросы по тестовому стенду
-
-### Как проверяется корректность JSON-LD на этой странице?
-
-После публикации URL статьи прогоняется через валидатор Schema.org или Google Rich Results Test, где должны отобразиться сущности `TechArticle`, `BreadcrumbList` и `FAQPage`.
-
-### Зачем в статье используется уникальный ключ `translationKey`?
-
-Если переводов на другие языки пока нет, блок переключения языков не рендерится, а в микроразметке остаётся чистый `TechArticle` без лишних связей.
 
 {{< rawhtml >}}
 <div class="rfid-u-article" style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; color: #1e293b; line-height: 1.7;">
