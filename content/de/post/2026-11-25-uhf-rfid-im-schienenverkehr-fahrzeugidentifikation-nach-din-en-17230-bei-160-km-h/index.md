@@ -8,7 +8,7 @@ description: "Technische Analyse der automatischen Fahrzeugidentifikation (AVI)
   Lesefenster), 2 W ERP nach ETSI EN 302 208, Metall-Keramik-Transponder
   316L/Al₂O₃ und GS1 GIAI/EPCIS 2.0."
 date: 2026-06-09T22:00:00.000Z
-image: industrial_uhf_rfid_applications-2_1.jpg
+image: industry_4.0_identification-2_1.jpg
 categories:
   - RFID Solutions
 tags:
