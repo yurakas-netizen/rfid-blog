@@ -11,16 +11,16 @@
     "secondaryCtaUrl": "/search/",
     "metrics": [
       {
-        "value": "20",
-        "label": "Languages"
+        "value": "7",
+        "label": "Articles"
+      },
+      {
+        "value": "21",
+        "label": "Tags"
       },
       {
         "value": "865–928 MHz",
         "label": "ETSI / FCC UHF"
-      },
-      {
-        "value": "EPC Gen2v2",
-        "label": "ISO/IEC 18000-63"
       }
     ]
   },
@@ -29,7 +29,11 @@
     "heading": "Dossiers d’ingénierie sélectionnés",
     "subtitle": "Architectures de référence et retours d’expérience terrain",
     "mode": "auto",
-    "postSlugs": [],
+    "postSlugs": [
+      "defis-techniques-des-etiquettes-rfid-textiles-pour-equipements-militaires",
+      "2026-11-26-rfid-dans-la-construction-automobile-traçabilité-iatf-16949-et-analyse-technique",
+      "fusion-rfid-et-vision-par-ordinateur-en-logistique-automatisee"
+    ],
     "limit": 3
   },
   "tracks": [
