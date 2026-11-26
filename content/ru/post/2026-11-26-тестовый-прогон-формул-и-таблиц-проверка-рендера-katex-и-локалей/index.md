@@ -1,7 +1,7 @@
 ---
 title: "Тестовый прогон формул и таблиц: проверка рендера KaTeX и локалей"
 slug: testovyy-progon-formul-i-tablits-proverka-rendera-katex-i-lokaley
-date: 2026-11-26T16:23:00.000Z
+date: 2026-11-24T18:23:00.000Z
 image: industrial_rfid_ecosystem-1_1.jpg
 ---
 
