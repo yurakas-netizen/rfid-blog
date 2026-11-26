@@ -7,7 +7,7 @@ description: Teknisk analyse af UHF RFID (ISO/IEC 18000-63), LF RFID (ISO
   påvirkning fra is og sporbarhed efter Regulation (EC) 178/2002 og GS1 EPCIS
   2.0.
 date: 2026-06-08T22:00:00.000Z
-image: industrial_rfid_in_extreme_environments-5_3.jpg
+image: матриця_екстремальної_індустрії-4_3.jpg
 categories:
   - RFID Solutions
 tags:
