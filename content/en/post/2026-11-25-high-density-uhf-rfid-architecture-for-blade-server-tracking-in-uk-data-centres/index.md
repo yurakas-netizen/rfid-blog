@@ -8,7 +8,7 @@ description: "Technical analysis of near-field magnetic coupling UHF RFID for
   29167-10), Ofcom IR 2030, ISO/IEC 19770-1 and 5-year TCO in GBP for 200 racks
   / 8,000 servers."
 date: 2026-06-08T22:00:00.000Z
-image: industrial_rfid_applications-1_1.jpg
+image: industrial_rfid_ecosystem-1_1.jpg
 categories:
   - RFID Solutions
 tags:
