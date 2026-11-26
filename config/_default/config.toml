@@ -1,3 +1,4 @@
+buildFuture = true
 baseurl = "https://rfid.org.ua/"
 defaultContentLanguage = "uk"
 defaultContentLanguageInSubdir = false
