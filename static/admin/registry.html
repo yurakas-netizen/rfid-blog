@@ -1,0 +1,2951 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RFID Ukraine — Реестр таксономии и связок</title>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --surface-muted: #f1f5f9;
+      --border: #cbd5e1;
+      --border-soft: #e2e8f0;
+      --text: #0f172a;
+      --text-muted: #475569;
+      --text-soft: #64748b;
+      --accent: #0284c7;
+      --accent-hover: #0369a1;
+      --accent-soft: #e0f2fe;
+      --ok-bg: #dcfce7;
+      --ok-text: #166534;
+      --ok-border: #86efac;
+      --warn-bg: #fef3c7;
+      --warn-text: #92400e;
+      --warn-border: #fcd34d;
+      --err-bg: #fee2e2;
+      --err-text: #991b1b;
+      --err-border: #fca5a5;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      --sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .app {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Top Header */
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 10px 16px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .topbar-left {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-title {
+      margin: 0;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
+    .mode-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 8px;
+      border-radius: 5px;
+      background: var(--surface-muted);
+      border: 1px solid var(--border);
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .mode-badge.is-local {
+      background: #ecfeff;
+      border-color: #a5f3fc;
+      color: #0e7490;
+    }
+
+    .mode-badge.is-github {
+      background: #eef2ff;
+      border-color: #c7d2fe;
+      color: #3730a3;
+    }
+
+    .kpi-strip {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .kpi-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 9px;
+      border-radius: 6px;
+      border: 1px solid var(--border-soft);
+      background: var(--surface-muted);
+      color: var(--text-muted);
+      font-size: 12px;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+      cursor: pointer;
+    }
+
+    .kpi-btn:hover {
+      border-color: var(--border);
+      background: #e2e8f0;
+    }
+
+    .kpi-btn.is-warn {
+      background: var(--warn-bg);
+      border-color: var(--warn-border);
+      color: var(--warn-text);
+    }
+
+    .kpi-btn.is-dirty {
+      background: var(--accent-soft);
+      border-color: #7dd3fc;
+      color: var(--accent-hover);
+    }
+
+    .topbar-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      height: 32px;
+      padding: 0 12px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      font-size: 12.5px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .btn:hover:not(:disabled) {
+      background: var(--surface-muted);
+      border-color: #94a3b8;
+    }
+
+    .btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #ffffff;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background: var(--accent-hover);
+      border-color: var(--accent-hover);
+    }
+
+    .btn-sm {
+      height: 26px;
+      padding: 0 8px;
+      font-size: 11.5px;
+    }
+
+    .btn-danger {
+      background: #fff1f2;
+      border-color: #fecdd3;
+      color: #be123c;
+    }
+
+    /* GitHub Auth Banner */
+    .auth-banner {
+      display: none;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      padding: 10px 16px;
+      background: #eff6ff;
+      border-bottom: 1px solid #bfdbfe;
+    }
+
+    .auth-banner.is-visible {
+      display: flex;
+    }
+
+    .auth-banner input {
+      height: 30px;
+      padding: 0 10px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-family: var(--mono);
+      font-size: 12px;
+      background: #ffffff;
+    }
+
+    /* Filters Bar */
+    .filters {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border-soft);
+      padding: 10px 16px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .input, .select {
+      height: 30px;
+      padding: 0 9px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: #ffffff;
+      color: var(--text);
+      font-size: 12.5px;
+      outline: none;
+    }
+
+    .input:focus, .select:focus {
+      border-color: var(--accent);
+    }
+
+    .search-input {
+      min-width: 240px;
+      flex: 1 1 240px;
+      max-width: 380px;
+    }
+
+    .problem-check {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      height: 30px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--surface-muted);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .problem-check.is-active {
+      background: var(--warn-bg);
+      border-color: var(--warn-border);
+      color: var(--warn-text);
+    }
+
+    .view-tabs {
+      display: inline-flex;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .view-tab {
+      height: 28px;
+      padding: 0 10px;
+      border: 0;
+      background: var(--surface);
+      color: var(--text-muted);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .view-tab.is-active {
+      background: var(--accent);
+      color: #ffffff;
+    }
+
+    /* Bulk Bar */
+    .bulk-bar {
+      display: none;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 16px;
+      background: #0f172a;
+      color: #f8fafc;
+      border-bottom: 1px solid #1e293b;
+      position: sticky;
+      top: 53px;
+      z-index: 35;
+    }
+
+    .bulk-bar.is-open {
+      display: flex;
+    }
+
+    .bulk-group {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 7px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 6px;
+    }
+
+    .bulk-group label {
+      font-size: 11px;
+      color: #94a3b8;
+      font-weight: 600;
+    }
+
+    .bulk-bar input {
+      height: 26px;
+      padding: 0 8px;
+      border-radius: 5px;
+      border: 1px solid #475569;
+      background: #1e293b;
+      color: #f8fafc;
+      font-size: 12px;
+      width: 155px;
+      outline: none;
+    }
+
+    .bulk-bar input:focus {
+      border-color: #38bdf8;
+    }
+
+    .bulk-btn {
+      height: 26px;
+      padding: 0 9px;
+      border-radius: 5px;
+      border: 1px solid #475569;
+      background: #334155;
+      color: #f8fafc;
+      font-size: 11.5px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .bulk-btn:hover {
+      background: #0284c7;
+      border-color: #0284c7;
+    }
+
+    /* Table */
+    .table-wrap {
+      flex: 1 1 auto;
+      overflow: auto;
+      padding: 12px 16px 36px;
+    }
+
+    table.reg-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      min-width: 1140px;
+    }
+
+    table.reg-table thead th {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: var(--surface-muted);
+      color: var(--text-muted);
+      font-size: 11.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      text-align: left;
+      padding: 9px 10px;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    table.reg-table thead th:hover {
+      color: var(--text);
+    }
+
+    table.reg-table tbody td {
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--border-soft);
+      vertical-align: top;
+    }
+
+    table.reg-table tbody tr:last-child td {
+      border-bottom: 0;
+    }
+
+    table.reg-table tbody tr.is-dirty {
+      background: #f0f9ff;
+    }
+
+    table.reg-table tbody tr.is-selected {
+      background: #eff6ff;
+    }
+
+    table.reg-table tbody tr.group-header-row td {
+      background: #f8fafc;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 6px 10px;
+    }
+
+    .group-header-flex {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .lang-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 32px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: #0f172a;
+      color: #ffffff;
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .file-cell-top {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 4px;
+    }
+
+    .article-title-link {
+      font-weight: 600;
+      color: var(--text);
+      text-decoration: none;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .article-title-link:hover {
+      color: var(--accent);
+      text-decoration: underline;
+    }
+
+    .file-path {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--text-soft);
+      word-break: break-all;
+      margin-bottom: 4px;
+    }
+
+    .inline-edit-row {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .cell-input {
+      width: 100%;
+      height: 26px;
+      padding: 0 7px;
+      border: 1px solid var(--border-soft);
+      border-radius: 5px;
+      background: #ffffff;
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 11.5px;
+      outline: none;
+    }
+
+    .cell-input:focus {
+      border-color: var(--accent);
+    }
+
+    .cell-input.is-missing {
+      border-color: var(--warn-border);
+      background: #fffbeb;
+    }
+
+    .mini-icon-btn {
+      flex-shrink: 0;
+      height: 26px;
+      min-width: 26px;
+      padding: 0 6px;
+      border-radius: 5px;
+      border: 1px solid var(--border-soft);
+      background: var(--surface-muted);
+      color: var(--text-muted);
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .mini-icon-btn:hover {
+      background: #e2e8f0;
+      color: var(--text);
+    }
+
+    .chips-box {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-bottom: 5px;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-size: 11.5px;
+      font-weight: 500;
+      background: var(--surface-muted);
+      border: 1px solid var(--border);
+      color: var(--text);
+      max-width: 240px;
+    }
+
+    .chip.is-cat {
+      background: #e0f2fe;
+      border-color: #7dd3fc;
+      color: #0369a1;
+      font-weight: 600;
+    }
+
+    .chip.is-drift {
+      background: var(--warn-bg);
+      border-color: var(--warn-border);
+      color: var(--warn-text);
+    }
+
+    .chip-text {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .chip-del {
+      border: 0;
+      background: transparent;
+      color: inherit;
+      opacity: 0.65;
+      cursor: pointer;
+      padding: 0 2px;
+      font-size: 13px;
+      line-height: 1;
+    }
+
+    .chip-del:hover {
+      opacity: 1;
+    }
+
+    .status-stack {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 4px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      border: 1px solid transparent;
+      white-space: nowrap;
+    }
+
+    .badge-ok {
+      background: var(--ok-bg);
+      border-color: var(--ok-border);
+      color: var(--ok-text);
+    }
+
+    .badge-warn {
+      background: var(--warn-bg);
+      border-color: var(--warn-border);
+      color: var(--warn-text);
+    }
+
+    .badge-err {
+      background: var(--err-bg);
+      border-color: var(--err-border);
+      color: var(--err-text);
+    }
+
+    .badge-dirty {
+      background: var(--accent-soft);
+      border-color: #7dd3fc;
+      color: var(--accent-hover);
+    }
+
+    .empty-state {
+      padding: 40px 20px;
+      text-align: center;
+      color: var(--text-soft);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+    }
+
+    /* Modals */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      background: rgba(15, 23, 42, 0.56);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-backdrop.is-open {
+      display: flex;
+    }
+
+    .modal {
+      width: min(94vw, 960px);
+      max-height: 90vh;
+      background: var(--surface);
+      border-radius: 10px;
+      box-shadow: 0 24px 60px rgba(15, 23, 42, 0.3);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .modal-header {
+      padding: 12px 18px;
+      border-bottom: 1px solid var(--border-soft);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .modal-header h2 {
+      margin: 0;
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .modal-body {
+      padding: 14px 18px;
+      overflow-y: auto;
+      flex: 1 1 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .modal-footer {
+      padding: 12px 18px;
+      border-top: 1px solid var(--border-soft);
+      background: var(--surface-muted);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .diff-card {
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      overflow: hidden;
+    }
+
+    .diff-card-head {
+      padding: 7px 12px;
+      background: var(--surface-muted);
+      border-bottom: 1px solid var(--border-soft);
+      font-family: var(--mono);
+      font-size: 11.5px;
+      font-weight: 600;
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .diff-pre {
+      margin: 0;
+      padding: 8px 0;
+      font-family: var(--mono);
+      font-size: 11.5px;
+      line-height: 1.45;
+      overflow-x: auto;
+      background: #ffffff;
+    }
+
+    .diff-line {
+      padding: 1px 12px;
+      white-space: pre;
+    }
+
+    .diff-line.is-del {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .diff-line.is-add {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .diff-line.is-ctx {
+      color: #64748b;
+    }
+
+    .dict-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+      gap: 14px;
+    }
+
+    .dict-panel {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .dict-panel-head {
+      padding: 8px 12px;
+      background: var(--surface-muted);
+      border-bottom: 1px solid var(--border-soft);
+      font-weight: 700;
+      font-size: 12.5px;
+    }
+
+    .dict-list {
+      max-height: 55vh;
+      overflow-y: auto;
+    }
+
+    .dict-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 6px 12px;
+      border-bottom: 1px solid var(--border-soft);
+    }
+
+    .dict-row:last-child {
+      border-bottom: 0;
+    }
+
+    .dict-row.is-collision {
+      background: #fffbeb;
+    }
+
+    .toast {
+      position: fixed;
+      right: 16px;
+      bottom: 16px;
+      z-index: 200;
+      padding: 10px 14px;
+      border-radius: 7px;
+      background: #0f172a;
+      color: #ffffff;
+      font-size: 12.5px;
+      font-weight: 600;
+      box-shadow: 0 12px 28px rgba(15, 23, 42, 0.25);
+      display: none;
+    }
+
+    .toast.is-open {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="topbar-left">
+        <h1 class="brand-title">Реестр таксономии и связок</h1>
+        <span id="modeBadge" class="mode-badge">Загрузка...</span>
+        <div class="kpi-strip">
+          <button type="button" id="kpiTotal" class="kpi-btn">Статей: 0</button>
+          <button type="button" id="kpiGroups" class="kpi-btn">Тем: 0</button>
+          <button type="button" id="kpiProblems" class="kpi-btn">Проблем: 0</button>
+          <button type="button" id="kpiDirty" class="kpi-btn">Изменено: 0</button>
+        </div>
+      </div>
+      <div class="topbar-actions">
+        <button type="button" id="dictBtn" class="btn">Словарь тегов и категорий</button>
+        <button type="button" id="reloadBtn" class="btn">Обновить</button>
+        <button type="button" id="resetAllBtn" class="btn btn-danger" disabled>Сбросить правки</button>
+        <button type="button" id="saveDiffBtn" class="btn btn-primary" disabled>Проверить Diff и сохранить (0)</button>
+        <a href="/admin/" id="backToCmsLink" class="btn">← В CMS</a>
+      </div>
+    </header>
+
+    <section id="githubAuthBanner" class="auth-banner">
+      <strong>GitHub API режим:</strong>
+      <span>Репозиторий</span>
+      <input type="text" id="ghRepoInput" value="yurakas-netizen/rfid-blog" style="width: 210px;" />
+      <span>Ветка</span>
+      <input type="text" id="ghBranchInput" value="master" style="width: 90px;" />
+      <span>Токен</span>
+      <input type="password" id="ghTokenInput" placeholder="GitHub PAT (хранится только в памяти вкладки)" style="width: 260px;" />
+      <button type="button" id="ghConnectBtn" class="btn btn-primary btn-sm">Подключиться</button>
+      <button type="button" id="ghFromDecapBtn" class="btn btn-sm">Взять из сессии Decap CMS</button>
+      <span id="ghAuthStatus" style="font-size: 12px; color: #1e3a8a;"></span>
+    </section>
+
+    <section class="filters">
+      <input type="search" id="searchInput" class="input search-input" placeholder="Поиск: заголовок, slug, файл, тема, тег..." />
+      <select id="langFilter" class="select"><option value="">Все языки</option></select>
+      <select id="catFilter" class="select"><option value="">Все категории</option></select>
+      <select id="tagFilter" class="select"><option value="">Все теги</option></select>
+      <select id="tkFilter" class="select"><option value="">Все темы (translationKey)</option></select>
+      <select id="problemSelect" class="select">
+        <option value="">Любой статус</option>
+        <option value="any">Все проблемные</option>
+        <option value="orphan">Сироты (нет пары)</option>
+        <option value="no_tk">Нет translationKey</option>
+        <option value="cat_mismatch">Разные категории в связке</option>
+        <option value="tag_drift">Разнобой / дубли тегов</option>
+        <option value="empty_tax">Пустые категории или теги</option>
+        <option value="no_slug">Нет латинского slug</option>
+        <option value="dup_tk_lang">Дубль языка в translationKey</option>
+        <option value="dirty">Только изменённые в сессии</option>
+      </select>
+      <label id="onlyProblemsLabel" class="problem-check">
+        <input type="checkbox" id="onlyProblemsCb" />
+        <span>Только проблемные</span>
+      </label>
+      <div class="view-tabs">
+        <button type="button" id="viewFlatBtn" class="view-tab is-active">Таблица</button>
+        <button type="button" id="viewGroupedBtn" class="view-tab">По темам</button>
+      </div>
+      <button type="button" id="clearFiltersBtn" class="btn btn-sm">Сбросить фильтры</button>
+    </section>
+
+    <section id="bulkBar" class="bulk-bar">
+      <strong id="bulkCountLabel">Выбрано: 0</strong>
+      <button type="button" id="bulkClearSelBtn" class="bulk-btn">Снять выбор</button>
+
+      <div class="bulk-group">
+        <label>Категория:</label>
+        <input type="text" id="bulkCatInput" list="dl-cats" placeholder="Например: UHF RFID" />
+        <button type="button" id="bulkCatReplaceBtn" class="bulk-btn" title="Заменить категории выбранных статей">Перекинуть</button>
+        <button type="button" id="bulkCatAddBtn" class="bulk-btn">+ Добавить</button>
+        <button type="button" id="bulkCatRemoveBtn" class="bulk-btn">− Удалить</button>
+      </div>
+
+      <div class="bulk-group">
+        <label>Тема:</label>
+        <input type="text" id="bulkTkInput" list="dl-tk" placeholder="translationKey" />
+        <button type="button" id="bulkTkSetBtn" class="bulk-btn">Назначить</button>
+        <button type="button" id="bulkAlignCatBtn" class="bulk-btn" title="Скопировать категории из первой выбранной статьи">Выровнять категории</button>
+      </div>
+
+      <div class="bulk-group">
+        <label>Теги:</label>
+        <input type="text" id="bulkTagFromInput" list="dl-tags" placeholder="Тег" style="width: 130px;" />
+        <input type="text" id="bulkTagToInput" list="dl-tags" placeholder="Заменить на (опц.)" style="width: 135px;" />
+        <button type="button" id="bulkTagAddBtn" class="bulk-btn">+ Добавить</button>
+        <button type="button" id="bulkTagRemoveBtn" class="bulk-btn">− Удалить</button>
+        <button type="button" id="bulkTagRenameBtn" class="bulk-btn">Заменить A→B</button>
+      </div>
+
+      <button type="button" id="bulkAutoSlugBtn" class="bulk-btn">Латинский slug (пустым)</button>
+    </section>
+
+    <main class="table-wrap">
+      <div id="tableContainer"></div>
+    </main>
+  </div>
+
+  <!-- Datalists for fast inline autocomplete -->
+  <datalist id="dl-cats"></datalist>
+  <datalist id="dl-tags"></datalist>
+  <datalist id="dl-tk"></datalist>
+
+  <!-- Diff & Save Modal -->
+  <div id="diffModalBackdrop" class="modal-backdrop" role="dialog" aria-modal="true">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Предпросмотр изменений (YAML Frontmatter Diff)</h2>
+        <button type="button" id="diffCloseBtn" class="btn btn-sm">Закрыть</button>
+      </div>
+      <div id="diffModalBody" class="modal-body"></div>
+      <div class="modal-footer">
+        <div id="diffCommitRow" style="display:none; flex: 1 1 320px; align-items:center; gap:8px;">
+          <label for="commitMsgInput" style="font-size:12px; font-weight:600;">Commit:</label>
+          <input type="text" id="commitMsgInput" class="input" style="flex:1;" />
+        </div>
+        <div id="diffStatusText" style="font-size:12.5px; font-weight:600; color:#475569;"></div>
+        <div style="display:flex; gap:8px;">
+          <button type="button" id="diffCancelBtn" class="btn">Отмена</button>
+          <button type="button" id="diffApplyBtn" class="btn btn-primary">Применить и сохранить</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Taxonomy Dictionary Modal -->
+  <div id="dictModalBackdrop" class="modal-backdrop" role="dialog" aria-modal="true">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Словарь категорий и тегов (поиск дублей и объединение)</h2>
+        <button type="button" id="dictCloseBtn" class="btn btn-sm">Закрыть</button>
+      </div>
+      <div id="dictModalBody" class="modal-body"></div>
+      <div class="modal-footer">
+        <span style="font-size:12px; color:#64748b;">Переименование обновляет черновики в таблице — сохранение выполняется через «Проверить Diff и сохранить».</span>
+        <button type="button" id="dictDoneBtn" class="btn btn-primary">Готово</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <script>
+    (function () {
+      var DEFAULT_LANGUAGES = [
+        { code: 'uk', shortLabel: 'UA', label: 'Українська (UA)', urlPrefix: '' },
+        { code: 'en', shortLabel: 'EN', label: 'English (EN)', urlPrefix: '/en' },
+        { code: 'da', shortLabel: 'DA', label: 'Dansk (DA)', urlPrefix: '/da' },
+        { code: 'de', shortLabel: 'DE', label: 'Deutsch (DE)', urlPrefix: '/de' },
+        { code: 'fr', shortLabel: 'FR', label: 'Français (FR)', urlPrefix: '/fr' },
+        { code: 'ru', shortLabel: 'RU', label: 'Русский (RU)', urlPrefix: '/ru' },
+        { code: 'pl', shortLabel: 'PL', label: 'Polski (PL)', urlPrefix: '/pl' },
+        { code: 'es', shortLabel: 'ES', label: 'Español (ES)', urlPrefix: '/es' },
+        { code: 'it', shortLabel: 'IT', label: 'Italiano (IT)', urlPrefix: '/it' },
+        { code: 'nl', shortLabel: 'NL', label: 'Nederlands (NL)', urlPrefix: '/nl' },
+        { code: 'pt', shortLabel: 'PT', label: 'Português (PT)', urlPrefix: '/pt' },
+        { code: 'sv', shortLabel: 'SV', label: 'Svenska (SV)', urlPrefix: '/sv' },
+        { code: 'no', shortLabel: 'NO', label: 'Norsk (NO)', urlPrefix: '/no' },
+        { code: 'fi', shortLabel: 'FI', label: 'Suomi (FI)', urlPrefix: '/fi' },
+        { code: 'cs', shortLabel: 'CS', label: 'Čeština (CS)', urlPrefix: '/cs' },
+        { code: 'sk', shortLabel: 'SK', label: 'Slovenčina (SK)', urlPrefix: '/sk' },
+        { code: 'ro', shortLabel: 'RO', label: 'Română (RO)', urlPrefix: '/ro' },
+        { code: 'bg', shortLabel: 'BG', label: 'Български (BG)', urlPrefix: '/bg' },
+        { code: 'et', shortLabel: 'ET', label: 'Eesti (ET)', urlPrefix: '/et' },
+        { code: 'lt', shortLabel: 'LT', label: 'Lietuvių (LT)', urlPrefix: '/lt' }
+      ];
+
+      var state = {
+        mode: 'loading', // 'local' | 'github'
+        languages: DEFAULT_LANGUAGES.slice(),
+        langMap: {},
+        posts: [],         // current working entries
+        originals: {},     // relPath -> deep snapshot of original entry
+        rawFiles: {},      // relPath -> raw markdown text (used in GitHub mode)
+        selected: new Set(),
+        lastCheckedId: null,
+        viewMode: 'flat',  // 'flat' | 'grouped'
+        sortKey: 'date',   // 'lang' | 'title' | 'tk' | 'date' | 'status'
+        sortDir: 'desc',
+        ghRepo: 'yurakas-netizen/rfid-blog',
+        ghBranch: 'master',
+        ghToken: '',
+        ghHeadCommitSha: '',
+        ghHeadTreeSha: '',
+        filters: {
+          search: '',
+          lang: '',
+          cat: '',
+          tag: '',
+          tk: '',
+          problem: '',
+          onlyProblems: false
+        }
+      };
+
+      function rebuildLangMap() {
+        state.langMap = {};
+        state.languages.forEach(function (l) {
+          state.langMap[l.code] = l;
+        });
+      }
+      rebuildLangMap();
+
+      if (window.parent && window.parent !== window) {
+        document.getElementById('backToCmsLink').style.display = 'none';
+      }
+
+      /* ---------- Utilities ---------- */
+      function showToast(msg) {
+        var el = document.getElementById('toast');
+        el.textContent = msg;
+        el.classList.add('is-open');
+        clearTimeout(showToast._timer);
+        showToast._timer = setTimeout(function () {
+          el.classList.remove('is-open');
+        }, 3200);
+      }
+
+      function cloneArr(arr) {
+        return Array.isArray(arr) ? arr.slice() : [];
+      }
+
+      function normalizeArr(arr) {
+        var seen = new Set();
+        var out = [];
+        (arr || []).forEach(function (x) {
+          var v = String(x == null ? '' : x).trim();
+          if (v && !seen.has(v)) {
+            seen.add(v);
+            out.push(v);
+          }
+        });
+        return out;
+      }
+
+      function arraysEqual(a, b) {
+        if (a.length !== b.length) return false;
+        for (var i = 0; i < a.length; i++) {
+          if (a[i] !== b[i]) return false;
+        }
+        return true;
+      }
+
+      function isDirtyEntry(post) {
+        var orig = state.originals[post.relPath];
+        if (!orig) return false;
+        return (
+          post.slug !== orig.slug ||
+          post.translationKey !== orig.translationKey ||
+          !arraysEqual(post.categories, orig.categories) ||
+          !arraysEqual(post.tags, orig.tags)
+        );
+      }
+
+      function getDirtyPosts() {
+        return state.posts.filter(isDirtyEntry);
+      }
+
+      function toLatinSlug(text) {
+        var map = {
+          'а':'a','б':'b','в':'v','г':'g','ґ':'g','д':'d','е':'e','є':'ye','ё':'yo','ж':'zh',
+          'з':'z','и':'y','і':'i','ї':'yi','й':'y','к':'k','л':'l','м':'m','н':'n','о':'o',
+          'п':'p','р':'r','с':'s','т':'t','у':'u','ф':'f','х':'kh','ц':'ts','ч':'ch','ш':'sh',
+          'щ':'shch','ъ':'','ы':'y','ь':'','э':'e','ю':'yu','я':'ya',
+          'æ':'ae','ø':'o','å':'a','ß':'ss','ł':'l','đ':'d','ð':'d','þ':'th'
+        };
+        var lower = String(text || '').toLowerCase();
+        var out = '';
+        for (var i = 0; i < lower.length; i++) {
+          var ch = lower[i];
+          out += Object.prototype.hasOwnProperty.call(map, ch) ? map[ch] : ch;
+        }
+        out = out.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        out = out
+          .replace(/['’ʼ`]/g, '')
+          .replace(/[^a-z0-9]+/g, '-')
+          .replace(/^-+|-+$/g, '')
+          .replace(/-{2,}/g, '-');
+        if (out.length > 80) {
+          var cut = out.slice(0, 80);
+          var lastDash = cut.lastIndexOf('-');
+          out = (lastDash > 40 ? cut.slice(0, lastDash) : cut).replace(/-+$/g, '');
+        }
+        return out;
+      }
+
+      function canonTag(t) {
+        return String(t || '')
+          .trim()
+          .toLowerCase()
+          .normalize('NFKD')
+          .replace(/[\u0300-\u036f]/g, '')
+          .replace(/[\s_-]+/g, '');
+      }
+
+      function isValidLatinSlug(s) {
+        return Boolean(s && /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(s));
+      }
+
+      /* ---------- UTF-8 & YAML Frontmatter Helpers (for GitHub mode + local parity) ---------- */
+      function decodeBase64Utf8(b64) {
+        var clean = String(b64 || '').replace(/\s+/g, '');
+        var bin = atob(clean);
+        var bytes = new Uint8Array(bin.length);
+        for (var i = 0; i < bin.length; i++) {
+          bytes[i] = bin.charCodeAt(i);
+        }
+        return new TextDecoder('utf-8').decode(bytes);
+      }
+
+      async function sha256Hex(str) {
+        var buf = new TextEncoder().encode(str);
+        var digest = await crypto.subtle.digest('SHA-256', buf);
+        return Array.from(new Uint8Array(digest))
+          .map(function (b) { return b.toString(16).padStart(2, '0'); })
+          .join('');
+      }
+
+      function splitFrontmatterDocument(rawFile) {
+        var bom = rawFile.charCodeAt(0) === 0xFEFF ? '\uFEFF' : '';
+        var withoutBom = bom ? rawFile.slice(1) : rawFile;
+        var match = withoutBom.match(/^---(\r?\n)([\s\S]*?)\r?\n---([\s\S]*)$/);
+        if (match) {
+          return { bom: bom, eol: match[1] || '\n', fmText: match[2], bodyWithClosing: match[3] || '' };
+        }
+        var emptyMatch = withoutBom.match(/^---(\r?\n)---([\s\S]*)$/);
+        if (emptyMatch) {
+          return { bom: bom, eol: emptyMatch[1] || '\n', fmText: '', bodyWithClosing: emptyMatch[2] || '' };
+        }
+        throw new Error('YAML frontmatter не найден');
+      }
+
+      function unquoteYamlScalar(raw) {
+        var s = String(raw || '').trim();
+        if (!s) return '';
+        if (s[0] === '"' && s[s.length - 1] === '"' && s.length >= 2) {
+          try {
+            return JSON.parse(s.replace(/\r?\n\s*/g, ' '));
+          } catch (_) {
+            return s.slice(1, -1).replace(/\\"/g, '"').replace(/\\\\/g, '\\');
+          }
+        }
+        if (s[0] === "'" && s[s.length - 1] === "'" && s.length >= 2) {
+          return s.slice(1, -1).replace(/''/g, "'");
+        }
+        return s;
+      }
+
+      function parseInlineYamlArray(raw) {
+        var inner = String(raw || '').trim();
+        if (inner[0] === '[' && inner[inner.length - 1] === ']') {
+          inner = inner.slice(1, -1);
+        }
+        var items = [];
+        var cur = '';
+        var quote = null;
+        for (var i = 0; i < inner.length; i++) {
+          var ch = inner[i];
+          if (quote) {
+            if (ch === '\\' && quote === '"' && i + 1 < inner.length) {
+              cur += ch + inner[++i];
+            } else if (ch === quote) {
+              if (quote === "'" && inner[i + 1] === "'") {
+                cur += "''";
+                i++;
+              } else {
+                cur += ch;
+                quote = null;
+              }
+            } else {
+              cur += ch;
+            }
+          } else {
+            if (ch === '"' || ch === "'") {
+              quote = ch;
+              cur += ch;
+            } else if (ch === ',') {
+              var v = unquoteYamlScalar(cur);
+              if (v) items.push(v);
+              cur = '';
+            } else {
+              cur += ch;
+            }
+          }
+        }
+        var tail = unquoteYamlScalar(cur);
+        if (tail) items.push(tail);
+        return normalizeArr(items);
+      }
+
+      function parseYamlFrontmatter(fmText) {
+        var data = {
+          title: '',
+          slug: '',
+          date: '',
+          translationKey: '',
+          categories: [],
+          tags: [],
+          draft: false
+        };
+        if (!fmText || !fmText.trim()) return data;
+
+        var lines = fmText.split(/\r?\n/);
+        var blocks = [];
+        var current = null;
+        for (var i = 0; i < lines.length; i++) {
+          var line = lines[i];
+          var km = line.match(/^([A-Za-z0-9_-]+)\s*:(.*)$/);
+          if (km) {
+            current = { key: km[1], head: km[2], rest: [] };
+            blocks.push(current);
+          } else if (current) {
+            current.rest.push(line);
+          }
+        }
+
+        blocks.forEach(function (b) {
+          var headTrim = b.head.trim();
+          if (b.key === 'categories' || b.key === 'tags') {
+            if (headTrim.startsWith('[') && headTrim.endsWith(']')) {
+              data[b.key] = parseInlineYamlArray(headTrim);
+            } else if (b.rest.length > 0) {
+              var list = [];
+              b.rest.forEach(function (rl) {
+                var lm = rl.match(/^\s*-\s+(.*)$/);
+                if (lm) {
+                  var item = unquoteYamlScalar(lm[1]);
+                  if (item) list.push(item);
+                }
+              });
+              data[b.key] = normalizeArr(list);
+            } else if (headTrim) {
+              data[b.key] = normalizeArr([unquoteYamlScalar(headTrim)]);
+            }
+          } else if (b.key === 'title' || b.key === 'slug' || b.key === 'translationKey' || b.key === 'date') {
+            if (headTrim === '|' || headTrim === '>') {
+              data[b.key] = b.rest.map(function (l) { return l.trim(); }).join(' ').trim();
+            } else if (b.rest.length > 0) {
+              var combined = [headTrim].concat(b.rest.map(function (l) { return l.trim(); })).filter(Boolean).join(' ');
+              data[b.key] = unquoteYamlScalar(combined);
+            } else {
+              data[b.key] = unquoteYamlScalar(headTrim);
+            }
+          } else if (b.key === 'draft') {
+            data.draft = headTrim.toLowerCase() === 'true';
+          }
+        });
+
+        return data;
+      }
+
+      function formatYamlScalar(value) {
+        var str = String(value == null ? '' : value);
+        if (
+          !str ||
+          /^\s|\s$/.test(str) ||
+          /^[-?:,&*!|>'"%@`\[{]/.test(str) ||
+          /:\s|\s#|^#|:$|[\r\n]/.test(str) ||
+          /^(true|false|yes|no|on|off|null|~|[+-]?(\d+\.?\d*|\.\d+)([eE][+-]?\d+)?)$/i.test(str)
+        ) {
+          return JSON.stringify(str);
+        }
+        return str;
+      }
+
+      function patchFrontmatterContent(rawFile, patch) {
+        var doc = splitFrontmatterDocument(rawFile);
+        var lines = doc.fmText.trim() ? doc.fmText.split(/\r?\n/) : [];
+        var blocks = [];
+        var cur = null;
+
+        for (var i = 0; i < lines.length; i++) {
+          var line = lines[i];
+          var km = line.match(/^([A-Za-z0-9_-]+)\s*:(.*)$/);
+          if (km) {
+            cur = { key: km[1], lines: [line] };
+            blocks.push(cur);
+          } else if (cur) {
+            cur.lines.push(line);
+          } else {
+            blocks.push({ key: null, lines: [line] });
+          }
+        }
+
+        function buildKeyLines(key, val) {
+          if (Array.isArray(val)) {
+            var arr = normalizeArr(val);
+            if (!arr.length) return null;
+            return [key + ':'].concat(arr.map(function (it) { return '  - ' + formatYamlScalar(it); }));
+          }
+          var s = String(val == null ? '' : val).trim();
+          return s ? [key + ': ' + formatYamlScalar(s)] : null;
+        }
+
+        var updates = [];
+        if ('slug' in patch) updates.push({ key: 'slug', val: patch.slug });
+        if ('categories' in patch) updates.push({ key: 'categories', val: patch.categories });
+        if ('tags' in patch) updates.push({ key: 'tags', val: patch.tags });
+        if ('translationKey' in patch) updates.push({ key: 'translationKey', val: patch.translationKey });
+
+        updates.forEach(function (u) {
+          var nextLines = buildKeyLines(u.key, u.val);
+          var idx = blocks.findIndex(function (b) { return b.key === u.key; });
+          if (idx !== -1) {
+            if (nextLines) {
+              blocks[idx] = { key: u.key, lines: nextLines };
+            } else {
+              blocks.splice(idx, 1);
+            }
+          } else if (nextLines) {
+            blocks.push({ key: u.key, lines: nextLines });
+          }
+        });
+
+        var afterLines = [];
+        blocks.forEach(function (b) {
+          b.lines.forEach(function (l) { afterLines.push(l); });
+        });
+
+        var beforeFm = doc.fmText.replace(/\r\n/g, '\n');
+        var afterFm = afterLines.join('\n');
+        var afterEol = afterLines.join(doc.eol);
+        var nextContent = afterEol
+          ? doc.bom + '---' + doc.eol + afterEol + doc.eol + '---' + doc.bodyWithClosing
+          : doc.bom + '---' + doc.eol + '---' + doc.bodyWithClosing;
+
+        return {
+          nextContent: nextContent,
+          beforeFm: beforeFm,
+          afterFm: afterFm,
+          changed: nextContent !== rawFile
+        };
+      }
+
+      function computeLineDiff(beforeText, afterText) {
+        var a = beforeText ? beforeText.split('\n') : [];
+        var b = afterText ? afterText.split('\n') : [];
+        var m = a.length;
+        var n = b.length;
+        var dp = [];
+        for (var r = 0; r <= m; r++) {
+          dp[r] = new Array(n + 1).fill(0);
+        }
+        for (var i = m - 1; i >= 0; i--) {
+          for (var j = n - 1; j >= 0; j--) {
+            dp[i][j] = a[i] === b[j] ? 1 + dp[i + 1][j + 1] : Math.max(dp[i + 1][j], dp[i][j + 1]);
+          }
+        }
+        var full = [];
+        var x = 0, y = 0;
+        while (x < m && y < n) {
+          if (a[x] === b[y]) {
+            full.push({ type: 'ctx', text: a[x] });
+            x++; y++;
+          } else if (dp[x + 1][y] >= dp[x][y + 1]) {
+            full.push({ type: 'del', text: a[x++] });
+          } else {
+            full.push({ type: 'add', text: b[y++] });
+          }
+        }
+        while (x < m) full.push({ type: 'del', text: a[x++] });
+        while (y < n) full.push({ type: 'add', text: b[y++] });
+
+        var keep = new Set();
+        full.forEach(function (item, idx) {
+          if (item.type !== 'ctx') {
+            if (idx > 0) keep.add(idx - 1);
+            keep.add(idx);
+            if (idx + 1 < full.length) keep.add(idx + 1);
+          }
+        });
+        return full.filter(function (_, idx) { return keep.has(idx); });
+      }
+
+      /* ---------- Diagnostics & Dictionaries ---------- */
+      function computeAnalysis() {
+        var posts = state.posts;
+        var tkMap = new Map();       // tk -> posts[]
+        var catCounts = new Map();   // exact -> count
+        var tagCounts = new Map();   // exact -> count
+        var tagCanonMap = new Map(); // canon -> Map<exact, count>
+        var catCanonMap = new Map(); // canon -> Map<exact, count>
+
+        posts.forEach(function (p) {
+          if (p.translationKey) {
+            if (!tkMap.has(p.translationKey)) tkMap.set(p.translationKey, []);
+            tkMap.get(p.translationKey).push(p);
+          }
+          p.categories.forEach(function (c) {
+            catCounts.set(c, (catCounts.get(c) || 0) + 1);
+            var cc = canonTag(c);
+            if (!catCanonMap.has(cc)) catCanonMap.set(cc, new Map());
+            catCanonMap.get(cc).set(c, (catCanonMap.get(cc).get(c) || 0) + 1);
+          });
+          p.tags.forEach(function (t) {
+            tagCounts.set(t, (tagCounts.get(t) || 0) + 1);
+            var ct = canonTag(t);
+            if (!tagCanonMap.has(ct)) tagCanonMap.set(ct, new Map());
+            tagCanonMap.get(ct).set(t, (tagCanonMap.get(ct).get(t) || 0) + 1);
+          });
+        });
+
+        var tagDriftVariants = new Set();
+        tagCanonMap.forEach(function (variants) {
+          if (variants.size > 1) {
+            variants.forEach(function (_, exact) {
+              tagDriftVariants.add(exact);
+            });
+          }
+        });
+
+        var catDriftVariants = new Set();
+        catCanonMap.forEach(function (variants) {
+          if (variants.size > 1) {
+            variants.forEach(function (_, exact) {
+              catDriftVariants.add(exact);
+            });
+          }
+        });
+
+        var tkDiagnostics = new Map();
+        tkMap.forEach(function (group, tk) {
+          var langsSeen = {};
+          var dupLang = false;
+          var catSignatures = new Set();
+
+          group.forEach(function (p) {
+            langsSeen[p.lang] = (langsSeen[p.lang] || 0) + 1;
+            if (langsSeen[p.lang] > 1) dupLang = true;
+            var sig = p.categories.map(function (c) { return c.toLowerCase(); }).sort().join('|');
+            catSignatures.add(sig);
+          });
+
+          tkDiagnostics.set(tk, {
+            count: group.length,
+            langs: Object.keys(langsSeen),
+            dupLang: dupLang,
+            catMismatch: group.length >= 2 && catSignatures.size > 1
+          });
+        });
+
+        var byId = new Map();
+        var problemCount = 0;
+
+        posts.forEach(function (p) {
+          var flags = {
+            no_tk: !p.translationKey,
+            orphan: Boolean(p.translationKey && tkDiagnostics.get(p.translationKey).count < 2),
+            dup_tk_lang: Boolean(p.translationKey && tkDiagnostics.get(p.translationKey).dupLang),
+            cat_mismatch: Boolean(p.translationKey && tkDiagnostics.get(p.translationKey).catMismatch),
+            no_cat: p.categories.length === 0,
+            no_tags: p.tags.length === 0,
+            tag_drift: p.tags.some(function (t) { return tagDriftVariants.has(t); }) ||
+                       p.categories.some(function (c) { return catDriftVariants.has(c); }),
+            no_slug: !isValidLatinSlug(p.slug)
+          };
+          flags.empty_tax = flags.no_cat || flags.no_tags;
+          flags.any = flags.no_tk || flags.orphan || flags.dup_tk_lang || flags.cat_mismatch || flags.empty_tax || flags.tag_drift || flags.no_slug;
+          flags.dirty = isDirtyEntry(p);
+          if (flags.any) problemCount++;
+          byId.set(p.relPath, flags);
+        });
+
+        return {
+          tkMap: tkMap,
+          tkDiagnostics: tkDiagnostics,
+          catCounts: catCounts,
+          tagCounts: tagCounts,
+          tagCanonMap: tagCanonMap,
+          catCanonMap: catCanonMap,
+          tagDriftVariants: tagDriftVariants,
+          catDriftVariants: catDriftVariants,
+          byId: byId,
+          problemCount: problemCount
+        };
+      }
+
+      /* ---------- Data Loading (Local Express or GitHub API) ---------- */
+      function readDecapToken() {
+        var keys = ['decap-cms-user', 'netlify-cms-user'];
+        for (var i = 0; i < keys.length; i++) {
+          try {
+            var raw = localStorage.getItem(keys[i]);
+            if (!raw) continue;
+            var obj = JSON.parse(raw);
+            if (obj && obj.token) {
+              return { token: String(obj.token), login: obj.login || '' };
+            }
+          } catch (_) {}
+        }
+        return null;
+      }
+
+      function applyLoadedPosts(posts, mode, repoInfo) {
+        state.mode = mode;
+        state.posts = posts;
+        state.originals = {};
+        state.selected.clear();
+
+        posts.forEach(function (p) {
+          state.originals[p.relPath] = {
+            slug: p.slug,
+            translationKey: p.translationKey,
+            categories: cloneArr(p.categories),
+            tags: cloneArr(p.tags)
+          };
+        });
+
+        var badge = document.getElementById('modeBadge');
+        if (mode === 'local') {
+          badge.className = 'mode-badge is-local';
+          badge.textContent = 'Локальный диск · content/*/post';
+          document.getElementById('githubAuthBanner').classList.remove('is-visible');
+        } else {
+          badge.className = 'mode-badge is-github';
+          badge.textContent = 'GitHub · ' + repoInfo.repo + '@' + repoInfo.branch;
+        }
+
+        renderAll();
+      }
+
+      async function loadFromGithub() {
+        var repo = document.getElementById('ghRepoInput').value.trim() || state.ghRepo;
+        var branch = document.getElementById('ghBranchInput').value.trim() || state.ghBranch;
+        var tokenInput = document.getElementById('ghTokenInput').value.trim();
+        if (tokenInput) state.ghToken = tokenInput;
+
+        state.ghRepo = repo;
+        state.ghBranch = branch;
+
+        var statusEl = document.getElementById('ghAuthStatus');
+        var headers = { Accept: 'application/vnd.github+json' };
+        if (state.ghToken) {
+          headers.Authorization = 'Bearer ' + state.ghToken;
+        }
+
+        statusEl.textContent = 'Загрузка дерева из GitHub...';
+        var refRes = await fetch('https://api.github.com/repos/' + repo + '/git/ref/heads/' + encodeURIComponent(branch), { headers: headers });
+        if (!refRes.ok) {
+          throw new Error('GitHub API HTTP ' + refRes.status + ' (проверьте токен или имя репозитория)');
+        }
+        var refJson = await refRes.json();
+        var headCommitSha = refJson.object.sha;
+
+        var commitRes = await fetch('https://api.github.com/repos/' + repo + '/git/commits/' + headCommitSha, { headers: headers });
+        if (!commitRes.ok) throw new Error('Не удалось получить commit ' + headCommitSha);
+        var commitJson = await commitRes.json();
+
+        var treeRes = await fetch('https://api.github.com/repos/' + repo + '/git/trees/' + commitJson.tree.sha + '?recursive=1', { headers: headers });
+        if (!treeRes.ok) throw new Error('Не удалось получить дерево файлов GitHub');
+        var treeJson = await treeRes.json();
+
+        state.ghHeadCommitSha = headCommitSha;
+        state.ghHeadTreeSha = commitJson.tree.sha;
+
+        var postNodes = (treeJson.tree || []).filter(function (item) {
+          return item.type === 'blob' && /^content\/([a-z]{2})\/post\/([^/]+)\/index\.md$/.test(item.path);
+        });
+
+        state.rawFiles = {};
+        var loadedPosts = [];
+        var cursor = 0;
+
+        async function worker() {
+          while (cursor < postNodes.length) {
+            var idx = cursor++;
+            var node = postNodes[idx];
+            var m = node.path.match(/^content\/([a-z]{2})\/post\/([^/]+)\/index\.md$/);
+            if (!m) continue;
+            var lang = m[1];
+            var folder = m[2];
+            var blobRes = await fetch('https://api.github.com/repos/' + repo + '/git/blobs/' + node.sha, { headers: headers });
+            if (!blobRes.ok) continue;
+            var blobJson = await blobRes.json();
+            var rawText = decodeBase64Utf8(blobJson.content || '');
+            state.rawFiles[node.path] = rawText;
+
+            var fmText = '';
+            try {
+              fmText = splitFrontmatterDocument(rawText).fmText;
+            } catch (_) {}
+            var fm = parseYamlFrontmatter(fmText);
+            var effectiveSlug = fm.slug || folder;
+            var langObj = state.langMap[lang] || { urlPrefix: '/' + lang };
+            var fileHash = await sha256Hex(rawText);
+
+            loadedPosts.push({
+              id: node.path,
+              relPath: node.path,
+              lang: lang,
+              folder: folder,
+              title: fm.title || folder,
+              slug: fm.slug || '',
+              effectiveSlug: effectiveSlug,
+              date: fm.date || '',
+              translationKey: fm.translationKey || '',
+              categories: fm.categories || [],
+              tags: fm.tags || [],
+              draft: fm.draft,
+              fileHash: fileHash,
+              blobSha: node.sha,
+              permalink: (langObj.urlPrefix || '') + '/p/' + encodeURIComponent(effectiveSlug) + '/'
+            });
+          }
+        }
+
+        var workers = [];
+        for (var w = 0; w < 8; w++) workers.push(worker());
+        await Promise.all(workers);
+
+        loadedPosts.sort(function (a, b) {
+          var diff = (Date.parse(b.date) || 0) - (Date.parse(a.date) || 0);
+          return diff !== 0 ? diff : a.relPath.localeCompare(b.relPath);
+        });
+
+        statusEl.textContent = 'Загружено статей: ' + loadedPosts.length;
+        applyLoadedPosts(loadedPosts, 'github', { repo: repo, branch: branch });
+      }
+
+      async function loadData() {
+        var badge = document.getElementById('modeBadge');
+        badge.textContent = 'Загрузка...';
+        try {
+          var res = await fetch('/api/registry/posts');
+          if (res.ok) {
+            var json = await res.json();
+            if (json && json.mode === 'local' && Array.isArray(json.posts)) {
+              if (Array.isArray(json.languages) && json.languages.length) {
+                state.languages = json.languages;
+                rebuildLangMap();
+              }
+              applyLoadedPosts(json.posts, 'local');
+              return;
+            }
+          }
+        } catch (_) {}
+
+        // Static / Netlify fallback -> GitHub API mode
+        state.mode = 'github';
+        badge.className = 'mode-badge is-github';
+        badge.textContent = 'GitHub API режим';
+        document.getElementById('githubAuthBanner').classList.add('is-visible');
+
+        if (!state.ghToken) {
+          var decap = readDecapToken();
+          if (decap && decap.token) {
+            state.ghToken = decap.token;
+            document.getElementById('ghAuthStatus').textContent = 'Токен подтянут из сессии Decap CMS' + (decap.login ? ' (' + decap.login + ')' : '');
+          }
+        }
+
+        if (state.ghToken) {
+          try {
+            await loadFromGithub();
+            return;
+          } catch (err) {
+            document.getElementById('ghAuthStatus').textContent = 'Ошибка: ' + err.message;
+          }
+        } else {
+          document.getElementById('ghAuthStatus').textContent = 'Войдите в Decap CMS или введите GitHub PAT и нажмите «Подключиться»';
+          renderAll();
+        }
+      }
+
+      /* ---------- Filtering, Sorting & Rendering ---------- */
+      function populateSelectAndDatalists(analysis) {
+        var langSel = document.getElementById('langFilter');
+        var prevLang = state.filters.lang;
+        var langCounts = new Map();
+        state.posts.forEach(function (p) {
+          langCounts.set(p.lang, (langCounts.get(p.lang) || 0) + 1);
+        });
+        langSel.innerHTML = '';
+        langSel.appendChild(new Option('Все языки (' + state.posts.length + ')', ''));
+        state.languages.forEach(function (l) {
+          var cnt = langCounts.get(l.code) || 0;
+          if (cnt > 0) {
+            langSel.appendChild(new Option(l.shortLabel + ' — ' + l.label.split(' ')[0] + ' (' + cnt + ')', l.code));
+          }
+        });
+        langSel.value = prevLang;
+
+        var catSel = document.getElementById('catFilter');
+        var prevCat = state.filters.cat;
+        var catsSorted = Array.from(analysis.catCounts.entries()).sort(function (a, b) {
+          return b[1] - a[1] || a[0].localeCompare(b[0]);
+        });
+        catSel.innerHTML = '';
+        catSel.appendChild(new Option('Все категории (' + catsSorted.length + ')', ''));
+        catSel.appendChild(new Option('— Без категории —', '__EMPTY__'));
+        catsSorted.forEach(function (entry) {
+          catSel.appendChild(new Option(entry[0] + ' (' + entry[1] + ')', entry[0]));
+        });
+        catSel.value = prevCat;
+
+        var tagSel = document.getElementById('tagFilter');
+        var prevTag = state.filters.tag;
+        var tagsSorted = Array.from(analysis.tagCounts.entries()).sort(function (a, b) {
+          return b[1] - a[1] || a[0].localeCompare(b[0]);
+        });
+        tagSel.innerHTML = '';
+        tagSel.appendChild(new Option('Все теги (' + tagsSorted.length + ')', ''));
+        tagSel.appendChild(new Option('— Без тегов —', '__EMPTY__'));
+        tagsSorted.forEach(function (entry) {
+          tagSel.appendChild(new Option(entry[0] + ' (' + entry[1] + ')', entry[0]));
+        });
+        tagSel.value = prevTag;
+
+        var tkSel = document.getElementById('tkFilter');
+        var prevTk = state.filters.tk;
+        var tksSorted = Array.from(analysis.tkMap.entries()).sort(function (a, b) {
+          return a[0].localeCompare(b[0]);
+        });
+        tkSel.innerHTML = '';
+        tkSel.appendChild(new Option('Все темы (' + tksSorted.length + ')', ''));
+        tkSel.appendChild(new Option('— Без translationKey —', '__EMPTY__'));
+        tksSorted.forEach(function (entry) {
+          tkSel.appendChild(new Option(entry[0] + ' (' + entry[1].length + ' яз.)', entry[0]));
+        });
+        tkSel.value = prevTk;
+
+        // Datalists
+        var dlCats = document.getElementById('dl-cats');
+        dlCats.innerHTML = '';
+        catsSorted.forEach(function (e) {
+          var opt = document.createElement('option');
+          opt.value = e[0];
+          dlCats.appendChild(opt);
+        });
+
+        var dlTags = document.getElementById('dl-tags');
+        dlTags.innerHTML = '';
+        tagsSorted.forEach(function (e) {
+          var opt = document.createElement('option');
+          opt.value = e[0];
+          dlTags.appendChild(opt);
+        });
+
+        var dlTk = document.getElementById('dl-tk');
+        dlTk.innerHTML = '';
+        tksSorted.forEach(function (e) {
+          var opt = document.createElement('option');
+          opt.value = e[0];
+          dlTk.appendChild(opt);
+        });
+      }
+
+      function filterPosts(analysis) {
+        var f = state.filters;
+        var q = f.search.trim().toLowerCase();
+
+        return state.posts.filter(function (p) {
+          var flags = analysis.byId.get(p.relPath);
+          if (f.lang && p.lang !== f.lang) return false;
+
+          if (f.cat === '__EMPTY__') {
+            if (p.categories.length > 0) return false;
+          } else if (f.cat && p.categories.indexOf(f.cat) === -1) {
+            return false;
+          }
+
+          if (f.tag === '__EMPTY__') {
+            if (p.tags.length > 0) return false;
+          } else if (f.tag && p.tags.indexOf(f.tag) === -1) {
+            return false;
+          }
+
+          if (f.tk === '__EMPTY__') {
+            if (p.translationKey) return false;
+          } else if (f.tk && p.translationKey !== f.tk) {
+            return false;
+          }
+
+          if (f.onlyProblems && !flags.any) return false;
+          if (f.problem) {
+            if (f.problem === 'dirty') {
+              if (!flags.dirty) return false;
+            } else if (!flags[f.problem]) {
+              return false;
+            }
+          }
+
+          if (q) {
+            var hay = [
+              p.title,
+              p.slug,
+              p.folder,
+              p.relPath,
+              p.translationKey,
+              p.categories.join(' '),
+              p.tags.join(' ')
+            ].join('\n').toLowerCase();
+            if (hay.indexOf(q) === -1) return false;
+          }
+          return true;
+        });
+      }
+
+      function sortPosts(list, analysis) {
+        var dir = state.sortDir === 'asc' ? 1 : -1;
+        var key = state.sortKey;
+        return list.slice().sort(function (a, b) {
+          if (key === 'lang') {
+            return dir * a.lang.localeCompare(b.lang) || a.title.localeCompare(b.title);
+          }
+          if (key === 'title') {
+            return dir * a.title.localeCompare(b.title);
+          }
+          if (key === 'tk') {
+            return dir * (a.translationKey || 'zzz').localeCompare(b.translationKey || 'zzz') || a.lang.localeCompare(b.lang);
+          }
+          if (key === 'status') {
+            var pa = analysis.byId.get(a.relPath).any ? 1 : 0;
+            var pb = analysis.byId.get(b.relPath).any ? 1 : 0;
+            return dir * (pa - pb) || a.relPath.localeCompare(b.relPath);
+          }
+          var da = Date.parse(a.date) || 0;
+          var db = Date.parse(b.date) || 0;
+          return dir * (da - db) || a.relPath.localeCompare(b.relPath);
+        });
+      }
+
+      function updateHeaderKpis(analysis) {
+        var dirtyCount = getDirtyPosts().length;
+        document.getElementById('kpiTotal').textContent = 'Статей: ' + state.posts.length;
+        document.getElementById('kpiGroups').textContent = 'Тем: ' + analysis.tkMap.size;
+
+        var probBtn = document.getElementById('kpiProblems');
+        probBtn.textContent = 'Проблем: ' + analysis.problemCount;
+        probBtn.classList.toggle('is-warn', analysis.problemCount > 0);
+
+        var dirtyBtn = document.getElementById('kpiDirty');
+        dirtyBtn.textContent = 'Изменено: ' + dirtyCount;
+        dirtyBtn.classList.toggle('is-dirty', dirtyCount > 0);
+
+        document.getElementById('resetAllBtn').disabled = dirtyCount === 0;
+        var saveBtn = document.getElementById('saveDiffBtn');
+        saveBtn.disabled = dirtyCount === 0;
+        saveBtn.textContent = 'Проверить Diff и сохранить (' + dirtyCount + ')';
+
+        document.getElementById('onlyProblemsLabel').classList.toggle('is-active', state.filters.onlyProblems);
+      }
+
+      function updateBulkBar() {
+        var bar = document.getElementById('bulkBar');
+        var count = state.selected.size;
+        bar.classList.toggle('is-open', count > 0);
+        document.getElementById('bulkCountLabel').textContent = 'Выбрано: ' + count;
+      }
+
+      function makeBadge(text, cls) {
+        var sp = document.createElement('span');
+        sp.className = 'badge ' + cls;
+        sp.textContent = text;
+        return sp;
+      }
+
+      function buildRowElement(post, analysis) {
+        var flags = analysis.byId.get(post.relPath);
+        var tr = document.createElement('tr');
+        tr.dataset.id = post.relPath;
+        if (flags.dirty) tr.classList.add('is-dirty');
+        if (state.selected.has(post.relPath)) tr.classList.add('is-selected');
+
+        // 1. Checkbox
+        var tdChk = document.createElement('td');
+        var chk = document.createElement('input');
+        chk.type = 'checkbox';
+        chk.checked = state.selected.has(post.relPath);
+        chk.addEventListener('click', function (e) {
+          if (e.shiftKey && state.lastCheckedId) {
+            var visibleIds = Array.from(document.querySelectorAll('tr[data-id]')).map(function (r) { return r.dataset.id; });
+            var a = visibleIds.indexOf(state.lastCheckedId);
+            var b = visibleIds.indexOf(post.relPath);
+            if (a !== -1 && b !== -1) {
+              var lo = Math.min(a, b), hi = Math.max(a, b);
+              for (var k = lo; k <= hi; k++) {
+                if (chk.checked) state.selected.add(visibleIds[k]);
+                else state.selected.delete(visibleIds[k]);
+              }
+              state.lastCheckedId = post.relPath;
+              renderTableOnly();
+              return;
+            }
+          }
+          if (chk.checked) state.selected.add(post.relPath);
+          else state.selected.delete(post.relPath);
+          state.lastCheckedId = post.relPath;
+          tr.classList.toggle('is-selected', chk.checked);
+          updateBulkBar();
+        });
+        tdChk.appendChild(chk);
+        tr.appendChild(tdChk);
+
+        // 2. Lang / File / Slug
+        var tdFile = document.createElement('td');
+        tdFile.style.minWidth = '270px';
+        tdFile.style.maxWidth = '340px';
+
+        var top = document.createElement('div');
+        top.className = 'file-cell-top';
+        var langPill = document.createElement('span');
+        langPill.className = 'lang-pill';
+        var langMeta = state.langMap[post.lang];
+        langPill.textContent = langMeta ? langMeta.shortLabel : post.lang.toUpperCase();
+        top.appendChild(langPill);
+
+        var titleLink = document.createElement('a');
+        titleLink.className = 'article-title-link';
+        titleLink.href = post.permalink;
+        titleLink.target = '_blank';
+        titleLink.rel = 'noopener noreferrer';
+        titleLink.textContent = post.title;
+        titleLink.title = post.title;
+        top.appendChild(titleLink);
+        tdFile.appendChild(top);
+
+        var pathDiv = document.createElement('div');
+        pathDiv.className = 'file-path';
+        pathDiv.textContent = post.lang + '/' + post.folder;
+        pathDiv.title = post.relPath;
+        tdFile.appendChild(pathDiv);
+
+        var slugRow = document.createElement('div');
+        slugRow.className = 'inline-edit-row';
+        var slugInput = document.createElement('input');
+        slugInput.type = 'text';
+        slugInput.className = 'cell-input' + (flags.no_slug ? ' is-missing' : '');
+        slugInput.value = post.slug;
+        slugInput.placeholder = 'латинский slug...';
+        slugInput.title = 'URL-слаг (латиницей)';
+        slugInput.addEventListener('change', function () {
+          post.slug = slugInput.value.trim();
+          renderAll();
+        });
+        var slugAutoBtn = document.createElement('button');
+        slugAutoBtn.type = 'button';
+        slugAutoBtn.className = 'mini-icon-btn';
+        slugAutoBtn.textContent = 'A-z';
+        slugAutoBtn.title = 'Сгенерировать латинский slug из заголовка';
+        slugAutoBtn.addEventListener('click', function () {
+          var next = toLatinSlug(post.title);
+          if (next) {
+            post.slug = next;
+            renderAll();
+          }
+        });
+        slugRow.appendChild(slugInput);
+        slugRow.appendChild(slugAutoBtn);
+        tdFile.appendChild(slugRow);
+        tr.appendChild(tdFile);
+
+        // 3. translationKey
+        var tdTk = document.createElement('td');
+        tdTk.style.minWidth = '195px';
+        tdTk.style.maxWidth = '240px';
+        var tkRow = document.createElement('div');
+        tkRow.className = 'inline-edit-row';
+        var tkInput = document.createElement('input');
+        tkInput.type = 'text';
+        tkInput.className = 'cell-input' + (flags.no_tk ? ' is-missing' : '');
+        tkInput.setAttribute('list', 'dl-tk');
+        tkInput.value = post.translationKey;
+        tkInput.placeholder = 'translationKey...';
+        tkInput.addEventListener('change', function () {
+          post.translationKey = tkInput.value.trim();
+          renderAll();
+        });
+        var tkFilterBtn = document.createElement('button');
+        tkFilterBtn.type = 'button';
+        tkFilterBtn.className = 'mini-icon-btn';
+        tkFilterBtn.textContent = 'Фильтр';
+        tkFilterBtn.title = 'Показать все статьи с этим translationKey';
+        tkFilterBtn.disabled = !post.translationKey;
+        tkFilterBtn.addEventListener('click', function () {
+          state.filters.tk = post.translationKey;
+          document.getElementById('tkFilter').value = post.translationKey;
+          renderAll();
+        });
+        tkRow.appendChild(tkInput);
+        tkRow.appendChild(tkFilterBtn);
+        tdTk.appendChild(tkRow);
+        tr.appendChild(tdTk);
+
+        // 4. Categories
+        var tdCat = document.createElement('td');
+        tdCat.style.minWidth = '190px';
+        tdCat.style.maxWidth = '250px';
+        var catChips = document.createElement('div');
+        catChips.className = 'chips-box';
+        post.categories.forEach(function (c) {
+          var chip = document.createElement('span');
+          chip.className = 'chip is-cat' + (analysis.catDriftVariants.has(c) ? ' is-drift' : '');
+          var txt = document.createElement('span');
+          txt.className = 'chip-text';
+          txt.textContent = c;
+          txt.title = c;
+          var del = document.createElement('button');
+          del.type = 'button';
+          del.className = 'chip-del';
+          del.textContent = '×';
+          del.title = 'Удалить категорию';
+          del.addEventListener('click', function () {
+            post.categories = post.categories.filter(function (x) { return x !== c; });
+            renderAll();
+          });
+          chip.appendChild(txt);
+          chip.appendChild(del);
+          catChips.appendChild(chip);
+        });
+        tdCat.appendChild(catChips);
+
+        var catAddRow = document.createElement('div');
+        catAddRow.className = 'inline-edit-row';
+        var catInput = document.createElement('input');
+        catInput.type = 'text';
+        catInput.className = 'cell-input' + (flags.no_cat ? ' is-missing' : '');
+        catInput.setAttribute('list', 'dl-cats');
+        catInput.placeholder = '+ категория (Enter)';
+        function commitCatInput() {
+          var val = catInput.value.trim();
+          if (val && post.categories.indexOf(val) === -1) {
+            post.categories.push(val);
+            renderAll();
+          }
+        }
+        catInput.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            commitCatInput();
+          }
+        });
+        var catPlusBtn = document.createElement('button');
+        catPlusBtn.type = 'button';
+        catPlusBtn.className = 'mini-icon-btn';
+        catPlusBtn.textContent = '+';
+        catPlusBtn.addEventListener('click', commitCatInput);
+        catAddRow.appendChild(catInput);
+        catAddRow.appendChild(catPlusBtn);
+        tdCat.appendChild(catAddRow);
+        tr.appendChild(tdCat);
+
+        // 5. Tags
+        var tdTags = document.createElement('td');
+        tdTags.style.minWidth = '230px';
+        var tagChips = document.createElement('div');
+        tagChips.className = 'chips-box';
+        post.tags.forEach(function (t) {
+          var isDrift = analysis.tagDriftVariants.has(t);
+          var chip = document.createElement('span');
+          chip.className = 'chip' + (isDrift ? ' is-drift' : '');
+          var txt = document.createElement('span');
+          txt.className = 'chip-text';
+          txt.textContent = t;
+          txt.title = isDrift ? t + ' (найден дубль написания в словаре!)' : t;
+          var del = document.createElement('button');
+          del.type = 'button';
+          del.className = 'chip-del';
+          del.textContent = '×';
+          del.title = 'Удалить тег';
+          del.addEventListener('click', function () {
+            post.tags = post.tags.filter(function (x) { return x !== t; });
+            renderAll();
+          });
+          chip.appendChild(txt);
+          chip.appendChild(del);
+          tagChips.appendChild(chip);
+        });
+        tdTags.appendChild(tagChips);
+
+        var tagAddRow = document.createElement('div');
+        tagAddRow.className = 'inline-edit-row';
+        var tagInput = document.createElement('input');
+        tagInput.type = 'text';
+        tagInput.className = 'cell-input' + (flags.no_tags ? ' is-missing' : '');
+        tagInput.setAttribute('list', 'dl-tags');
+        tagInput.placeholder = '+ тег (Enter или запятая)';
+        function commitTagInput() {
+          var parts = tagInput.value.split(',').map(function (s) { return s.trim(); }).filter(Boolean);
+          if (!parts.length) return;
+          parts.forEach(function (part) {
+            if (post.tags.indexOf(part) === -1) post.tags.push(part);
+          });
+          renderAll();
+        }
+        tagInput.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter' || e.key === ',') {
+            e.preventDefault();
+            commitTagInput();
+          } else if (e.key === 'Backspace' && !tagInput.value && post.tags.length > 0) {
+            post.tags.pop();
+            renderAll();
+          }
+        });
+        var tagPlusBtn = document.createElement('button');
+        tagPlusBtn.type = 'button';
+        tagPlusBtn.className = 'mini-icon-btn';
+        tagPlusBtn.textContent = '+';
+        tagPlusBtn.addEventListener('click', commitTagInput);
+        tagAddRow.appendChild(tagInput);
+        tagAddRow.appendChild(tagPlusBtn);
+        tdTags.appendChild(tagAddRow);
+        tr.appendChild(tdTags);
+
+        // 6. Status / Pair Diagnostics
+        var tdStatus = document.createElement('td');
+        tdStatus.style.minWidth = '175px';
+        var stack = document.createElement('div');
+        stack.className = 'status-stack';
+
+        if (!flags.any) {
+          var diag = analysis.tkDiagnostics.get(post.translationKey);
+          var langsLabel = diag ? diag.langs.map(function (c) { return (state.langMap[c] && state.langMap[c].shortLabel) || c.toUpperCase(); }).join(', ') : '';
+          stack.appendChild(makeBadge('ОК · ' + (diag ? diag.count : 1) + ' яз. (' + langsLabel + ')', 'badge-ok'));
+        } else {
+          if (flags.dup_tk_lang) stack.appendChild(makeBadge('Дубль языка в связке', 'badge-err'));
+          if (flags.cat_mismatch) stack.appendChild(makeBadge('Разные категории в связке', 'badge-err'));
+          if (flags.no_tk) stack.appendChild(makeBadge('Нет translationKey', 'badge-warn'));
+          else if (flags.orphan) stack.appendChild(makeBadge('Сирота (1 яз.)', 'badge-warn'));
+          if (flags.tag_drift) stack.appendChild(makeBadge('Разнобой написания', 'badge-warn'));
+          if (flags.no_cat) stack.appendChild(makeBadge('Нет категории', 'badge-warn'));
+          if (flags.no_tags) stack.appendChild(makeBadge('Нет тегов', 'badge-warn'));
+          if (flags.no_slug) stack.appendChild(makeBadge('Нет лат. slug', 'badge-warn'));
+        }
+
+        if (flags.dirty) {
+          var dirtyWrap = document.createElement('div');
+          dirtyWrap.style.display = 'flex';
+          dirtyWrap.style.gap = '4px';
+          dirtyWrap.style.alignItems = 'center';
+          dirtyWrap.appendChild(makeBadge('Изменено', 'badge-dirty'));
+          var undoBtn = document.createElement('button');
+          undoBtn.type = 'button';
+          undoBtn.className = 'mini-icon-btn';
+          undoBtn.textContent = '↺';
+          undoBtn.title = 'Откатить изменения этой строки';
+          undoBtn.addEventListener('click', function () {
+            var orig = state.originals[post.relPath];
+            if (orig) {
+              post.slug = orig.slug;
+              post.translationKey = orig.translationKey;
+              post.categories = cloneArr(orig.categories);
+              post.tags = cloneArr(orig.tags);
+              renderAll();
+            }
+          });
+          dirtyWrap.appendChild(undoBtn);
+          stack.appendChild(dirtyWrap);
+        }
+
+        tdStatus.appendChild(stack);
+        tr.appendChild(tdStatus);
+
+        return tr;
+      }
+
+      function renderTableOnly() {
+        var analysis = computeAnalysis();
+        var filtered = sortPosts(filterPosts(analysis), analysis);
+        var container = document.getElementById('tableContainer');
+        container.innerHTML = '';
+
+        if (state.posts.length === 0) {
+          var empty = document.createElement('div');
+          empty.className = 'empty-state';
+          empty.textContent = state.mode === 'github' && !state.ghToken
+            ? 'Укажите GitHub токен (или войдите в Decap CMS) для загрузки статей из репозитория.'
+            : 'Статьи не найдены.';
+          container.appendChild(empty);
+          updateBulkBar();
+          return;
+        }
+
+        if (filtered.length === 0) {
+          var noMatch = document.createElement('div');
+          noMatch.className = 'empty-state';
+          noMatch.textContent = 'По текущим фильтрам статей не найдено.';
+          container.appendChild(noMatch);
+          updateBulkBar();
+          return;
+        }
+
+        var table = document.createElement('table');
+        table.className = 'reg-table';
+
+        var thead = document.createElement('thead');
+        var hr = document.createElement('tr');
+
+        var thAll = document.createElement('th');
+        thAll.style.width = '34px';
+        var allCb = document.createElement('input');
+        allCb.type = 'checkbox';
+        var allVisibleSelected = filtered.every(function (p) { return state.selected.has(p.relPath); });
+        allCb.checked = filtered.length > 0 && allVisibleSelected;
+        allCb.title = 'Выбрать все отфильтрованные строки';
+        allCb.addEventListener('change', function () {
+          filtered.forEach(function (p) {
+            if (allCb.checked) state.selected.add(p.relPath);
+            else state.selected.delete(p.relPath);
+          });
+          renderTableOnly();
+        });
+        thAll.appendChild(allCb);
+        hr.appendChild(thAll);
+
+        var cols = [
+          { label: 'Язык / Файл / Slug', key: 'lang' },
+          { label: 'Тема (translationKey)', key: 'tk' },
+          { label: 'Категории', key: '' },
+          { label: 'Якорные слова (Tags)', key: '' },
+          { label: 'Статус связки', key: 'status' }
+        ];
+        cols.forEach(function (col) {
+          var th = document.createElement('th');
+          var arrow = col.key && state.sortKey === col.key ? (state.sortDir === 'asc' ? ' ▲' : ' ▼') : '';
+          th.textContent = col.label + arrow;
+          if (col.key) {
+            th.addEventListener('click', function () {
+              if (state.sortKey === col.key) {
+                state.sortDir = state.sortDir === 'asc' ? 'desc' : 'asc';
+              } else {
+                state.sortKey = col.key;
+                state.sortDir = 'asc';
+              }
+              renderTableOnly();
+            });
+          }
+          hr.appendChild(th);
+        });
+        thead.appendChild(hr);
+        table.appendChild(thead);
+
+        var tbody = document.createElement('tbody');
+
+        if (state.viewMode === 'grouped') {
+          var groups = new Map();
+          filtered.forEach(function (p) {
+            var k = p.translationKey || '__NO_TK__';
+            if (!groups.has(k)) groups.set(k, []);
+            groups.get(k).push(p);
+          });
+          var keys = Array.from(groups.keys()).sort(function (a, b) {
+            if (a === '__NO_TK__') return 1;
+            if (b === '__NO_TK__') return -1;
+            return a.localeCompare(b);
+          });
+
+          keys.forEach(function (tk) {
+            var rows = groups.get(tk);
+            var gTr = document.createElement('tr');
+            gTr.className = 'group-header-row';
+            var gTd = document.createElement('td');
+            gTd.colSpan = 6;
+            var flex = document.createElement('div');
+            flex.className = 'group-header-flex';
+
+            var leftInfo = document.createElement('div');
+            leftInfo.style.display = 'flex';
+            leftInfo.style.alignItems = 'center';
+            leftInfo.style.gap = '8px';
+            var titleStrong = document.createElement('strong');
+            titleStrong.style.fontFamily = 'var(--mono)';
+            titleStrong.textContent = tk === '__NO_TK__' ? 'Без translationKey (' + rows.length + ')' : tk + ' (' + rows.length + ' ст.)';
+            leftInfo.appendChild(titleStrong);
+
+            if (tk !== '__NO_TK__') {
+              var diag = analysis.tkDiagnostics.get(tk);
+              if (diag && diag.catMismatch) leftInfo.appendChild(makeBadge('Разные категории в связке', 'badge-err'));
+              if (diag && diag.dupLang) leftInfo.appendChild(makeBadge('Дубль языка', 'badge-err'));
+              if (diag && diag.count === 1) leftInfo.appendChild(makeBadge('Сирота', 'badge-warn'));
+            }
+
+            var rightBtns = document.createElement('div');
+            rightBtns.style.display = 'flex';
+            rightBtns.style.gap = '6px';
+            var selGrpBtn = document.createElement('button');
+            selGrpBtn.type = 'button';
+            selGrpBtn.className = 'btn btn-sm';
+            selGrpBtn.textContent = 'Выбрать группу';
+            selGrpBtn.addEventListener('click', function () {
+              rows.forEach(function (r) { state.selected.add(r.relPath); });
+              renderTableOnly();
+            });
+            rightBtns.appendChild(selGrpBtn);
+
+            if (tk !== '__NO_TK__' && rows.length > 1) {
+              var alignBtn = document.createElement('button');
+              alignBtn.type = 'button';
+              alignBtn.className = 'btn btn-sm';
+              alignBtn.textContent = 'Выровнять категории по 1-й';
+              alignBtn.addEventListener('click', function () {
+                var baseCats = cloneArr(rows[0].categories);
+                rows.forEach(function (r) { r.categories = cloneArr(baseCats); });
+                renderAll();
+                showToast('Категории группы выровнены');
+              });
+              rightBtns.appendChild(alignBtn);
+            }
+
+            flex.appendChild(leftInfo);
+            flex.appendChild(rightBtns);
+            gTd.appendChild(flex);
+            gTr.appendChild(gTd);
+            tbody.appendChild(gTr);
+
+            rows.forEach(function (p) {
+              tbody.appendChild(buildRowElement(p, analysis));
+            });
+          });
+        } else {
+          filtered.forEach(function (p) {
+            tbody.appendChild(buildRowElement(p, analysis));
+          });
+        }
+
+        table.appendChild(tbody);
+        container.appendChild(table);
+        updateBulkBar();
+      }
+
+      function renderAll() {
+        var analysis = computeAnalysis();
+        populateSelectAndDatalists(analysis);
+        updateHeaderKpis(analysis);
+        renderTableOnly();
+      }
+
+      /* ---------- Bulk Actions ---------- */
+      function getSelectedPosts() {
+        return state.posts.filter(function (p) { return state.selected.has(p.relPath); });
+      }
+
+      document.getElementById('bulkClearSelBtn').addEventListener('click', function () {
+        state.selected.clear();
+        renderTableOnly();
+      });
+
+      document.getElementById('bulkCatReplaceBtn').addEventListener('click', function () {
+        var val = document.getElementById('bulkCatInput').value.trim();
+        var targets = getSelectedPosts();
+        if (!targets.length) return;
+        targets.forEach(function (p) {
+          p.categories = val ? [val] : [];
+        });
+        renderAll();
+        showToast(val ? 'Категория заменена для ' + targets.length + ' ст.' : 'Категории очищены для ' + targets.length + ' ст.');
+      });
+
+      document.getElementById('bulkCatAddBtn').addEventListener('click', function () {
+        var val = document.getElementById('bulkCatInput').value.trim();
+        if (!val) return;
+        var targets = getSelectedPosts();
+        targets.forEach(function (p) {
+          if (p.categories.indexOf(val) === -1) p.categories.push(val);
+        });
+        renderAll();
+        showToast('Добавлена категория «' + val + '» для ' + targets.length + ' ст.');
+      });
+
+      document.getElementById('bulkCatRemoveBtn').addEventListener('click', function () {
+        var val = document.getElementById('bulkCatInput').value.trim();
+        if (!val) return;
+        var targets = getSelectedPosts();
+        targets.forEach(function (p) {
+          p.categories = p.categories.filter(function (c) { return c !== val; });
+        });
+        renderAll();
+        showToast('Удалена категория «' + val + '»');
+      });
+
+      document.getElementById('bulkTkSetBtn').addEventListener('click', function () {
+        var val = document.getElementById('bulkTkInput').value.trim();
+        var targets = getSelectedPosts();
+        targets.forEach(function (p) { p.translationKey = val; });
+        renderAll();
+        showToast(val ? 'Назначен translationKey для ' + targets.length + ' ст.' : 'translationKey очищен');
+      });
+
+      document.getElementById('bulkAlignCatBtn').addEventListener('click', function () {
+        var targets = getSelectedPosts();
+        if (targets.length < 2) return;
+        var base = cloneArr(targets[0].categories);
+        targets.forEach(function (p) { p.categories = cloneArr(base); });
+        renderAll();
+        showToast('Категории выровнены по первой выбранной статье');
+      });
+
+      document.getElementById('bulkTagAddBtn').addEventListener('click', function () {
+        var val = document.getElementById('bulkTagFromInput').value.trim();
+        if (!val) return;
+        var targets = getSelectedPosts();
+        targets.forEach(function (p) {
+          if (p.tags.indexOf(val) === -1) p.tags.push(val);
+        });
+        renderAll();
+        showToast('Тег «' + val + '» добавлен');
+      });
+
+      document.getElementById('bulkTagRemoveBtn').addEventListener('click', function () {
+        var val = document.getElementById('bulkTagFromInput').value.trim();
+        if (!val) return;
+        var targets = getSelectedPosts();
+        targets.forEach(function (p) {
+          p.tags = p.tags.filter(function (t) { return t !== val; });
+        });
+        renderAll();
+        showToast('Тег «' + val + '» удалён');
+      });
+
+      document.getElementById('bulkTagRenameBtn').addEventListener('click', function () {
+        var fromTag = document.getElementById('bulkTagFromInput').value.trim();
+        var toTag = document.getElementById('bulkTagToInput').value.trim();
+        if (!fromTag || !toTag) {
+          showToast('Укажите оба поля: исходный тег и новый тег');
+          return;
+        }
+        var targets = getSelectedPosts();
+        var count = 0;
+        targets.forEach(function (p) {
+          if (p.tags.indexOf(fromTag) !== -1) {
+            p.tags = normalizeArr(p.tags.map(function (t) { return t === fromTag ? toTag : t; }));
+            count++;
+          }
+        });
+        renderAll();
+        showToast('Тег «' + fromTag + '» → «' + toTag + '» заменён в ' + count + ' ст.');
+      });
+
+      document.getElementById('bulkAutoSlugBtn').addEventListener('click', function () {
+        var targets = getSelectedPosts();
+        var count = 0;
+        targets.forEach(function (p) {
+          if (!isValidLatinSlug(p.slug)) {
+            var next = toLatinSlug(p.title);
+            if (next) {
+              p.slug = next;
+              count++;
+            }
+          }
+        });
+        renderAll();
+        showToast('Сгенерирован латинский slug для ' + count + ' ст.');
+      });
+
+      /* ---------- Dictionary Modal (Tag & Category Conflict Inspector) ---------- */
+      function openDictModal() {
+        var analysis = computeAnalysis();
+        var body = document.getElementById('dictModalBody');
+        body.innerHTML = '';
+
+        var grid = document.createElement('div');
+        grid.className = 'dict-grid';
+
+        function buildPanel(title, countsMap, canonMap, fieldName) {
+          var panel = document.createElement('div');
+          panel.className = 'dict-panel';
+          var head = document.createElement('div');
+          head.className = 'dict-panel-head';
+          head.textContent = title + ' (' + countsMap.size + ')';
+          panel.appendChild(head);
+
+          var list = document.createElement('div');
+          list.className = 'dict-list';
+
+          var entries = Array.from(countsMap.entries()).sort(function (a, b) {
+            var ac = canonMap.get(canonTag(a[0])).size > 1 ? 0 : 1;
+            var bc = canonMap.get(canonTag(b[0])).size > 1 ? 0 : 1;
+            return ac - bc || b[1] - a[1] || a[0].localeCompare(b[0]);
+          });
+
+          entries.forEach(function (entry) {
+            var term = entry[0];
+            var count = entry[1];
+            var variants = canonMap.get(canonTag(term));
+            var hasCollision = variants && variants.size > 1;
+
+            var row = document.createElement('div');
+            row.className = 'dict-row' + (hasCollision ? ' is-collision' : '');
+
+            var left = document.createElement('div');
+            left.style.display = 'flex';
+            left.style.alignItems = 'center';
+            left.style.gap = '6px';
+            left.style.minWidth = '0';
+            var nameSpan = document.createElement('span');
+            nameSpan.style.fontWeight = '600';
+            nameSpan.textContent = term + ' (' + count + ')';
+            left.appendChild(nameSpan);
+            if (hasCollision) {
+              left.appendChild(makeBadge('Дубль написания', 'badge-warn'));
+            }
+
+            var actions = document.createElement('div');
+            actions.style.display = 'flex';
+            actions.style.gap = '5px';
+
+            var filterBtn = document.createElement('button');
+            filterBtn.type = 'button';
+            filterBtn.className = 'btn btn-sm';
+            filterBtn.textContent = 'Показать';
+            filterBtn.addEventListener('click', function () {
+              if (fieldName === 'categories') {
+                state.filters.cat = term;
+                document.getElementById('catFilter').value = term;
+              } else {
+                state.filters.tag = term;
+                document.getElementById('tagFilter').value = term;
+              }
+              document.getElementById('dictModalBackdrop').classList.remove('is-open');
+              renderAll();
+            });
+
+            var renameBtn = document.createElement('button');
+            renameBtn.type = 'button';
+            renameBtn.className = 'btn btn-sm';
+            renameBtn.textContent = 'Объединить / переим.';
+            renameBtn.addEventListener('click', function () {
+              // Inline quick rename inside row
+              actions.innerHTML = '';
+              var inp = document.createElement('input');
+              inp.type = 'text';
+              inp.className = 'input';
+              inp.style.height = '26px';
+              inp.style.width = '150px';
+              inp.setAttribute('list', fieldName === 'categories' ? 'dl-cats' : 'dl-tags');
+              // Suggest dominant variant if collision exists
+              var best = term;
+              if (hasCollision) {
+                var maxC = -1;
+                variants.forEach(function (vc, vName) {
+                  if (vc > maxC) { maxC = vc; best = vName; }
+                });
+              }
+              inp.value = best;
+              var okBtn = document.createElement('button');
+              okBtn.type = 'button';
+              okBtn.className = 'btn btn-primary btn-sm';
+              okBtn.textContent = 'OK';
+              okBtn.addEventListener('click', function () {
+                var targetName = inp.value.trim();
+                if (!targetName || targetName === term) {
+                  openDictModal();
+                  return;
+                }
+                var changed = 0;
+                state.posts.forEach(function (p) {
+                  if (p[fieldName].indexOf(term) !== -1) {
+                    p[fieldName] = normalizeArr(p[fieldName].map(function (v) { return v === term ? targetName : v; }));
+                    changed++;
+                  }
+                });
+                renderAll();
+                openDictModal();
+                showToast('«' + term + '» → «' + targetName + '» в ' + changed + ' ст.');
+              });
+              actions.appendChild(inp);
+              actions.appendChild(okBtn);
+              inp.focus();
+            });
+
+            actions.appendChild(filterBtn);
+            actions.appendChild(renameBtn);
+            row.appendChild(left);
+            row.appendChild(actions);
+            list.appendChild(row);
+          });
+
+          panel.appendChild(list);
+          return panel;
+        }
+
+        grid.appendChild(buildPanel('Категории', analysis.catCounts, analysis.catCanonMap, 'categories'));
+        grid.appendChild(buildPanel('Теги (якорные слова)', analysis.tagCounts, analysis.tagCanonMap, 'tags'));
+        body.appendChild(grid);
+        document.getElementById('dictModalBackdrop').classList.add('is-open');
+      }
+
+      /* ---------- Diff Preview & Atomic Apply ---------- */
+      var pendingChangesPayload = [];
+
+      async function openDiffModal() {
+        var dirty = getDirtyPosts();
+        if (!dirty.length) return;
+
+        pendingChangesPayload = dirty.map(function (p) {
+          return {
+            relPath: p.relPath,
+            expectedHash: p.fileHash,
+            patch: {
+              slug: p.slug,
+              translationKey: p.translationKey,
+              categories: p.categories,
+              tags: p.tags
+            }
+          };
+        });
+
+        var body = document.getElementById('diffModalBody');
+        var statusEl = document.getElementById('diffStatusText');
+        var applyBtn = document.getElementById('diffApplyBtn');
+        var commitRow = document.getElementById('diffCommitRow');
+
+        body.innerHTML = '';
+        statusEl.textContent = 'Формирование diff...';
+        applyBtn.disabled = true;
+        commitRow.style.display = state.mode === 'github' ? 'flex' : 'none';
+        if (state.mode === 'github') {
+          document.getElementById('commitMsgInput').value = 'chore(taxonomy): update frontmatter for ' + dirty.length + ' article(s)';
+        }
+
+        document.getElementById('diffModalBackdrop').classList.add('is-open');
+
+        try {
+          var previews = [];
+          if (state.mode === 'local') {
+            var res = await fetch('/api/registry/preview', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ changes: pendingChangesPayload })
+            });
+            var json = await res.json();
+            if (!res.ok || !json.ok) {
+              throw new Error(json.error || 'Ошибка предпросмотра');
+            }
+            previews = json.previews || [];
+          } else {
+            previews = pendingChangesPayload.map(function (ch) {
+              var raw = state.rawFiles[ch.relPath] || '';
+              var patched = patchFrontmatterContent(raw, ch.patch);
+              return {
+                relPath: ch.relPath,
+                changed: patched.changed,
+                conflict: false,
+                diffLines: computeLineDiff(patched.beforeFm, patched.afterFm)
+              };
+            });
+          }
+
+          var hasConflict = false;
+          previews.forEach(function (item) {
+            var card = document.createElement('div');
+            card.className = 'diff-card';
+            var head = document.createElement('div');
+            head.className = 'diff-card-head';
+            var pathSpan = document.createElement('span');
+            pathSpan.textContent = item.relPath;
+            var rightSpan = document.createElement('span');
+            if (item.conflict) {
+              hasConflict = true;
+              rightSpan.style.color = '#991b1b';
+              rightSpan.textContent = item.error || 'Конфликт версии!';
+            } else {
+              rightSpan.style.color = '#166534';
+              rightSpan.textContent = item.changed ? 'Готово к записи' : 'Без изменений';
+            }
+            head.appendChild(pathSpan);
+            head.appendChild(rightSpan);
+            card.appendChild(head);
+
+            var pre = document.createElement('div');
+            pre.className = 'diff-pre';
+            if (item.diffLines && item.diffLines.length) {
+              item.diffLines.forEach(function (dl) {
+                var lineDiv = document.createElement('div');
+                lineDiv.className = 'diff-line is-' + dl.type;
+                var prefix = dl.type === 'del' ? '- ' : dl.type === 'add' ? '+ ' : '  ';
+                lineDiv.textContent = prefix + dl.text;
+                pre.appendChild(lineDiv);
+              });
+            } else {
+              var emptyLine = document.createElement('div');
+              emptyLine.className = 'diff-line is-ctx';
+              emptyLine.textContent = '(Изменений в YAML frontmatter нет)';
+              pre.appendChild(emptyLine);
+            }
+            card.appendChild(pre);
+            body.appendChild(card);
+          });
+
+          if (hasConflict) {
+            statusEl.textContent = 'Обнаружен конфликт файлов — обновите реестр.';
+            applyBtn.disabled = true;
+          } else {
+            statusEl.textContent = 'Файлов к обновлению: ' + previews.filter(function (p) { return p.changed; }).length;
+            applyBtn.disabled = false;
+          }
+        } catch (err) {
+          statusEl.textContent = 'Ошибка: ' + err.message;
+          applyBtn.disabled = true;
+        }
+      }
+
+      async function applyPendingChanges() {
+        var applyBtn = document.getElementById('diffApplyBtn');
+        var statusEl = document.getElementById('diffStatusText');
+        applyBtn.disabled = true;
+        statusEl.textContent = 'Сохранение...';
+
+        try {
+          if (state.mode === 'local') {
+            var res = await fetch('/api/registry/apply', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ changes: pendingChangesPayload })
+            });
+            var json = await res.json();
+            if (!res.ok || !json.ok) {
+              throw new Error(json.error || 'Не удалось сохранить изменения');
+            }
+            document.getElementById('diffModalBackdrop').classList.remove('is-open');
+            showToast('Сохранено файлов на диск: ' + json.updated.length);
+            await loadData();
+          } else {
+            var repo = state.ghRepo;
+            var branch = state.ghBranch;
+            var headers = {
+              Accept: 'application/vnd.github+json',
+              'Content-Type': 'application/json',
+              Authorization: 'Bearer ' + state.ghToken
+            };
+
+            // 1. Verify branch HEAD did not move
+            var refCheck = await fetch('https://api.github.com/repos/' + repo + '/git/ref/heads/' + encodeURIComponent(branch), { headers: headers });
+            if (!refCheck.ok) throw new Error('Не удалось проверить ветку GitHub');
+            var refData = await refCheck.json();
+            if (refData.object.sha !== state.ghHeadCommitSha) {
+              throw new Error('В ветке ' + branch + ' появились новые коммиты. Обновите реестр перед сохранением.');
+            }
+
+            // 2. Create blobs for modified files
+            var treeEntries = [];
+            for (var i = 0; i < pendingChangesPayload.length; i++) {
+              var ch = pendingChangesPayload[i];
+              var patched = patchFrontmatterContent(state.rawFiles[ch.relPath], ch.patch);
+              if (!patched.changed) continue;
+
+              var blobRes = await fetch('https://api.github.com/repos/' + repo + '/git/blobs', {
+                method: 'POST',
+                headers: headers,
+                body: JSON.stringify({ content: patched.nextContent, encoding: 'utf-8' })
+              });
+              if (!blobRes.ok) throw new Error('Ошибка создания Git blob для ' + ch.relPath);
+              var blobJson = await blobRes.json();
+              treeEntries.push({
+                path: ch.relPath,
+                mode: '100644',
+                type: 'blob',
+                sha: blobJson.sha
+              });
+            }
+
+            if (!treeEntries.length) {
+              document.getElementById('diffModalBackdrop').classList.remove('is-open');
+              return;
+            }
+
+            // 3. Create tree
+            var treeRes = await fetch('https://api.github.com/repos/' + repo + '/git/trees', {
+              method: 'POST',
+              headers: headers,
+              body: JSON.stringify({ base_tree: state.ghHeadTreeSha, tree: treeEntries })
+            });
+            if (!treeRes.ok) throw new Error('Ошибка создания Git tree');
+            var treeJson = await treeRes.json();
+
+            // 4. Create commit
+            var commitMsg = document.getElementById('commitMsgInput').value.trim() || 'chore(taxonomy): update frontmatter';
+            var commitRes = await fetch('https://api.github.com/repos/' + repo + '/git/commits', {
+              method: 'POST',
+              headers: headers,
+              body: JSON.stringify({
+                message: commitMsg,
+                tree: treeJson.sha,
+                parents: [state.ghHeadCommitSha]
+              })
+            });
+            if (!commitRes.ok) throw new Error('Ошибка создания коммита');
+            var commitJson = await commitRes.json();
+
+            // 5. Fast-forward branch ref
+            var patchRefRes = await fetch('https://api.github.com/repos/' + repo + '/git/refs/heads/' + encodeURIComponent(branch), {
+              method: 'PATCH',
+              headers: headers,
+              body: JSON.stringify({ sha: commitJson.sha, force: false })
+            });
+            if (!patchRefRes.ok) {
+              throw new Error('Конфликт обновления ветки (HTTP ' + patchRefRes.status + '). Обновите реестр.');
+            }
+
+            document.getElementById('diffModalBackdrop').classList.remove('is-open');
+            showToast('Создан коммит ' + commitJson.sha.slice(0, 7) + ' (' + treeEntries.length + ' файлов)');
+            await loadFromGithub();
+          }
+        } catch (err) {
+          statusEl.textContent = 'Ошибка: ' + err.message;
+          applyBtn.disabled = false;
+        }
+      }
+
+      /* ---------- Event Listeners ---------- */
+      document.getElementById('searchInput').addEventListener('input', function (e) {
+        state.filters.search = e.target.value;
+        renderTableOnly();
+      });
+      document.getElementById('langFilter').addEventListener('change', function (e) {
+        state.filters.lang = e.target.value;
+        renderTableOnly();
+      });
+      document.getElementById('catFilter').addEventListener('change', function (e) {
+        state.filters.cat = e.target.value;
+        renderTableOnly();
+      });
+      document.getElementById('tagFilter').addEventListener('change', function (e) {
+        state.filters.tag = e.target.value;
+        renderTableOnly();
+      });
+      document.getElementById('tkFilter').addEventListener('change', function (e) {
+        state.filters.tk = e.target.value;
+        renderTableOnly();
+      });
+      document.getElementById('problemSelect').addEventListener('change', function (e) {
+        state.filters.problem = e.target.value;
+        renderTableOnly();
+      });
+      document.getElementById('onlyProblemsCb').addEventListener('change', function (e) {
+        state.filters.onlyProblems = e.target.checked;
+        document.getElementById('onlyProblemsLabel').classList.toggle('is-active', e.target.checked);
+        renderTableOnly();
+      });
+      document.getElementById('kpiProblems').addEventListener('click', function () {
+        state.filters.onlyProblems = !state.filters.onlyProblems;
+        document.getElementById('onlyProblemsCb').checked = state.filters.onlyProblems;
+        document.getElementById('onlyProblemsLabel').classList.toggle('is-active', state.filters.onlyProblems);
+        renderTableOnly();
+      });
+      document.getElementById('kpiDirty').addEventListener('click', function () {
+        var next = state.filters.problem === 'dirty' ? '' : 'dirty';
+        state.filters.problem = next;
+        document.getElementById('problemSelect').value = next;
+        renderTableOnly();
+      });
+
+      document.getElementById('viewFlatBtn').addEventListener('click', function () {
+        state.viewMode = 'flat';
+        document.getElementById('viewFlatBtn').classList.add('is-active');
+        document.getElementById('viewGroupedBtn').classList.remove('is-active');
+        renderTableOnly();
+      });
+      document.getElementById('viewGroupedBtn').addEventListener('click', function () {
+        state.viewMode = 'grouped';
+        document.getElementById('viewGroupedBtn').classList.add('is-active');
+        document.getElementById('viewFlatBtn').classList.remove('is-active');
+        renderTableOnly();
+      });
+
+      document.getElementById('clearFiltersBtn').addEventListener('click', function () {
+        state.filters = { search: '', lang: '', cat: '', tag: '', tk: '', problem: '', onlyProblems: false };
+        document.getElementById('searchInput').value = '';
+        document.getElementById('langFilter').value = '';
+        document.getElementById('catFilter').value = '';
+        document.getElementById('tagFilter').value = '';
+        document.getElementById('tkFilter').value = '';
+        document.getElementById('problemSelect').value = '';
+        document.getElementById('onlyProblemsCb').checked = false;
+        document.getElementById('onlyProblemsLabel').classList.remove('is-active');
+        renderTableOnly();
+      });
+
+      document.getElementById('reloadBtn').addEventListener('click', function () {
+        loadData();
+      });
+
+      document.getElementById('resetAllBtn').addEventListener('click', function () {
+        state.posts.forEach(function (p) {
+          var orig = state.originals[p.relPath];
+          if (orig) {
+            p.slug = orig.slug;
+            p.translationKey = orig.translationKey;
+            p.categories = cloneArr(orig.categories);
+            p.tags = cloneArr(orig.tags);
+          }
+        });
+        renderAll();
+        showToast('Все несохранённые изменения сброшены');
+      });
+
+      document.getElementById('saveDiffBtn').addEventListener('click', openDiffModal);
+      document.getElementById('diffApplyBtn').addEventListener('click', applyPendingChanges);
+      document.getElementById('diffCloseBtn').addEventListener('click', function () {
+        document.getElementById('diffModalBackdrop').classList.remove('is-open');
+      });
+      document.getElementById('diffCancelBtn').addEventListener('click', function () {
+        document.getElementById('diffModalBackdrop').classList.remove('is-open');
+      });
+
+      document.getElementById('dictBtn').addEventListener('click', openDictModal);
+      document.getElementById('dictCloseBtn').addEventListener('click', function () {
+        document.getElementById('dictModalBackdrop').classList.remove('is-open');
+      });
+      document.getElementById('dictDoneBtn').addEventListener('click', function () {
+        document.getElementById('dictModalBackdrop').classList.remove('is-open');
+      });
+
+      document.getElementById('ghConnectBtn').addEventListener('click', function () {
+        loadFromGithub().catch(function (err) {
+          document.getElementById('ghAuthStatus').textContent = 'Ошибка: ' + err.message;
+        });
+      });
+
+      document.getElementById('ghFromDecapBtn').addEventListener('click', function () {
+        var decap = readDecapToken();
+        if (decap && decap.token) {
+          state.ghToken = decap.token;
+          document.getElementById('ghTokenInput').value = '';
+          loadFromGithub().catch(function (err) {
+            document.getElementById('ghAuthStatus').textContent = 'Ошибка: ' + err.message;
+          });
+        } else {
+          document.getElementById('ghAuthStatus').textContent = 'Сессия Decap CMS не найдена в localStorage';
+        }
+      });
+
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') {
+          document.getElementById('diffModalBackdrop').classList.remove('is-open');
+          document.getElementById('dictModalBackdrop').classList.remove('is-open');
+        }
+      });
+
+      loadData();
+    })();
+  </script>
+</body>
+</html>

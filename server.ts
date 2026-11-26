@@ -23,6 +23,12 @@ import {
 } from './src/content.js';
 import { buildStylesheet } from './src/styles.js';
 import { buildSchemaJsonLd } from './src/schema.js';
+import {
+  loadRegistryEntries,
+  previewRegistryChanges,
+  applyRegistryChanges,
+  type RegistryChangeInput,
+} from './src/registry.js';
 
 const ROOT_DIR = process.cwd();
 const PORT = 3000;
@@ -199,6 +205,99 @@ app.use(express.static(path.join(ROOT_DIR, 'static')));
 app.get('/health', (_req: Request, res: Response) => {
   const siteContent = loadSiteContent();
   res.json({ status: 'ok', posts: siteContent.allPosts.length });
+});
+
+// Taxonomy & Translation Registry API (local filesystem mode)
+app.use('/api/registry', express.json({ limit: '2mb' }));
+
+function verifySameOrigin(req: Request): boolean {
+  const origin = req.get('origin');
+  if (!origin) return true;
+  const host = req.get('x-forwarded-host') || req.get('host');
+  if (!host) return false;
+  try {
+    const parsed = new URL(origin);
+    return parsed.host === host;
+  } catch {
+    return false;
+  }
+}
+
+function sanitizeRegistryChanges(rawChanges: unknown): RegistryChangeInput[] {
+  if (!Array.isArray(rawChanges)) {
+    throw new Error('Поле changes должно быть массивом');
+  }
+  return rawChanges.map((item) => {
+    if (!item || typeof item !== 'object') {
+      throw new Error('Некорректный элемент в списке изменений');
+    }
+    const obj = item as Record<string, unknown>;
+    const relPath = typeof obj.relPath === 'string' ? obj.relPath : '';
+    const expectedHash = typeof obj.expectedHash === 'string' ? obj.expectedHash : '';
+    const rawPatch = (obj.patch && typeof obj.patch === 'object' ? obj.patch : {}) as Record<string, unknown>;
+    const patch: RegistryChangeInput['patch'] = {};
+    if ('slug' in rawPatch && rawPatch.slug !== undefined) {
+      patch.slug = String(rawPatch.slug).trim();
+    }
+    if ('translationKey' in rawPatch && rawPatch.translationKey !== undefined) {
+      patch.translationKey = String(rawPatch.translationKey).trim();
+    }
+    if ('categories' in rawPatch && Array.isArray(rawPatch.categories)) {
+      patch.categories = rawPatch.categories.map((c) => String(c ?? '').trim()).filter(Boolean);
+    }
+    if ('tags' in rawPatch && Array.isArray(rawPatch.tags)) {
+      patch.tags = rawPatch.tags.map((t) => String(t ?? '').trim()).filter(Boolean);
+    }
+    return { relPath, expectedHash, patch };
+  });
+}
+
+app.get('/api/registry/posts', (_req: Request, res: Response) => {
+  const posts = loadRegistryEntries();
+  res.json({
+    mode: 'local',
+    repo: 'yurakas-netizen/rfid-blog',
+    branch: 'master',
+    languages: ORDERED_LANGUAGES.map((l) => ({
+      code: l.code,
+      shortLabel: l.shortLabel,
+      label: l.label,
+      urlPrefix: l.urlPrefix,
+    })),
+    posts,
+  });
+});
+
+app.post('/api/registry/preview', (req: Request, res: Response) => {
+  if (!verifySameOrigin(req)) {
+    res.status(403).json({ ok: false, error: 'Запрос отклонён (несовпадение Origin)' });
+    return;
+  }
+  try {
+    const changes = sanitizeRegistryChanges(req.body?.changes);
+    const previews = previewRegistryChanges(changes);
+    res.json({ ok: true, previews });
+  } catch (err) {
+    res.status(400).json({ ok: false, error: err instanceof Error ? err.message : String(err) });
+  }
+});
+
+app.post('/api/registry/apply', (req: Request, res: Response) => {
+  if (!verifySameOrigin(req)) {
+    res.status(403).json({ ok: false, error: 'Запрос отклонён (несовпадение Origin)' });
+    return;
+  }
+  try {
+    const changes = sanitizeRegistryChanges(req.body?.changes);
+    const result = applyRegistryChanges(changes);
+    res.status(result.status).json(result);
+  } catch (err) {
+    res.status(400).json({ ok: false, error: err instanceof Error ? err.message : String(err) });
+  }
+});
+
+app.get(['/registry', '/registry/'], (_req: Request, res: Response) => {
+  res.redirect('/admin/registry.html');
 });
 
 // Serve page bundle assets at permalink/:filename
