@@ -64,8 +64,7 @@
         {{- if gt (len $populated) 0 -}}
             <section class="sc-empty-branch">
                 {{- if eq $totalPosts 0 -}}
-                    <h3 class="sc-empty-branch__title">{{ default $hero.title $cfg.emptyTitle }}</h3>
-                    <p class="sc-empty-branch__desc">{{ default .Site.Params.sidebar.subtitle $cfg.emptyDescription }}</p>
+                    <p class="sc-empty-branch__desc">🌐 Available language branches / Доступні мовні розділи:</p>
                 {{- end -}}
                 <div class="sc-empty-branch__links">
                     {{- range $populated -}}
