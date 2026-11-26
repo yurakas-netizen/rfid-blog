@@ -8,6 +8,7 @@ description: "Technical analysis of anti-collision algorithms in UK automated
   (1,000–1,400 tags/s), Miller M=4, Session S2, Ofcom IR 2030 / ETSI EN 302 208,
   and 5-year TCO in GBP for 24 tunnel portals / 45 million parcels per year."
 date: 2026-06-08T22:00:00.000Z
+image: next-gen_industrial_rfid_applications-2_2.jpg
 categories:
   - RFID Solutions
 tags:
