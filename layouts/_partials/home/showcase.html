@@ -51,32 +51,35 @@
             {{- end -}}
         </section>
 
-        {{- if eq $totalPosts 0 -}}
-            {{- /* Empty locale bridge showing available language branches */ -}}
+             {{- /* Языковой хаб по всем заполненным веткам сайта */ -}}
+        {{- $populated := slice -}}
+        {{- range .Site.Home.AllTranslations -}}
+            {{- if ne .Language.Lang $lang -}}
+                {{- $otherPosts := where .Site.RegularPages "Type" "in" .Site.Params.mainSections -}}
+                {{- if gt (len $otherPosts) 0 -}}
+                    {{- $populated = $populated | append (dict "Lang" .Language "Permalink" .RelPermalink "Count" (len $otherPosts)) -}}
+                {{- end -}}
+            {{- end -}}
+        {{- end -}}
+        {{- if gt (len $populated) 0 -}}
             <section class="sc-empty-branch">
-                <h3 class="sc-empty-branch__title">{{ default $hero.title $cfg.emptyTitle }}</h3>
-                <p class="sc-empty-branch__desc">{{ default .Site.Params.sidebar.subtitle $cfg.emptyDescription }}</p>
-                {{- $populated := slice -}}
-                {{- range .Site.Home.AllTranslations -}}
-                    {{- if ne .Language.Lang $lang -}}
-                        {{- $otherPosts := where .Site.RegularPages "Type" "in" .Site.Params.mainSections -}}
-                        {{- if gt (len $otherPosts) 0 -}}
-                            {{- $populated = $populated | append (dict "Lang" .Language "Permalink" .RelPermalink "Count" (len $otherPosts)) -}}
-                        {{- end -}}
+                {{- if eq $totalPosts 0 -}}
+                    <h3 class="sc-empty-branch__title">{{ default $hero.title $cfg.emptyTitle }}</h3>
+                    <p class="sc-empty-branch__desc">{{ default .Site.Params.sidebar.subtitle $cfg.emptyDescription }}</p>
+                {{- end -}}
+                <div class="sc-empty-branch__links">
+                    {{- range $populated -}}
+                        <a class="sc-lang-jump" href="{{ .Permalink }}">
+                            <span>{{ .Lang.Label }}</span>
+                            <span class="sc-lang-jump__count">{{ .Count }}</span>
+                        </a>
                     {{- end -}}
-                {{- end -}}
-                {{- if gt (len $populated) 0 -}}
-                    <div class="sc-empty-branch__links">
-                        {{- range $populated -}}
-                            <a class="sc-lang-jump" href="{{ .Permalink }}">
-                                <span>{{ .Lang.Label }}</span>
-                                <span class="sc-lang-jump__count">{{ .Count }}</span>
-                            </a>
-                        {{- end -}}
-                    </div>
-                {{- end -}}
+                </div>
             </section>
-        {{- else -}}
+        {{- end -}}
+
+        {{- if gt $totalPosts 0 -}}
+
             {{- /* 2. FEATURED SECTION */ -}}
             {{- $feat := $cfg.featured -}}
             {{- if and $feat (ne $feat.enabled false) -}}
