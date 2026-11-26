@@ -15,7 +15,7 @@
         "label": "Published Articles"
       },
       {
-        "value": "150",
+        "value": "45",
         "label": "Technical Tags"
       },
       {
@@ -29,15 +29,44 @@
     "heading": "Featured Engineering Briefs",
     "subtitle": "Core architectural benchmarks and production deployment studies",
     "mode": "auto",
-    "postSlugs": [],
+    "postSlugs": [
+      "uhf-rfid-and-rtls-in-uk-nuclear-containment-structures-radiation-hardened-architecture-and-compliance",
+      "uhf-rfid-in-aviation-mro-99-9-read-reliability-on-turbine-blades-at-250c",
+      "sterile-zone-automation-autoclave-resistant-uhf-rfid-in-uk-biopharma"
+    ],
     "limit": 3
   },
-  "tracks": [],
+  "tracks": [
+    {
+      "id": "tag-uhf-rfid",
+      "title": "Track: UHF RFID",
+      "description": "Curated specifications and deployment blueprints for UHF RFID",
+      "filterType": "tag",
+      "filterValue": "UHF RFID",
+      "postSlugs": [],
+      "limit": 3,
+      "layout": "grid",
+      "linkLabel": "Explore track",
+      "linkUrl": "/tags/uhf-rfid/"
+    },
+    {
+      "id": "tag-rtls",
+      "title": "Track: RTLS & Hybrid Tracking",
+      "description": "Real-time location architectures for mining, defence, and heavy industry",
+      "filterType": "tag",
+      "filterValue": "RTLS",
+      "postSlugs": [],
+      "limit": 3,
+      "layout": "grid",
+      "linkLabel": "Explore track",
+      "linkUrl": "/tags/rtls/"
+    }
+  ],
   "latest": {
     "enabled": true,
     "heading": "Latest Technical Publications",
     "subtitle": "Recent specifications, standards compliance, and test benches",
-    "limit": 20,
+    "limit": 12,
     "archiveLabel": "View full archive",
     "archiveUrl": "/archives/"
   },
