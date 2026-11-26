@@ -6,7 +6,7 @@ description: "Teknisk analyse af hybrid UHF RFID (ISO/IEC 18000-63, 865–868 MH
   havvand (σ ≈ 4 S/m, skin depth 8–9 mm), IP68 vs. IP69K, ISO 9227-saltspray,
   DNV-ST-0126 og GS1 GIAI/EPCIS 2.0 livscyklussporing."
 date: 2026-06-08T22:00:00.000Z
-image: industrial_rfid_and_rtls_applications-2_1.jpg
+image: industrial_rfid_in_extreme_environments-2_2.jpg
 categories:
   - RFID Solutions
 tags:
