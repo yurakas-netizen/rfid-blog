@@ -29,55 +29,15 @@
     "heading": "Featured Engineering Briefs",
     "subtitle": "Core architectural benchmarks and production deployment studies",
     "mode": "auto",
-    "postSlugs": [
-      "high-density-uhf-rfid-architecture-for-blade-server-tracking-in-uk-data-centres",
-      "sterile-zone-automation-autoclave-resistant-uhf-rfid-in-uk-biopharma"
-    ],
+    "postSlugs": [],
     "limit": 3
   },
-  "tracks": [
-    {
-      "id": "tag-data-centre-rfid",
-      "title": "Focus: Data Centre RFID",
-      "description": "Curated specifications and deployment blueprints for Data Centre RFID",
-      "filterType": "tag",
-      "filterValue": "Data Centre RFID",
-      "postSlugs": [],
-      "limit": 2,
-      "layout": "grid",
-      "linkLabel": "Explore topic",
-      "linkUrl": "/tags/data-centre-rfid/"
-    },
-    {
-      "id": "tag-blade-server-tracking",
-      "title": "Focus: Blade Server Tracking",
-      "description": "Curated specifications and deployment blueprints for Blade Server Tracking",
-      "filterType": "tag",
-      "filterValue": "Blade Server Tracking",
-      "postSlugs": [],
-      "limit": 2,
-      "layout": "grid",
-      "linkLabel": "Explore topic",
-      "linkUrl": "/tags/blade-server-tracking/"
-    },
-    {
-      "id": "tag-near-field-uhf",
-      "title": "Focus: Near-Field UHF",
-      "description": "Curated specifications and deployment blueprints for Near-Field UHF",
-      "filterType": "tag",
-      "filterValue": "Near-Field UHF",
-      "postSlugs": [],
-      "limit": 2,
-      "layout": "grid",
-      "linkLabel": "Explore topic",
-      "linkUrl": "/tags/near-field-uhf/"
-    }
-  ],
+  "tracks": [],
   "latest": {
     "enabled": true,
     "heading": "Latest Technical Publications",
     "subtitle": "Recent specifications, standards compliance, and test benches",
-    "limit": 6,
+    "limit": 20,
     "archiveLabel": "View full archive",
     "archiveUrl": "/archives/"
   },
