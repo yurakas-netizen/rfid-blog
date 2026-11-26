@@ -7,7 +7,7 @@ description: "Teknisk analyse af blinde paller i danske distributionscentre:
   AutoTune-chips (NXP UCODE 9, Impinj M730/M750) og tretrins-tunnelløsninger,
   der løfter læseraten fra 78 % til 99,3 % i et 20.000-palle-flow."
 date: 2026-06-08T22:00:00.000Z
-image: industrial_rfid_in_extreme_environments-4_4.jpg
+image: industry_4.0_identification-4_3.jpg
 categories:
   - RFID Solutions
 tags:
