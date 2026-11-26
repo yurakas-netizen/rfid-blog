@@ -1,0 +1,318 @@
+{{- $page := . -}}
+{{- $lang := .Language.Lang -}}
+{{- $homeData := site.Data.home -}}
+{{- $cfg := index $homeData $lang -}}
+{{- if not $cfg -}}
+    {{- $cfg = index $homeData "en" -}}
+{{- end -}}
+{{- $posts := partial "helper/pages.html" . -}}
+{{- $totalPosts := len $posts -}}
+
+{{- if not $cfg -}}
+    <section class="article-list">
+        {{ range $posts }}
+            {{ partial "article-list/default" . }}
+        {{ end }}
+    </section>
+{{- else -}}
+    <div class="rfid-showcase">
+        {{- /* 1. HERO BAND */ -}}
+        {{- $hero := $cfg.hero -}}
+        {{- $primaryUrl := partial "home/resolve-url.html" (dict "Url" (default "/archives/" $hero.primaryCtaUrl) "Lang" $lang) -}}
+        {{- $secondaryUrl := "" -}}
+        {{- if $hero.secondaryCtaUrl -}}
+            {{- $secondaryUrl = partial "home/resolve-url.html" (dict "Url" $hero.secondaryCtaUrl "Lang" $lang) -}}
+        {{- end -}}
+        <section class="sc-hero">
+            {{- with $hero.eyebrow -}}
+                <div class="sc-hero__eyebrow">{{ . }}</div>
+            {{- end -}}
+            <h2 class="sc-hero__title">{{ $hero.title }}</h2>
+            {{- with $hero.subtitle -}}
+                <p class="sc-hero__subtitle">{{ . }}</p>
+            {{- end -}}
+            <div class="sc-hero__actions">
+                {{- if $hero.primaryCtaLabel -}}
+                    <a class="sc-btn sc-btn--primary" href="{{ $primaryUrl }}">{{ $hero.primaryCtaLabel }}</a>
+                {{- end -}}
+                {{- if and $hero.secondaryCtaLabel $secondaryUrl -}}
+                    <a class="sc-btn sc-btn--secondary" href="{{ $secondaryUrl }}">{{ $hero.secondaryCtaLabel }}</a>
+                {{- end -}}
+            </div>
+            {{- with $hero.metrics -}}
+                <div class="sc-hero__metrics">
+                    {{- range . -}}
+                        <div class="sc-metric">
+                            <span class="sc-metric__val">{{ .value }}</span>
+                            <span class="sc-metric__lbl">{{ .label }}</span>
+                        </div>
+                    {{- end -}}
+                </div>
+            {{- end -}}
+        </section>
+
+        {{- if eq $totalPosts 0 -}}
+            {{- /* Empty locale bridge showing available language branches */ -}}
+            <section class="sc-empty-branch">
+                <h3 class="sc-empty-branch__title">{{ default $hero.title $cfg.emptyTitle }}</h3>
+                <p class="sc-empty-branch__desc">{{ default .Site.Params.sidebar.subtitle $cfg.emptyDescription }}</p>
+                {{- $populated := slice -}}
+                {{- range .Site.Home.AllTranslations -}}
+                    {{- if ne .Language.Lang $lang -}}
+                        {{- $otherPosts := where .Site.RegularPages "Type" "in" .Site.Params.mainSections -}}
+                        {{- if gt (len $otherPosts) 0 -}}
+                            {{- $populated = $populated | append (dict "Lang" .Language "Permalink" .RelPermalink "Count" (len $otherPosts)) -}}
+                        {{- end -}}
+                    {{- end -}}
+                {{- end -}}
+                {{- if gt (len $populated) 0 -}}
+                    <div class="sc-empty-branch__links">
+                        {{- range $populated -}}
+                            <a class="sc-lang-jump" href="{{ .Permalink }}">
+                                <span>{{ .Lang.Label }}</span>
+                                <span class="sc-lang-jump__count">{{ .Count }}</span>
+                            </a>
+                        {{- end -}}
+                    </div>
+                {{- end -}}
+            </section>
+        {{- else -}}
+            {{- /* 2. FEATURED SECTION */ -}}
+            {{- $feat := $cfg.featured -}}
+            {{- if and $feat (ne $feat.enabled false) -}}
+                {{- $featLimit := int (default 3 $feat.limit) -}}
+                {{- $featPosts := slice -}}
+                {{- $seenFeat := slice -}}
+                {{- if and (eq $feat.mode "manual") $feat.postSlugs -}}
+                    {{- range $rawSlug := $feat.postSlugs -}}
+                        {{- $want := lower (strings.TrimSpace $rawSlug) -}}
+                        {{- range $p := $posts -}}
+                            {{- $dirSlug := "" -}}
+                            {{- with $p.File -}}
+                                {{- $dirSlug = path.Base (strings.TrimSuffix "/" .Dir) -}}
+                            {{- end -}}
+                            {{- if or (eq (lower $p.Slug) $want) (eq (lower $dirSlug) $want) (eq (lower $p.RelPermalink) $want) -}}
+                                {{- if not (in $seenFeat $p.RelPermalink) -}}
+                                    {{- $seenFeat = $seenFeat | append $p.RelPermalink -}}
+                                    {{- $featPosts = $featPosts | append $p -}}
+                                {{- end -}}
+                            {{- end -}}
+                        {{- end -}}
+                    {{- end -}}
+                {{- end -}}
+                {{- if eq (len $featPosts) 0 -}}
+                    {{- $withImg := slice -}}
+                    {{- $withoutImg := slice -}}
+                    {{- range $p := $posts -}}
+                        {{- if $p.Params.image -}}
+                            {{- $withImg = $withImg | append $p -}}
+                        {{- else -}}
+                            {{- $withoutImg = $withoutImg | append $p -}}
+                        {{- end -}}
+                    {{- end -}}
+                    {{- $featPosts = $withImg -}}
+                    {{- range $withoutImg -}}
+                        {{- $featPosts = $featPosts | append . -}}
+                    {{- end -}}
+                {{- end -}}
+                {{- $featPosts = first $featLimit $featPosts -}}
+                {{- if gt (len $featPosts) 0 -}}
+                    <section class="sc-section">
+                        <header class="sc-section__head">
+                            <div>
+                                <h2 class="sc-section__title">{{ $feat.heading }}</h2>
+                                {{- with $feat.subtitle -}}
+                                    <p class="sc-section__sub">{{ . }}</p>
+                                {{- end -}}
+                            </div>
+                        </header>
+                        {{- $lead := index $featPosts 0 -}}
+                        {{ partial "home/card.html" (dict "Page" $lead "Variant" "lead") }}
+                        {{- $rest := after 1 $featPosts -}}
+                        {{- if gt (len $rest) 0 -}}
+                            <div class="sc-grid sc-grid--2">
+                                {{- range $rest -}}
+                                    {{ partial "home/card.html" (dict "Page" . "Variant" "standard") }}
+                                {{- end -}}
+                            </div>
+                        {{- end -}}
+                    </section>
+                {{- end -}}
+            {{- end -}}
+
+            {{- /* 3. CURATED TRACKS */ -}}
+            {{- range $track := $cfg.tracks -}}
+                {{- $tLimit := int (default 2 $track.limit) -}}
+                {{- $tType := default "latest" $track.filterType -}}
+                {{- $tLayout := default "grid" $track.layout -}}
+                {{- $tMatched := slice -}}
+
+                {{- if eq $tType "manual" -}}
+                    {{- $seenT := slice -}}
+                    {{- range $rawSlug := $track.postSlugs -}}
+                        {{- $want := lower (strings.TrimSpace $rawSlug) -}}
+                        {{- range $p := $posts -}}
+                            {{- $dirSlug := "" -}}
+                            {{- with $p.File -}}
+                                {{- $dirSlug = path.Base (strings.TrimSuffix "/" .Dir) -}}
+                            {{- end -}}
+                            {{- if or (eq (lower $p.Slug) $want) (eq (lower $dirSlug) $want) (eq (lower $p.RelPermalink) $want) -}}
+                                {{- if not (in $seenT $p.RelPermalink) -}}
+                                    {{- $seenT = $seenT | append $p.RelPermalink -}}
+                                    {{- $tMatched = $tMatched | append $p -}}
+                                {{- end -}}
+                            {{- end -}}
+                        {{- end -}}
+                    {{- end -}}
+                {{- else if or (eq $tType "category") (eq $tType "tag") (eq $tType "translationKey") -}}
+                    {{- $tokens := slice -}}
+                    {{- range split (default "" $track.filterValue) "," -}}
+                        {{- $tv := strings.TrimSpace (lower .) -}}
+                        {{- if $tv -}}
+                            {{- $tokens = $tokens | append $tv -}}
+                        {{- end -}}
+                    {{- end -}}
+                    {{- range $p := $posts -}}
+                        {{- $hit := false -}}
+                        {{- if eq $tType "category" -}}
+                            {{- range $p.Params.categories -}}
+                                {{- if in $tokens (lower .) -}}{{- $hit = true -}}{{- end -}}
+                            {{- end -}}
+                        {{- else if eq $tType "tag" -}}
+                            {{- range $p.Params.tags -}}
+                                {{- if in $tokens (lower .) -}}{{- $hit = true -}}{{- end -}}
+                            {{- end -}}
+                        {{- else if eq $tType "translationKey" -}}
+                            {{- if and $p.Params.translationKey (in $tokens (lower $p.Params.translationKey)) -}}
+                                {{- $hit = true -}}
+                            {{- end -}}
+                        {{- end -}}
+                        {{- if $hit -}}
+                            {{- $tMatched = $tMatched | append $p -}}
+                        {{- end -}}
+                    {{- end -}}
+                {{- else -}}
+                    {{- $tMatched = $posts -}}
+                {{- end -}}
+
+                {{- $tPosts := first $tLimit $tMatched -}}
+                {{- if gt (len $tPosts) 0 -}}
+                    {{- $tRawUrl := default "" $track.linkUrl -}}
+                    {{- if not $tRawUrl -}}
+                        {{- if and (eq $tType "category") $track.filterValue -}}
+                            {{- $firstVal := strings.TrimSpace (index (split $track.filterValue ",") 0) -}}
+                            {{- $tRawUrl = printf "/categories/%s/" (urlize $firstVal) -}}
+                        {{- else if and (eq $tType "tag") $track.filterValue -}}
+                            {{- $firstVal := strings.TrimSpace (index (split $track.filterValue ",") 0) -}}
+                            {{- $tRawUrl = printf "/tags/%s/" (urlize $firstVal) -}}
+                        {{- else -}}
+                            {{- $tRawUrl = "/archives/" -}}
+                        {{- end -}}
+                    {{- end -}}
+                    {{- $tLink := partial "home/resolve-url.html" (dict "Url" $tRawUrl "Lang" $lang) -}}
+                    <section class="sc-section">
+                        <header class="sc-section__head">
+                            <div>
+                                <h2 class="sc-section__title">{{ $track.title }}</h2>
+                                {{- with $track.description -}}
+                                    <p class="sc-section__sub">{{ . }}</p>
+                                {{- end -}}
+                            </div>
+                            {{- if $track.linkLabel -}}
+                                <a class="sc-section__more" href="{{ $tLink }}">{{ $track.linkLabel }} &rarr;</a>
+                            {{- end -}}
+                        </header>
+                        {{- if eq $tLayout "compact" -}}
+                            <div class="sc-compact-list">
+                                {{- range $tp := $tPosts -}}
+                                    <a class="sc-compact-row" href="{{ $tp.RelPermalink }}">
+                                        <span class="sc-compact-row__title">{{ $tp.Title }}</span>
+                                        <span class="sc-compact-row__meta">
+                                            {{- if not $tp.Date.IsZero -}}
+                                                <time datetime='{{ $tp.Date.Format "2006-01-02" }}'>{{ $tp.Date | time.Format $tp.Site.Params.dateFormat.published }}</time>
+                                                <span aria-hidden="true">&middot;</span>
+                                            {{- end -}}
+                                            <span>{{ T "article.readingTime" $tp.ReadingTime }}</span>
+                                        </span>
+                                    </a>
+                                {{- end -}}
+                            </div>
+                        {{- else -}}
+                            <div class="sc-grid sc-grid--2">
+                                {{- range $tPosts -}}
+                                    {{ partial "home/card.html" (dict "Page" . "Variant" "standard") }}
+                                {{- end -}}
+                            </div>
+                        {{- end -}}
+                    </section>
+                {{- end -}}
+            {{- end -}}
+
+            {{- /* 4. LATEST INDEX STRIP */ -}}
+            {{- $latest := $cfg.latest -}}
+            {{- if and $latest (ne $latest.enabled false) -}}
+                {{- $lLimit := int (default 6 $latest.limit) -}}
+                {{- $lPosts := first $lLimit $posts -}}
+                {{- if gt (len $lPosts) 0 -}}
+                    {{- $archUrl := partial "home/resolve-url.html" (dict "Url" (default "/archives/" $latest.archiveUrl) "Lang" $lang) -}}
+                    <section class="sc-section">
+                        <header class="sc-section__head">
+                            <div>
+                                <h2 class="sc-section__title">{{ $latest.heading }}</h2>
+                                {{- with $latest.subtitle -}}
+                                    <p class="sc-section__sub">{{ . }}</p>
+                                {{- end -}}
+                            </div>
+                            {{- if $latest.archiveLabel -}}
+                                <a class="sc-section__more" href="{{ $archUrl }}">{{ $latest.archiveLabel }} &rarr;</a>
+                            {{- end -}}
+                        </header>
+                        <div class="sc-compact-list">
+                            {{- range $lp := $lPosts -}}
+                                <a class="sc-compact-row" href="{{ $lp.RelPermalink }}">
+                                    <span class="sc-compact-row__title">{{ $lp.Title }}</span>
+                                    <span class="sc-compact-row__meta">
+                                        {{- if not $lp.Date.IsZero -}}
+                                            <time datetime='{{ $lp.Date.Format "2006-01-02" }}'>{{ $lp.Date | time.Format $lp.Site.Params.dateFormat.published }}</time>
+                                            <span aria-hidden="true">&middot;</span>
+                                        {{- end -}}
+                                        <span>{{ T "article.readingTime" $lp.ReadingTime }}</span>
+                                    </span>
+                                </a>
+                            {{- end -}}
+                        </div>
+                    </section>
+                {{- end -}}
+            {{- end -}}
+        {{- end -}}
+
+        {{- /* 5. CTA BANNER */ -}}
+        {{- $cta := $cfg.cta -}}
+        {{- if and $cta (ne $cta.enabled false) -}}
+            {{- $ctaUrl := partial "home/resolve-url.html" (dict "Url" (default "mailto:info@rfid.org.ua" $cta.buttonUrl) "Lang" $lang) -}}
+            {{- $ctaSecUrl := "" -}}
+            {{- if $cta.secondaryUrl -}}
+                {{- $ctaSecUrl = partial "home/resolve-url.html" (dict "Url" $cta.secondaryUrl "Lang" $lang) -}}
+            {{- end -}}
+            <section class="sc-cta">
+                <div class="sc-cta__copy">
+                    {{- with $cta.eyebrow -}}
+                        <div class="sc-cta__eyebrow">{{ . }}</div>
+                    {{- end -}}
+                    <h2 class="sc-cta__title">{{ $cta.title }}</h2>
+                    {{- with $cta.description -}}
+                        <p class="sc-cta__desc">{{ . }}</p>
+                    {{- end -}}
+                </div>
+                <div class="sc-cta__actions">
+                    {{- if $cta.buttonLabel -}}
+                        <a class="sc-btn sc-btn--primary" href="{{ $ctaUrl }}">{{ $cta.buttonLabel }}</a>
+                    {{- end -}}
+                    {{- if and $cta.secondaryLabel $ctaSecUrl -}}
+                        <a class="sc-btn sc-btn--secondary" href="{{ $ctaSecUrl }}">{{ $cta.secondaryLabel }}</a>
+                    {{- end -}}
+                </div>
+            </section>
+        {{- end -}}
+    </div>
+{{- end -}}

@@ -1,0 +1,67 @@
+{
+  "version": 1,
+  "lang": "fr",
+  "hero": {
+    "eyebrow": "Base d’ingénierie · UHF RFID · RTLS · IIoT",
+    "title": "Ingénierie appliquée de l’identification industrielle et des systèmes RF",
+    "subtitle": "Analyses techniques EPC Gen2v2, budgets de liaison RF, traçabilité sur métal, chaîne du froid et automatisation IIoT.",
+    "primaryCtaLabel": "Explorer les archives",
+    "primaryCtaUrl": "/archives/",
+    "secondaryCtaLabel": "Rechercher",
+    "secondaryCtaUrl": "/search/",
+    "metrics": [
+      {
+        "value": "20",
+        "label": "EN · UA · DE · DA · EU"
+      },
+      {
+        "value": "865–928 MHz",
+        "label": "ETSI / FCC UHF"
+      },
+      {
+        "value": "EPC Gen2v2",
+        "label": "ISO/IEC 18000-63"
+      }
+    ]
+  },
+  "featured": {
+    "enabled": true,
+    "heading": "Dossiers d’ingénierie sélectionnés",
+    "subtitle": "Architectures de référence et retours d’expérience terrain",
+    "mode": "auto",
+    "postSlugs": [],
+    "limit": 3
+  },
+  "tracks": [
+    {
+      "id": "solutions",
+      "title": "Déploiements RFID industriels",
+      "description": "Intégration UHF RFID en environnements exigeants",
+      "filterType": "latest",
+      "filterValue": "",
+      "postSlugs": [],
+      "limit": 4,
+      "layout": "grid",
+      "linkLabel": "Voir toutes les archives",
+      "linkUrl": "/archives/"
+    }
+  ],
+  "latest": {
+    "enabled": true,
+    "heading": "Dernières publications techniques",
+    "subtitle": "Spécifications récentes, normes et cas industriels",
+    "limit": 6,
+    "archiveLabel": "Voir toutes les archives",
+    "archiveUrl": "/archives/"
+  },
+  "cta": {
+    "enabled": true,
+    "eyebrow": "Conseil en ingénierie",
+    "title": "Besoin d’une étude RF ou d’un choix de transpondeurs ?",
+    "description": "Accompagnement sur l’architecture d’antennes, les milieux métalliques et l’intégration EPCIS.",
+    "buttonLabel": "Contacter un ingénieur",
+    "buttonUrl": "mailto:info@rfid.org.ua",
+    "secondaryLabel": "Rechercher",
+    "secondaryUrl": "/search/"
+  }
+}

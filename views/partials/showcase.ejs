@@ -1,0 +1,159 @@
+<%
+  const cfg = showcase.config;
+  const hero = cfg.hero;
+%>
+<div class="rfid-showcase">
+  <section class="sc-hero">
+    <% if (hero.eyebrow) { %>
+      <div class="sc-hero__eyebrow"><%= hero.eyebrow %></div>
+    <% } %>
+    <h2 class="sc-hero__title"><%= hero.title %></h2>
+    <% if (hero.subtitle) { %>
+      <p class="sc-hero__subtitle"><%= hero.subtitle %></p>
+    <% } %>
+    <div class="sc-hero__actions">
+      <% if (hero.primaryCtaLabel) { %>
+        <a class="sc-btn sc-btn--primary" href="<%= hero.primaryCtaUrl %>"><%= hero.primaryCtaLabel %></a>
+      <% } %>
+      <% if (hero.secondaryCtaLabel && hero.secondaryCtaUrl) { %>
+        <a class="sc-btn sc-btn--secondary" href="<%= hero.secondaryCtaUrl %>"><%= hero.secondaryCtaLabel %></a>
+      <% } %>
+    </div>
+    <% if (hero.metrics && hero.metrics.length > 0) { %>
+      <div class="sc-hero__metrics">
+        <% hero.metrics.forEach(function(m) { %>
+          <div class="sc-metric">
+            <span class="sc-metric__val"><%= m.value %></span>
+            <span class="sc-metric__lbl"><%= m.label %></span>
+          </div>
+        <% }); %>
+      </div>
+    <% } %>
+  </section>
+
+  <% if (showcase.totalLangPosts === 0) { %>
+    <section class="sc-empty-branch">
+      <h3 class="sc-empty-branch__title"><%= showcaseEmptyCopy.emptyBranchTitle %></h3>
+      <p class="sc-empty-branch__desc"><%= showcaseEmptyCopy.emptyBranchDesc %></p>
+      <% if (showcase.populatedLangs.length > 0) { %>
+        <div class="sc-empty-branch__links">
+          <% showcase.populatedLangs.forEach(function(pl) { %>
+            <a class="sc-lang-jump" href="<%= pl.urlPrefix %>">
+              <span><%= pl.label %></span>
+              <span class="sc-lang-jump__count"><%= pl.count %></span>
+            </a>
+          <% }); %>
+        </div>
+      <% } %>
+    </section>
+  <% } else { %>
+    <% if (cfg.featured.enabled && showcase.leadPost) { %>
+      <section class="sc-section">
+        <header class="sc-section__head">
+          <div>
+            <h2 class="sc-section__title"><%= cfg.featured.heading %></h2>
+            <% if (cfg.featured.subtitle) { %>
+              <p class="sc-section__sub"><%= cfg.featured.subtitle %></p>
+            <% } %>
+          </div>
+        </header>
+        <%- include('showcase-card', { post: showcase.leadPost, variant: 'lead', existingImagesMap: showcase.existingImagesMap }) %>
+        <% if (showcase.secondaryPosts.length > 0) { %>
+          <div class="sc-grid sc-grid--2">
+            <% showcase.secondaryPosts.forEach(function(sp) { %>
+              <%- include('showcase-card', { post: sp, variant: 'standard', existingImagesMap: showcase.existingImagesMap }) %>
+            <% }); %>
+          </div>
+        <% } %>
+      </section>
+    <% } %>
+
+    <% showcase.tracks.forEach(function(track) { %>
+      <% if (track.posts && track.posts.length > 0) { %>
+        <section class="sc-section">
+          <header class="sc-section__head">
+            <div>
+              <h2 class="sc-section__title"><%= track.title %></h2>
+              <% if (track.description) { %>
+                <p class="sc-section__sub"><%= track.description %></p>
+              <% } %>
+            </div>
+            <% if (track.linkLabel) { %>
+              <a class="sc-section__more" href="<%= track.resolvedLinkUrl %>"><%= track.linkLabel %> &rarr;</a>
+            <% } %>
+          </header>
+          <% if (track.layout === 'compact') { %>
+            <div class="sc-compact-list">
+              <% track.posts.forEach(function(tp) { %>
+                <a class="sc-compact-row" href="<%= tp.permalink %>">
+                  <span class="sc-compact-row__title"><%= tp.title %></span>
+                  <span class="sc-compact-row__meta">
+                    <time datetime="<%= tp.date.toISOString().slice(0, 10) %>"><%= formatDate(tp.date, lang) %></time>
+                    <span aria-hidden="true">&middot;</span>
+                    <span><%= tp.readingTime %> <%= t.minRead %></span>
+                  </span>
+                </a>
+              <% }); %>
+            </div>
+          <% } else { %>
+            <div class="sc-grid sc-grid--2">
+              <% track.posts.forEach(function(tp) { %>
+                <%- include('showcase-card', { post: tp, variant: 'standard', existingImagesMap: showcase.existingImagesMap }) %>
+              <% }); %>
+            </div>
+          <% } %>
+        </section>
+      <% } %>
+    <% }); %>
+
+    <% if (cfg.latest.enabled && showcase.latestPosts.length > 0) { %>
+      <section class="sc-section">
+        <header class="sc-section__head">
+          <div>
+            <h2 class="sc-section__title"><%= cfg.latest.heading %></h2>
+            <% if (cfg.latest.subtitle) { %>
+              <p class="sc-section__sub"><%= cfg.latest.subtitle %></p>
+            <% } %>
+          </div>
+          <% if (cfg.latest.archiveLabel) { %>
+            <a class="sc-section__more" href="<%= cfg.latest.archiveUrl %>"><%= cfg.latest.archiveLabel %> &rarr;</a>
+          <% } %>
+        </header>
+        <div class="sc-compact-list">
+          <% showcase.latestPosts.forEach(function(lp) { %>
+            <a class="sc-compact-row" href="<%= lp.permalink %>">
+              <span class="sc-compact-row__title"><%= lp.title %></span>
+              <span class="sc-compact-row__meta">
+                <time datetime="<%= lp.date.toISOString().slice(0, 10) %>"><%= formatDate(lp.date, lang) %></time>
+                <span aria-hidden="true">&middot;</span>
+                <span><%= lp.readingTime %> <%= t.minRead %></span>
+              </span>
+            </a>
+          <% }); %>
+        </div>
+      </section>
+    <% } %>
+  <% } %>
+
+  <% if (cfg.cta.enabled) { %>
+    <section class="sc-cta">
+      <div class="sc-cta__copy">
+        <% if (cfg.cta.eyebrow) { %>
+          <div class="sc-cta__eyebrow"><%= cfg.cta.eyebrow %></div>
+        <% } %>
+        <h2 class="sc-cta__title"><%= cfg.cta.title %></h2>
+        <% if (cfg.cta.description) { %>
+          <p class="sc-cta__desc"><%= cfg.cta.description %></p>
+        <% } %>
+      </div>
+      <div class="sc-cta__actions">
+        <% if (cfg.cta.buttonLabel) { %>
+          <a class="sc-btn sc-btn--primary" href="<%= cfg.cta.buttonUrl %>"><%= cfg.cta.buttonLabel %></a>
+        <% } %>
+        <% if (cfg.cta.secondaryLabel && cfg.cta.secondaryUrl) { %>
+          <a class="sc-btn sc-btn--secondary" href="<%= cfg.cta.secondaryUrl %>"><%= cfg.cta.secondaryLabel %></a>
+        <% } %>
+      </div>
+    </section>
+  <% } %>
+</div>

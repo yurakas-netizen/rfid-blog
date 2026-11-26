@@ -8,6 +8,9 @@
     </header>
   <% } %>
 
+  <% if (typeof showcase !== 'undefined' && showcase) { %>
+    <%- include('partials/showcase') %>
+  <% } else { %>
   <section class="article-list">
     <% if (posts.length === 0) { %>
       <div class="section-card">
@@ -67,6 +70,7 @@
         <a class="page-link <%= p === currentPage ? 'current' : '' %>" href="<%= p === 1 ? basePath : `${basePath}page/${p}/` %>"><%= p %></a>
       <% } %>
     </nav>
+  <% } %>
   <% } %>
 
 <%- include('partials/footer') %>

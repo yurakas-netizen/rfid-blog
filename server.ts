@@ -29,6 +29,14 @@ import {
   applyRegistryChanges,
   type RegistryChangeInput,
 } from './src/registry.js';
+import {
+  resolveShowcaseForLang,
+  getShowcaseEmptyCopy,
+  loadShowcaseFileForLang,
+  generateStarterShowcaseForLang,
+  applyShowcaseUpdates,
+  type ShowcaseSaveInput,
+} from './src/showcase.js';
 
 const ROOT_DIR = process.cwd();
 const PORT = 3000;
@@ -300,6 +308,119 @@ app.get(['/registry', '/registry/'], (_req: Request, res: Response) => {
   res.redirect('/admin/registry.html');
 });
 
+// Homepage Showcase Builder API (local filesystem mode)
+app.use('/api/home-builder', express.json({ limit: '4mb' }));
+
+app.get('/api/home-builder/state', (_req: Request, res: Response) => {
+  const siteContent = loadSiteContent();
+  const configs: Record<string, unknown> = {};
+  const meta: Record<string, unknown> = {};
+
+  for (const l of ORDERED_LANGUAGES) {
+    const langPosts = siteContent.postsByLang[l.code] || [];
+    const tax = computeTaxonomies(langPosts, siteContent.categoryStyles);
+    const loaded = loadShowcaseFileForLang(l.code);
+    const effectiveConfig = loaded.config || generateStarterShowcaseForLang(l.code, siteContent);
+
+    const tkCounts = new Map<string, number>();
+    for (const p of langPosts) {
+      if (p.translationKey) {
+        tkCounts.set(p.translationKey, (tkCounts.get(p.translationKey) || 0) + 1);
+      }
+    }
+
+    configs[l.code] = effectiveConfig;
+    meta[l.code] = {
+      exists: loaded.exists,
+      relPath: loaded.relPath,
+      fileHash: loaded.fileHash,
+      postCount: langPosts.length,
+      categories: tax.categories.map((c) => ({ name: c.name, slug: c.slug, count: c.count })),
+      tags: tax.tags.map((t) => ({ name: t.name, slug: t.slug, count: t.count })),
+      translationKeys: Array.from(tkCounts.entries())
+        .map(([key, count]) => ({ key, count }))
+        .sort((a, b) => b.count - a.count || a.key.localeCompare(b.key)),
+      posts: langPosts.map((p) => ({
+        slug: p.slug,
+        folder: path.basename(p.bundleDir),
+        title: p.title,
+        description: p.description || p.summary,
+        date: p.date.toISOString(),
+        image: p.image,
+        imageUrl: p.imageUrl,
+        categories: p.categories,
+        tags: p.tags,
+        translationKey: p.translationKey,
+        permalink: p.permalink,
+        readingTime: p.readingTime,
+      })),
+    };
+  }
+
+  res.json({
+    mode: 'local',
+    repo: 'yurakas-netizen/rfid-blog',
+    branch: 'master',
+    languages: ORDERED_LANGUAGES.map((l) => ({
+      code: l.code,
+      shortLabel: l.shortLabel,
+      label: l.label,
+      urlPrefix: l.urlPrefix,
+    })),
+    configs,
+    meta,
+  });
+});
+
+app.post('/api/home-builder/generate', (req: Request, res: Response) => {
+  if (!verifySameOrigin(req)) {
+    res.status(403).json({ ok: false, error: 'Запрос отклонён (несовпадение Origin)' });
+    return;
+  }
+  const siteContent = loadSiteContent();
+  const target = String(req.body?.lang || 'all').trim();
+  const configs: Record<string, unknown> = {};
+
+  if (target === 'all') {
+    for (const l of ORDERED_LANGUAGES) {
+      configs[l.code] = generateStarterShowcaseForLang(l.code, siteContent);
+    }
+  } else if (isValidLang(target)) {
+    configs[target] = generateStarterShowcaseForLang(target, siteContent);
+  } else {
+    res.status(400).json({ ok: false, error: `Неизвестный язык: ${target}` });
+    return;
+  }
+
+  res.json({ ok: true, configs });
+});
+
+app.post('/api/home-builder/apply', (req: Request, res: Response) => {
+  if (!verifySameOrigin(req)) {
+    res.status(403).json({ ok: false, error: 'Запрос отклонён (несовпадение Origin)' });
+    return;
+  }
+  const rawItems = req.body?.items;
+  if (!Array.isArray(rawItems)) {
+    res.status(400).json({ ok: false, error: 'Поле items должно быть массивом' });
+    return;
+  }
+  const items: ShowcaseSaveInput[] = rawItems.map((it: unknown) => {
+    const obj = it && typeof it === 'object' ? (it as Record<string, unknown>) : {};
+    return {
+      lang: String(obj.lang || '') as LangCode,
+      expectedHash: typeof obj.expectedHash === 'string' ? obj.expectedHash : '',
+      config: obj.config,
+    };
+  });
+  const result = applyShowcaseUpdates(items);
+  res.status(result.status).json(result);
+});
+
+app.get(['/home-builder', '/home-builder/'], (_req: Request, res: Response) => {
+  res.redirect('/admin/home-builder.html');
+});
+
 // Serve page bundle assets at permalink/:filename
 function handleBundleAsset(req: Request, res: Response, next: NextFunction) {
   const siteContent = loadSiteContent();
@@ -542,6 +663,8 @@ async function handleHome(res: Response, lang: LangCode, pageNum: number) {
   const start = (currentPage - 1) * pageSize;
   const posts = allPosts.slice(start, start + pageSize);
   const prefix = LANGUAGES[lang].urlPrefix;
+  const showcase = currentPage === 1 ? resolveShowcaseForLang(lang, siteContent) : null;
+  const showcaseEmptyCopy = currentPage === 1 ? getShowcaseEmptyCopy(lang) : null;
 
   await renderView(res, siteContent, 'index', lang, {
     activeNav: 'home',
@@ -549,6 +672,8 @@ async function handleHome(res: Response, lang: LangCode, pageNum: number) {
     pageTitle: `${LANGUAGES[lang].title} — ${I18N[lang].subtitle}`,
     pageDescription: I18N[lang].subtitle,
     posts,
+    showcase,
+    showcaseEmptyCopy,
     isFallback,
     currentPage,
     totalPages,

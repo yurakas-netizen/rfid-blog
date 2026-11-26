@@ -1,0 +1,42 @@
+<%
+  const hasImg = Boolean(post.imageUrl && (!existingImagesMap || existingImagesMap[post.id] !== false));
+  const variantClass = typeof variant !== 'undefined' && variant ? variant : 'standard';
+%>
+<article class="sc-card sc-card--<%= variantClass %> <%= hasImg ? 'has-cover' : 'no-cover' %>">
+  <a class="sc-card__media" href="<%= post.permalink %>" aria-hidden="true" tabindex="-1">
+    <% if (hasImg) { %>
+      <img src="<%= post.imageUrl %>" loading="lazy" alt="<%= post.title %>" />
+    <% } else { %>
+      <div class="sc-card__fallback">
+        <svg viewBox="0 0 120 80" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <circle cx="32" cy="40" r="8" stroke="currentColor" stroke-width="1.6"/>
+          <path d="M46 27a18 18 0 0 1 0 26" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+          <path d="M56 19a30 30 0 0 1 0 42" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity="0.72"/>
+          <path d="M66 11a42 42 0 0 1 0 58" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" opacity="0.45"/>
+          <rect x="82" y="24" width="22" height="32" rx="4" stroke="currentColor" stroke-width="1.4" opacity="0.6"/>
+          <line x1="87" y1="33" x2="99" y2="33" stroke="currentColor" stroke-width="1.4" opacity="0.6"/>
+          <line x1="87" y1="40" x2="99" y2="40" stroke="currentColor" stroke-width="1.4" opacity="0.6"/>
+          <line x1="87" y1="47" x2="95" y2="47" stroke="currentColor" stroke-width="1.4" opacity="0.6"/>
+        </svg>
+      </div>
+    <% } %>
+  </a>
+  <div class="sc-card__body">
+    <div class="sc-card__meta">
+      <% if (post.categories && post.categories.length > 0) { %>
+        <a class="sc-card__kicker" href="<%= langPrefix %>/categories/<%= encodeURIComponent(slugify(post.categories[0])) %>/"><%= post.categories[0] %></a>
+        <span class="sc-meta-sep" aria-hidden="true">&middot;</span>
+      <% } %>
+      <time datetime="<%= post.date.toISOString() %>"><%= formatDate(post.date, lang) %></time>
+      <span class="sc-meta-sep" aria-hidden="true">&middot;</span>
+      <span><%= post.readingTime %> <%= t.minRead %></span>
+    </div>
+    <h3 class="sc-card__title">
+      <a href="<%= post.permalink %>"><%= post.title %></a>
+    </h3>
+    <% const excerpt = post.description || post.summary; %>
+    <% if (excerpt) { %>
+      <p class="sc-card__excerpt"><%= excerpt.length > 165 ? excerpt.slice(0, 162) + '...' : excerpt %></p>
+    <% } %>
+  </div>
+</article>

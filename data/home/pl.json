@@ -1,0 +1,67 @@
+{
+  "version": 1,
+  "lang": "pl",
+  "hero": {
+    "eyebrow": "Baza wiedzy inżynieryjnej · UHF RFID · RTLS · IIoT",
+    "title": "Inżynieria stosowana przemysłowej identyfikacji i systemów RF",
+    "subtitle": "Analizy techniczne EPC Gen2v2, budżety łącza RF, wdrożenia na metalu, w farmacji, logistyce i centrach danych.",
+    "primaryCtaLabel": "Przeglądaj archiwum",
+    "primaryCtaUrl": "/archives/",
+    "secondaryCtaLabel": "Szukaj standardów",
+    "secondaryCtaUrl": "/search/",
+    "metrics": [
+      {
+        "value": "20",
+        "label": "EN · UA · DE · DA · EU"
+      },
+      {
+        "value": "865–928 MHz",
+        "label": "ETSI / FCC UHF"
+      },
+      {
+        "value": "EPC Gen2v2",
+        "label": "ISO/IEC 18000-63"
+      }
+    ]
+  },
+  "featured": {
+    "enabled": true,
+    "heading": "Kluczowe opracowania inżynieryjne",
+    "subtitle": "Wybrane architektury referencyjne i badania terenowe",
+    "mode": "auto",
+    "postSlugs": [],
+    "limit": 3
+  },
+  "tracks": [
+    {
+      "id": "solutions",
+      "title": "Przemysłowe wdrożenia RFID",
+      "description": "Sprawdzone architektury transponderów i czytników UHF",
+      "filterType": "latest",
+      "filterValue": "",
+      "postSlugs": [],
+      "limit": 4,
+      "layout": "grid",
+      "linkLabel": "Zobacz całe archiwum",
+      "linkUrl": "/archives/"
+    }
+  ],
+  "latest": {
+    "enabled": true,
+    "heading": "Najnowsze publikacje techniczne",
+    "subtitle": "Bieżące analizy, normy i wdrożenia przemysłowe",
+    "limit": 6,
+    "archiveLabel": "Zobacz całe archiwum",
+    "archiveUrl": "/archives/"
+  },
+  "cta": {
+    "enabled": true,
+    "eyebrow": "Konsultacje inżynieryjne",
+    "title": "Potrzebujesz analizy strefy RF lub doboru transponderów?",
+    "description": "Pomagamy w doborze anten, tagów wysokotemperaturowych oraz integracji EPCIS 2.0.",
+    "buttonLabel": "Kontakt z inżynierem",
+    "buttonUrl": "mailto:info@rfid.org.ua",
+    "secondaryLabel": "Otwórz wyszukiwanie",
+    "secondaryUrl": "/search/"
+  }
+}

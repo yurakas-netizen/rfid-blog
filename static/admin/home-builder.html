@@ -1,0 +1,2506 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RFID Ukraine — Конструктор витрины главной</title>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --surface-muted: #f1f5f9;
+      --border: #cbd5e1;
+      --border-soft: #e2e8f0;
+      --text: #0f172a;
+      --text-muted: #475569;
+      --text-soft: #64748b;
+      --accent: #0284c7;
+      --accent-hover: #0369a1;
+      --accent-soft: #e0f2fe;
+      --ok-bg: #dcfce7;
+      --ok-text: #166534;
+      --ok-border: #86efac;
+      --warn-bg: #fef3c7;
+      --warn-text: #92400e;
+      --warn-border: #fcd34d;
+      --err-bg: #fee2e2;
+      --err-text: #991b1b;
+      --err-border: #fca5a5;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      --sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .app {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 10px 16px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .topbar-left {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-title {
+      margin: 0;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
+    .mode-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 8px;
+      border-radius: 5px;
+      background: var(--surface-muted);
+      border: 1px solid var(--border);
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .mode-badge.is-local { background: #ecfeff; border-color: #a5f3fc; color: #0e7490; }
+    .mode-badge.is-github { background: #eef2ff; border-color: #c7d2fe; color: #3730a3; }
+
+    .topbar-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      height: 32px;
+      padding: 0 11px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      font-size: 12.5px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .btn:hover:not(:disabled) {
+      background: var(--surface-muted);
+      border-color: #94a3b8;
+    }
+
+    .btn:disabled { opacity: 0.45; cursor: not-allowed; }
+    .btn-primary { background: var(--accent); border-color: var(--accent); color: #ffffff; }
+    .btn-primary:hover:not(:disabled) { background: var(--accent-hover); border-color: var(--accent-hover); }
+    .btn-sm { height: 26px; padding: 0 8px; font-size: 11.5px; }
+    .btn-danger { background: #fff1f2; border-color: #fecdd3; color: #be123c; }
+    .btn-accent-soft { background: var(--accent-soft); border-color: #7dd3fc; color: var(--accent-hover); }
+
+    .dirty-pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 9px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+      background: var(--surface-muted);
+      border: 1px solid var(--border-soft);
+      color: var(--text-muted);
+    }
+
+    .dirty-pill.has-dirty {
+      background: var(--warn-bg);
+      border-color: var(--warn-border);
+      color: var(--warn-text);
+    }
+
+    .auth-banner {
+      display: none;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      padding: 10px 16px;
+      background: #eff6ff;
+      border-bottom: 1px solid #bfdbfe;
+    }
+
+    .auth-banner.is-visible { display: flex; }
+
+    .input, .select, .textarea {
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--surface);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 12.5px;
+      outline: none;
+    }
+
+    .input, .select {
+      height: 32px;
+      padding: 0 9px;
+      width: 100%;
+    }
+
+    .textarea {
+      width: 100%;
+      padding: 8px 10px;
+      resize: vertical;
+      min-height: 62px;
+      line-height: 1.45;
+    }
+
+    .input:focus, .select:focus, .textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.12);
+    }
+
+    /* Main Workspace Grid */
+    .workspace {
+      display: grid;
+      grid-template-columns: 248px minmax(0, 1fr);
+      flex: 1 1 auto;
+      min-height: 0;
+    }
+
+    @media (max-width: 900px) {
+      .workspace { grid-template-columns: 1fr; }
+    }
+
+    .lang-rail {
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      max-height: calc(100vh - 54px);
+      overflow-y: auto;
+      position: sticky;
+      top: 54px;
+    }
+
+    @media (max-width: 900px) {
+      .lang-rail {
+        position: static;
+        max-height: 220px;
+        border-right: 0;
+        border-bottom: 1px solid var(--border);
+      }
+    }
+
+    .rail-head {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-soft);
+      padding: 4px 6px 6px;
+    }
+
+    .lang-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      width: 100%;
+      padding: 7px 9px;
+      border-radius: 7px;
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 12.5px;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .lang-item:hover { background: var(--surface-muted); }
+
+    .lang-item.is-active {
+      background: var(--accent-soft);
+      border-color: #7dd3fc;
+      color: var(--accent-hover);
+      font-weight: 700;
+    }
+
+    .lang-item-left {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      min-width: 0;
+    }
+
+    .lang-code {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 26px;
+      height: 20px;
+      padding: 0 4px;
+      border-radius: 4px;
+      background: var(--surface-muted);
+      border: 1px solid var(--border-soft);
+      font-family: var(--mono);
+      font-size: 10.5px;
+      font-weight: 700;
+    }
+
+    .lang-item.is-active .lang-code {
+      background: #ffffff;
+      border-color: #7dd3fc;
+      color: var(--accent-hover);
+    }
+
+    .lang-name {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .lang-badges {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+
+    .count-tag {
+      font-size: 10.5px;
+      font-variant-numeric: tabular-nums;
+      color: var(--text-soft);
+      padding: 1px 5px;
+      border-radius: 4px;
+      background: var(--surface-muted);
+    }
+
+    .count-tag.has-posts {
+      background: var(--ok-bg);
+      color: var(--ok-text);
+      font-weight: 600;
+    }
+
+    .dirty-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #d97706;
+      flex-shrink: 0;
+    }
+
+    /* Main Editor Column */
+    .editor-pane {
+      padding: 16px 20px 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      max-width: 1120px;
+      width: 100%;
+    }
+
+    .subbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 14px;
+    }
+
+    .tabs {
+      display: inline-flex;
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      overflow: hidden;
+    }
+
+    .tab-btn {
+      border: 0;
+      background: var(--surface-muted);
+      color: var(--text-muted);
+      padding: 6px 14px;
+      font-size: 12.5px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .tab-btn.is-active {
+      background: var(--accent);
+      color: #ffffff;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .card-head {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border-soft);
+    }
+
+    .card-title {
+      margin: 0;
+      font-size: 14.5px;
+      font-weight: 700;
+    }
+
+    .card-sub {
+      margin: 2px 0 0;
+      font-size: 12px;
+      color: var(--text-soft);
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    @media (max-width: 720px) {
+      .grid-2, .grid-3 { grid-template-columns: 1fr; }
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .field-label {
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .check-row {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 12.5px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .metric-row {
+      display: grid;
+      grid-template-columns: 140px 1fr auto;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .track-box {
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      background: #fcfdff;
+      padding: 13px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .track-head {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .track-num {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12.5px;
+      font-weight: 700;
+    }
+
+    .match-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 8px;
+      border-radius: 5px;
+      font-size: 11px;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+      background: var(--ok-bg);
+      color: var(--ok-text);
+      border: 1px solid var(--ok-border);
+    }
+
+    .match-badge.is-zero {
+      background: var(--warn-bg);
+      color: var(--warn-text);
+      border-color: var(--warn-border);
+    }
+
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-top: 4px;
+    }
+
+    .quick-chip {
+      padding: 2px 8px;
+      border-radius: 5px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text-muted);
+      font-size: 11px;
+      cursor: pointer;
+    }
+
+    .quick-chip:hover {
+      border-color: var(--accent);
+      color: var(--accent-hover);
+      background: var(--accent-soft);
+    }
+
+    .post-picker {
+      border: 1px solid var(--border-soft);
+      border-radius: 7px;
+      background: var(--surface);
+      max-height: 200px;
+      overflow-y: auto;
+      padding: 6px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .post-pick-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 5px 8px;
+      border-radius: 5px;
+      font-size: 12px;
+      border: 1px solid transparent;
+    }
+
+    .post-pick-row:hover { background: var(--surface-muted); }
+    .post-pick-row.is-picked { background: var(--accent-soft); border-color: #7dd3fc; }
+
+    /* Live Preview Sandbox */
+    .preview-shell {
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      padding: 22px;
+      background: #f4f6fb;
+      color: #0f172a;
+    }
+
+    .preview-shell.is-dark {
+      background: #090d16;
+      color: #f8fafc;
+      border-color: rgba(56, 189, 248, 0.25);
+    }
+
+    .pv-hero {
+      padding: 22px;
+      border-radius: 14px;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      background: #ffffff;
+      margin-bottom: 18px;
+    }
+
+    .preview-shell.is-dark .pv-hero {
+      background: radial-gradient(600px 240px at 100% 0%, rgba(56, 189, 248, 0.14), transparent 65%), #111827;
+      border-color: rgba(56, 189, 248, 0.25);
+    }
+
+    .pv-eyebrow { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: #0284c7; margin-bottom: 6px; }
+    .preview-shell.is-dark .pv-eyebrow { color: #38bdf8; }
+    .pv-h1 { margin: 0 0 8px; font-size: 22px; font-weight: 700; line-height: 1.25; }
+    .pv-sub { margin: 0; font-size: 13.5px; opacity: 0.8; }
+    .pv-metrics { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-top: 14px; padding-top: 12px; border-top: 1px solid rgba(148, 163, 184, 0.24); }
+    .pv-section { margin-bottom: 18px; }
+    .pv-sec-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; }
+    .pv-sec-title { margin: 0; font-size: 16px; font-weight: 700; }
+    .pv-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .pv-card {
+      padding: 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      background: #ffffff;
+    }
+    .preview-shell.is-dark .pv-card { background: #111827; border-color: rgba(56, 189, 248, 0.18); }
+    .pv-card.is-lead { grid-column: 1 / -1; }
+    .pv-card-meta { font-size: 11px; opacity: 0.7; margin-bottom: 4px; }
+    .pv-card-title { font-size: 14.5px; font-weight: 700; margin: 0 0 5px; }
+    .pv-list-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 14px;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+      background: #ffffff;
+      font-size: 13px;
+    }
+    .preview-shell.is-dark .pv-list-row { background: #111827; }
+
+    /* Modals */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      background: rgba(15, 23, 42, 0.56);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .modal-backdrop.is-open { display: flex; }
+
+    .modal {
+      width: min(94vw, 880px);
+      max-height: 90vh;
+      background: var(--surface);
+      border-radius: 11px;
+      box-shadow: 0 24px 64px rgba(15, 23, 42, 0.35);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .modal-head {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border-soft);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .modal-title { margin: 0; font-size: 14.5px; font-weight: 700; }
+
+    .modal-body {
+      padding: 14px 16px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .modal-foot {
+      padding: 10px 16px;
+      border-top: 1px solid var(--border-soft);
+      background: var(--surface-muted);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .code-area {
+      width: 100%;
+      min-height: 320px;
+      font-family: var(--mono);
+      font-size: 12px;
+      line-height: 1.45;
+      padding: 10px;
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      background: #0f172a;
+      color: #e2e8f0;
+      resize: vertical;
+    }
+
+    .diff-card {
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      overflow: hidden;
+    }
+
+    .diff-head {
+      padding: 6px 10px;
+      background: var(--surface-muted);
+      border-bottom: 1px solid var(--border-soft);
+      font-family: var(--mono);
+      font-size: 11.5px;
+      font-weight: 700;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .diff-pre {
+      margin: 0;
+      padding: 8px 10px;
+      font-family: var(--mono);
+      font-size: 11px;
+      line-height: 1.45;
+      max-height: 220px;
+      overflow: auto;
+      white-space: pre;
+    }
+
+    .diff-line.is-add { background: #dcfce7; color: #166534; }
+    .diff-line.is-del { background: #fee2e2; color: #991b1b; }
+
+    .toast {
+      position: fixed;
+      right: 16px;
+      bottom: 16px;
+      z-index: 200;
+      background: #0f172a;
+      color: #f8fafc;
+      padding: 9px 14px;
+      border-radius: 7px;
+      font-size: 12.5px;
+      font-weight: 600;
+      box-shadow: 0 12px 32px rgba(15, 23, 42, 0.35);
+      display: none;
+    }
+
+    .toast.is-visible { display: block; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="topbar-left">
+        <h1 class="brand-title">Конструктор витрины главной</h1>
+        <span id="modeBadge" class="mode-badge">Загрузка...</span>
+        <span id="dirtyPill" class="dirty-pill">Изменено языков: 0</span>
+      </div>
+      <div class="topbar-actions">
+        <button id="genLangBtn" type="button" class="btn btn-accent-soft">Сгенерировать для языка</button>
+        <button id="genAllBtn" type="button" class="btn">Автогенерация всех (20)</button>
+        <button id="ioModalBtn" type="button" class="btn">Импорт / Экспорт</button>
+        <button id="saveBtn" type="button" class="btn btn-primary" disabled>Сохранить (0)</button>
+        <a href="/admin/registry.html" class="btn">Реестр</a>
+        <a href="/admin/" class="btn">← В CMS</a>
+      </div>
+    </header>
+
+    <section id="githubAuthBanner" class="auth-banner">
+      <strong style="font-size: 12.5px; color: #1e3a8a;">GitHub режим (Netlify):</strong>
+      <input id="ghRepoInput" type="text" class="input" style="width: 210px;" value="yurakas-netizen/rfid-blog" aria-label="Репозиторий" />
+      <input id="ghBranchInput" type="text" class="input" style="width: 100px;" value="master" aria-label="Ветка" />
+      <input id="ghTokenInput" type="password" class="input" style="width: 240px;" placeholder="GitHub PAT (если не авторизован в CMS)" aria-label="GitHub токен" />
+      <button id="ghConnectBtn" type="button" class="btn btn-primary btn-sm">Подключиться</button>
+      <button id="ghFromDecapBtn" type="button" class="btn btn-sm">Взять токен из CMS</button>
+      <span id="ghAuthStatus" style="font-size: 12px; color: #1e40af;"></span>
+    </section>
+
+    <div class="workspace">
+      <aside class="lang-rail">
+        <div class="rail-head">Языковые ветки (20)</div>
+        <div id="langList"></div>
+      </aside>
+
+      <main class="editor-pane">
+        <div class="subbar">
+          <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+            <strong id="activeLangTitle" style="font-size: 14px;">—</strong>
+            <span id="activeLangStats" class="count-tag">0 ст.</span>
+            <a id="openLangSiteLink" href="/" target="_blank" rel="noopener noreferrer" class="btn btn-sm">Открыть страницу ↗</a>
+          </div>
+          <div class="tabs">
+            <button type="button" class="tab-btn is-active" data-tab="editor">Редактор блоков</button>
+            <button type="button" class="tab-btn" data-tab="preview">Живой предпросмотр</button>
+            <button type="button" class="tab-btn" data-tab="json">JSON-код</button>
+          </div>
+        </div>
+
+        <div id="tabEditor"></div>
+        <div id="tabPreview" style="display: none;"></div>
+        <div id="tabJson" style="display: none;"></div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Import / Export Modal -->
+  <div id="ioModalBackdrop" class="modal-backdrop">
+    <div class="modal" role="dialog" aria-modal="true">
+      <div class="modal-head">
+        <h3 class="modal-title">Импорт / Экспорт конфигурации витрины</h3>
+        <button id="ioCloseBtn" type="button" class="btn btn-sm">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between;">
+          <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+            <div class="tabs">
+              <button type="button" class="tab-btn is-active" data-iomode="export">Экспорт</button>
+              <button type="button" class="tab-btn" data-iomode="import">Импорт</button>
+            </div>
+            <div class="tabs">
+              <button type="button" class="tab-btn is-active" data-ioscope="single">Текущий язык</button>
+              <button type="button" class="tab-btn" data-ioscope="all">Все языки (пакет)</button>
+            </div>
+            <div class="tabs">
+              <button type="button" class="tab-btn is-active" data-iofmt="json">JSON</button>
+              <button type="button" class="tab-btn" data-iofmt="yaml">YAML</button>
+            </div>
+          </div>
+          <input id="ioFileInput" type="file" accept=".json,.yaml,.yml,.txt" style="display: none;" />
+        </div>
+        <textarea id="ioTextarea" class="code-area" spellcheck="false"></textarea>
+        <div id="ioSummary" style="font-size: 12px; color: var(--text-muted);"></div>
+      </div>
+      <div class="modal-foot">
+        <span id="ioStatus" style="font-size: 12px; color: var(--text-muted);"></span>
+        <div style="display: flex; gap: 8px;">
+          <button id="ioCopyBtn" type="button" class="btn">Скопировать</button>
+          <button id="ioDownloadBtn" type="button" class="btn btn-primary">Скачать файл</button>
+          <button id="ioApplyBtn" type="button" class="btn btn-primary" style="display: none;">Применить в черновик</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Save / Diff Modal -->
+  <div id="saveModalBackdrop" class="modal-backdrop">
+    <div class="modal" role="dialog" aria-modal="true">
+      <div class="modal-head">
+        <h3 class="modal-title">Сохранение конфигурации витрины (data/home/*.json)</h3>
+        <button id="saveCloseBtn" type="button" class="btn btn-sm">&times;</button>
+      </div>
+      <div class="modal-body" id="saveModalBody"></div>
+      <div class="modal-foot">
+        <div id="saveCommitWrap" style="display: none; align-items: center; gap: 8px; flex: 1 1 280px;">
+          <span style="font-size: 12px; font-weight: 600;">Commit:</span>
+          <input id="saveCommitMsg" type="text" class="input" value="feat(home): update showcase configuration" />
+        </div>
+        <span id="saveModalStatus" style="font-size: 12px; color: var(--text-muted);"></span>
+        <div style="display: flex; gap: 8px;">
+          <button id="saveCancelBtn" type="button" class="btn">Отмена</button>
+          <button id="saveConfirmBtn" type="button" class="btn btn-primary">Подтвердить сохранение</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <script>
+    (function () {
+      'use strict';
+
+      var DEFAULT_LANGUAGES = [
+        { code: 'uk', shortLabel: 'UA', label: 'Українська (UA)', urlPrefix: '' },
+        { code: 'en', shortLabel: 'EN', label: 'English (EN)', urlPrefix: '/en' },
+        { code: 'da', shortLabel: 'DA', label: 'Dansk (DA)', urlPrefix: '/da' },
+        { code: 'de', shortLabel: 'DE', label: 'Deutsch (DE)', urlPrefix: '/de' },
+        { code: 'fr', shortLabel: 'FR', label: 'Français (FR)', urlPrefix: '/fr' },
+        { code: 'ru', shortLabel: 'RU', label: 'Русский (RU)', urlPrefix: '/ru' },
+        { code: 'pl', shortLabel: 'PL', label: 'Polski (PL)', urlPrefix: '/pl' },
+        { code: 'es', shortLabel: 'ES', label: 'Español (ES)', urlPrefix: '/es' },
+        { code: 'it', shortLabel: 'IT', label: 'Italiano (IT)', urlPrefix: '/it' },
+        { code: 'nl', shortLabel: 'NL', label: 'Nederlands (NL)', urlPrefix: '/nl' },
+        { code: 'pt', shortLabel: 'PT', label: 'Português (PT)', urlPrefix: '/pt' },
+        { code: 'sv', shortLabel: 'SV', label: 'Svenska (SV)', urlPrefix: '/sv' },
+        { code: 'no', shortLabel: 'NO', label: 'Norsk (NO)', urlPrefix: '/no' },
+        { code: 'fi', shortLabel: 'FI', label: 'Suomi (FI)', urlPrefix: '/fi' },
+        { code: 'cs', shortLabel: 'CS', label: 'Čeština (CS)', urlPrefix: '/cs' },
+        { code: 'sk', shortLabel: 'SK', label: 'Slovenčina (SK)', urlPrefix: '/sk' },
+        { code: 'ro', shortLabel: 'RO', label: 'Română (RO)', urlPrefix: '/ro' },
+        { code: 'bg', shortLabel: 'BG', label: 'Български (BG)', urlPrefix: '/bg' },
+        { code: 'et', shortLabel: 'ET', label: 'Eesti (ET)', urlPrefix: '/et' },
+        { code: 'lt', shortLabel: 'LT', label: 'Lietuvių (LT)', urlPrefix: '/lt' }
+      ];
+
+      var state = {
+        mode: 'loading',
+        languages: DEFAULT_LANGUAGES.slice(),
+        activeLang: 'uk',
+        activeTab: 'editor',
+        previewDark: true,
+        configs: {},
+        originals: {},
+        meta: {},
+        ghRepo: 'yurakas-netizen/rfid-blog',
+        ghBranch: 'master',
+        ghToken: '',
+        ghHeadCommitSha: '',
+        ghHeadTreeSha: '',
+        ioMode: 'export',
+        ioScope: 'single',
+        ioFmt: 'json'
+      };
+
+      function showToast(msg) {
+        var el = document.getElementById('toast');
+        el.textContent = msg;
+        el.classList.add('is-visible');
+        clearTimeout(el._timer);
+        el._timer = setTimeout(function () {
+          el.classList.remove('is-visible');
+        }, 2800);
+      }
+
+      function deepClone(v) {
+        return JSON.parse(JSON.stringify(v));
+      }
+
+      function slugify(str) {
+        return String(str || '')
+          .trim()
+          .toLowerCase()
+          .replace(/[\s_]+/g, '-')
+          .replace(/[^a-z0-9\u0400-\u04ff-]+/g, '')
+          .replace(/-+/g, '-')
+          .replace(/^-|-$/g, '') || 'item';
+      }
+
+      function isSafeUrl(url) {
+        var s = String(url || '').trim();
+        if (!s) return false;
+        return s.indexOf('/') === 0 || s.indexOf('https://') === 0 || s.indexOf('http://') === 0 || s.indexOf('mailto:') === 0 || s.indexOf('tel:') === 0;
+      }
+
+      function sanitizeUrl(url, fallback) {
+        return isSafeUrl(url) ? String(url).trim() : (fallback || '/archives/');
+      }
+
+      function normalizeClientConfig(raw, lang) {
+        var obj = raw && typeof raw === 'object' ? raw : {};
+        var code = lang || obj.lang || 'uk';
+        var hero = obj.hero && typeof obj.hero === 'object' ? obj.hero : {};
+        var feat = obj.featured && typeof obj.featured === 'object' ? obj.featured : {};
+        var latest = obj.latest && typeof obj.latest === 'object' ? obj.latest : {};
+        var cta = obj.cta && typeof obj.cta === 'object' ? obj.cta : {};
+        var tracks = Array.isArray(obj.tracks) ? obj.tracks : [];
+        var allowedFt = ['category', 'tag', 'translationKey', 'manual', 'latest'];
+
+        return {
+          version: 1,
+          lang: code,
+          hero: {
+            eyebrow: String(hero.eyebrow || ''),
+            title: String(hero.title || 'RFID Ukraine'),
+            subtitle: String(hero.subtitle || ''),
+            primaryCtaLabel: String(hero.primaryCtaLabel || 'Archives'),
+            primaryCtaUrl: sanitizeUrl(hero.primaryCtaUrl, '/archives/'),
+            secondaryCtaLabel: String(hero.secondaryCtaLabel || ''),
+            secondaryCtaUrl: hero.secondaryCtaUrl ? sanitizeUrl(hero.secondaryCtaUrl, '/search/') : '',
+            metrics: Array.isArray(hero.metrics)
+              ? hero.metrics.slice(0, 4).map(function (m) {
+                  return { value: String((m && m.value) || ''), label: String((m && m.label) || '') };
+                })
+              : []
+          },
+          featured: {
+            enabled: feat.enabled !== false,
+            heading: String(feat.heading || 'Featured'),
+            subtitle: String(feat.subtitle || ''),
+            mode: feat.mode === 'manual' ? 'manual' : 'auto',
+            postSlugs: Array.isArray(feat.postSlugs) ? feat.postSlugs.map(function (s) { return String(s || '').trim(); }).filter(Boolean) : [],
+            limit: Math.min(6, Math.max(1, Number(feat.limit) || 3))
+          },
+          tracks: tracks.slice(0, 8).map(function (t, idx) {
+            var ft = allowedFt.indexOf(t && t.filterType) !== -1 ? t.filterType : 'latest';
+            var lo = t && t.layout === 'compact' ? 'compact' : 'grid';
+            return {
+              id: String((t && t.id) || ('track-' + (idx + 1))),
+              title: String((t && t.title) || ('Track ' + (idx + 1))),
+              description: String((t && t.description) || ''),
+              filterType: ft,
+              filterValue: String((t && t.filterValue) || ''),
+              postSlugs: Array.isArray(t && t.postSlugs) ? t.postSlugs.map(function (s) { return String(s || '').trim(); }).filter(Boolean) : [],
+              limit: Math.min(8, Math.max(1, Number(t && t.limit) || (lo === 'compact' ? 4 : 2))),
+              layout: lo,
+              linkLabel: String((t && t.linkLabel) || ''),
+              linkUrl: t && t.linkUrl ? sanitizeUrl(t.linkUrl, '') : ''
+            };
+          }),
+          latest: {
+            enabled: latest.enabled !== false,
+            heading: String(latest.heading || 'Latest'),
+            subtitle: String(latest.subtitle || ''),
+            limit: Math.min(15, Math.max(1, Number(latest.limit) || 6)),
+            archiveLabel: String(latest.archiveLabel || 'Archive'),
+            archiveUrl: sanitizeUrl(latest.archiveUrl, '/archives/')
+          },
+          cta: {
+            enabled: cta.enabled !== false,
+            eyebrow: String(cta.eyebrow || ''),
+            title: String(cta.title || ''),
+            description: String(cta.description || ''),
+            buttonLabel: String(cta.buttonLabel || ''),
+            buttonUrl: sanitizeUrl(cta.buttonUrl, 'mailto:info@rfid.org.ua'),
+            secondaryLabel: String(cta.secondaryLabel || ''),
+            secondaryUrl: cta.secondaryUrl ? sanitizeUrl(cta.secondaryUrl, '/search/') : ''
+          }
+        };
+      }
+
+      function isLangDirty(lang) {
+        var cur = JSON.stringify(state.configs[lang] || {});
+        var orig = state.originals[lang] || '';
+        return cur !== orig;
+      }
+
+      function getDirtyLanguages() {
+        return state.languages.filter(function (l) { return isLangDirty(l.code); }).map(function (l) { return l.code; });
+      }
+
+      function updateHeaderStatus() {
+        var dirty = getDirtyLanguages();
+        var pill = document.getElementById('dirtyPill');
+        pill.textContent = 'Изменено языков: ' + dirty.length;
+        pill.classList.toggle('has-dirty', dirty.length > 0);
+        var saveBtn = document.getElementById('saveBtn');
+        saveBtn.textContent = 'Сохранить (' + dirty.length + ')';
+        saveBtn.disabled = dirty.length === 0;
+      }
+
+      /* ---------- Client-side Starter Generator (for GitHub/Netlify mode) ---------- */
+      function buildClientStarter(lang) {
+        var meta = state.meta[lang] || { posts: [], categories: [], tags: [] };
+        var posts = meta.posts || [];
+        var tags = meta.tags || [];
+        var cats = meta.categories || [];
+        var existing = state.configs[lang];
+        var baseHero = existing && existing.hero ? deepClone(existing.hero) : {
+          eyebrow: 'RFID Ukraine · UHF RFID · RTLS · IIoT',
+          title: 'Applied Engineering for Industrial Identification and RF Systems',
+          subtitle: 'Technical briefs, EPC Gen2v2 benchmarks, and industrial deployments.',
+          primaryCtaLabel: 'Archives',
+          primaryCtaUrl: '/archives/',
+          secondaryCtaLabel: 'Search',
+          secondaryCtaUrl: '/search/',
+          metrics: []
+        };
+        baseHero.metrics = posts.length > 0
+          ? [
+              { value: String(posts.length), label: 'Articles' },
+              { value: String(tags.length), label: 'Tags' },
+              { value: '865–928 MHz', label: 'ETSI / FCC UHF' }
+            ]
+          : [
+              { value: '20', label: 'Languages' },
+              { value: '865–928 MHz', label: 'ETSI / FCC UHF' },
+              { value: 'EPC Gen2v2', label: 'ISO/IEC 18000-63' }
+            ];
+
+        var withImg = posts.filter(function (p) { return Boolean(p.image); });
+        var featOrder = withImg.concat(posts.filter(function (p) { return !p.image; }));
+        var featSlugs = featOrder.slice(0, 3).map(function (p) { return p.slug; });
+
+        var tracks = [];
+        var used = {};
+        if (posts.length >= 6) {
+          posts.slice(0, 3).forEach(function (p) { used[p.slug] = true; });
+        }
+        tags.forEach(function (t) {
+          if (tracks.length >= 3) return;
+          var matched = posts.filter(function (p) {
+            return (p.tags || []).some(function (x) { return x.toLowerCase() === t.name.toLowerCase(); });
+          });
+          var fresh = matched.filter(function (p) { return !used[p.slug]; });
+          if (posts.length >= 4 && fresh.length === 0) return;
+          matched.slice(0, 2).forEach(function (p) { used[p.slug] = true; });
+          tracks.push({
+            id: 'tag-' + slugify(t.name),
+            title: t.name,
+            description: 'Curated technical articles tagged ' + t.name,
+            filterType: 'tag',
+            filterValue: t.name,
+            postSlugs: [],
+            limit: matched.length >= 3 ? 3 : 2,
+            layout: tracks.length === 1 && matched.length >= 3 ? 'compact' : 'grid',
+            linkLabel: (existing && existing.tracks && existing.tracks[0] && existing.tracks[0].linkLabel) || 'All',
+            linkUrl: '/tags/' + encodeURIComponent(slugify(t.name)) + '/'
+          });
+        });
+
+        if (tracks.length === 0 && cats.length > 0) {
+          tracks.push({
+            id: 'cat-' + slugify(cats[0].name),
+            title: cats[0].name,
+            description: 'Engineering briefs in ' + cats[0].name,
+            filterType: 'category',
+            filterValue: cats[0].name,
+            postSlugs: [],
+            limit: Math.min(4, Math.max(2, posts.length)),
+            layout: 'grid',
+            linkLabel: 'All',
+            linkUrl: '/categories/' + encodeURIComponent(slugify(cats[0].name)) + '/'
+          });
+        }
+        if (tracks.length === 0) {
+          tracks.push({
+            id: 'latest-solutions',
+            title: (existing && existing.tracks && existing.tracks[0] && existing.tracks[0].title) || 'Industrial RFID',
+            description: (existing && existing.tracks && existing.tracks[0] && existing.tracks[0].description) || '',
+            filterType: 'latest',
+            filterValue: '',
+            postSlugs: [],
+            limit: 4,
+            layout: 'grid',
+            linkLabel: (existing && existing.latest && existing.latest.archiveLabel) || 'Archive',
+            linkUrl: '/archives/'
+          });
+        }
+
+        return normalizeClientConfig({
+          version: 1,
+          lang: lang,
+          hero: baseHero,
+          featured: {
+            enabled: true,
+            heading: (existing && existing.featured && existing.featured.heading) || 'Featured',
+            subtitle: (existing && existing.featured && existing.featured.subtitle) || '',
+            mode: 'auto',
+            postSlugs: featSlugs,
+            limit: 3
+          },
+          tracks: tracks,
+          latest: (existing && existing.latest) || { enabled: true, heading: 'Latest', subtitle: '', limit: 6, archiveLabel: 'Archive', archiveUrl: '/archives/' },
+          cta: (existing && existing.cta) || { enabled: true, eyebrow: 'Consulting', title: 'Need RF study?', description: '', buttonLabel: 'Contact', buttonUrl: 'mailto:info@rfid.org.ua', secondaryLabel: 'Search', secondaryUrl: '/search/' }
+        }, lang);
+      }
+
+      /* ---------- Post Matching Helper for Live Preview & Track Counter ---------- */
+      function resolveTrackPosts(track, posts) {
+        if (!posts || !posts.length) return [];
+        if (track.filterType === 'manual') {
+          var bySlug = {};
+          posts.forEach(function (p) {
+            bySlug[String(p.slug).toLowerCase()] = p;
+            bySlug[String(p.folder || '').toLowerCase()] = p;
+          });
+          var out = [];
+          (track.postSlugs || []).forEach(function (s) {
+            var hit = bySlug[String(s).trim().toLowerCase()];
+            if (hit) out.push(hit);
+          });
+          return out;
+        }
+        if (track.filterType === 'latest') return posts.slice();
+        var tokens = String(track.filterValue || '').split(',').map(function (s) { return s.trim().toLowerCase(); }).filter(Boolean);
+        if (!tokens.length) return [];
+        return posts.filter(function (p) {
+          if (track.filterType === 'category') {
+            return (p.categories || []).some(function (c) { return tokens.indexOf(c.toLowerCase()) !== -1; });
+          }
+          if (track.filterType === 'tag') {
+            return (p.tags || []).some(function (t) { return tokens.indexOf(t.toLowerCase()) !== -1; });
+          }
+          if (track.filterType === 'translationKey') {
+            return p.translationKey && tokens.indexOf(String(p.translationKey).toLowerCase()) !== -1;
+          }
+          return false;
+        });
+      }
+
+      /* ---------- YAML Serializer & Minimal YAML Parser (Zero External Deps) ---------- */
+      function yamlScalar(v) {
+        var s = String(v == null ? '' : v);
+        if (
+          !s ||
+          /^\s|\s$/.test(s) ||
+          /^[-?:,&*!|>'"%@`\[{]/.test(s) ||
+          /:\s|\s#|^#|:$|[\r\n]/.test(s) ||
+          /^(true|false|yes|no|on|off|null|~|[+-]?(\d+\.?\d*|\.\d+)([eE][+-]?\d+)?)$/i.test(s)
+        ) {
+          return JSON.stringify(s);
+        }
+        return s;
+      }
+
+      function toYaml(val, indent) {
+        var pad = new Array((indent || 0) + 1).join('  ');
+        if (val === null || val === undefined) return 'null';
+        if (typeof val === 'boolean' || typeof val === 'number') return String(val);
+        if (typeof val === 'string') return yamlScalar(val);
+        if (Array.isArray(val)) {
+          if (!val.length) return '[]';
+          return val.map(function (item) {
+            if (item && typeof item === 'object' && !Array.isArray(item)) {
+              var keys = Object.keys(item);
+              if (!keys.length) return pad + '- {}';
+              return keys.map(function (k, idx) {
+                var prefix = idx === 0 ? pad + '- ' : pad + '  ';
+                var sub = item[k];
+                if (sub && typeof sub === 'object') {
+                  var rendered = toYaml(sub, (indent || 0) + 2);
+                  if (Array.isArray(sub) ? sub.length : Object.keys(sub).length) {
+                    return prefix + k + ':\n' + rendered;
+                  }
+                  return prefix + k + ': ' + rendered;
+                }
+                return prefix + k + ': ' + toYaml(sub, (indent || 0) + 2);
+              }).join('\n');
+            }
+            return pad + '- ' + toYaml(item, (indent || 0) + 1);
+          }).join('\n');
+        }
+        var keys = Object.keys(val);
+        if (!keys.length) return '{}';
+        return keys.map(function (k) {
+          var sub = val[k];
+          if (sub && typeof sub === 'object') {
+            var isEmpty = Array.isArray(sub) ? sub.length === 0 : Object.keys(sub).length === 0;
+            if (isEmpty) return pad + k + ': ' + (Array.isArray(sub) ? '[]' : '{}');
+            return pad + k + ':\n' + toYaml(sub, (indent || 0) + 1);
+          }
+          return pad + k + ': ' + toYaml(sub, (indent || 0) + 1);
+        }).join('\n');
+      }
+
+      function parseYamlScalar(raw) {
+        var s = String(raw || '').trim();
+        if (s === 'true') return true;
+        if (s === 'false') return false;
+        if (s === 'null' || s === '~') return null;
+        if (s === '[]') return [];
+        if (s === '{}') return {};
+        if (/^-?\d+(\.\d+)?$/.test(s)) return Number(s);
+        if (s.charAt(0) === '"' && s.charAt(s.length - 1) === '"') {
+          try { return JSON.parse(s); } catch (_) { return s.slice(1, -1); }
+        }
+        if (s.charAt(0) === "'" && s.charAt(s.length - 1) === "'") {
+          return s.slice(1, -1).replace(/''/g, "'");
+        }
+        if (s.charAt(0) === '[' && s.charAt(s.length - 1) === ']') {
+          try { return JSON.parse(s); } catch (_) {
+            return s.slice(1, -1).split(',').map(function (x) { return parseYamlScalar(x); }).filter(function (x) { return x !== ''; });
+          }
+        }
+        return s;
+      }
+
+      function parseSimpleYaml(text) {
+        var rawLines = String(text || '').replace(/\r\n/g, '\n').split('\n');
+        var tokens = [];
+        for (var i = 0; i < rawLines.length; i++) {
+          var line = rawLines[i];
+          if (!line.trim() || /^\s*#/.test(line) || line.trim() === '---') continue;
+          var indent = line.match(/^ */)[0].length;
+          tokens.push({ indent: indent, text: line.trim() });
+        }
+        if (!tokens.length) throw new Error('Пустой YAML документ');
+
+        var pos = 0;
+        function parseBlock(minIndent) {
+          if (pos >= tokens.length) return {};
+          if (tokens[pos].text.indexOf('- ') === 0 || tokens[pos].text === '-') {
+            var arr = [];
+            var arrIndent = tokens[pos].indent;
+            while (pos < tokens.length && tokens[pos].indent === arrIndent && (tokens[pos].text.indexOf('- ') === 0 || tokens[pos].text === '-')) {
+              var afterDash = tokens[pos].text.slice(1).trim();
+              pos++;
+              if (!afterDash) {
+                arr.push(pos < tokens.length && tokens[pos].indent > arrIndent ? parseBlock(tokens[pos].indent) : null);
+              } else {
+                var kv = afterDash.match(/^([A-Za-z0-9_-]+)\s*:(.*)$/);
+                if (kv) {
+                  var itemObj = {};
+                  var valPart = kv[2].trim();
+                  if (valPart) {
+                    itemObj[kv[1]] = parseYamlScalar(valPart);
+                  } else if (pos < tokens.length && tokens[pos].indent > arrIndent) {
+                    itemObj[kv[1]] = parseBlock(tokens[pos].indent);
+                  } else {
+                    itemObj[kv[1]] = '';
+                  }
+                  while (pos < tokens.length && tokens[pos].indent > arrIndent) {
+                    var subIndent = tokens[pos].indent;
+                    var subMap = parseBlock(subIndent);
+                    if (subMap && typeof subMap === 'object' && !Array.isArray(subMap)) {
+                      Object.keys(subMap).forEach(function (sk) { itemObj[sk] = subMap[sk]; });
+                    }
+                  }
+                  arr.push(itemObj);
+                } else {
+                  arr.push(parseYamlScalar(afterDash));
+                }
+              }
+            }
+            return arr;
+          }
+
+          var obj = {};
+          var objIndent = tokens[pos].indent;
+          while (pos < tokens.length && tokens[pos].indent === objIndent) {
+            if (tokens[pos].text.indexOf('- ') === 0) break;
+            var m = tokens[pos].text.match(/^("[^"]+"|[A-Za-z0-9_-]+)\s*:(.*)$/);
+            if (!m) {
+              throw new Error('Некорректная YAML строка: ' + tokens[pos].text);
+            }
+            var key = m[1].charAt(0) === '"' ? JSON.parse(m[1]) : m[1];
+            var rest = m[2].trim();
+            pos++;
+            if (rest) {
+              obj[key] = parseYamlScalar(rest);
+            } else if (pos < tokens.length && tokens[pos].indent > objIndent) {
+              obj[key] = parseBlock(tokens[pos].indent);
+            } else {
+              obj[key] = '';
+            }
+          }
+          return obj;
+        }
+
+        return parseBlock(tokens[0].indent);
+      }
+
+      /* ---------- Rendering ---------- */
+      function el(tag, attrs, text) {
+        var node = document.createElement(tag);
+        if (attrs) {
+          Object.keys(attrs).forEach(function (k) {
+            if (k === 'className') node.className = attrs[k];
+            else if (k === 'style') node.style.cssText = attrs[k];
+            else if (k === 'checked') node.checked = Boolean(attrs[k]);
+            else if (k === 'value') node.value = attrs[k];
+            else node.setAttribute(k, attrs[k]);
+          });
+        }
+        if (text !== undefined && text !== null) node.textContent = String(text);
+        return node;
+      }
+
+      function renderLangRail() {
+        var rail = document.getElementById('langList');
+        rail.innerHTML = '';
+        state.languages.forEach(function (l) {
+          var meta = state.meta[l.code] || { postCount: 0, exists: false };
+          var btn = el('button', {
+            type: 'button',
+            className: 'lang-item' + (state.activeLang === l.code ? ' is-active' : '')
+          });
+
+          var left = el('div', { className: 'lang-item-left' });
+          left.appendChild(el('span', { className: 'lang-code' }, l.shortLabel));
+          left.appendChild(el('span', { className: 'lang-name' }, l.label.split(' ')[0]));
+
+          var badges = el('div', { className: 'lang-badges' });
+          if (isLangDirty(l.code)) {
+            var dot = el('span', { className: 'dirty-dot', title: 'Есть несохранённые изменения' });
+            badges.appendChild(dot);
+          }
+          badges.appendChild(el('span', {
+            className: 'count-tag' + (meta.postCount > 0 ? ' has-posts' : '')
+          }, meta.postCount + ' ст.'));
+
+          btn.appendChild(left);
+          btn.appendChild(badges);
+          btn.addEventListener('click', function () {
+            state.activeLang = l.code;
+            renderAll();
+          });
+          rail.appendChild(btn);
+        });
+      }
+
+      function makeField(labelText, control) {
+        var wrap = el('div', { className: 'field' });
+        wrap.appendChild(el('label', { className: 'field-label' }, labelText));
+        wrap.appendChild(control);
+        return wrap;
+      }
+
+      function renderEditorTab() {
+        var container = document.getElementById('tabEditor');
+        container.innerHTML = '';
+
+        var lang = state.activeLang;
+        var cfg = state.configs[lang];
+        var meta = state.meta[lang] || { posts: [], categories: [], tags: [], translationKeys: [] };
+        if (!cfg) {
+          container.appendChild(el('div', { className: 'card' }, 'Нет данных для выбранного языка.'));
+          return;
+        }
+
+        function touch() {
+          updateHeaderStatus();
+          renderLangRail();
+        }
+
+        /* 1. HERO CARD */
+        var heroCard = el('section', { className: 'card' });
+        var heroHead = el('div', { className: 'card-head' });
+        var hLeft = el('div');
+        hLeft.appendChild(el('h2', { className: 'card-title' }, '1. Hero-секция (первый экран витрины)'));
+        hLeft.appendChild(el('p', { className: 'card-sub' }, 'Единая компоновка для всех языков. Ссылки без префикса (/archives/) локализуются автоматически.'));
+        heroHead.appendChild(hLeft);
+        heroCard.appendChild(heroHead);
+
+        var eyebrowIn = el('input', { type: 'text', className: 'input', value: cfg.hero.eyebrow });
+        eyebrowIn.addEventListener('input', function () { cfg.hero.eyebrow = this.value; touch(); });
+        heroCard.appendChild(makeField('Надзаголовок (eyebrow)', eyebrowIn));
+
+        var titleIn = el('input', { type: 'text', className: 'input', value: cfg.hero.title });
+        titleIn.addEventListener('input', function () { cfg.hero.title = this.value; touch(); });
+        heroCard.appendChild(makeField('Главный заголовок витрины', titleIn));
+
+        var subIn = el('textarea', { className: 'textarea' });
+        subIn.value = cfg.hero.subtitle;
+        subIn.addEventListener('input', function () { cfg.hero.subtitle = this.value; touch(); });
+        heroCard.appendChild(makeField('Описание (лид-текст)', subIn));
+
+        var ctaGrid = el('div', { className: 'grid-2' });
+        var pLbl = el('input', { type: 'text', className: 'input', value: cfg.hero.primaryCtaLabel });
+        pLbl.addEventListener('input', function () { cfg.hero.primaryCtaLabel = this.value; touch(); });
+        var pUrl = el('input', { type: 'text', className: 'input', value: cfg.hero.primaryCtaUrl });
+        pUrl.addEventListener('input', function () { cfg.hero.primaryCtaUrl = this.value; touch(); });
+        var sLbl = el('input', { type: 'text', className: 'input', value: cfg.hero.secondaryCtaLabel });
+        sLbl.addEventListener('input', function () { cfg.hero.secondaryCtaLabel = this.value; touch(); });
+        var sUrl = el('input', { type: 'text', className: 'input', value: cfg.hero.secondaryCtaUrl });
+        sUrl.addEventListener('input', function () { cfg.hero.secondaryCtaUrl = this.value; touch(); });
+        ctaGrid.appendChild(makeField('Основная кнопка — текст', pLbl));
+        ctaGrid.appendChild(makeField('Основная кнопка — URL', pUrl));
+        ctaGrid.appendChild(makeField('Вторая кнопка — текст', sLbl));
+        ctaGrid.appendChild(makeField('Вторая кнопка — URL', sUrl));
+        heroCard.appendChild(ctaGrid);
+
+        var metricsWrap = el('div', { style: 'display:flex; flex-direction:column; gap:8px; margin-top:4px;' });
+        var mHead = el('div', { style: 'display:flex; justify-content:space-between; align-items:center;' });
+        mHead.appendChild(el('span', { className: 'field-label' }, 'Инженерные метрики (до 4 шт.)'));
+        var addMetricBtn = el('button', { type: 'button', className: 'btn btn-sm' }, '+ Метрика');
+        addMetricBtn.disabled = cfg.hero.metrics.length >= 4;
+        addMetricBtn.addEventListener('click', function () {
+          if (cfg.hero.metrics.length >= 4) return;
+          cfg.hero.metrics.push({ value: 'UHF', label: 'EPC Gen2v2' });
+          touch();
+          renderEditorTab();
+        });
+        mHead.appendChild(addMetricBtn);
+        metricsWrap.appendChild(mHead);
+
+        cfg.hero.metrics.forEach(function (m, idx) {
+          var row = el('div', { className: 'metric-row' });
+          var mv = el('input', { type: 'text', className: 'input', value: m.value, placeholder: 'Значение' });
+          mv.addEventListener('input', function () { m.value = this.value; touch(); });
+          var ml = el('input', { type: 'text', className: 'input', value: m.label, placeholder: 'Подпись' });
+          ml.addEventListener('input', function () { m.label = this.value; touch(); });
+          var delM = el('button', { type: 'button', className: 'btn btn-sm btn-danger' }, '×');
+          delM.addEventListener('click', function () {
+            cfg.hero.metrics.splice(idx, 1);
+            touch();
+            renderEditorTab();
+          });
+          row.appendChild(mv);
+          row.appendChild(ml);
+          row.appendChild(delM);
+          metricsWrap.appendChild(row);
+        });
+        heroCard.appendChild(metricsWrap);
+        container.appendChild(heroCard);
+
+        /* 2. FEATURED CARD */
+        var featCard = el('section', { className: 'card' });
+        var featHead = el('div', { className: 'card-head' });
+        var fTitleBox = el('div');
+        fTitleBox.appendChild(el('h2', { className: 'card-title' }, '2. Блок «Избранное» (Lead-материал + 2 карточки)'));
+        fTitleBox.appendChild(el('p', { className: 'card-sub' }, 'Первая статья выводится крупным горизонтальным баннером, следующие — сеткой в 2 колонки.'));
+        featHead.appendChild(fTitleBox);
+        var fToggleLbl = el('label', { className: 'check-row' });
+        var fToggle = el('input', { type: 'checkbox', checked: cfg.featured.enabled });
+        fToggle.addEventListener('change', function () { cfg.featured.enabled = this.checked; touch(); renderEditorTab(); });
+        fToggleLbl.appendChild(fToggle);
+        fToggleLbl.appendChild(document.createTextNode('Показывать блок'));
+        featHead.appendChild(fToggleLbl);
+        featCard.appendChild(featHead);
+
+        if (cfg.featured.enabled) {
+          var fGrid = el('div', { className: 'grid-2' });
+          var fh = el('input', { type: 'text', className: 'input', value: cfg.featured.heading });
+          fh.addEventListener('input', function () { cfg.featured.heading = this.value; touch(); });
+          var fs = el('input', { type: 'text', className: 'input', value: cfg.featured.subtitle });
+          fs.addEventListener('input', function () { cfg.featured.subtitle = this.value; touch(); });
+          fGrid.appendChild(makeField('Заголовок блока', fh));
+          fGrid.appendChild(makeField('Подзаголовок', fs));
+
+          var fMode = el('select', { className: 'select' });
+          fMode.appendChild(new Option('Авто (свежие статьи с обложкой)', 'auto'));
+          fMode.appendChild(new Option('Ручной выбор статей', 'manual'));
+          fMode.value = cfg.featured.mode;
+          fMode.addEventListener('change', function () {
+            cfg.featured.mode = this.value === 'manual' ? 'manual' : 'auto';
+            touch();
+            renderEditorTab();
+          });
+          var fLim = el('input', { type: 'number', min: '1', max: '6', className: 'input', value: String(cfg.featured.limit) });
+          fLim.addEventListener('input', function () { cfg.featured.limit = Math.min(6, Math.max(1, Number(this.value) || 3)); touch(); });
+          fGrid.appendChild(makeField('Режим отбора', fMode));
+          fGrid.appendChild(makeField('Макс. карточек (1..6)', fLim));
+          featCard.appendChild(fGrid);
+
+          if (cfg.featured.mode === 'manual') {
+            featCard.appendChild(buildPostPicker(meta.posts, cfg.featured.postSlugs, function (nextSlugs) {
+              cfg.featured.postSlugs = nextSlugs;
+              touch();
+              renderEditorTab();
+            }));
+          }
+        }
+        container.appendChild(featCard);
+
+        /* 3. TRACKS CARD */
+        var tracksCard = el('section', { className: 'card' });
+        var trHead = el('div', { className: 'card-head' });
+        var trLeft = el('div');
+        trLeft.appendChild(el('h2', { className: 'card-title' }, '3. Тематические подборки и треки (' + cfg.tracks.length + ')'));
+        trLeft.appendChild(el('p', { className: 'card-sub' }, 'Фильтрация по категориям, тегам, translationKey или ручной подборке. Можно указывать несколько значений через запятую.'));
+        trHead.appendChild(trLeft);
+
+        var addTrackBtn = el('button', { type: 'button', className: 'btn btn-primary btn-sm' }, '+ Добавить секцию');
+        addTrackBtn.disabled = cfg.tracks.length >= 8;
+        addTrackBtn.addEventListener('click', function () {
+          if (cfg.tracks.length >= 8) return;
+          cfg.tracks.push({
+            id: 'track-' + (cfg.tracks.length + 1),
+            title: 'Новый тематический блок',
+            description: '',
+            filterType: meta.tags.length ? 'tag' : (meta.categories.length ? 'category' : 'latest'),
+            filterValue: meta.tags.length ? meta.tags[0].name : (meta.categories.length ? meta.categories[0].name : ''),
+            postSlugs: [],
+            limit: 2,
+            layout: 'grid',
+            linkLabel: 'Все материалы',
+            linkUrl: ''
+          });
+          touch();
+          renderEditorTab();
+        });
+        trHead.appendChild(addTrackBtn);
+        tracksCard.appendChild(trHead);
+
+        cfg.tracks.forEach(function (track, idx) {
+          var box = el('div', { className: 'track-box' });
+          var tTop = el('div', { className: 'track-head' });
+
+          var matched = resolveTrackPosts(track, meta.posts);
+          var badgeWrap = el('div', { className: 'track-num' });
+          badgeWrap.appendChild(document.createTextNode('Секция #' + (idx + 1)));
+          badgeWrap.appendChild(el('span', {
+            className: 'match-badge' + (matched.length === 0 ? ' is-zero' : '')
+          }, 'Совпадений: ' + matched.length));
+          tTop.appendChild(badgeWrap);
+
+          var tBtns = el('div', { style: 'display:flex; gap:5px;' });
+          var upBtn = el('button', { type: 'button', className: 'btn btn-sm' }, '↑');
+          upBtn.disabled = idx === 0;
+          upBtn.addEventListener('click', function () {
+            var tmp = cfg.tracks[idx - 1];
+            cfg.tracks[idx - 1] = track;
+            cfg.tracks[idx] = tmp;
+            touch();
+            renderEditorTab();
+          });
+          var dnBtn = el('button', { type: 'button', className: 'btn btn-sm' }, '↓');
+          dnBtn.disabled = idx === cfg.tracks.length - 1;
+          dnBtn.addEventListener('click', function () {
+            var tmp = cfg.tracks[idx + 1];
+            cfg.tracks[idx + 1] = track;
+            cfg.tracks[idx] = tmp;
+            touch();
+            renderEditorTab();
+          });
+          var delBtn = el('button', { type: 'button', className: 'btn btn-sm btn-danger' }, 'Удалить');
+          delBtn.addEventListener('click', function () {
+            cfg.tracks.splice(idx, 1);
+            touch();
+            renderEditorTab();
+          });
+          tBtns.appendChild(upBtn);
+          tBtns.appendChild(dnBtn);
+          tBtns.appendChild(delBtn);
+          tTop.appendChild(tBtns);
+          box.appendChild(tTop);
+
+          var g1 = el('div', { className: 'grid-2' });
+          var tt = el('input', { type: 'text', className: 'input', value: track.title });
+          tt.addEventListener('input', function () { track.title = this.value; touch(); });
+          var td = el('input', { type: 'text', className: 'input', value: track.description });
+          td.addEventListener('input', function () { track.description = this.value; touch(); });
+          g1.appendChild(makeField('Заголовок секции', tt));
+          g1.appendChild(makeField('Краткое описание', td));
+          box.appendChild(g1);
+
+          var g2 = el('div', { className: 'grid-3' });
+          var ftSel = el('select', { className: 'select' });
+          ftSel.appendChild(new Option('По тегу (tag)', 'tag'));
+          ftSel.appendChild(new Option('По категории (category)', 'category'));
+          ftSel.appendChild(new Option('По ключу перевода (translationKey)', 'translationKey'));
+          ftSel.appendChild(new Option('Ручной подбор статей', 'manual'));
+          ftSel.appendChild(new Option('Свежие статьи (latest)', 'latest'));
+          ftSel.value = track.filterType;
+          ftSel.addEventListener('change', function () {
+            track.filterType = this.value;
+            touch();
+            renderEditorTab();
+          });
+
+          var loSel = el('select', { className: 'select' });
+          loSel.appendChild(new Option('Сетка карточек (2 кол.)', 'grid'));
+          loSel.appendChild(new Option('Компактный индекс', 'compact'));
+          loSel.value = track.layout;
+          loSel.addEventListener('change', function () { track.layout = this.value; touch(); });
+
+          var limIn = el('input', { type: 'number', min: '1', max: '8', className: 'input', value: String(track.limit) });
+          limIn.addEventListener('input', function () { track.limit = Math.min(8, Math.max(1, Number(this.value) || 2)); touch(); });
+
+          g2.appendChild(makeField('Критерий отбора', ftSel));
+          g2.appendChild(makeField('Оформление', loSel));
+          g2.appendChild(makeField('Лимит (1..8)', limIn));
+          box.appendChild(g2);
+
+          if (track.filterType === 'manual') {
+            box.appendChild(buildPostPicker(meta.posts, track.postSlugs, function (nextSlugs) {
+              track.postSlugs = nextSlugs;
+              touch();
+              renderEditorTab();
+            }));
+          } else if (track.filterType !== 'latest') {
+            var fvIn = el('input', {
+              type: 'text',
+              className: 'input',
+              value: track.filterValue,
+              placeholder: 'Например: UHF RFID, Cold Chain (через запятую)'
+            });
+            fvIn.addEventListener('input', function () {
+              track.filterValue = this.value;
+              touch();
+              var mLen = resolveTrackPosts(track, meta.posts).length;
+              var mb = box.querySelector('.match-badge');
+              if (mb) {
+                mb.textContent = 'Совпадений: ' + mLen;
+                mb.className = 'match-badge' + (mLen === 0 ? ' is-zero' : '');
+              }
+            });
+            box.appendChild(makeField('Значение фильтра (через запятую для OR)', fvIn));
+
+            var suggestions = [];
+            if (track.filterType === 'category') suggestions = (meta.categories || []).map(function (c) { return c.name + ' (' + c.count + ')'; });
+            if (track.filterType === 'tag') suggestions = (meta.tags || []).slice(0, 14).map(function (t) { return t.name + ' (' + t.count + ')'; });
+            if (track.filterType === 'translationKey') suggestions = (meta.translationKeys || []).slice(0, 12).map(function (tk) { return tk.key; });
+
+            if (suggestions.length) {
+              var chips = el('div', { className: 'chip-row' });
+              suggestions.forEach(function (lbl) {
+                var rawVal = lbl.replace(/\s*\(\d+\)$/, '');
+                var ch = el('button', { type: 'button', className: 'quick-chip' }, lbl);
+                ch.addEventListener('click', function () {
+                  track.filterValue = rawVal;
+                  touch();
+                  renderEditorTab();
+                });
+                chips.appendChild(ch);
+              });
+              box.appendChild(chips);
+            }
+          }
+
+          var g3 = el('div', { className: 'grid-2' });
+          var ll = el('input', { type: 'text', className: 'input', value: track.linkLabel });
+          ll.addEventListener('input', function () { track.linkLabel = this.value; touch(); });
+          var lu = el('input', { type: 'text', className: 'input', value: track.linkUrl, placeholder: 'Пусто = авто по категории/тегу' });
+          lu.addEventListener('input', function () { track.linkUrl = this.value; touch(); });
+          g3.appendChild(makeField('Текст ссылки «Все →»', ll));
+          g3.appendChild(makeField('URL ссылки (необязательно)', lu));
+          box.appendChild(g3);
+
+          tracksCard.appendChild(box);
+        });
+        container.appendChild(tracksCard);
+
+        /* 4. LATEST & CTA */
+        var latestCard = el('section', { className: 'card' });
+        var lHead = el('div', { className: 'card-head' });
+        lHead.appendChild(el('h2', { className: 'card-title' }, '4. Блок «Последние публикации»'));
+        var lLbl = el('label', { className: 'check-row' });
+        var lCb = el('input', { type: 'checkbox', checked: cfg.latest.enabled });
+        lCb.addEventListener('change', function () { cfg.latest.enabled = this.checked; touch(); renderEditorTab(); });
+        lLbl.appendChild(lCb);
+        lLbl.appendChild(document.createTextNode('Показывать список новинок'));
+        lHead.appendChild(lLbl);
+        latestCard.appendChild(lHead);
+        if (cfg.latest.enabled) {
+          var lg = el('div', { className: 'grid-2' });
+          var lh = el('input', { type: 'text', className: 'input', value: cfg.latest.heading });
+          lh.addEventListener('input', function () { cfg.latest.heading = this.value; touch(); });
+          var ls = el('input', { type: 'text', className: 'input', value: cfg.latest.subtitle });
+          ls.addEventListener('input', function () { cfg.latest.subtitle = this.value; touch(); });
+          var llim = el('input', { type: 'number', min: '1', max: '15', className: 'input', value: String(cfg.latest.limit) });
+          llim.addEventListener('input', function () { cfg.latest.limit = Math.min(15, Math.max(1, Number(this.value) || 6)); touch(); });
+          var laLbl = el('input', { type: 'text', className: 'input', value: cfg.latest.archiveLabel });
+          laLbl.addEventListener('input', function () { cfg.latest.archiveLabel = this.value; touch(); });
+          lg.appendChild(makeField('Заголовок', lh));
+          lg.appendChild(makeField('Подзаголовок', ls));
+          lg.appendChild(makeField('Количество строк (1..15)', llim));
+          lg.appendChild(makeField('Кнопка перехода в архив', laLbl));
+          latestCard.appendChild(lg);
+        }
+        container.appendChild(latestCard);
+
+        var ctaCard = el('section', { className: 'card' });
+        var cHead = el('div', { className: 'card-head' });
+        cHead.appendChild(el('h2', { className: 'card-title' }, '5. Нижний инженерный CTA-баннер'));
+        var cLbl = el('label', { className: 'check-row' });
+        var cCb = el('input', { type: 'checkbox', checked: cfg.cta.enabled });
+        cCb.addEventListener('change', function () { cfg.cta.enabled = this.checked; touch(); renderEditorTab(); });
+        cLbl.appendChild(cCb);
+        cLbl.appendChild(document.createTextNode('Показывать CTA-баннер'));
+        cHead.appendChild(cLbl);
+        ctaCard.appendChild(cHead);
+        if (cfg.cta.enabled) {
+          var cg = el('div', { className: 'grid-2' });
+          var ce = el('input', { type: 'text', className: 'input', value: cfg.cta.eyebrow });
+          ce.addEventListener('input', function () { cfg.cta.eyebrow = this.value; touch(); });
+          var ct = el('input', { type: 'text', className: 'input', value: cfg.cta.title });
+          ct.addEventListener('input', function () { cfg.cta.title = this.value; touch(); });
+          cg.appendChild(makeField('Надзаголовок', ce));
+          cg.appendChild(makeField('Заголовок CTA', ct));
+          ctaCard.appendChild(cg);
+
+          var cd = el('textarea', { className: 'textarea' });
+          cd.value = cfg.cta.description;
+          cd.addEventListener('input', function () { cfg.cta.description = this.value; touch(); });
+          ctaCard.appendChild(makeField('Описание', cd));
+
+          var cg2 = el('div', { className: 'grid-2' });
+          var cb1 = el('input', { type: 'text', className: 'input', value: cfg.cta.buttonLabel });
+          cb1.addEventListener('input', function () { cfg.cta.buttonLabel = this.value; touch(); });
+          var cu1 = el('input', { type: 'text', className: 'input', value: cfg.cta.buttonUrl });
+          cu1.addEventListener('input', function () { cfg.cta.buttonUrl = this.value; touch(); });
+          var cb2 = el('input', { type: 'text', className: 'input', value: cfg.cta.secondaryLabel });
+          cb2.addEventListener('input', function () { cfg.cta.secondaryLabel = this.value; touch(); });
+          var cu2 = el('input', { type: 'text', className: 'input', value: cfg.cta.secondaryUrl });
+          cu2.addEventListener('input', function () { cfg.cta.secondaryUrl = this.value; touch(); });
+          cg2.appendChild(makeField('Основная кнопка — текст', cb1));
+          cg2.appendChild(makeField('Основная кнопка — URL', cu1));
+          cg2.appendChild(makeField('Доп. кнопка — текст', cb2));
+          cg2.appendChild(makeField('Доп. кнопка — URL', cu2));
+          ctaCard.appendChild(cg2);
+        }
+        container.appendChild(ctaCard);
+      }
+
+      function buildPostPicker(posts, selectedSlugs, onChange) {
+        var box = el('div', { className: 'post-picker' });
+        if (!posts || !posts.length) {
+          box.appendChild(el('div', { style: 'padding:6px; font-size:12px; color:var(--text-soft);' }, 'В этой языковой ветке пока нет статей.'));
+          return box;
+        }
+        var pickedSet = new Set(selectedSlugs || []);
+        posts.forEach(function (p) {
+          var isPicked = pickedSet.has(p.slug);
+          var row = el('label', { className: 'post-pick-row' + (isPicked ? ' is-picked' : '') });
+          var left = el('span', { style: 'display:flex; align-items:center; gap:8px; min-width:0;' });
+          var cb = el('input', { type: 'checkbox', checked: isPicked });
+          cb.addEventListener('change', function () {
+            var next = (selectedSlugs || []).filter(function (s) { return s !== p.slug; });
+            if (cb.checked) next.push(p.slug);
+            onChange(next);
+          });
+          left.appendChild(cb);
+          left.appendChild(el('span', { style: 'white-space:nowrap; overflow:hidden; text-overflow:ellipsis;' }, p.title));
+          row.appendChild(left);
+          row.appendChild(el('span', { style: 'font-family:var(--mono); font-size:10.5px; color:var(--text-soft); flex-shrink:0;' }, p.slug));
+          box.appendChild(row);
+        });
+        return box;
+      }
+
+      function renderPreviewTab() {
+        var wrap = document.getElementById('tabPreview');
+        wrap.innerHTML = '';
+        var lang = state.activeLang;
+        var cfg = state.configs[lang];
+        var meta = state.meta[lang] || { posts: [] };
+        var posts = meta.posts || [];
+        if (!cfg) return;
+
+        var bar = el('div', { style: 'display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;' });
+        bar.appendChild(el('span', { style: 'font-size:12px; color:var(--text-muted);' }, 'Схематический предпросмотр компоновки витрины для ветки ' + lang.toUpperCase()));
+        var themeBtn = el('button', { type: 'button', className: 'btn btn-sm' }, state.previewDark ? 'Переключить на светлую тему' : 'Переключить на тёмную тему');
+        themeBtn.addEventListener('click', function () {
+          state.previewDark = !state.previewDark;
+          renderPreviewTab();
+        });
+        bar.appendChild(themeBtn);
+        wrap.appendChild(bar);
+
+        var shell = el('div', { className: 'preview-shell' + (state.previewDark ? ' is-dark' : '') });
+
+        var hero = el('div', { className: 'pv-hero' });
+        if (cfg.hero.eyebrow) hero.appendChild(el('div', { className: 'pv-eyebrow' }, cfg.hero.eyebrow));
+        hero.appendChild(el('h2', { className: 'pv-h1' }, cfg.hero.title));
+        if (cfg.hero.subtitle) hero.appendChild(el('p', { className: 'pv-sub' }, cfg.hero.subtitle));
+        if (cfg.hero.metrics && cfg.hero.metrics.length) {
+          var mGrid = el('div', { className: 'pv-metrics' });
+          cfg.hero.metrics.forEach(function (m) {
+            var item = el('div');
+            item.appendChild(el('div', { style: 'font-weight:700; font-size:15px;' }, m.value));
+            item.appendChild(el('div', { style: 'font-size:11.5px; opacity:0.7;' }, m.label));
+            mGrid.appendChild(item);
+          });
+          hero.appendChild(mGrid);
+        }
+        shell.appendChild(hero);
+
+        if (!posts.length) {
+          var emptyBox = el('div', { className: 'pv-card', style: 'margin-bottom:16px;' });
+          emptyBox.appendChild(el('strong', {}, 'В ветке ' + lang.toUpperCase() + ' пока 0 статей'));
+          emptyBox.appendChild(el('div', { style: 'font-size:12px; opacity:0.75; margin-top:4px;' }, 'На сайте отобразится мост со ссылками на заполненные языковые разделы.'));
+          shell.appendChild(emptyBox);
+        } else {
+          if (cfg.featured.enabled) {
+            var featPosts = [];
+            if (cfg.featured.mode === 'manual' && cfg.featured.postSlugs.length) {
+              featPosts = resolveTrackPosts({ filterType: 'manual', postSlugs: cfg.featured.postSlugs }, posts);
+            }
+            if (!featPosts.length) featPosts = posts;
+            featPosts = featPosts.slice(0, cfg.featured.limit);
+
+            if (featPosts.length) {
+              var fSec = el('div', { className: 'pv-section' });
+              var fHead = el('div', { className: 'pv-sec-head' });
+              fHead.appendChild(el('h3', { className: 'pv-sec-title' }, cfg.featured.heading));
+              fSec.appendChild(fHead);
+              var fGrid = el('div', { className: 'pv-grid' });
+              featPosts.forEach(function (p, i) {
+                var card = el('div', { className: 'pv-card' + (i === 0 ? ' is-lead' : '') });
+                card.appendChild(el('div', { className: 'pv-card-meta' }, ((p.categories && p.categories[0]) || 'RFID') + ' · ' + p.readingTime + ' min'));
+                card.appendChild(el('div', { className: 'pv-card-title' }, p.title));
+                if (p.description) card.appendChild(el('div', { style: 'font-size:12px; opacity:0.78;' }, p.description.slice(0, 140)));
+                fGrid.appendChild(card);
+              });
+              fSec.appendChild(fGrid);
+              shell.appendChild(fSec);
+            }
+          }
+
+          cfg.tracks.forEach(function (track) {
+            var matched = resolveTrackPosts(track, posts).slice(0, track.limit);
+            var tSec = el('div', { className: 'pv-section' });
+            var tHead = el('div', { className: 'pv-sec-head' });
+            tHead.appendChild(el('h3', { className: 'pv-sec-title' }, track.title));
+            if (track.linkLabel) tHead.appendChild(el('span', { style: 'font-size:12px; color:#38bdf8;' }, track.linkLabel + ' →'));
+            tSec.appendChild(tHead);
+            if (!matched.length) {
+              tSec.appendChild(el('div', { className: 'pv-card', style: 'opacity:0.65;' }, 'Нет статей по фильтру (' + track.filterType + ': ' + track.filterValue + ')'));
+            } else if (track.layout === 'compact') {
+              matched.forEach(function (p) {
+                var row = el('div', { className: 'pv-list-row' });
+                row.appendChild(el('span', { style: 'font-weight:600;' }, p.title));
+                row.appendChild(el('span', { style: 'opacity:0.65;' }, p.readingTime + ' min'));
+                tSec.appendChild(row);
+              });
+            } else {
+              var g = el('div', { className: 'pv-grid' });
+              matched.forEach(function (p) {
+                var c = el('div', { className: 'pv-card' });
+                c.appendChild(el('div', { className: 'pv-card-meta' }, (p.categories && p.categories[0]) || 'RFID'));
+                c.appendChild(el('div', { className: 'pv-card-title' }, p.title));
+                g.appendChild(c);
+              });
+              tSec.appendChild(g);
+            }
+            shell.appendChild(tSec);
+          });
+        }
+
+        if (cfg.cta.enabled) {
+          var ctaBox = el('div', { className: 'pv-card' });
+          ctaBox.appendChild(el('div', { className: 'pv-eyebrow' }, cfg.cta.eyebrow));
+          ctaBox.appendChild(el('div', { className: 'pv-card-title' }, cfg.cta.title));
+          if (cfg.cta.description) ctaBox.appendChild(el('div', { style: 'font-size:12px; opacity:0.8;' }, cfg.cta.description));
+          shell.appendChild(ctaBox);
+        }
+
+        wrap.appendChild(shell);
+      }
+
+      function renderJsonTab() {
+        var wrap = document.getElementById('tabJson');
+        wrap.innerHTML = '';
+        var card = el('div', { className: 'card' });
+        var head = el('div', { className: 'card-head' });
+        head.appendChild(el('h2', { className: 'card-title' }, 'data/home/' + state.activeLang + '.json'));
+        var applyBtn = el('button', { type: 'button', className: 'btn btn-primary btn-sm' }, 'Применить JSON в редактор');
+        head.appendChild(applyBtn);
+        card.appendChild(head);
+
+        var ta = el('textarea', { className: 'code-area', style: 'min-height:480px;' });
+        ta.value = JSON.stringify(state.configs[state.activeLang], null, 2);
+        var errMsg = el('div', { style: 'font-size:12px; color:#be123c;' });
+
+        applyBtn.addEventListener('click', function () {
+          try {
+            var parsed = JSON.parse(ta.value);
+            state.configs[state.activeLang] = normalizeClientConfig(parsed, state.activeLang);
+            errMsg.textContent = '';
+            renderAll();
+            showToast('JSON применён для ' + state.activeLang.toUpperCase());
+          } catch (err) {
+            errMsg.textContent = 'Ошибка JSON: ' + err.message;
+          }
+        });
+
+        card.appendChild(ta);
+        card.appendChild(errMsg);
+        wrap.appendChild(card);
+      }
+
+      function renderAll() {
+        var langObj = state.languages.find(function (l) { return l.code === state.activeLang; }) || state.languages[0];
+        var meta = state.meta[state.activeLang] || { postCount: 0 };
+        document.getElementById('activeLangTitle').textContent = langObj.label;
+        document.getElementById('activeLangStats').textContent = meta.postCount + ' ст.';
+        document.getElementById('genLangBtn').textContent = 'Сгенерировать для ' + langObj.shortLabel;
+        var siteHref = langObj.urlPrefix ? (langObj.urlPrefix + '/') : '/';
+        document.getElementById('openLangSiteLink').href = siteHref;
+
+        renderLangRail();
+        updateHeaderStatus();
+
+        document.getElementById('tabEditor').style.display = state.activeTab === 'editor' ? 'flex' : 'none';
+        document.getElementById('tabEditor').style.flexDirection = 'column';
+        document.getElementById('tabEditor').style.gap = '14px';
+        document.getElementById('tabPreview').style.display = state.activeTab === 'preview' ? 'block' : 'none';
+        document.getElementById('tabJson').style.display = state.activeTab === 'json' ? 'block' : 'none';
+
+        if (state.activeTab === 'editor') renderEditorTab();
+        else if (state.activeTab === 'preview') renderPreviewTab();
+        else renderJsonTab();
+      }
+
+      /* ---------- Data Loading (Local Express vs GitHub API) ---------- */
+      function readDecapToken() {
+        var keys = ['decap-cms-user', 'netlify-cms-user'];
+        for (var i = 0; i < keys.length; i++) {
+          try {
+            var raw = localStorage.getItem(keys[i]);
+            if (!raw) continue;
+            var obj = JSON.parse(raw);
+            if (obj && obj.token) return { token: String(obj.token), login: obj.login || '' };
+          } catch (_) {}
+        }
+        return null;
+      }
+
+      function decodeBase64Utf8(b64) {
+        var bin = atob(String(b64 || '').replace(/\s+/g, ''));
+        var bytes = new Uint8Array(bin.length);
+        for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+        return new TextDecoder('utf-8').decode(bytes);
+      }
+
+      function parsePostFrontmatter(rawFile) {
+        var m = String(rawFile || '').match(/^\uFEFF?---\r?\n([\s\S]*?)\r?\n---/);
+        if (!m) return {};
+        try { return parseSimpleYaml(m[1]); } catch (_) { return {}; }
+      }
+
+      async function loadFromGithub() {
+        var repo = document.getElementById('ghRepoInput').value.trim() || state.ghRepo;
+        var branch = document.getElementById('ghBranchInput').value.trim() || state.ghBranch;
+        var tokenIn = document.getElementById('ghTokenInput').value.trim();
+        if (tokenIn) state.ghToken = tokenIn;
+        state.ghRepo = repo;
+        state.ghBranch = branch;
+
+        var statusEl = document.getElementById('ghAuthStatus');
+        var headers = { Accept: 'application/vnd.github+json' };
+        if (state.ghToken) headers.Authorization = 'Bearer ' + state.ghToken;
+
+        statusEl.textContent = 'Загрузка репозитория из GitHub...';
+        var refRes = await fetch('https://api.github.com/repos/' + repo + '/git/ref/heads/' + encodeURIComponent(branch), { headers: headers });
+        if (!refRes.ok) throw new Error('GitHub HTTP ' + refRes.status);
+        var refJson = await refRes.json();
+        state.ghHeadCommitSha = refJson.object.sha;
+
+        var commitRes = await fetch('https://api.github.com/repos/' + repo + '/git/commits/' + state.ghHeadCommitSha, { headers: headers });
+        if (!commitRes.ok) throw new Error('Не удалось загрузить commit');
+        var commitJson = await commitRes.json();
+        state.ghHeadTreeSha = commitJson.tree.sha;
+
+        var treeRes = await fetch('https://api.github.com/repos/' + repo + '/git/trees/' + state.ghHeadTreeSha + '?recursive=1', { headers: headers });
+        if (!treeRes.ok) throw new Error('Не удалось загрузить дерево файлов');
+        var treeJson = await treeRes.json();
+
+        var homeNodes = (treeJson.tree || []).filter(function (n) {
+          return n.type === 'blob' && /^data\/home\/([a-z]{2})\.json$/.test(n.path);
+        });
+        var postNodes = (treeJson.tree || []).filter(function (n) {
+          return n.type === 'blob' && /^content\/([a-z]{2})\/post\/([^/]+)\/index\.md$/.test(n.path);
+        });
+
+        var postsByLang = {};
+        state.languages.forEach(function (l) { postsByLang[l.code] = []; });
+
+        var cursor = 0;
+        var allJobs = homeNodes.map(function (n) { return { kind: 'home', node: n }; }).concat(
+          postNodes.map(function (n) { return { kind: 'post', node: n }; })
+        );
+
+        var loadedConfigs = {};
+        async function worker() {
+          while (cursor < allJobs.length) {
+            var job = allJobs[cursor++];
+            var bRes = await fetch('https://api.github.com/repos/' + repo + '/git/blobs/' + job.node.sha, { headers: headers });
+            if (!bRes.ok) continue;
+            var bJson = await bRes.json();
+            var text = decodeBase64Utf8(bJson.content || '');
+            if (job.kind === 'home') {
+              var hm = job.node.path.match(/^data\/home\/([a-z]{2})\.json$/);
+              if (hm) {
+                try { loadedConfigs[hm[1]] = normalizeClientConfig(JSON.parse(text), hm[1]); } catch (_) {}
+              }
+            } else {
+              var pm = job.node.path.match(/^content\/([a-z]{2})\/post\/([^/]+)\/index\.md$/);
+              if (pm && postsByLang[pm[1]]) {
+                var fm = parsePostFrontmatter(text);
+                var slug = String(fm.slug || pm[2]);
+                postsByLang[pm[1]].push({
+                  slug: slug,
+                  folder: pm[2],
+                  title: String(fm.title || slug),
+                  description: String(fm.description || ''),
+                  date: String(fm.date || ''),
+                  image: fm.image ? String(fm.image) : null,
+                  categories: Array.isArray(fm.categories) ? fm.categories.map(String) : [],
+                  tags: Array.isArray(fm.tags) ? fm.tags.map(String) : [],
+                  translationKey: fm.translationKey ? String(fm.translationKey) : '',
+                  readingTime: 3
+                });
+              }
+            }
+          }
+        }
+        var workers = [];
+        for (var w = 0; w < 8; w++) workers.push(worker());
+        await Promise.all(workers);
+
+        state.configs = {};
+        state.originals = {};
+        state.meta = {};
+
+        state.languages.forEach(function (l) {
+          var lPosts = (postsByLang[l.code] || []).sort(function (a, b) {
+            return (Date.parse(b.date) || 0) - (Date.parse(a.date) || 0);
+          });
+          var catMap = {}, tagMap = {}, tkMap = {};
+          lPosts.forEach(function (p) {
+            (p.categories || []).forEach(function (c) { catMap[c] = (catMap[c] || 0) + 1; });
+            (p.tags || []).forEach(function (t) { tagMap[t] = (tagMap[t] || 0) + 1; });
+            if (p.translationKey) tkMap[p.translationKey] = (tkMap[p.translationKey] || 0) + 1;
+          });
+          state.meta[l.code] = {
+            exists: Boolean(loadedConfigs[l.code]),
+            relPath: 'data/home/' + l.code + '.json',
+            fileHash: '',
+            postCount: lPosts.length,
+            categories: Object.keys(catMap).map(function (k) { return { name: k, count: catMap[k] }; }),
+            tags: Object.keys(tagMap).map(function (k) { return { name: k, count: tagMap[k] }; }).sort(function (a, b) { return b.count - a.count; }),
+            translationKeys: Object.keys(tkMap).map(function (k) { return { key: k, count: tkMap[k] }; }),
+            posts: lPosts
+          };
+          var cfg = loadedConfigs[l.code] || buildClientStarter(l.code);
+          state.configs[l.code] = cfg;
+          state.originals[l.code] = loadedConfigs[l.code] ? JSON.stringify(cfg) : '';
+        });
+
+        state.mode = 'github';
+        var badge = document.getElementById('modeBadge');
+        badge.className = 'mode-badge is-github';
+        badge.textContent = 'GitHub · ' + repo + '@' + branch;
+        statusEl.textContent = 'Загружено (' + Object.keys(loadedConfigs).length + ' конфигов, ' + postNodes.length + ' ст.)';
+        renderAll();
+      }
+
+      async function loadState() {
+        try {
+          var res = await fetch('/api/home-builder/state');
+          if (res.ok) {
+            var json = await res.json();
+            if (json && json.mode === 'local') {
+              state.mode = 'local';
+              if (Array.isArray(json.languages)) state.languages = json.languages;
+              state.configs = {};
+              state.originals = {};
+              state.meta = json.meta || {};
+              state.languages.forEach(function (l) {
+                var c = normalizeClientConfig(json.configs[l.code], l.code);
+                state.configs[l.code] = c;
+                var m = state.meta[l.code];
+                state.originals[l.code] = m && m.exists ? JSON.stringify(c) : '';
+              });
+              var badge = document.getElementById('modeBadge');
+              badge.className = 'mode-badge is-local';
+              badge.textContent = 'Локальный диск · data/home/*.json';
+              document.getElementById('githubAuthBanner').classList.remove('is-visible');
+              renderAll();
+              return;
+            }
+          }
+        } catch (_) {}
+
+        state.mode = 'github';
+        document.getElementById('modeBadge').className = 'mode-badge is-github';
+        document.getElementById('modeBadge').textContent = 'GitHub API режим';
+        document.getElementById('githubAuthBanner').classList.add('is-visible');
+
+        var decap = readDecapToken();
+        if (decap && decap.token) {
+          state.ghToken = decap.token;
+          await loadFromGithub().catch(function (err) {
+            document.getElementById('ghAuthStatus').textContent = 'Ошибка: ' + err.message;
+          });
+        } else {
+          document.getElementById('ghAuthStatus').textContent = 'Войдите в CMS или введите GitHub PAT и нажмите «Подключиться»';
+          state.languages.forEach(function (l) {
+            state.meta[l.code] = { postCount: 0, categories: [], tags: [], translationKeys: [], posts: [] };
+            state.configs[l.code] = buildClientStarter(l.code);
+            state.originals[l.code] = '';
+          });
+          renderAll();
+        }
+      }
+
+      /* ---------- Auto-Generate ---------- */
+      async function runAutoGenerate(targetLang) {
+        if (state.mode === 'local') {
+          var res = await fetch('/api/home-builder/generate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ lang: targetLang })
+          });
+          var json = await res.json();
+          if (!res.ok || !json.ok) throw new Error(json.error || 'Ошибка автогенерации');
+          Object.keys(json.configs).forEach(function (code) {
+            state.configs[code] = normalizeClientConfig(json.configs[code], code);
+          });
+        } else {
+          var targets = targetLang === 'all' ? state.languages.map(function (l) { return l.code; }) : [targetLang];
+          targets.forEach(function (code) {
+            state.configs[code] = buildClientStarter(code);
+          });
+        }
+        renderAll();
+        showToast(targetLang === 'all'
+          ? 'Стартовая витрина сгенерирована для всех 20 языков'
+          : 'Стартовая витрина сгенерирована для ' + targetLang.toUpperCase());
+      }
+
+      /* ---------- Import / Export Modal ---------- */
+      function refreshIoContent() {
+        var ta = document.getElementById('ioTextarea');
+        var sum = document.getElementById('ioSummary');
+        var copyBtn = document.getElementById('ioCopyBtn');
+        var dlBtn = document.getElementById('ioDownloadBtn');
+        var applyBtn = document.getElementById('ioApplyBtn');
+        var fileIn = document.getElementById('ioFileInput');
+
+        if (state.ioMode === 'export') {
+          ta.readOnly = true;
+          fileIn.style.display = 'none';
+          copyBtn.style.display = 'inline-flex';
+          dlBtn.style.display = 'inline-flex';
+          applyBtn.style.display = 'none';
+          var payload = state.ioScope === 'all' ? state.configs : state.configs[state.activeLang];
+          ta.value = state.ioFmt === 'yaml' ? toYaml(payload, 0) : JSON.stringify(payload, null, 2);
+          sum.textContent = state.ioScope === 'all'
+            ? 'Экспорт всех 20 языковых конфигураций (' + state.ioFmt.toUpperCase() + ').'
+            : 'Экспорт конфигурации для языка ' + state.activeLang.toUpperCase() + ' (' + state.ioFmt.toUpperCase() + ').';
+        } else {
+          ta.readOnly = false;
+          fileIn.style.display = 'inline-block';
+          copyBtn.style.display = 'none';
+          dlBtn.style.display = 'none';
+          applyBtn.style.display = 'inline-flex';
+          updateImportSummary();
+        }
+      }
+
+      function parseImportedShowcase(text) {
+        var trimmed = String(text || '').trim();
+        if (!trimmed) throw new Error('Вставьте JSON/YAML или выберите файл');
+        var data = (trimmed.charAt(0) === '{' || trimmed.charAt(0) === '[')
+          ? JSON.parse(trimmed)
+          : parseSimpleYaml(trimmed);
+        if (!data || typeof data !== 'object' || Array.isArray(data)) {
+          throw new Error('Ожидается объект конфигурации или карта { lang: config }');
+        }
+        var langCodes = state.languages.map(function (l) { return l.code; });
+        var isBundle = !('hero' in data) && Object.keys(data).some(function (k) { return langCodes.indexOf(k) !== -1; });
+        if (isBundle) {
+          var out = {};
+          Object.keys(data).forEach(function (k) {
+            if (langCodes.indexOf(k) !== -1 && data[k] && typeof data[k] === 'object') {
+              out[k] = normalizeClientConfig(data[k], k);
+            }
+          });
+          if (!Object.keys(out).length) throw new Error('В пакете не найдено поддерживаемых языков');
+          return { kind: 'bundle', configs: out };
+        }
+        var targetLang = (data.lang && langCodes.indexOf(data.lang) !== -1 && state.ioScope === 'all')
+          ? data.lang
+          : state.activeLang;
+        return { kind: 'single', lang: targetLang, config: normalizeClientConfig(data, targetLang) };
+      }
+
+      function updateImportSummary() {
+        var sum = document.getElementById('ioSummary');
+        var txt = document.getElementById('ioTextarea').value;
+        if (!txt.trim()) {
+          sum.textContent = 'Поддерживается JSON или YAML: как для одного языка, так и пакет { "uk": {...}, "de": {...} }.';
+          return;
+        }
+        try {
+          var parsed = parseImportedShowcase(txt);
+          if (parsed.kind === 'bundle') {
+            var keys = Object.keys(parsed.configs);
+            sum.textContent = 'Распознан пакет для языков (' + keys.length + '): ' + keys.join(', ').toUpperCase();
+          } else {
+            sum.textContent = 'Распознана конфигурация для ' + parsed.lang.toUpperCase() + ': секций-треков — ' + parsed.config.tracks.length;
+          }
+        } catch (err) {
+          sum.textContent = 'Ошибка разбора: ' + err.message;
+        }
+      }
+
+      /* ---------- Save / Diff Modal ---------- */
+      function computeLineDiff(beforeText, afterText) {
+        var a = beforeText ? beforeText.split('\n') : [];
+        var b = afterText ? afterText.split('\n') : [];
+        var max = Math.max(a.length, b.length);
+        var out = [];
+        for (var i = 0; i < max; i++) {
+          if (a[i] === b[i]) {
+            if (a[i] !== undefined) out.push({ type: 'ctx', text: a[i] });
+          } else {
+            if (a[i] !== undefined) out.push({ type: 'del', text: a[i] });
+            if (b[i] !== undefined) out.push({ type: 'add', text: b[i] });
+          }
+        }
+        return out.filter(function (l) { return l.type !== 'ctx'; }).slice(0, 60);
+      }
+
+      function openSaveModal() {
+        var dirty = getDirtyLanguages();
+        if (!dirty.length) return;
+        var body = document.getElementById('saveModalBody');
+        body.innerHTML = '';
+        document.getElementById('saveCommitWrap').style.display = state.mode === 'github' ? 'flex' : 'none';
+        document.getElementById('saveModalStatus').textContent = 'Файлов к записи: ' + dirty.length;
+        document.getElementById('saveConfirmBtn').disabled = false;
+
+        dirty.forEach(function (code) {
+          var card = el('div', { className: 'diff-card' });
+          var head = el('div', { className: 'diff-head' });
+          head.appendChild(el('span', {}, 'data/home/' + code + '.json'));
+          head.appendChild(el('span', { style: 'color:#166534;' }, state.originals[code] ? 'Обновление' : 'Новый файл'));
+          card.appendChild(head);
+
+          var beforePretty = state.originals[code] ? JSON.stringify(JSON.parse(state.originals[code]), null, 2) : '';
+          var afterPretty = JSON.stringify(state.configs[code], null, 2);
+          var diffLines = computeLineDiff(beforePretty, afterPretty);
+
+          var pre = el('div', { className: 'diff-pre' });
+          diffLines.forEach(function (dl) {
+            pre.appendChild(el('div', { className: 'diff-line is-' + dl.type }, (dl.type === 'del' ? '- ' : '+ ') + dl.text));
+          });
+          card.appendChild(pre);
+          body.appendChild(card);
+        });
+
+        document.getElementById('saveModalBackdrop').classList.add('is-open');
+      }
+
+      async function confirmSave() {
+        var dirty = getDirtyLanguages();
+        if (!dirty.length) return;
+        var btn = document.getElementById('saveConfirmBtn');
+        var statusEl = document.getElementById('saveModalStatus');
+        btn.disabled = true;
+        statusEl.textContent = 'Сохранение...';
+
+        try {
+          if (state.mode === 'local') {
+            var items = dirty.map(function (code) {
+              var m = state.meta[code] || {};
+              return { lang: code, expectedHash: m.fileHash || '', config: state.configs[code] };
+            });
+            var res = await fetch('/api/home-builder/apply', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ items: items })
+            });
+            var json = await res.json();
+            if (!res.ok || !json.ok) throw new Error(json.error || 'Ошибка сохранения');
+            document.getElementById('saveModalBackdrop').classList.remove('is-open');
+            showToast('Сохранено конфигураций: ' + json.updated.length);
+            await loadState();
+          } else {
+            var repo = state.ghRepo;
+            var branch = state.ghBranch;
+            var headers = {
+              Accept: 'application/vnd.github+json',
+              'Content-Type': 'application/json',
+              Authorization: 'Bearer ' + state.ghToken
+            };
+            var refCheck = await fetch('https://api.github.com/repos/' + repo + '/git/ref/heads/' + encodeURIComponent(branch), { headers: headers });
+            if (!refCheck.ok) throw new Error('Не удалось проверить HEAD ветки');
+            var refData = await refCheck.json();
+            if (refData.object.sha !== state.ghHeadCommitSha) {
+              throw new Error('В ветке появились новые коммиты — перезагрузите данные');
+            }
+
+            var treeEntries = [];
+            for (var i = 0; i < dirty.length; i++) {
+              var code = dirty[i];
+              var content = JSON.stringify(state.configs[code], null, 2) + '\n';
+              var blobRes = await fetch('https://api.github.com/repos/' + repo + '/git/blobs', {
+                method: 'POST',
+                headers: headers,
+                body: JSON.stringify({ content: content, encoding: 'utf-8' })
+              });
+              if (!blobRes.ok) throw new Error('Ошибка создания blob для data/home/' + code + '.json');
+              var blobJson = await blobRes.json();
+              treeEntries.push({
+                path: 'data/home/' + code + '.json',
+                mode: '100644',
+                type: 'blob',
+                sha: blobJson.sha
+              });
+            }
+
+            var treeRes = await fetch('https://api.github.com/repos/' + repo + '/git/trees', {
+              method: 'POST',
+              headers: headers,
+              body: JSON.stringify({ base_tree: state.ghHeadTreeSha, tree: treeEntries })
+            });
+            if (!treeRes.ok) throw new Error('Ошибка создания Git tree');
+            var treeJson = await treeRes.json();
+
+            var commitMsg = document.getElementById('saveCommitMsg').value.trim() || 'feat(home): update showcase config';
+            var commitRes = await fetch('https://api.github.com/repos/' + repo + '/git/commits', {
+              method: 'POST',
+              headers: headers,
+              body: JSON.stringify({ message: commitMsg, tree: treeJson.sha, parents: [state.ghHeadCommitSha] })
+            });
+            if (!commitRes.ok) throw new Error('Ошибка создания коммита');
+            var commitJson = await commitRes.json();
+
+            var patchRes = await fetch('https://api.github.com/repos/' + repo + '/git/refs/heads/' + encodeURIComponent(branch), {
+              method: 'PATCH',
+              headers: headers,
+              body: JSON.stringify({ sha: commitJson.sha, force: false })
+            });
+            if (!patchRes.ok) throw new Error('Ошибка обновления ветки (HTTP ' + patchRes.status + ')');
+
+            document.getElementById('saveModalBackdrop').classList.remove('is-open');
+            showToast('Создан коммит ' + commitJson.sha.slice(0, 7));
+            await loadFromGithub();
+          }
+        } catch (err) {
+          statusEl.textContent = 'Ошибка: ' + err.message;
+          btn.disabled = false;
+        }
+      }
+
+      /* ---------- Event Wiring ---------- */
+      document.querySelectorAll('[data-tab]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          document.querySelectorAll('[data-tab]').forEach(function (x) { x.classList.remove('is-active'); });
+          btn.classList.add('is-active');
+          state.activeTab = btn.getAttribute('data-tab');
+          renderAll();
+        });
+      });
+
+      document.getElementById('genLangBtn').addEventListener('click', function () {
+        runAutoGenerate(state.activeLang).catch(function (e) { showToast('Ошибка: ' + e.message); });
+      });
+      document.getElementById('genAllBtn').addEventListener('click', function () {
+        runAutoGenerate('all').catch(function (e) { showToast('Ошибка: ' + e.message); });
+      });
+
+      document.getElementById('ioModalBtn').addEventListener('click', function () {
+        document.getElementById('ioStatus').textContent = '';
+        refreshIoContent();
+        document.getElementById('ioModalBackdrop').classList.add('is-open');
+      });
+      document.getElementById('ioCloseBtn').addEventListener('click', function () {
+        document.getElementById('ioModalBackdrop').classList.remove('is-open');
+      });
+
+      document.querySelectorAll('[data-iomode]').forEach(function (b) {
+        b.addEventListener('click', function () {
+          document.querySelectorAll('[data-iomode]').forEach(function (x) { x.classList.remove('is-active'); });
+          b.classList.add('is-active');
+          state.ioMode = b.getAttribute('data-iomode');
+          if (state.ioMode === 'import') document.getElementById('ioTextarea').value = '';
+          refreshIoContent();
+        });
+      });
+      document.querySelectorAll('[data-ioscope]').forEach(function (b) {
+        b.addEventListener('click', function () {
+          document.querySelectorAll('[data-ioscope]').forEach(function (x) { x.classList.remove('is-active'); });
+          b.classList.add('is-active');
+          state.ioScope = b.getAttribute('data-ioscope');
+          refreshIoContent();
+        });
+      });
+      document.querySelectorAll('[data-iofmt]').forEach(function (b) {
+        b.addEventListener('click', function () {
+          document.querySelectorAll('[data-iofmt]').forEach(function (x) { x.classList.remove('is-active'); });
+          b.classList.add('is-active');
+          state.ioFmt = b.getAttribute('data-iofmt');
+          refreshIoContent();
+        });
+      });
+
+      document.getElementById('ioTextarea').addEventListener('input', function () {
+        if (state.ioMode === 'import') updateImportSummary();
+      });
+
+      document.getElementById('ioFileInput').addEventListener('change', function () {
+        var f = this.files && this.files[0];
+        if (!f) return;
+        var r = new FileReader();
+        r.onload = function () {
+          document.getElementById('ioTextarea').value = String(r.result || '');
+          updateImportSummary();
+        };
+        r.readAsText(f, 'utf-8');
+      });
+
+      document.getElementById('ioCopyBtn').addEventListener('click', function () {
+        var ta = document.getElementById('ioTextarea');
+        navigator.clipboard.writeText(ta.value).then(function () {
+          document.getElementById('ioStatus').textContent = 'Скопировано в буфер обмена';
+        }).catch(function () {
+          ta.select();
+          document.execCommand('copy');
+          document.getElementById('ioStatus').textContent = 'Скопировано';
+        });
+      });
+
+      document.getElementById('ioDownloadBtn').addEventListener('click', function () {
+        var text = document.getElementById('ioTextarea').value;
+        var ext = state.ioFmt === 'yaml' ? 'yaml' : 'json';
+        var fname = (state.ioScope === 'all' ? 'showcase-all' : ('showcase-' + state.activeLang)) + '.' + ext;
+        var blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url;
+        a.download = fname;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      });
+
+      document.getElementById('ioApplyBtn').addEventListener('click', function () {
+        try {
+          var parsed = parseImportedShowcase(document.getElementById('ioTextarea').value);
+          if (parsed.kind === 'bundle') {
+            Object.keys(parsed.configs).forEach(function (k) {
+              state.configs[k] = parsed.configs[k];
+            });
+            showToast('Импортированы языки: ' + Object.keys(parsed.configs).join(', ').toUpperCase());
+          } else {
+            state.configs[parsed.lang] = parsed.config;
+            state.activeLang = parsed.lang;
+            showToast('Конфигурация применена для ' + parsed.lang.toUpperCase());
+          }
+          document.getElementById('ioModalBackdrop').classList.remove('is-open');
+          renderAll();
+        } catch (err) {
+          document.getElementById('ioStatus').textContent = 'Ошибка: ' + err.message;
+        }
+      });
+
+      document.getElementById('saveBtn').addEventListener('click', openSaveModal);
+      document.getElementById('saveCloseBtn').addEventListener('click', function () {
+        document.getElementById('saveModalBackdrop').classList.remove('is-open');
+      });
+      document.getElementById('saveCancelBtn').addEventListener('click', function () {
+        document.getElementById('saveModalBackdrop').classList.remove('is-open');
+      });
+      document.getElementById('saveConfirmBtn').addEventListener('click', confirmSave);
+
+      document.getElementById('ghConnectBtn').addEventListener('click', function () {
+        loadFromGithub().catch(function (err) {
+          document.getElementById('ghAuthStatus').textContent = 'Ошибка: ' + err.message;
+        });
+      });
+
+      document.getElementById('ghFromDecapBtn').addEventListener('click', function () {
+        var decap = readDecapToken();
+        if (decap && decap.token) {
+          state.ghToken = decap.token;
+          loadFromGithub().catch(function (err) {
+            document.getElementById('ghAuthStatus').textContent = 'Ошибка: ' + err.message;
+          });
+        } else {
+          document.getElementById('ghAuthStatus').textContent = 'Сессия Decap CMS не найдена';
+        }
+      });
+
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') {
+          document.getElementById('ioModalBackdrop').classList.remove('is-open');
+          document.getElementById('saveModalBackdrop').classList.remove('is-open');
+        }
+      });
+
+      loadState();
+    })();
+  </script>
+</body>
+</html>

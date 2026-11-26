@@ -1,0 +1,67 @@
+{
+  "version": 1,
+  "lang": "et",
+  "hero": {
+    "eyebrow": "Inseneriteadmistebaas · UHF RFID · RTLS · IIoT",
+    "title": "Tööstusliku identifitseerimise ja RF-süsteemide rakendusinseneeria",
+    "subtitle": "EPC Gen2v2 tehnilised analüüsid, RF-lingi eelarved, metallpindade ja külmaketi jälgimise lahendused.",
+    "primaryCtaLabel": "Vaata arhiivi",
+    "primaryCtaUrl": "/archives/",
+    "secondaryCtaLabel": "Otsi standardeid",
+    "secondaryCtaUrl": "/search/",
+    "metrics": [
+      {
+        "value": "20",
+        "label": "EN · UA · DE · DA · EU"
+      },
+      {
+        "value": "865–868 MHz",
+        "label": "ETSI EN 302 208"
+      },
+      {
+        "value": "EPC Gen2v2",
+        "label": "ISO/IEC 18000-63"
+      }
+    ]
+  },
+  "featured": {
+    "enabled": true,
+    "heading": "Esiletõstetud insenerianalüüsid",
+    "subtitle": "Referentsarhitektuurid ja välimõõtmised",
+    "mode": "auto",
+    "postSlugs": [],
+    "limit": 3
+  },
+  "tracks": [
+    {
+      "id": "solutions",
+      "title": "Tööstuslikud RFID-lahendused",
+      "description": "Karmides oludes tõestatud UHF RFID arhitektuurid",
+      "filterType": "latest",
+      "filterValue": "",
+      "postSlugs": [],
+      "limit": 4,
+      "layout": "grid",
+      "linkLabel": "Vaata kogu arhiivi",
+      "linkUrl": "/archives/"
+    }
+  ],
+  "latest": {
+    "enabled": true,
+    "heading": "Viimased tehnilised publikatsioonid",
+    "subtitle": "Uued spetsifikatsioonid, standardid ja rakendusjuhud",
+    "limit": 6,
+    "archiveLabel": "Vaata kogu arhiivi",
+    "archiveUrl": "/archives/"
+  },
+  "cta": {
+    "enabled": true,
+    "eyebrow": "Tehniline nõustamine",
+    "title": "Vajate RF-leviala arvutust või transponderite valikut?",
+    "description": "Aitame antennide, metallikeskkondade, kõrgete temperatuuride ja EPCIS-i integreerimisega.",
+    "buttonLabel": "Võta ühendust",
+    "buttonUrl": "mailto:info@rfid.org.ua",
+    "secondaryLabel": "Ava otsing",
+    "secondaryUrl": "/search/"
+  }
+}

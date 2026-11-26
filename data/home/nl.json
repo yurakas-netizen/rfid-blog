@@ -1,0 +1,67 @@
+{
+  "version": 1,
+  "lang": "nl",
+  "hero": {
+    "eyebrow": "Engineering Kennisbank · UHF RFID · RTLS · IIoT",
+    "title": "Toegepaste engineering voor industriële identificatie en RF-systemen",
+    "subtitle": "Technische analyses van EPC Gen2v2, RF-linkbudgetten, on-metal tags, koelketens en IIoT-automatisering.",
+    "primaryCtaLabel": "Bekijk archief",
+    "primaryCtaUrl": "/archives/",
+    "secondaryCtaLabel": "Zoek normen",
+    "secondaryCtaUrl": "/search/",
+    "metrics": [
+      {
+        "value": "20",
+        "label": "EN · UA · DE · DA · EU"
+      },
+      {
+        "value": "865–928 MHz",
+        "label": "ETSI / FCC UHF"
+      },
+      {
+        "value": "EPC Gen2v2",
+        "label": "ISO/IEC 18000-63"
+      }
+    ]
+  },
+  "featured": {
+    "enabled": true,
+    "heading": "Uitgelichte engineering-dossiers",
+    "subtitle": "Referentiearchitecturen en praktijkmetingen",
+    "mode": "auto",
+    "postSlugs": [],
+    "limit": 3
+  },
+  "tracks": [
+    {
+      "id": "solutions",
+      "title": "Industriële RFID-toepassingen",
+      "description": "Bewezen UHF RFID-architecturen voor veeleisende omgevingen",
+      "filterType": "latest",
+      "filterValue": "",
+      "postSlugs": [],
+      "limit": 4,
+      "layout": "grid",
+      "linkLabel": "Volledig archief",
+      "linkUrl": "/archives/"
+    }
+  ],
+  "latest": {
+    "enabled": true,
+    "heading": "Nieuwste technische publicaties",
+    "subtitle": "Recente specificaties, normen en praktijkcases",
+    "limit": 6,
+    "archiveLabel": "Volledig archief",
+    "archiveUrl": "/archives/"
+  },
+  "cta": {
+    "enabled": true,
+    "eyebrow": "Technisch advies",
+    "title": "RF-zonestudie of transponderselectie nodig?",
+    "description": "Advies over antenneplaatsing, metaalomgevingen, hoge temperaturen en EPCIS-koppeling.",
+    "buttonLabel": "Neem contact op",
+    "buttonUrl": "mailto:info@rfid.org.ua",
+    "secondaryLabel": "Zoeken",
+    "secondaryUrl": "/search/"
+  }
+}

@@ -1,0 +1,67 @@
+{
+  "version": 1,
+  "lang": "no",
+  "hero": {
+    "eyebrow": "Ingeniørkunnskapsbase · UHF RFID · RTLS · IIoT",
+    "title": "Anvendt ingeniørkunst for industriell identifikasjon og RF-systemer",
+    "subtitle": "Tekniske analyser av EPC Gen2v2, RF-lenkebudsjett, on-metal-brikker, kjølekjede og industriell sporing.",
+    "primaryCtaLabel": "Se arkiv",
+    "primaryCtaUrl": "/archives/",
+    "secondaryCtaLabel": "Søk standarder",
+    "secondaryCtaUrl": "/search/",
+    "metrics": [
+      {
+        "value": "20",
+        "label": "EN · UA · DE · DA · EU"
+      },
+      {
+        "value": "865–868 MHz",
+        "label": "ETSI EN 302 208"
+      },
+      {
+        "value": "EPC Gen2v2",
+        "label": "ISO/IEC 18000-63"
+      }
+    ]
+  },
+  "featured": {
+    "enabled": true,
+    "heading": "Utvalgte ingeniøranalyser",
+    "subtitle": "Referansearkitekturer og feltstudier",
+    "mode": "auto",
+    "postSlugs": [],
+    "limit": 3
+  },
+  "tracks": [
+    {
+      "id": "solutions",
+      "title": "Industrielle RFID-løsninger",
+      "description": "Dokumenterte UHF RFID-arkitekturer for krevende miljøer",
+      "filterType": "latest",
+      "filterValue": "",
+      "postSlugs": [],
+      "limit": 4,
+      "layout": "grid",
+      "linkLabel": "Se hele arkivet",
+      "linkUrl": "/archives/"
+    }
+  ],
+  "latest": {
+    "enabled": true,
+    "heading": "Siste tekniske publikasjoner",
+    "subtitle": "Nye spesifikasjoner, standarder og industrieksempler",
+    "limit": 6,
+    "archiveLabel": "Se hele arkivet",
+    "archiveUrl": "/archives/"
+  },
+  "cta": {
+    "enabled": true,
+    "eyebrow": "Teknisk rådgivning",
+    "title": "Trenger du RF-studie eller valg av industribrikker?",
+    "description": "Rådgivning om antenner, metallmiljø, høy temperatur og GS1 EPCIS-integrasjon.",
+    "buttonLabel": "Kontakt ingeniør",
+    "buttonUrl": "mailto:info@rfid.org.ua",
+    "secondaryLabel": "Søk i bibliotek",
+    "secondaryUrl": "/search/"
+  }
+}

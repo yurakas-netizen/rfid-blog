@@ -1,0 +1,94 @@
+{
+  "version": 1,
+  "lang": "en",
+  "hero": {
+    "eyebrow": "Engineering Knowledge Base · UHF RFID · RTLS · IIoT",
+    "title": "Applied Engineering for Industrial Identification and RF Systems",
+    "subtitle": "Deep technical analyses of EPC Gen2v2, RF link budgets, near-field UHF architectures, high-temp transponders, and sterile cleanroom deployments.",
+    "primaryCtaLabel": "Browse Archive",
+    "primaryCtaUrl": "/archives/",
+    "secondaryCtaLabel": "Search Standards",
+    "secondaryCtaUrl": "/search/",
+    "metrics": [
+      {
+        "value": "2",
+        "label": "Published Articles"
+      },
+      {
+        "value": "13",
+        "label": "Technical Tags"
+      },
+      {
+        "value": "865–928 MHz",
+        "label": "ETSI / Ofcom / FCC"
+      }
+    ]
+  },
+  "featured": {
+    "enabled": true,
+    "heading": "Featured Engineering Briefs",
+    "subtitle": "Core architectural benchmarks and production deployment studies",
+    "mode": "auto",
+    "postSlugs": [
+      "high-density-uhf-rfid-architecture-for-blade-server-tracking-in-uk-data-centres",
+      "sterile-zone-automation-autoclave-resistant-uhf-rfid-in-uk-biopharma"
+    ],
+    "limit": 3
+  },
+  "tracks": [
+    {
+      "id": "tag-data-centre-rfid",
+      "title": "Focus: Data Centre RFID",
+      "description": "Curated specifications and deployment blueprints for Data Centre RFID",
+      "filterType": "tag",
+      "filterValue": "Data Centre RFID",
+      "postSlugs": [],
+      "limit": 2,
+      "layout": "grid",
+      "linkLabel": "Explore topic",
+      "linkUrl": "/tags/data-centre-rfid/"
+    },
+    {
+      "id": "tag-blade-server-tracking",
+      "title": "Focus: Blade Server Tracking",
+      "description": "Curated specifications and deployment blueprints for Blade Server Tracking",
+      "filterType": "tag",
+      "filterValue": "Blade Server Tracking",
+      "postSlugs": [],
+      "limit": 2,
+      "layout": "grid",
+      "linkLabel": "Explore topic",
+      "linkUrl": "/tags/blade-server-tracking/"
+    },
+    {
+      "id": "tag-near-field-uhf",
+      "title": "Focus: Near-Field UHF",
+      "description": "Curated specifications and deployment blueprints for Near-Field UHF",
+      "filterType": "tag",
+      "filterValue": "Near-Field UHF",
+      "postSlugs": [],
+      "limit": 2,
+      "layout": "grid",
+      "linkLabel": "Explore topic",
+      "linkUrl": "/tags/near-field-uhf/"
+    }
+  ],
+  "latest": {
+    "enabled": true,
+    "heading": "Latest Technical Publications",
+    "subtitle": "Recent specifications, standards compliance, and test benches",
+    "limit": 6,
+    "archiveLabel": "View full archive",
+    "archiveUrl": "/archives/"
+  },
+  "cta": {
+    "enabled": true,
+    "eyebrow": "Engineering Advisory",
+    "title": "Planning an RF zone study or harsh-environment tag selection?",
+    "description": "Discuss link margins, on-metal isolation, autoclave durability, and EPCIS integration directly with our engineering team.",
+    "buttonLabel": "Contact Engineering",
+    "buttonUrl": "mailto:info@rfid.org.ua",
+    "secondaryLabel": "Search Library",
+    "secondaryUrl": "/search/"
+  }
+}

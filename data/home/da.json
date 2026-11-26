@@ -1,0 +1,95 @@
+{
+  "version": 1,
+  "lang": "da",
+  "hero": {
+    "eyebrow": "Ingeniørvidensbase · UHF RFID · RTLS · Ambient IoT",
+    "title": "Anvendt ingeniørkunst til industriel identifikation og RF-systemer",
+    "subtitle": "Tekniske analyser af UHF RFID, Ambient IoT, CSRD Scope 3, kølekæde-TCO og sporbarhed i barske industrielle miljøer.",
+    "primaryCtaLabel": "Se arkiv",
+    "primaryCtaUrl": "/archives/",
+    "secondaryCtaLabel": "Søg i standarder",
+    "secondaryCtaUrl": "/search/",
+    "metrics": [
+      {
+        "value": "6",
+        "label": "Artikler i sektion"
+      },
+      {
+        "value": "28",
+        "label": "Tekniske tags"
+      },
+      {
+        "value": "865–868 MHz",
+        "label": "ETSI EN 302 208"
+      }
+    ]
+  },
+  "featured": {
+    "enabled": true,
+    "heading": "Udvalgte ingeniøranalyser",
+    "subtitle": "Centrale arkitekturer, TCO-beregninger og feltvalidering",
+    "mode": "auto",
+    "postSlugs": [
+      "ambient-iot-i-dansk-gron-logistik-2026-2027-ble-vs-3gpp-tco-og-csrd",
+      "blind-pallet-hvordan-taetstablede-varer-blokerer-rfid-signalet",
+      "q-algoritme-vs-adaptiv-anti-kollision-uhf-rfid-teknisk-analyse-for-dansk"
+    ],
+    "limit": 3
+  },
+  "tracks": [
+    {
+      "id": "tag-uhf-rfid",
+      "title": "Spor: UHF RFID",
+      "description": "Udvalgte tekniske løsninger og standarder inden for UHF RFID",
+      "filterType": "tag",
+      "filterValue": "UHF RFID",
+      "postSlugs": [],
+      "limit": 3,
+      "layout": "grid",
+      "linkLabel": "Se alle i sporet",
+      "linkUrl": "/tags/uhf-rfid/"
+    },
+    {
+      "id": "tag-ip69k",
+      "title": "Spor: IP69K",
+      "description": "Udvalgte tekniske løsninger og standarder inden for IP69K",
+      "filterType": "tag",
+      "filterValue": "IP69K",
+      "postSlugs": [],
+      "limit": 2,
+      "layout": "grid",
+      "linkLabel": "Se alle i sporet",
+      "linkUrl": "/tags/ip69k/"
+    },
+    {
+      "id": "tag-offshore-wind",
+      "title": "Spor: Offshore Wind",
+      "description": "Udvalgte tekniske løsninger og standarder inden for Offshore Wind",
+      "filterType": "tag",
+      "filterValue": "Offshore Wind",
+      "postSlugs": [],
+      "limit": 2,
+      "layout": "grid",
+      "linkLabel": "Se alle i sporet",
+      "linkUrl": "/tags/offshore-wind/"
+    }
+  ],
+  "latest": {
+    "enabled": true,
+    "heading": "Seneste tekniske publikationer",
+    "subtitle": "Nye artikler, standarder og industrielle referencecases",
+    "limit": 6,
+    "archiveLabel": "Se hele arkivet",
+    "archiveUrl": "/archives/"
+  },
+  "cta": {
+    "enabled": true,
+    "eyebrow": "Teknisk rådgivning",
+    "title": "Brug for RF-dækningsanalyse eller valg af industritags?",
+    "description": "Vi rådgiver om antennegeometri, linkbudget, batterifri sensorer og GS1 EPCIS-integration.",
+    "buttonLabel": "Kontakt ingeniørteam",
+    "buttonUrl": "mailto:info@rfid.org.ua",
+    "secondaryLabel": "Søg i dokumenter",
+    "secondaryUrl": "/search/"
+  }
+}

@@ -1,0 +1,67 @@
+{
+  "version": 1,
+  "lang": "fi",
+  "hero": {
+    "eyebrow": "Suunnittelun tietopankki · UHF RFID · RTLS · IIoT",
+    "title": "Sovellettua suunnittelua teolliseen tunnistukseen ja RF-järjestelmiin",
+    "subtitle": "Tekniset analyysit EPC Gen2v2 -standardeista, RF-linkkibudjeteista, metallitunnisteista ja kylmäketjun seurannasta.",
+    "primaryCtaLabel": "Selaa arkistoa",
+    "primaryCtaUrl": "/archives/",
+    "secondaryCtaLabel": "Hae standardeja",
+    "secondaryCtaUrl": "/search/",
+    "metrics": [
+      {
+        "value": "20",
+        "label": "EN · UA · DE · DA · EU"
+      },
+      {
+        "value": "865–868 MHz",
+        "label": "ETSI EN 302 208"
+      },
+      {
+        "value": "EPC Gen2v2",
+        "label": "ISO/IEC 18000-63"
+      }
+    ]
+  },
+  "featured": {
+    "enabled": true,
+    "heading": "Keskeiset suunnittelukatsaukset",
+    "subtitle": "Referenssiarkkitehtuurit ja kenttäkokeet",
+    "mode": "auto",
+    "postSlugs": [],
+    "limit": 3
+  },
+  "tracks": [
+    {
+      "id": "solutions",
+      "title": "Teolliset RFID-ratkaisut",
+      "description": "Vaativiin ympäristöihin testatut UHF RFID -arkkitehtuurit",
+      "filterType": "latest",
+      "filterValue": "",
+      "postSlugs": [],
+      "limit": 4,
+      "layout": "grid",
+      "linkLabel": "Näytä koko arkisto",
+      "linkUrl": "/archives/"
+    }
+  ],
+  "latest": {
+    "enabled": true,
+    "heading": "Uusimmat tekniset julkaisut",
+    "subtitle": "Tuoreet määritykset, standardit ja teollisuusratkaisut",
+    "limit": 6,
+    "archiveLabel": "Näytä koko arkisto",
+    "archiveUrl": "/archives/"
+  },
+  "cta": {
+    "enabled": true,
+    "eyebrow": "Tekninen neuvonta",
+    "title": "Tarvitsetko RF-kenttäsuunnittelua tai tunnistevalintaa?",
+    "description": "Autamme antennisuunnittelussa, metalli- ja korkean lämpötilan kohteissa sekä EPCIS-integraatiossa.",
+    "buttonLabel": "Ota yhteyttä",
+    "buttonUrl": "mailto:info@rfid.org.ua",
+    "secondaryLabel": "Hae asiakirjoja",
+    "secondaryUrl": "/search/"
+  }
+}

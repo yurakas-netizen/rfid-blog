@@ -1,0 +1,67 @@
+{
+  "version": 1,
+  "lang": "es",
+  "hero": {
+    "eyebrow": "Base de Ingeniería · UHF RFID · RTLS · IIoT",
+    "title": "Ingeniería aplicada para identificación industrial y sistemas RF",
+    "subtitle": "Análisis técnicos de EPC Gen2v2, balance de enlace RF, trazabilidad sobre metal, cadena de frío y automatización IIoT.",
+    "primaryCtaLabel": "Explorar archivo",
+    "primaryCtaUrl": "/archives/",
+    "secondaryCtaLabel": "Buscar normas",
+    "secondaryCtaUrl": "/search/",
+    "metrics": [
+      {
+        "value": "20",
+        "label": "EN · UA · DE · DA · EU"
+      },
+      {
+        "value": "865–928 MHz",
+        "label": "ETSI / FCC UHF"
+      },
+      {
+        "value": "EPC Gen2v2",
+        "label": "ISO/IEC 18000-63"
+      }
+    ]
+  },
+  "featured": {
+    "enabled": true,
+    "heading": "Informes de ingeniería destacados",
+    "subtitle": "Arquitecturas de referencia y estudios de campo",
+    "mode": "auto",
+    "postSlugs": [],
+    "limit": 3
+  },
+  "tracks": [
+    {
+      "id": "solutions",
+      "title": "Despliegues RFID industriales",
+      "description": "Integración de UHF RFID en entornos exigentes",
+      "filterType": "latest",
+      "filterValue": "",
+      "postSlugs": [],
+      "limit": 4,
+      "layout": "grid",
+      "linkLabel": "Ver archivo completo",
+      "linkUrl": "/archives/"
+    }
+  ],
+  "latest": {
+    "enabled": true,
+    "heading": "Últimas publicaciones técnicas",
+    "subtitle": "Especificaciones recientes, estándares y casos reales",
+    "limit": 6,
+    "archiveLabel": "Ver archivo completo",
+    "archiveUrl": "/archives/"
+  },
+  "cta": {
+    "enabled": true,
+    "eyebrow": "Asesoría técnica",
+    "title": "¿Necesita un estudio de cobertura RF o selección de tags?",
+    "description": "Asesoramiento en antenas, etiquetas sobre metal, alta temperatura e integración GS1 EPCIS.",
+    "buttonLabel": "Contactar ingeniería",
+    "buttonUrl": "mailto:info@rfid.org.ua",
+    "secondaryLabel": "Buscar documentos",
+    "secondaryUrl": "/search/"
+  }
+}

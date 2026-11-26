@@ -1,0 +1,95 @@
+{
+  "version": 1,
+  "lang": "de",
+  "hero": {
+    "eyebrow": "Ingenieur-Wissensdatenbank · UHF RFID · RTLS · IIoT",
+    "title": "Angewandte Systemtechnik für industrielle Identifikation & RF-Physik",
+    "subtitle": "Technische Tiefenanalysen zu EPC Gen2v2, Hochtemperatur-Keramiktranspondern, IATF 16949, EU-GMP, DIN EN 17230 und Ambient IoT.",
+    "primaryCtaLabel": "Archiv öffnen",
+    "primaryCtaUrl": "/archives/",
+    "secondaryCtaLabel": "Nach Normen suchen",
+    "secondaryCtaUrl": "/search/",
+    "metrics": [
+      {
+        "value": "14",
+        "label": "Fachbeiträge"
+      },
+      {
+        "value": "75",
+        "label": "Technische Tags"
+      },
+      {
+        "value": "865–868 MHz",
+        "label": "ETSI EN 302 208"
+      }
+    ]
+  },
+  "featured": {
+    "enabled": true,
+    "heading": "Ausgewählte Systemanalysen",
+    "subtitle": "Referenzarchitekturen für Fertigung, Luftfahrt, Pharma und Rechenzentren",
+    "mode": "auto",
+    "postSlugs": [
+      "passive-uhf-rfid-thermosensoren-zur-pue-optimierung-in-rechenzentren",
+      "rfid-in-der-pharmazeutischen-produktion-eu-gmp-autoklav-134-c-und-reinraum-iso-5",
+      "uhf-rfid-im-schienenverkehr-fahrzeugidentifikation-nach-din-en-17230-bei-160-km"
+    ],
+    "limit": 3
+  },
+  "tracks": [
+    {
+      "id": "tag-uhf-rfid-sensor",
+      "title": "Fokus: UHF RFID Sensor",
+      "description": "Spezialisierte Systemanalysen und Normen zu UHF RFID Sensor",
+      "filterType": "tag",
+      "filterValue": "UHF RFID Sensor",
+      "postSlugs": [],
+      "limit": 2,
+      "layout": "grid",
+      "linkLabel": "Alle Beiträge im Fokus",
+      "linkUrl": "/tags/uhf-rfid-sensor/"
+    },
+    {
+      "id": "tag-fram",
+      "title": "Fokus: FRAM",
+      "description": "Spezialisierte Systemanalysen und Normen zu FRAM",
+      "filterType": "tag",
+      "filterValue": "FRAM",
+      "postSlugs": [],
+      "limit": 2,
+      "layout": "grid",
+      "linkLabel": "Alle Beiträge im Fokus",
+      "linkUrl": "/tags/fram/"
+    },
+    {
+      "id": "tag-miller-m4",
+      "title": "Fokus: Miller M4",
+      "description": "Spezialisierte Systemanalysen und Normen zu Miller M4",
+      "filterType": "tag",
+      "filterValue": "Miller M4",
+      "postSlugs": [],
+      "limit": 2,
+      "layout": "grid",
+      "linkLabel": "Alle Beiträge im Fokus",
+      "linkUrl": "/tags/miller-m4/"
+    }
+  ],
+  "latest": {
+    "enabled": true,
+    "heading": "Aktuelle Fachpublikationen",
+    "subtitle": "Alle kürzlich veröffentlichten Analysen und Normenberichte",
+    "limit": 6,
+    "archiveLabel": "Gesamtes Archiv ansehen",
+    "archiveUrl": "/archives/"
+  },
+  "cta": {
+    "enabled": true,
+    "eyebrow": "Technische Beratung",
+    "title": "Planen Sie eine RF-Feldausleuchtung oder Transponder-Qualifizierung?",
+    "description": "Unterstützung bei Miller-M4-Konfiguration, Autoklav- und Metallumgebungen sowie GS1-EPCIS-2.0-Anbindung.",
+    "buttonLabel": "Ingenieur kontaktieren",
+    "buttonUrl": "mailto:info@rfid.org.ua",
+    "secondaryLabel": "Fachsuche öffnen",
+    "secondaryUrl": "/search/"
+  }
+}

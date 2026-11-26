@@ -1,0 +1,67 @@
+{
+  "version": 1,
+  "lang": "sk",
+  "hero": {
+    "eyebrow": "Inžinierska znalostná báza · UHF RFID · RTLS · IIoT",
+    "title": "Aplikované inžinierstvo priemyselnej identifikácie a RF systémov",
+    "subtitle": "Technické analýzy EPC Gen2v2, výpočty RF bilancie, aplikácie na kove, vo farmácii, logistike a dátových centrách.",
+    "primaryCtaLabel": "Prehliadať archív",
+    "primaryCtaUrl": "/archives/",
+    "secondaryCtaLabel": "Hľadať normy",
+    "secondaryCtaUrl": "/search/",
+    "metrics": [
+      {
+        "value": "20",
+        "label": "EN · UA · DE · DA · EU"
+      },
+      {
+        "value": "865–928 MHz",
+        "label": "ETSI / FCC UHF"
+      },
+      {
+        "value": "EPC Gen2v2",
+        "label": "ISO/IEC 18000-63"
+      }
+    ]
+  },
+  "featured": {
+    "enabled": true,
+    "heading": "Kľúčové inžinierske štúdie",
+    "subtitle": "Referenčné architektúry a prevádzkové merania",
+    "mode": "auto",
+    "postSlugs": [],
+    "limit": 3
+  },
+  "tracks": [
+    {
+      "id": "solutions",
+      "title": "Priemyselné nasadenia RFID",
+      "description": "Overené architektúry UHF RFID pre náročné prostredia",
+      "filterType": "latest",
+      "filterValue": "",
+      "postSlugs": [],
+      "limit": 4,
+      "layout": "grid",
+      "linkLabel": "Zobraziť celý archív",
+      "linkUrl": "/archives/"
+    }
+  ],
+  "latest": {
+    "enabled": true,
+    "heading": "Najnovšie technické publikácie",
+    "subtitle": "Aktuálne špecifikácie, štandardy a prípadové štúdie",
+    "limit": 6,
+    "archiveLabel": "Zobraziť celý archív",
+    "archiveUrl": "/archives/"
+  },
+  "cta": {
+    "enabled": true,
+    "eyebrow": "Inžinierska konzultácia",
+    "title": "Potrebujete výpočet RF zóny alebo výber transpondérov?",
+    "description": "Pomôžeme s návrhom antén, vysokoteplotných tagov aj integráciou GS1 EPCIS 2.0.",
+    "buttonLabel": "Kontaktovať inžiniera",
+    "buttonUrl": "mailto:info@rfid.org.ua",
+    "secondaryLabel": "Otvoriť vyhľadávanie",
+    "secondaryUrl": "/search/"
+  }
+}

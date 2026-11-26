@@ -1,0 +1,67 @@
+{
+  "version": 1,
+  "lang": "ru",
+  "hero": {
+    "eyebrow": "Инженерная база знаний · UHF RFID · RTLS · IIoT",
+    "title": "Прикладная инженерия промышленной идентификации и радиочастотных систем",
+    "subtitle": "Технические разборы стандартов EPC Gen2v2, расчёты RF-бюджета, кейсы внедрения на металле, в фармацевтике, логистике и ЦОД.",
+    "primaryCtaLabel": "Архив публикаций",
+    "primaryCtaUrl": "/archives/",
+    "secondaryCtaLabel": "Поиск по стандартам",
+    "secondaryCtaUrl": "/search/",
+    "metrics": [
+      {
+        "value": "20",
+        "label": "EN · UA · DE · DA · EU"
+      },
+      {
+        "value": "865–928 МГц",
+        "label": "ETSI / FCC UHF"
+      },
+      {
+        "value": "EPC Gen2v2",
+        "label": "ISO/IEC 18000-63"
+      }
+    ]
+  },
+  "featured": {
+    "enabled": true,
+    "heading": "Ключевые инженерные материалы",
+    "subtitle": "Подборка базовых архитектурных решений и полевых испытаний",
+    "mode": "auto",
+    "postSlugs": [],
+    "limit": 3
+  },
+  "tracks": [
+    {
+      "id": "solutions",
+      "title": "Отраслевые решения RFID",
+      "description": "Системная интеграция UHF RFID в производственных и логистических контурах",
+      "filterType": "latest",
+      "filterValue": "",
+      "postSlugs": [],
+      "limit": 4,
+      "layout": "grid",
+      "linkLabel": "Все публикации в архиве",
+      "linkUrl": "/archives/"
+    }
+  ],
+  "latest": {
+    "enabled": true,
+    "heading": "Последние технические материалы",
+    "subtitle": "Свежие разборы, стандарты и прикладные кейсы",
+    "limit": 6,
+    "archiveLabel": "Все публикации в архиве",
+    "archiveUrl": "/archives/"
+  },
+  "cta": {
+    "enabled": true,
+    "eyebrow": "Инженерная консультация",
+    "title": "Нужен расчёт RF-зоны или аудит оборудования?",
+    "description": "Поможем подобрать транспондеры, антенны и архитектуру считывания под металл, влагу, вибрацию и высокие температуры.",
+    "buttonLabel": "Связаться с инженером",
+    "buttonUrl": "mailto:info@rfid.org.ua",
+    "secondaryLabel": "Открыть поиск",
+    "secondaryUrl": "/search/"
+  }
+}

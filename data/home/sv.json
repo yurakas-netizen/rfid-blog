@@ -1,0 +1,67 @@
+{
+  "version": 1,
+  "lang": "sv",
+  "hero": {
+    "eyebrow": "Ingenjörskunskapsbas · UHF RFID · RTLS · IIoT",
+    "title": "Tillämpad ingenjörskonst för industriell identifiering och RF-system",
+    "subtitle": "Tekniska analyser av EPC Gen2v2, RF-länkbudgetar, metalltaggar, kylkedjor och industriell spårbarhet.",
+    "primaryCtaLabel": "Öppna arkiv",
+    "primaryCtaUrl": "/archives/",
+    "secondaryCtaLabel": "Sök standarder",
+    "secondaryCtaUrl": "/search/",
+    "metrics": [
+      {
+        "value": "20",
+        "label": "EN · UA · DE · DA · EU"
+      },
+      {
+        "value": "865–868 MHz",
+        "label": "ETSI EN 302 208"
+      },
+      {
+        "value": "EPC Gen2v2",
+        "label": "ISO/IEC 18000-63"
+      }
+    ]
+  },
+  "featured": {
+    "enabled": true,
+    "heading": "Utvalda ingenjörsanalyser",
+    "subtitle": "Referensarkitekturer och fältvalidering",
+    "mode": "auto",
+    "postSlugs": [],
+    "limit": 3
+  },
+  "tracks": [
+    {
+      "id": "solutions",
+      "title": "Industriella RFID-lösningar",
+      "description": "Beprövade UHF RFID-arkitekturer för krävande miljöer",
+      "filterType": "latest",
+      "filterValue": "",
+      "postSlugs": [],
+      "limit": 4,
+      "layout": "grid",
+      "linkLabel": "Visa hela arkivet",
+      "linkUrl": "/archives/"
+    }
+  ],
+  "latest": {
+    "enabled": true,
+    "heading": "Senaste tekniska publikationer",
+    "subtitle": "Nya specifikationer, standarder och fallstudier",
+    "limit": 6,
+    "archiveLabel": "Visa hela arkivet",
+    "archiveUrl": "/archives/"
+  },
+  "cta": {
+    "enabled": true,
+    "eyebrow": "Teknisk rådgivning",
+    "title": "Behöver ni RF-täckningsanalys eller val av industritaggar?",
+    "description": "Stöd kring antenngeometri, metallmiljöer, höga temperaturer och EPCIS-integration.",
+    "buttonLabel": "Kontakta ingenjör",
+    "buttonUrl": "mailto:info@rfid.org.ua",
+    "secondaryLabel": "Sök dokument",
+    "secondaryUrl": "/search/"
+  }
+}

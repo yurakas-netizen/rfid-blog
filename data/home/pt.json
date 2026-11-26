@@ -1,0 +1,67 @@
+{
+  "version": 1,
+  "lang": "pt",
+  "hero": {
+    "eyebrow": "Base de Engenharia · UHF RFID · RTLS · IIoT",
+    "title": "Engenharia aplicada para identificação industrial e sistemas RF",
+    "subtitle": "Análises técnicas de EPC Gen2v2, orçamentos de enlace RF, tags sobre metal, cadeia de frio e automação IIoT.",
+    "primaryCtaLabel": "Explorar arquivo",
+    "primaryCtaUrl": "/archives/",
+    "secondaryCtaLabel": "Pesquisar normas",
+    "secondaryCtaUrl": "/search/",
+    "metrics": [
+      {
+        "value": "20",
+        "label": "EN · UA · DE · DA · EU"
+      },
+      {
+        "value": "865–928 MHz",
+        "label": "ETSI / FCC UHF"
+      },
+      {
+        "value": "EPC Gen2v2",
+        "label": "ISO/IEC 18000-63"
+      }
+    ]
+  },
+  "featured": {
+    "enabled": true,
+    "heading": "Destaques de engenharia",
+    "subtitle": "Arquiteturas de referência e estudos de campo",
+    "mode": "auto",
+    "postSlugs": [],
+    "limit": 3
+  },
+  "tracks": [
+    {
+      "id": "solutions",
+      "title": "Implementações RFID industriais",
+      "description": "Arquiteturas UHF RFID validadas em ambientes críticos",
+      "filterType": "latest",
+      "filterValue": "",
+      "postSlugs": [],
+      "limit": 4,
+      "layout": "grid",
+      "linkLabel": "Ver arquivo completo",
+      "linkUrl": "/archives/"
+    }
+  ],
+  "latest": {
+    "enabled": true,
+    "heading": "Últimas publicações técnicas",
+    "subtitle": "Especificações recentes, normas e casos industriais",
+    "limit": 6,
+    "archiveLabel": "Ver arquivo completo",
+    "archiveUrl": "/archives/"
+  },
+  "cta": {
+    "enabled": true,
+    "eyebrow": "Consultoria técnica",
+    "title": "Precisa de estudo de cobertura RF ou seleção de tags?",
+    "description": "Apoio em antenas, superfícies metálicas, alta temperatura e integração GS1 EPCIS.",
+    "buttonLabel": "Falar com engenharia",
+    "buttonUrl": "mailto:info@rfid.org.ua",
+    "secondaryLabel": "Pesquisar",
+    "secondaryUrl": "/search/"
+  }
+}

@@ -1,0 +1,67 @@
+{
+  "version": 1,
+  "lang": "cs",
+  "hero": {
+    "eyebrow": "Inženýrská znalostní báze · UHF RFID · RTLS · IIoT",
+    "title": "Aplikované inženýrství průmyslové identifikace a RF systémů",
+    "subtitle": "Technické rozbory EPC Gen2v2, výpočty RF bilance, nasazení na kovu, ve farmacii, logistice a datových centrech.",
+    "primaryCtaLabel": "Prohlédnout archiv",
+    "primaryCtaUrl": "/archives/",
+    "secondaryCtaLabel": "Hledat normy",
+    "secondaryCtaUrl": "/search/",
+    "metrics": [
+      {
+        "value": "20",
+        "label": "EN · UA · DE · DA · EU"
+      },
+      {
+        "value": "865–928 MHz",
+        "label": "ETSI / FCC UHF"
+      },
+      {
+        "value": "EPC Gen2v2",
+        "label": "ISO/IEC 18000-63"
+      }
+    ]
+  },
+  "featured": {
+    "enabled": true,
+    "heading": "Klíčové inženýrské studie",
+    "subtitle": "Referenční architektury a terénní měření",
+    "mode": "auto",
+    "postSlugs": [],
+    "limit": 3
+  },
+  "tracks": [
+    {
+      "id": "solutions",
+      "title": "Průmyslové nasazení RFID",
+      "description": "Ověřené architektury UHF RFID pro náročné provozy",
+      "filterType": "latest",
+      "filterValue": "",
+      "postSlugs": [],
+      "limit": 4,
+      "layout": "grid",
+      "linkLabel": "Zobrazit celý archiv",
+      "linkUrl": "/archives/"
+    }
+  ],
+  "latest": {
+    "enabled": true,
+    "heading": "Nejnovější technické publikace",
+    "subtitle": "Aktuální specifikace, standardy a provozní testy",
+    "limit": 6,
+    "archiveLabel": "Zobrazit celý archiv",
+    "archiveUrl": "/archives/"
+  },
+  "cta": {
+    "enabled": true,
+    "eyebrow": "Inženýrská konzultace",
+    "title": "Potřebujete výpočet RF zóny nebo výběr transpondérů?",
+    "description": "Pomůžeme s návrhem antén, vysokoteplotních tagů i integrací GS1 EPCIS 2.0.",
+    "buttonLabel": "Kontaktovat inženýra",
+    "buttonUrl": "mailto:info@rfid.org.ua",
+    "secondaryLabel": "Otevřít vyhledávání",
+    "secondaryUrl": "/search/"
+  }
+}

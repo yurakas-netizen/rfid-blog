@@ -1,0 +1,53 @@
+{{- $p := .Page -}}
+{{- $variant := default "standard" .Variant -}}
+{{- $imgSrc := "" -}}
+{{- if $p.Params.image -}}
+    {{- $img := partial "helper/image" (dict "Image" $p.Params.image "Resources" $p.Resources "Context" $p) -}}
+    {{- if $img.Resource -}}
+        {{- $imgSrc = $img.Permalink -}}
+    {{- else if or (strings.HasPrefix $p.Params.image "http://") (strings.HasPrefix $p.Params.image "https://") (strings.HasPrefix $p.Params.image "/") -}}
+        {{- $imgSrc = $p.Params.image -}}
+    {{- end -}}
+{{- end -}}
+{{- $cats := $p.GetTerms "categories" -}}
+<article class="sc-card sc-card--{{ $variant }} {{ if $imgSrc }}has-cover{{ else }}no-cover{{ end }}">
+    <a class="sc-card__media" href="{{ $p.RelPermalink }}" aria-hidden="true" tabindex="-1">
+        {{- if $imgSrc -}}
+            <img src="{{ $imgSrc }}" loading="lazy" alt="{{ $p.Title }}" />
+        {{- else -}}
+            <div class="sc-card__fallback">
+                <svg viewBox="0 0 120 80" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <circle cx="32" cy="40" r="8" stroke="currentColor" stroke-width="1.6"/>
+                    <path d="M46 27a18 18 0 0 1 0 26" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+                    <path d="M56 19a30 30 0 0 1 0 42" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity="0.72"/>
+                    <path d="M66 11a42 42 0 0 1 0 58" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" opacity="0.45"/>
+                    <rect x="82" y="24" width="22" height="32" rx="4" stroke="currentColor" stroke-width="1.4" opacity="0.6"/>
+                    <line x1="87" y1="33" x2="99" y2="33" stroke="currentColor" stroke-width="1.4" opacity="0.6"/>
+                    <line x1="87" y1="40" x2="99" y2="40" stroke="currentColor" stroke-width="1.4" opacity="0.6"/>
+                    <line x1="87" y1="47" x2="95" y2="47" stroke="currentColor" stroke-width="1.4" opacity="0.6"/>
+                </svg>
+            </div>
+        {{- end -}}
+    </a>
+    <div class="sc-card__body">
+        <div class="sc-card__meta">
+            {{- with $cats -}}
+                {{- $firstCat := index . 0 -}}
+                <a class="sc-card__kicker" href="{{ $firstCat.RelPermalink }}">{{ $firstCat.LinkTitle }}</a>
+                <span class="sc-meta-sep" aria-hidden="true">&middot;</span>
+            {{- end -}}
+            {{- if not $p.Date.IsZero -}}
+                <time datetime='{{ $p.Date.Format "2006-01-02T15:04:05Z07:00" }}'>{{ $p.Date | time.Format $p.Site.Params.dateFormat.published }}</time>
+                <span class="sc-meta-sep" aria-hidden="true">&middot;</span>
+            {{- end -}}
+            <span>{{ T "article.readingTime" $p.ReadingTime }}</span>
+        </div>
+        <h3 class="sc-card__title">
+            <a href="{{ $p.RelPermalink }}">{{ $p.Title }}</a>
+        </h3>
+        {{- $desc := default ($p.Summary | plainify) $p.Params.description -}}
+        {{- if $desc -}}
+            <p class="sc-card__excerpt">{{ $desc | truncate 165 }}</p>
+        {{- end -}}
+    </div>
+</article>

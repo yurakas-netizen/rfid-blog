@@ -1,0 +1,67 @@
+{
+  "version": 1,
+  "lang": "ro",
+  "hero": {
+    "eyebrow": "Bază de Inginerie · UHF RFID · RTLS · IIoT",
+    "title": "Inginerie aplicată pentru identificare industrială și sisteme RF",
+    "subtitle": "Analize tehnice EPC Gen2v2, bugete de legătură RF, implementări pe metal, în industria farmaceutică și logistică.",
+    "primaryCtaLabel": "Deschide arhiva",
+    "primaryCtaUrl": "/archives/",
+    "secondaryCtaLabel": "Caută standarde",
+    "secondaryCtaUrl": "/search/",
+    "metrics": [
+      {
+        "value": "20",
+        "label": "EN · UA · DE · DA · EU"
+      },
+      {
+        "value": "865–928 MHz",
+        "label": "ETSI / FCC UHF"
+      },
+      {
+        "value": "EPC Gen2v2",
+        "label": "ISO/IEC 18000-63"
+      }
+    ]
+  },
+  "featured": {
+    "enabled": true,
+    "heading": "Studii de inginerie recomandate",
+    "subtitle": "Arhitecturi de referință și teste în teren",
+    "mode": "auto",
+    "postSlugs": [],
+    "limit": 3
+  },
+  "tracks": [
+    {
+      "id": "solutions",
+      "title": "Implementări RFID industriale",
+      "description": "Arhitecturi UHF RFID validate în medii critice",
+      "filterType": "latest",
+      "filterValue": "",
+      "postSlugs": [],
+      "limit": 4,
+      "layout": "grid",
+      "linkLabel": "Vezi toată arhiva",
+      "linkUrl": "/archives/"
+    }
+  ],
+  "latest": {
+    "enabled": true,
+    "heading": "Ultimele publicații tehnice",
+    "subtitle": "Specificații recente, standarde și studii de caz",
+    "limit": 6,
+    "archiveLabel": "Vezi toată arhiva",
+    "archiveUrl": "/archives/"
+  },
+  "cta": {
+    "enabled": true,
+    "eyebrow": "Consultanță tehnică",
+    "title": "Aveți nevoie de calcul RF sau selecție de transpondere?",
+    "description": "Suport pentru antene, medii metalice, temperaturi ridicate și integrare EPCIS.",
+    "buttonLabel": "Contactează un inginer",
+    "buttonUrl": "mailto:info@rfid.org.ua",
+    "secondaryLabel": "Caută documente",
+    "secondaryUrl": "/search/"
+  }
+}

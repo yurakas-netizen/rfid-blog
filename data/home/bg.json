@@ -1,0 +1,67 @@
+{
+  "version": 1,
+  "lang": "bg",
+  "hero": {
+    "eyebrow": "Инженерна база знания · UHF RFID · RTLS · IIoT",
+    "title": "Приложно инженерство за индустриална идентификация и RF системи",
+    "subtitle": "Технически анализи на EPC Gen2v2, RF бюджети, приложения върху метал, във фармацията, логистиката и центровете за данни.",
+    "primaryCtaLabel": "Разгледай архива",
+    "primaryCtaUrl": "/archives/",
+    "secondaryCtaLabel": "Търсене на стандарти",
+    "secondaryCtaUrl": "/search/",
+    "metrics": [
+      {
+        "value": "20",
+        "label": "EN · UA · DE · DA · EU"
+      },
+      {
+        "value": "865–928 MHz",
+        "label": "ETSI / FCC UHF"
+      },
+      {
+        "value": "EPC Gen2v2",
+        "label": "ISO/IEC 18000-63"
+      }
+    ]
+  },
+  "featured": {
+    "enabled": true,
+    "heading": "Ключови инженерни материали",
+    "subtitle": "Референтни архитектури и полеви изпитвания",
+    "mode": "auto",
+    "postSlugs": [],
+    "limit": 3
+  },
+  "tracks": [
+    {
+      "id": "solutions",
+      "title": "Индустриални RFID внедрявания",
+      "description": "Доказани UHF RFID архитектури за тежки условия",
+      "filterType": "latest",
+      "filterValue": "",
+      "postSlugs": [],
+      "limit": 4,
+      "layout": "grid",
+      "linkLabel": "Виж целия архив",
+      "linkUrl": "/archives/"
+    }
+  ],
+  "latest": {
+    "enabled": true,
+    "heading": "Последни технически публикации",
+    "subtitle": "Актуални спецификации, стандарти и индустриални решения",
+    "limit": 6,
+    "archiveLabel": "Виж целия архив",
+    "archiveUrl": "/archives/"
+  },
+  "cta": {
+    "enabled": true,
+    "eyebrow": "Инженерна консултация",
+    "title": "Нуждаете се от RF изчисление или избор на транспондери?",
+    "description": "Съдействие при избор на антени, високотемпературни тагове и EPCIS интеграция.",
+    "buttonLabel": "Свържете се с инженер",
+    "buttonUrl": "mailto:info@rfid.org.ua",
+    "secondaryLabel": "Отвори търсенето",
+    "secondaryUrl": "/search/"
+  }
+}
