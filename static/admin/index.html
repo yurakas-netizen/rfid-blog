@@ -539,7 +539,7 @@
       function findSlateEditor(slateEl) {
         var fiber = getFiber(slateEl);
         var steps = 0;
-        while (fiber && steps < 30) {
+        while (fiber && steps < 60) {
           var p = fiber.memoizedProps || fiber.pendingProps;
           if (p) {
             if (p.editor && typeof p.editor.undo === 'function') return p.editor;
@@ -553,10 +553,14 @@
 
       function findToolbarProps(controlBar) {
         if (!controlBar) return null;
-        var candidate = controlBar.querySelector('button') || controlBar.firstElementChild || controlBar;
+        var decapChild = controlBar.firstElementChild;
+        if (decapChild && (decapChild.classList.contains('rfid-cms-toolbar') || decapChild.classList.contains('rfid-cms-findbar'))) {
+          decapChild = null;
+        }
+        var candidate = (decapChild && (decapChild.querySelector('button') || decapChild)) || controlBar.querySelector('button') || controlBar;
         var fiber = getFiber(candidate);
         var steps = 0;
-        while (fiber && steps < 30) {
+        while (fiber && steps < 60) {
           var p = fiber.memoizedProps || fiber.pendingProps;
           if (p && typeof p.onToggleMode === 'function' && ('rawMode' in p || 'onMarkClick' in p)) {
             return p;
@@ -893,6 +897,172 @@
           }
         });
 
+        function makeRawHtmlNode(htmlCode) {
+          return {
+            type: 'shortcode',
+            id: 'rawhtml',
+            data: {
+              id: 'rawhtml',
+              shortcode: 'rawhtml',
+              shortcodeNew: false,
+              shortcodeData: { html: htmlCode }
+            },
+            children: [{ text: '' }]
+          };
+        }
+
+        function setSlateSelection(editor, range) {
+          if (!editor || typeof editor.apply !== 'function' || !range) return false;
+          try {
+            editor.apply({
+              type: 'set_selection',
+              properties: editor.selection ? JSON.parse(JSON.stringify(editor.selection)) : null,
+              newProperties: range
+            });
+            return true;
+          } catch (_) {
+            return false;
+          }
+        }
+
+        function findLastLeafPoint(editor) {
+          var children = editor && Array.isArray(editor.children) ? editor.children : [];
+          if (!children.length) return { path: [0, 0], offset: 0 };
+          var idx = children.length - 1;
+          var path = [idx];
+          var cur = children[idx];
+          while (cur && Array.isArray(cur.children) && cur.children.length > 0) {
+            var lastChildIdx = cur.children.length - 1;
+            path.push(lastChildIdx);
+            cur = cur.children[lastChildIdx];
+          }
+          if (path.length === 1) path.push(0);
+          var len = cur && typeof cur.text === 'string' ? cur.text.length : 0;
+          return { path: path, offset: len };
+        }
+
+        function findFirstLeafPointInNode(node, topIdx) {
+          var path = [topIdx];
+          var cur = node;
+          while (cur && Array.isArray(cur.children) && cur.children.length > 0) {
+            path.push(0);
+            cur = cur.children[0];
+          }
+          if (path.length === 1) path.push(0);
+          return { path: path, offset: 0 };
+        }
+
+        function isValidSlatePoint(editor, point) {
+          if (!editor || !point || !Array.isArray(point.path) || point.path.length === 0) return false;
+          var cur = editor;
+          for (var i = 0; i < point.path.length; i++) {
+            var seg = point.path[i];
+            if (!cur || !Array.isArray(cur.children) || seg < 0 || seg >= cur.children.length) {
+              return false;
+            }
+            cur = cur.children[seg];
+          }
+          return !!(
+            cur &&
+            typeof cur.text === 'string' &&
+            typeof point.offset === 'number' &&
+            point.offset >= 0 &&
+            point.offset <= cur.text.length
+          );
+        }
+
+        function isEmptyTopParagraph(node) {
+          return !!(
+            node &&
+            node.type === 'paragraph' &&
+            Array.isArray(node.children) &&
+            node.children.length === 1 &&
+            typeof node.children[0].text === 'string' &&
+            node.children[0].text === ''
+          );
+        }
+
+        function isVoidTopNode(editor, node) {
+          if (!node) return false;
+          if (editor && typeof editor.isVoid === 'function' && editor.isVoid(node)) return true;
+          return node.type === 'shortcode' || node.type === 'thematic-break' || node.type === 'image';
+        }
+
+        function ensureEditableParagraphAfter(editor, blockIdx) {
+          if (!editor || !Array.isArray(editor.children) || blockIdx < 0) return;
+          var nextIdx = blockIdx + 1;
+          var nextNode = editor.children[nextIdx];
+          if ((!nextNode || isVoidTopNode(editor, nextNode)) && typeof editor.apply === 'function') {
+            var para = { type: 'paragraph', children: [{ text: '' }] };
+            editor.apply({
+              type: 'insert_node',
+              path: [nextIdx],
+              node: para
+            });
+            nextNode = editor.children[nextIdx] || para;
+          }
+          if (nextNode) {
+            var pt = findFirstLeafPointInNode(nextNode, nextIdx);
+            setSlateSelection(editor, { anchor: pt, focus: pt });
+          }
+        }
+
+        function findActiveRawHtmlNodeFromDom(ctx) {
+          if (!ctx || !ctx.editor || !Array.isArray(ctx.editor.children) || !ctx.slateEl) return null;
+          var active = document.activeElement;
+          if (!active || !ctx.slateEl.contains(active)) return null;
+          var fiber = getFiber(active);
+          var steps = 0;
+          while (fiber && steps < 60) {
+            var p = fiber.memoizedProps || fiber.pendingProps;
+            if (p && p.element && p.element.type === 'shortcode' && p.element.data && p.element.data.shortcode === 'rawhtml') {
+              var idx = ctx.editor.children.indexOf(p.element);
+              if (idx !== -1) {
+                return { index: idx, node: p.element };
+              }
+            }
+            fiber = fiber.return;
+            steps++;
+          }
+          return null;
+        }
+
+        function findRawModeShortcodeRange(children, lineIdx) {
+          if (!Array.isArray(children) || lineIdx < 0 || lineIdx >= children.length) return null;
+          var openRe = /^\s*\{\{<\s*rawhtml\s*>\}\}\s*$/;
+          var closeRe = /^\s*\{\{<\s*\/rawhtml\s*>\}\}\s*$/;
+          function getLine(i) {
+            var n = children[i];
+            return n && Array.isArray(n.children) && n.children[0] && typeof n.children[0].text === 'string'
+              ? n.children[0].text
+              : '';
+          }
+          var start = -1;
+          for (var i = lineIdx; i >= 0; i--) {
+            var txt = getLine(i);
+            if (i < lineIdx && closeRe.test(txt)) break;
+            if (openRe.test(txt)) {
+              start = i;
+              break;
+            }
+          }
+          if (start === -1) return null;
+          var end = -1;
+          for (var j = Math.max(start + 1, lineIdx); j < children.length; j++) {
+            if (closeRe.test(getLine(j))) {
+              end = j;
+              break;
+            }
+            if (j > start && openRe.test(getLine(j))) break;
+          }
+          if (end === -1) return null;
+          var inner = [];
+          for (var k = start + 1; k < end; k++) {
+            inner.push(getLine(k));
+          }
+          return { start: start, end: end, html: inner.join('\n') };
+        }
+
         var htmlBtn = makeBtn({
           title: 'Вставить или редактировать сырой HTML / CSS / JS блок ({{< rawhtml >}})',
           label: 'HTML',
@@ -909,13 +1079,23 @@
 
             var initialHtml = '';
             var editingSlateNode = null;
+            var editingRawRange = null;
 
-            if (!isRaw && ctx.editor && savedSel && savedSel.anchor && Array.isArray(savedSel.anchor.path)) {
-              var topIdx = savedSel.anchor.path[0];
-              var candidateNode = ctx.editor.children && ctx.editor.children[topIdx];
-              if (candidateNode && candidateNode.type === 'shortcode' && candidateNode.data && candidateNode.data.shortcode === 'rawhtml') {
-                editingSlateNode = { index: topIdx, node: candidateNode };
-                initialHtml = (candidateNode.data.shortcodeData && candidateNode.data.shortcodeData.html) || '';
+            if (!isRaw && ctx.editor) {
+              if (savedSel && savedSel.anchor && Array.isArray(savedSel.anchor.path)) {
+                var topIdx = savedSel.anchor.path[0];
+                var candidateNode = ctx.editor.children && ctx.editor.children[topIdx];
+                if (candidateNode && candidateNode.type === 'shortcode' && candidateNode.data && candidateNode.data.shortcode === 'rawhtml') {
+                  editingSlateNode = { index: topIdx, node: candidateNode };
+                  initialHtml = (candidateNode.data.shortcodeData && candidateNode.data.shortcodeData.html) || '';
+                }
+              }
+              if (!editingSlateNode) {
+                var activeNode = findActiveRawHtmlNodeFromDom(ctx);
+                if (activeNode) {
+                  editingSlateNode = activeNode;
+                  initialHtml = (activeNode.node.data.shortcodeData && activeNode.node.data.shortcodeData.html) || '';
+                }
               }
             } else if (isRaw) {
               var domSel = window.getSelection();
@@ -924,74 +1104,189 @@
                 var rawMatch = selectedText.match(/^\s*\{\{<\s*rawhtml\s*>\}\}([\s\S]*?)\{\{<\s*\/rawhtml\s*>\}\}\s*$/);
                 initialHtml = rawMatch ? rawMatch[1].replace(/^\r?\n|\r?\n$/g, '') : selectedText;
               }
+              if (!initialHtml && ctx.editor && savedSel && savedSel.anchor && Array.isArray(savedSel.anchor.path)) {
+                var rawRange = findRawModeShortcodeRange(ctx.editor.children, savedSel.anchor.path[0]);
+                if (rawRange) {
+                  editingRawRange = rawRange;
+                  initialHtml = rawRange.html;
+                }
+              }
             }
 
             ensureRawHtmlModal().open({
               initialValue: initialHtml,
-              isEditing: !!editingSlateNode,
+              isEditing: !!(editingSlateNode || editingRawRange),
               onApply: function (rawCode) {
                 var cleanCode = String(rawCode || '').replace(/^\r?\n|\r?\n$/g, '');
                 var liveCtx = getCtx();
                 if (!liveCtx.editor) return;
+                var ed = liveCtx.editor;
 
-                liveCtx.slateEl.focus();
-                if (savedSel && typeof liveCtx.editor.apply === 'function') {
-                  try {
-                    liveCtx.editor.apply({
-                      type: 'set_selection',
-                      properties: liveCtx.editor.selection || null,
-                      newProperties: savedSel
-                    });
-                  } catch (_) {}
-                }
+                liveCtx.slateEl.focus({ preventScroll: true });
 
                 var currentlyRaw = !!(liveCtx.tb && liveCtx.tb.rawMode);
+
                 if (currentlyRaw) {
-                  liveCtx.editor.insertText('\n{{< rawhtml >}}\n' + cleanCode + '\n{{< /rawhtml >}}\n');
-                } else if (
-                  editingSlateNode &&
-                  liveCtx.editor.children &&
-                  liveCtx.editor.children[editingSlateNode.index] === editingSlateNode.node &&
-                  typeof liveCtx.editor.apply === 'function'
-                ) {
-                  var updatedNode = {
-                    type: 'shortcode',
-                    id: 'rawhtml',
-                    data: {
-                      shortcode: 'rawhtml',
-                      shortcodeNew: false,
-                      shortcodeData: { html: cleanCode }
-                    },
-                    children: [{ text: '' }]
-                  };
-                  liveCtx.editor.apply({
-                    type: 'remove_node',
-                    path: [editingSlateNode.index],
-                    node: editingSlateNode.node
-                  });
-                  liveCtx.editor.apply({
+                  var codeLines = cleanCode ? cleanCode.split(/\r?\n/) : [''];
+                  var blockLines = ['{{< rawhtml >}}'].concat(codeLines, ['{{< /rawhtml >}}']);
+                  var children = Array.isArray(ed.children) ? ed.children : [];
+
+                  if (editingRawRange && editingRawRange.start >= 0 && editingRawRange.end < children.length) {
+                    var startLine = editingRawRange.start;
+                    var count = editingRawRange.end - editingRawRange.start + 1;
+                    for (var bi = 0; bi < blockLines.length; bi++) {
+                      ed.apply({
+                        type: 'insert_node',
+                        path: [startLine + count + bi],
+                        node: { type: 'paragraph', children: [{ text: blockLines[bi] }] }
+                      });
+                    }
+                    for (var ri = 0; ri < count; ri++) {
+                      ed.apply({
+                        type: 'remove_node',
+                        path: [startLine],
+                        node: ed.children[startLine]
+                      });
+                    }
+                    var endLineIdx = startLine + blockLines.length - 1;
+                    var endText = ed.children[endLineIdx] && ed.children[endLineIdx].children[0]
+                      ? ed.children[endLineIdx].children[0].text.length
+                      : 0;
+                    setSlateSelection(ed, {
+                      anchor: { path: [endLineIdx, 0], offset: endText },
+                      focus: { path: [endLineIdx, 0], offset: endText }
+                    });
+                  } else {
+                    var hasChildren = children.length > 0;
+                    var targetIdx = hasChildren
+                      ? ((savedSel && savedSel.anchor && Array.isArray(savedSel.anchor.path))
+                          ? Math.min(savedSel.anchor.path[0], children.length - 1)
+                          : children.length - 1)
+                      : 0;
+                    var targetNode = hasChildren ? children[targetIdx] : null;
+                    var replaceEmpty = isEmptyTopParagraph(targetNode);
+                    var insertAt = hasChildren ? targetIdx + 1 : 0;
+
+                    if (hasChildren && !replaceEmpty && targetNode && targetNode.children && targetNode.children[0] && targetNode.children[0].text !== '') {
+                      blockLines.unshift('');
+                    }
+                    var nextRawNode = hasChildren ? children[targetIdx + 1] : null;
+                    if (!hasChildren || targetIdx >= children.length - 1 || !isEmptyTopParagraph(nextRawNode)) {
+                      blockLines.push('');
+                    }
+
+                    for (var k = 0; k < blockLines.length; k++) {
+                      ed.apply({
+                        type: 'insert_node',
+                        path: [insertAt + k],
+                        node: { type: 'paragraph', children: [{ text: blockLines[k] }] }
+                      });
+                    }
+                    if (replaceEmpty) {
+                      ed.apply({
+                        type: 'remove_node',
+                        path: [targetIdx],
+                        node: targetNode
+                      });
+                      insertAt = targetIdx;
+                    }
+                    var cursorLine = insertAt + blockLines.length - 1;
+                    var cursorText = ed.children[cursorLine] && ed.children[cursorLine].children[0]
+                      ? ed.children[cursorLine].children[0].text.length
+                      : 0;
+                    setSlateSelection(ed, {
+                      anchor: { path: [cursorLine, 0], offset: cursorText },
+                      focus: { path: [cursorLine, 0], offset: cursorText }
+                    });
+                  }
+                  requestAnimationFrame(refreshState);
+                  return;
+                }
+
+                // Rich-text mode
+                var updatedNode = makeRawHtmlNode(cleanCode);
+                if (editingSlateNode) {
+                  var editIdx = (ed.children && ed.children[editingSlateNode.index] === editingSlateNode.node)
+                    ? editingSlateNode.index
+                    : (ed.children ? ed.children.indexOf(editingSlateNode.node) : -1);
+
+                  if (editIdx !== -1 && typeof ed.apply === 'function') {
+                    // Insert first then remove so children never temporarily hits length 0 (which triggers Decap's empty-paragraph normalizer)
+                    ed.apply({
+                      type: 'insert_node',
+                      path: [editIdx + 1],
+                      node: updatedNode
+                    });
+                    ed.apply({
+                      type: 'remove_node',
+                      path: [editIdx],
+                      node: editingSlateNode.node
+                    });
+                    ensureEditableParagraphAfter(ed, editIdx);
+                    requestAnimationFrame(refreshState);
+                    return;
+                  }
+                }
+
+                // Inserting a new rawhtml block in rich-text mode
+                var restored = savedSel && isValidSlatePoint(ed, savedSel.anchor) && isValidSlatePoint(ed, savedSel.focus)
+                  ? setSlateSelection(ed, savedSel)
+                  : false;
+
+                var richChildren = Array.isArray(ed.children) ? ed.children : [];
+                if (!restored) {
+                  var lastIdx = Math.max(0, richChildren.length - 1);
+                  var lastNode = richChildren[lastIdx];
+                  if (richChildren.length > 0 && isEmptyTopParagraph(lastNode) && typeof ed.apply === 'function') {
+                    ed.apply({ type: 'insert_node', path: [lastIdx + 1], node: updatedNode });
+                    ed.apply({ type: 'remove_node', path: [lastIdx], node: lastNode });
+                    ensureEditableParagraphAfter(ed, lastIdx);
+                  } else if (typeof ed.apply === 'function') {
+                    var appendIdx = richChildren.length;
+                    ed.apply({ type: 'insert_node', path: [appendIdx], node: updatedNode });
+                    ensureEditableParagraphAfter(ed, appendIdx);
+                  }
+                  requestAnimationFrame(refreshState);
+                  return;
+                }
+
+                var selTopIdx = (ed.selection && ed.selection.anchor && Array.isArray(ed.selection.anchor.path))
+                  ? ed.selection.anchor.path[0]
+                  : Math.max(0, richChildren.length - 1);
+                var currentTopNode = richChildren[selTopIdx];
+
+                if (isEmptyTopParagraph(currentTopNode) && typeof ed.apply === 'function') {
+                  // Replace the empty paragraph (common on /new) without leaving a phantom blank line before the HTML block
+                  ed.apply({
                     type: 'insert_node',
-                    path: [editingSlateNode.index],
+                    path: [selTopIdx + 1],
                     node: updatedNode
                   });
-                  if (typeof liveCtx.editor.onChange === 'function') {
-                    liveCtx.editor.onChange();
-                  }
+                  ed.apply({
+                    type: 'remove_node',
+                    path: [selTopIdx],
+                    node: currentTopNode
+                  });
+                  ensureEditableParagraphAfter(ed, selTopIdx);
+                } else if (isVoidTopNode(ed, currentTopNode) && typeof ed.apply === 'function') {
+                  var afterVoidIdx = selTopIdx + 1;
+                  ed.apply({
+                    type: 'insert_node',
+                    path: [afterVoidIdx],
+                    node: updatedNode
+                  });
+                  ensureEditableParagraphAfter(ed, afterVoidIdx);
                 } else {
                   try {
-                    liveCtx.editor.insertNode({
-                      type: 'shortcode',
-                      id: 'rawhtml',
-                      data: {
-                        shortcode: 'rawhtml',
-                        shortcodeNew: false,
-                        shortcodeData: { html: cleanCode }
-                      },
-                      children: [{ text: '' }]
-                    });
-                    liveCtx.editor.insertNode({ type: 'paragraph', children: [{ text: '' }] });
+                    ed.insertNode(updatedNode);
+                    var insertedIdx = ed.children ? ed.children.indexOf(updatedNode) : -1;
+                    if (insertedIdx !== -1) {
+                      ensureEditableParagraphAfter(ed, insertedIdx);
+                    }
                   } catch (_) {
-                    liveCtx.editor.insertText('\n{{< rawhtml >}}\n' + cleanCode + '\n{{< /rawhtml >}}\n');
+                    var fallbackPt = findLastLeafPoint(ed);
+                    setSlateSelection(ed, { anchor: fallbackPt, focus: fallbackPt });
+                    ed.insertText('\n{{< rawhtml >}}\n' + cleanCode + '\n{{< /rawhtml >}}\n');
                   }
                 }
                 requestAnimationFrame(refreshState);
