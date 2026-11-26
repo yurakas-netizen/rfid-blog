@@ -80,7 +80,7 @@
             {{- /* 2. FEATURED SECTION */ -}}
             {{- $feat := $cfg.featured -}}
             {{- if and $feat (ne $feat.enabled false) -}}
-                {{- $featLimit := int (default 50 $feat.limit) -}}
+                {{- $featLimit := int (default 150 $feat.limit) -}}
                 {{- $featPosts := slice -}}
                 {{- $seenFeat := slice -}}
                 {{- if and (eq $feat.mode "manual") $feat.postSlugs -}}
