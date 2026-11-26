@@ -63,9 +63,7 @@
         {{- end -}}
         {{- if gt (len $populated) 0 -}}
             <section class="sc-empty-branch">
-                {{- if eq $totalPosts 0 -}}
-                {{- end -}}
-                <div class="sc-empty-branch__links">
+                                <div class="sc-empty-branch__links">
                     {{- range $populated -}}
                         <a class="sc-lang-jump" href="{{ .Permalink }}">
                             <span>{{ .Lang.Label }}</span>
