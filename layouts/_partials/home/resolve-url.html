@@ -1,11 +1,13 @@
 {{- $url := strings.TrimSpace (default "/" .Url) -}}
 {{- $lang := .Lang -}}
-{{- if or (strings.HasPrefix $url "http://") (strings.HasPrefix $url "https://") (strings.HasPrefix $url "mailto:") (strings.HasPrefix $url "tel:") -}}
-    {{- return $url -}}
-{{- end -}}
 {{- $langPrefix := printf "/%s/" $lang -}}
-{{- if and (ne $lang "uk") (or (eq $url (printf "/%s" $lang)) (strings.HasPrefix $url $langPrefix)) -}}
-    {{- return $url -}}
+{{- $result := "" -}}
+{{- if or (strings.HasPrefix $url "http://") (strings.HasPrefix $url "https://") (strings.HasPrefix $url "mailto:") (strings.HasPrefix $url "tel:") -}}
+    {{- $result = $url -}}
+{{- else if and (ne $lang "uk") (or (eq $url (printf "/%s" $lang)) (strings.HasPrefix $url $langPrefix)) -}}
+    {{- $result = $url -}}
+{{- else -}}
+    {{- $trimmed := strings.TrimPrefix "/" $url -}}
+    {{- $result = relLangURL $trimmed -}}
 {{- end -}}
-{{- $trimmed := strings.TrimPrefix "/" $url -}}
-{{- return (relLangURL $trimmed) -}}
+{{- return $result -}}

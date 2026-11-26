@@ -1,6 +1,6 @@
 {{- $page := . -}}
 {{- $lang := .Language.Lang -}}
-{{- $homeData := site.Data.home -}}
+{{- $homeData := hugo.Data.home | default dict -}}
 {{- $cfg := index $homeData $lang -}}
 {{- if not $cfg -}}
     {{- $cfg = index $homeData "en" -}}
