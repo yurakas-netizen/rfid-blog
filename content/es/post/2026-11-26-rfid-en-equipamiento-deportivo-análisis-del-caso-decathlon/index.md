@@ -15,7 +15,7 @@ tags:
   - SGTIN-96
   - EPCIS 2.0
   - GS1 Digital Link
-  - Inventario
+  - Inventario.
 translationKey: retail-sporting-goods-rain-rfid-decathlon-inventory
 ---
 La gestión de inventario en una cadena de artículos deportivos presenta un desafío único: un mismo establecimiento puede albergar desde una bicicleta de 2.000 € hasta un par de calcetines de 3 €, y la exactitud del stock impacta directamente en la venta, la logística y la experiencia del cliente. Las etiquetas de código de barras tradicionales no permiten inventarios rápidos ni visibilidad en tiempo real. Este artículo analiza cómo la tecnología RAIN RFID (UHF pasiva, ISO/IEC 18000-63) resuelve este problema, con un enfoque en el caso de Decathlon —el mayor minorista de artículos deportivos del mundo—, los estándares GS1 aplicables, dos escenarios de implementación en tiendas españolas y un TCO a cinco años en EUR para una tienda media de 3.000 m².
