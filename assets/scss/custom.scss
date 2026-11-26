@@ -1361,5 +1361,14 @@ html[data-scheme="dark"] .sc-cta {
     gap: 10px;
     flex-shrink: 0;
 }
+/* Компактная языковая плашка без пустого места и линии сверху */
+.sc-empty-branch {
+    padding: 14px 18px !important;
+}
+.sc-empty-branch__links {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+    border-top: none !important;
+}
 
 
