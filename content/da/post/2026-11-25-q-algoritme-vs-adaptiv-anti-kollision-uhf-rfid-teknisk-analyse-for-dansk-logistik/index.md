@@ -8,7 +8,7 @@ description: Teknisk analyse af Dynamic Q-algoritmen i ISO/IEC 18000-63 (EPC
   ETSI EN 302 208 (865–868 MHz, 2 W ERP) og tre danske cases, hvor read rate
   løftes fra 89–90 % til 99,3–99,6 % uden hardwareudskiftning.
 date: 2026-06-08T22:00:00.000Z
-image: industrial_rfid_in_extreme_environments-5_2.jpg
+image: матриця_екстремальної_індустрії-1_3.jpg
 categories:
   - RFID Solutions
 tags:
