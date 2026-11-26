@@ -12,11 +12,11 @@
     "metrics": [
       {
         "value": "20",
-        "label": "EN · UA · DE · DA · EU"
+        "label": "Languages"
       },
       {
-        "value": "865–868 MHz",
-        "label": "ETSI EN 302 208"
+        "value": "865–928 MHz",
+        "label": "ETSI / FCC UHF"
       },
       {
         "value": "EPC Gen2v2",
@@ -34,7 +34,7 @@
   },
   "tracks": [
     {
-      "id": "solutions",
+      "id": "latest-solutions",
       "title": "Pramoniniai RFID diegimai",
       "description": "Sudėtingai aplinkai pritaikytos UHF RFID architektūros",
       "filterType": "latest",

@@ -12,15 +12,15 @@
     "metrics": [
       {
         "value": "11",
-        "label": "Published Articles"
+        "label": "Articles"
       },
       {
-        "value": "45",
-        "label": "Technical Tags"
+        "value": "0",
+        "label": "Tags"
       },
       {
         "value": "865–928 MHz",
-        "label": "ETSI / Ofcom / FCC"
+        "label": "ETSI / FCC UHF"
       }
     ]
   },
@@ -30,36 +30,24 @@
     "subtitle": "Core architectural benchmarks and production deployment studies",
     "mode": "auto",
     "postSlugs": [
-      "uhf-rfid-and-rtls-in-uk-nuclear-containment-structures-radiation-hardened-architecture-and-compliance",
-      "uhf-rfid-in-aviation-mro-99-9-read-reliability-on-turbine-blades-at-250c",
-      "sterile-zone-automation-autoclave-resistant-uhf-rfid-in-uk-biopharma"
+      "high-density-uhf-rfid-architecture-for-blade-server-tracking-in-uk-data-centres",
+      "2026-11-26-hybrid-rtls-for-south-african-mining-passive-uhf-rfid-and-active-uwb-tracking-under-mhsa-regulation-16-7",
+      "rfid-in-defence-logistics-hybrid-866-mhz-433-mhz-tracking-cavity-physics"
     ],
     "limit": 3
   },
   "tracks": [
     {
-      "id": "tag-uhf-rfid",
+      "id": "latest-solutions",
       "title": "Track: UHF RFID",
       "description": "Curated specifications and deployment blueprints for UHF RFID",
-      "filterType": "tag",
-      "filterValue": "UHF RFID",
+      "filterType": "latest",
+      "filterValue": "",
       "postSlugs": [],
-      "limit": 3,
+      "limit": 4,
       "layout": "grid",
-      "linkLabel": "Explore track",
-      "linkUrl": "/tags/uhf-rfid/"
-    },
-    {
-      "id": "tag-rtls",
-      "title": "Track: RTLS & Hybrid Tracking",
-      "description": "Real-time location architectures for mining, defence, and heavy industry",
-      "filterType": "tag",
-      "filterValue": "RTLS",
-      "postSlugs": [],
-      "limit": 3,
-      "layout": "grid",
-      "linkLabel": "Explore track",
-      "linkUrl": "/tags/rtls/"
+      "linkLabel": "View full archive",
+      "linkUrl": "/archives/"
     }
   ],
   "latest": {

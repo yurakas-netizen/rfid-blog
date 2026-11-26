@@ -12,15 +12,15 @@
     "metrics": [
       {
         "value": "6",
-        "label": "Artikler i sektion"
+        "label": "Articles"
       },
       {
-        "value": "28",
-        "label": "Tekniske tags"
+        "value": "0",
+        "label": "Tags"
       },
       {
-        "value": "865–868 MHz",
-        "label": "ETSI EN 302 208"
+        "value": "865–928 MHz",
+        "label": "ETSI / FCC UHF"
       }
     ]
   },
@@ -32,46 +32,22 @@
     "postSlugs": [
       "ambient-iot-i-dansk-gron-logistik-2026-2027-ble-vs-3gpp-tco-og-csrd",
       "blind-pallet-hvordan-taetstablede-varer-blokerer-rfid-signalet",
-      "q-algoritme-vs-adaptiv-anti-kollision-uhf-rfid-teknisk-analyse-for-dansk"
+      "rfid-i-agri-food-ip69k-fra-30-c-til-80-c"
     ],
     "limit": 3
   },
   "tracks": [
     {
-      "id": "tag-uhf-rfid",
+      "id": "latest-solutions",
       "title": "Spor: UHF RFID",
       "description": "Udvalgte tekniske løsninger og standarder inden for UHF RFID",
-      "filterType": "tag",
-      "filterValue": "UHF RFID",
+      "filterType": "latest",
+      "filterValue": "",
       "postSlugs": [],
-      "limit": 3,
+      "limit": 4,
       "layout": "grid",
-      "linkLabel": "Se alle i sporet",
-      "linkUrl": "/tags/uhf-rfid/"
-    },
-    {
-      "id": "tag-ip69k",
-      "title": "Spor: IP69K",
-      "description": "Udvalgte tekniske løsninger og standarder inden for IP69K",
-      "filterType": "tag",
-      "filterValue": "IP69K",
-      "postSlugs": [],
-      "limit": 2,
-      "layout": "grid",
-      "linkLabel": "Se alle i sporet",
-      "linkUrl": "/tags/ip69k/"
-    },
-    {
-      "id": "tag-offshore-wind",
-      "title": "Spor: Offshore Wind",
-      "description": "Udvalgte tekniske løsninger og standarder inden for Offshore Wind",
-      "filterType": "tag",
-      "filterValue": "Offshore Wind",
-      "postSlugs": [],
-      "limit": 2,
-      "layout": "grid",
-      "linkLabel": "Se alle i sporet",
-      "linkUrl": "/tags/offshore-wind/"
+      "linkLabel": "Se hele arkivet",
+      "linkUrl": "/archives/"
     }
   ],
   "latest": {

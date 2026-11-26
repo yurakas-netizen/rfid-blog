@@ -12,7 +12,7 @@
     "metrics": [
       {
         "value": "20",
-        "label": "EN · UA · DE · DA · EU"
+        "label": "Languages"
       },
       {
         "value": "865–928 MHz",
@@ -34,7 +34,7 @@
   },
   "tracks": [
     {
-      "id": "solutions",
+      "id": "latest-solutions",
       "title": "Soluzioni RFID industriali",
       "description": "Architetture UHF RFID validate in ambienti critici",
       "filterType": "latest",

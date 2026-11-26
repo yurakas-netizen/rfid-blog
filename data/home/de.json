@@ -12,15 +12,15 @@
     "metrics": [
       {
         "value": "14",
-        "label": "Fachbeiträge"
+        "label": "Articles"
       },
       {
-        "value": "75",
-        "label": "Technische Tags"
+        "value": "0",
+        "label": "Tags"
       },
       {
-        "value": "865–868 MHz",
-        "label": "ETSI EN 302 208"
+        "value": "865–928 MHz",
+        "label": "ETSI / FCC UHF"
       }
     ]
   },
@@ -30,48 +30,24 @@
     "subtitle": "Referenzarchitekturen für Fertigung, Luftfahrt, Pharma und Rechenzentren",
     "mode": "auto",
     "postSlugs": [
-      "passive-uhf-rfid-thermosensoren-zur-pue-optimierung-in-rechenzentren",
-      "rfid-in-der-pharmazeutischen-produktion-eu-gmp-autoklav-134-c-und-reinraum-iso-5",
-      "uhf-rfid-im-schienenverkehr-fahrzeugidentifikation-nach-din-en-17230-bei-160-km"
+      "2026-11-25-ambient-iot-in-der-industrie-4-0-–-batterielose-sensorik-für-predictive-maintenance",
+      "2026-11-25-fälschungssicherheit-in-der-pharmalogistik-dual-frequenz-dna-rfid-unter-etikettenlack",
+      "2026-11-25-parasitäres-cross-reading-im-automobilbau-reflexionen-in-roboterzellen-vermeiden"
     ],
     "limit": 3
   },
   "tracks": [
     {
-      "id": "tag-uhf-rfid-sensor",
+      "id": "latest-solutions",
       "title": "Fokus: UHF RFID Sensor",
       "description": "Spezialisierte Systemanalysen und Normen zu UHF RFID Sensor",
-      "filterType": "tag",
-      "filterValue": "UHF RFID Sensor",
+      "filterType": "latest",
+      "filterValue": "",
       "postSlugs": [],
-      "limit": 2,
+      "limit": 4,
       "layout": "grid",
-      "linkLabel": "Alle Beiträge im Fokus",
-      "linkUrl": "/tags/uhf-rfid-sensor/"
-    },
-    {
-      "id": "tag-fram",
-      "title": "Fokus: FRAM",
-      "description": "Spezialisierte Systemanalysen und Normen zu FRAM",
-      "filterType": "tag",
-      "filterValue": "FRAM",
-      "postSlugs": [],
-      "limit": 2,
-      "layout": "grid",
-      "linkLabel": "Alle Beiträge im Fokus",
-      "linkUrl": "/tags/fram/"
-    },
-    {
-      "id": "tag-miller-m4",
-      "title": "Fokus: Miller M4",
-      "description": "Spezialisierte Systemanalysen und Normen zu Miller M4",
-      "filterType": "tag",
-      "filterValue": "Miller M4",
-      "postSlugs": [],
-      "limit": 2,
-      "layout": "grid",
-      "linkLabel": "Alle Beiträge im Fokus",
-      "linkUrl": "/tags/miller-m4/"
+      "linkLabel": "Gesamtes Archiv ansehen",
+      "linkUrl": "/archives/"
     }
   ],
   "latest": {

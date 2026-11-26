@@ -12,10 +12,10 @@
     "metrics": [
       {
         "value": "20",
-        "label": "EN · UA · DE · DA · EU· ES"
+        "label": "Languages"
       },
       {
-        "value": "865–928 МГц",
+        "value": "865–928 MHz",
         "label": "ETSI / FCC UHF"
       },
       {
@@ -34,7 +34,7 @@
   },
   "tracks": [
     {
-      "id": "solutions",
+      "id": "latest-solutions",
       "title": "Огляди галузевих рішень",
       "description": "Системна інтеграція UHF RFID у виробничих та логістичних контурах",
       "filterType": "latest",

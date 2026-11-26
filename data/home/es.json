@@ -11,16 +11,16 @@
     "secondaryCtaUrl": "/search/",
     "metrics": [
       {
-        "value": "20",
-        "label": "EN · UA · DE · DA · EU"
+        "value": "1",
+        "label": "Articles"
+      },
+      {
+        "value": "0",
+        "label": "Tags"
       },
       {
         "value": "865–928 MHz",
         "label": "ETSI / FCC UHF"
-      },
-      {
-        "value": "EPC Gen2v2",
-        "label": "ISO/IEC 18000-63"
       }
     ]
   },
@@ -29,12 +29,14 @@
     "heading": "Informes de ingeniería destacados",
     "subtitle": "Arquitecturas de referencia y estudios de campo",
     "mode": "auto",
-    "postSlugs": [],
+    "postSlugs": [
+      "ambient-iot-en-vinedos-y-retail-de-espana-analisis-tecnico"
+    ],
     "limit": 3
   },
   "tracks": [
     {
-      "id": "solutions",
+      "id": "latest-solutions",
       "title": "Despliegues RFID industriales",
       "description": "Integración de UHF RFID en entornos exigentes",
       "filterType": "latest",
