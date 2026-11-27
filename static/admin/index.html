@@ -366,7 +366,8 @@
     }
 
     /* Cover Image Prompt Generator in Right Preview Pane */
-    [class*="PreviewPaneContainer"].rfid-has-prompt-panel {
+    [class*="PreviewPaneContainer"].rfid-has-prompt-panel:has(> iframe#preview-pane),
+    .rfid-preview-prompt-host.rfid-has-prompt-panel:has(> iframe#preview-pane) {
       display: flex !important;
       flex-direction: column !important;
       gap: 10px !important;
@@ -376,7 +377,8 @@
       overflow: hidden !important;
     }
 
-    [class*="PreviewPaneContainer"].rfid-has-prompt-panel > iframe#preview-pane {
+    [class*="PreviewPaneContainer"].rfid-has-prompt-panel:has(> iframe#preview-pane) > iframe#preview-pane,
+    .rfid-preview-prompt-host.rfid-has-prompt-panel:has(> iframe#preview-pane) > iframe#preview-pane {
       flex: 1 1 0 !important;
       min-height: 170px !important;
       height: auto !important;
@@ -3428,25 +3430,49 @@
         return panel;
       }
 
+      function cleanupPromptHost(container) {
+        if (!container) return;
+        container.classList.remove('rfid-has-prompt-panel');
+        container.classList.remove('rfid-preview-prompt-host');
+        var strayPanels = container.querySelectorAll(':scope > .rfid-prompt-panel');
+        for (var i = 0; i < strayPanels.length; i++) {
+          strayPanels[i].remove();
+        }
+      }
+
+      function isValidRightPreviewHost(container) {
+        if (!container) return false;
+        var iframe = container.querySelector(':scope > iframe#preview-pane');
+        if (!iframe) return false;
+        if (container.querySelector('[id^="title-field-"], [class*="ControlPane"], [class*="EditorControlBar"]')) {
+          return false;
+        }
+        return true;
+      }
+
       function attachPreviewPromptPanel(previewContainer) {
-        if (!previewContainer) return;
-        var current = readCurrentEntryData();
-        if (!current || !entryHasBodyField(current.ctx)) {
-          previewContainer.classList.remove('rfid-has-prompt-panel');
+        if (!isValidRightPreviewHost(previewContainer)) {
+          cleanupPromptHost(previewContainer);
           return;
         }
-        var iframe = previewContainer.querySelector('iframe#preview-pane');
+        var current = readCurrentEntryData();
+        if (!current || !entryHasBodyField(current.ctx)) {
+          cleanupPromptHost(previewContainer);
+          return;
+        }
+        var iframe = previewContainer.querySelector(':scope > iframe#preview-pane');
+        if (!iframe) {
+          cleanupPromptHost(previewContainer);
+          return;
+        }
         var panel = previewContainer.querySelector(':scope > .rfid-prompt-panel');
         if (!panel) {
           panel = createPromptPanelInstance();
-          if (iframe) {
-            previewContainer.insertBefore(panel, iframe);
-          } else {
-            previewContainer.insertBefore(panel, previewContainer.firstChild);
-          }
-        } else if (iframe && panel.nextElementSibling !== iframe) {
+          previewContainer.insertBefore(panel, iframe);
+        } else if (panel.nextElementSibling !== iframe) {
           previewContainer.insertBefore(panel, iframe);
         }
+        previewContainer.classList.add('rfid-preview-prompt-host');
         previewContainer.classList.add('rfid-has-prompt-panel');
         if (typeof panel._rfidSyncPrompt === 'function') {
           panel._rfidSyncPrompt();
@@ -3497,9 +3523,25 @@
         for (var k = 0; k < appHeaders.length; k++) {
           attachHeaderRegistryButton(appHeaders[k]);
         }
-        var previewContainers = document.querySelectorAll('[class*="PreviewPaneContainer"]');
-        for (var p = 0; p < previewContainers.length; p++) {
-          attachPreviewPromptPanel(previewContainers[p]);
+
+        // Clean up any stale prompt panel or host class on non-preview containers (e.g., left editor pane)
+        var markedHosts = document.querySelectorAll('.rfid-has-prompt-panel, .rfid-preview-prompt-host');
+        for (var m = 0; m < markedHosts.length; m++) {
+          if (!isValidRightPreviewHost(markedHosts[m])) {
+            cleanupPromptHost(markedHosts[m]);
+          }
+        }
+        var allPanels = document.querySelectorAll('.rfid-prompt-panel');
+        for (var n = 0; n < allPanels.length; n++) {
+          if (!isValidRightPreviewHost(allPanels[n].parentElement)) {
+            allPanels[n].remove();
+          }
+        }
+
+        // Attach strictly to the parent of iframe#preview-pane (right preview pane only)
+        var previewIframes = document.querySelectorAll('iframe#preview-pane');
+        for (var p = 0; p < previewIframes.length; p++) {
+          attachPreviewPromptPanel(previewIframes[p].parentElement);
         }
       }
 
