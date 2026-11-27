@@ -37,6 +37,7 @@ import {
   applyShowcaseUpdates,
   type ShowcaseSaveInput,
 } from './src/showcase.js';
+import { selectArticleSources, getSourcesUiStrings } from './src/sources.js';
 
 const ROOT_DIR = process.cwd();
 const PORT = 3000;
@@ -639,6 +640,8 @@ app.get(
 
     const relatedPosts = getRelatedPosts(post, siteContent.postsByLang[post.lang], 3);
     const translatedPosts = getTranslatedPosts(post, siteContent.allPosts);
+    const articleSources = selectArticleSources(post);
+    const sourcesUi = getSourcesUiStrings(post.lang);
     await renderView(res, siteContent, 'article', post.lang, {
       activeNav: 'home',
       isArticle: true,
@@ -648,6 +651,8 @@ app.get(
       toc: post.toc,
       relatedPosts,
       translatedPosts,
+      articleSources,
+      sourcesUi,
       languagesMap: LANGUAGES,
     });
   }

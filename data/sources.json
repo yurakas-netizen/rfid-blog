@@ -1,0 +1,709 @@
+[
+  {
+    "code": "ETSI",
+    "url": "https://www.etsi.org/",
+    "desc": "European Telecommunications Standards Institute; TC ERM writes harmonised standards for RFID and short-range devices under the Radio Equipment Directive.",
+    "langs": ["all"],
+    "keywords": ["etsi", "tc erm", "en 302 208", "en 300 220", "en 300 330", "en 303", "srd", "865-868 mhz", "865–868", "915-921", "harmonised standard", "harmonized standard", "uhf rfid", "radio equipment"]
+  },
+  {
+    "code": "GS1",
+    "url": "https://www.gs1.org/",
+    "desc": "Global standards organisation maintaining EPC/RFID, Gen2 UHF, EPCIS 2.0 and Digital Link standards used across European supply chains.",
+    "langs": ["all"],
+    "keywords": ["gs1", "epc", "epc gen2", "gen2", "gen2v2", "uhf rfid", "epcis", "epcis 2.0", "digital link", "barcode", "gtin", "gln", "sgtin", "sscc", "grai", "giai", "dpp", "digital product passport"]
+  },
+  {
+    "code": "RAIN RFID Alliance",
+    "url": "https://rainrfid.org/",
+    "desc": "Industry alliance promoting passive UHF RFID based on ISO/IEC 18000-63 and GS1 EPC Gen2.",
+    "langs": ["all"],
+    "keywords": ["rain rfid", "rain", "iso/iec 18000-63", "18000-63", "18000-6c", "epc gen2", "uhf rfid", "passive uhf", "session s2", "miller", "q-algorithm", "algoritm q", "anti-kollision", "anti-collision", "on-metal"]
+  },
+  {
+    "code": "NFC Forum",
+    "url": "https://nfc-forum.org/",
+    "desc": "Industry association developing NFC technical specifications and certification for contactless interoperability.",
+    "langs": ["all"],
+    "keywords": ["nfc forum", "nfc", "13.56 mhz", "13,56 mhz", "hf rfid", "iso 14443", "iso/iec 14443", "iso 15693", "ndef", "nfc certification", "contactless"]
+  },
+  {
+    "code": "AIM Global",
+    "url": "https://www.aimglobal.org/",
+    "desc": "Global trade association for automatic identification and data capture technologies.",
+    "langs": ["all"],
+    "keywords": ["aim global", "aidc", "automatic identification and data capture", "auto-id", "barcode", "dpm", "direct part marking"]
+  },
+  {
+    "code": "omlox",
+    "url": "https://omlox.com/",
+    "desc": "Open RTLS standard defining interoperable interfaces for real-time locating systems in industry.",
+    "langs": ["all"],
+    "keywords": ["omlox", "rtls", "uwb", "real-time locating", "indoor positioning", "hybrid rtls", "ble", "ambient iot", "zone tracking"]
+  },
+  {
+    "code": "ISO",
+    "url": "https://www.iso.org/",
+    "desc": "International Organization for Standardization, publisher of ISO/IEC RFID, RTLS, ITAM and quality standards.",
+    "langs": ["all"],
+    "keywords": ["iso", "iso/iec", "iso/iec 18000", "18000-63", "18000-6", "iso/iec 24730", "iso/iec 18046", "iso/iec 19770", "iso 14443", "iso 15693", "iso 9001", "iatf 16949"]
+  },
+  {
+    "code": "IEC",
+    "url": "https://www.iec.ch/",
+    "desc": "International Electrotechnical Commission, publisher of international electrotechnical standards including RFID air interfaces, industrial security and test methods.",
+    "langs": ["all"],
+    "keywords": ["iec", "iso/iec 18000", "iso/iec 18047", "iec 62443", "iec 60079", "iec 61508", "ip68", "ip69k", "mil-std", "electrotechnical"]
+  },
+  {
+    "code": "CEN-CENELEC",
+    "url": "https://www.cencenelec.eu/",
+    "desc": "European standardisation bodies; work on RFID notification, signage, railway identification (EN 17230) and privacy-related standards.",
+    "langs": ["all"],
+    "keywords": ["cen", "cenelec", "cen-cenelec", "rfid emblem", "en 17230", "din en 17230", "en 18031", "european standard", "european norm"]
+  },
+  {
+    "code": "CEPT/ECO",
+    "url": "https://www.cept.org/",
+    "desc": "European Conference of Postal and Telecommunications Administrations; ECC/ECO harmonise spectrum for short-range devices, ERC Recommendation 70-03 covers RFID at 865-868 MHz.",
+    "langs": ["all"],
+    "keywords": ["cept", "electronic communications committee", "ecc decision", "erc recommendation 70-03", "70-03", "spectrum harmonisation", "865-868 mhz", "865–868", "uhf spectrum", "erp", "eirp"]
+  },
+  {
+    "code": "ITU",
+    "url": "https://www.itu.int/",
+    "desc": "International Telecommunication Union, UN agency coordinating global radio spectrum and telecom standards.",
+    "langs": ["all"],
+    "keywords": ["itu", "radio regulations", "itu-r", "3gpp", "ism band", "spectrum allocation"]
+  },
+  {
+    "code": "IEEE",
+    "url": "https://www.ieee.org/",
+    "desc": "IEEE: standards for wireless communications and low-rate wireless networks used by locating and Ambient IoT systems.",
+    "langs": ["all"],
+    "keywords": ["ieee", "ieee 802.15.4", "802.15.4", "uwb", "ble", "bluetooth", "passiveble", "3gpp", "ambient iot", "multipath"]
+  },
+  {
+    "code": "ASTM",
+    "url": "https://www.astm.org/",
+    "desc": "ASTM International: voluntary consensus standards and materials, thermal and environmental test methods.",
+    "langs": ["all"],
+    "keywords": ["astm", "astm international", "thermal shock", "salt spray", "vibration test", "chemical resistance"]
+  },
+  {
+    "code": "IECEx",
+    "url": "https://www.iecex.com/",
+    "desc": "IEC System for Certification to Standards relating to Equipment for use in Explosive Atmospheres.",
+    "langs": ["all"],
+    "keywords": ["iecex", "atex", "explosive atmosphere", "ex certification", "hazardous area", "zone 0", "zone 1", "zone 2", "offshore", "oil", "gas", "petrol", "górnictw", "mining"]
+  },
+  {
+    "code": "EC",
+    "url": "https://ec.europa.eu/",
+    "desc": "European Commission: Radio Equipment Directive 2014/53/EU, EN 18031, Cyber Resilience Act (EU) 2024/2847, ESPR (EU) 2024/1781 (DPP) and Battery Regulation (EU) 2023/1542.",
+    "langs": ["all"],
+    "keywords": ["european commission", "radio equipment directive", "2014/53/eu", "delegated regulation 2022/30", "en 18031", "cyber resilience act", "2024/2847", "espr", "2024/1781", "dpp", "digital product passport", "2023/1542", "csrd", "ce marking", "eu regulation", "rozporządzenie espr"]
+  },
+  {
+    "code": "GS1 in Europe",
+    "url": "https://gs1.eu/",
+    "desc": "Regional GS1 body covering 49 European member organisations; harmonises GS1 standard implementation and EU regulatory topics.",
+    "langs": ["all"],
+    "keywords": ["gs1 in europe", "gs1 europe", "dpp", "espr", "digital product passport", "epcis 2.0", "digital link"]
+  },
+  {
+    "code": "EASA",
+    "url": "https://www.easa.europa.eu/",
+    "desc": "European Union Aviation Safety Agency: aviation safety certification and airworthiness.",
+    "langs": ["all"],
+    "keywords": ["easa", "european union aviation safety agency", "aviation", "aerospace", "aircraft", "turbine", "mro", "as9100", "luftfahrt", "airworthiness"]
+  },
+  {
+    "code": "EMA",
+    "url": "https://www.ema.europa.eu/",
+    "desc": "European Medicines Agency: evaluation and supervision of medicines in the EU.",
+    "langs": ["all"],
+    "keywords": ["european medicines agency", "ema", "pharma", "pharmaceutical", "eu gmp", "gmp", "autoklav", "autoclave", "cold chain", "medicines", "lægemiddel"]
+  },
+  {
+    "code": "ENISA",
+    "url": "https://www.enisa.europa.eu/",
+    "desc": "EU Agency for Cybersecurity: cybersecurity certification and guidance, including IoT, industrial control and connected devices.",
+    "langs": ["all"],
+    "keywords": ["enisa", "eu agency for cybersecurity", "cybersecurity", "cybersicherheit", "nis2", "iec 62443", "data diode", "aes-128", "cryptograph", "encryption", "onr saps"]
+  },
+  {
+    "code": "ERA",
+    "url": "https://www.era.europa.eu/",
+    "desc": "European Union Agency for Railways: safety and technical interoperability (TSI) for the EU rail system, including vehicle identification.",
+    "langs": ["all"],
+    "keywords": ["european union agency for railways", "eu agency for railways", "railway interoperability", "tsi", "rail", "railway", "schienenverkehr", "jernbane", "kolej", "en 17230", "wagon", "rolling stock"]
+  },
+  {
+    "code": "UIC",
+    "url": "https://www.uic.org/",
+    "desc": "International Union of Railways: rail interoperability standards, ticketing and wagon/freight identification.",
+    "langs": ["all"],
+    "keywords": ["uic", "international union of railways", "uic leaflet", "rail", "railway", "schienenverkehr", "jernbane", "wagon", "godstrafikk", "freight"]
+  },
+  {
+    "code": "VDA",
+    "url": "https://www.vda.de/",
+    "desc": "German Association of the Automotive Industry; recommendation VDA 4994 (Global Transport Label) defines goods labels used in automotive supply chains, including RFID-equipped variants.",
+    "langs": ["de"],
+    "keywords": ["vda", "verband der automobilindustrie", "vda 4994", "global transport label", "warenanhanger", "warenanhänger", "automobilbau", "automobilproduktion", "automobil"]
+  },
+  {
+    "code": "Odette",
+    "url": "https://www.odette.org/",
+    "desc": "Odette International: European automotive supply-chain standards body, auto-ID/RFID recommendations for parts and vehicle track-and-trace.",
+    "langs": ["all"],
+    "keywords": ["odette", "odette international", "auto-id", "global transport label", "automotive", "automobil", "producția auto", "construction automobile", "iatf 16949", "vopsitorie", "oem", "gigafactory"]
+  },
+  {
+    "code": "ACEA",
+    "url": "https://www.acea.auto/",
+    "desc": "European Automobile Manufacturers' Association: industry positions and technical requirements of European vehicle OEMs.",
+    "langs": ["all"],
+    "keywords": ["acea", "european automobile manufacturers association", "automotive", "automobil", "producția auto", "construction automobile", "iatf 16949", "oem", "battery", "gigafactory"]
+  },
+  {
+    "code": "CLEPA",
+    "url": "https://www.clepa.eu/",
+    "desc": "European Association of Automotive Suppliers: represents automotive component and systems suppliers.",
+    "langs": ["all"],
+    "keywords": ["clepa", "european association of automotive suppliers", "automotive", "automobil", "producția auto", "construction automobile", "tier-1", "iatf 16949", "gigafactory"]
+  },
+  {
+    "code": "IATA",
+    "url": "https://www.iata.org/",
+    "desc": "International Air Transport Association: airline industry standards, including baggage tracking Resolution 753 and air cargo.",
+    "langs": ["all"],
+    "keywords": ["iata", "resolution 753", "baggage tracking", "air cargo", "aviation", "airport", "luftfahrt", "aerospace", "mro"]
+  },
+  {
+    "code": "ICAO",
+    "url": "https://www.icao.int/",
+    "desc": "International Civil Aviation Organization: standards for machine readable travel documents (Doc 9303) with contactless chips.",
+    "langs": ["all"],
+    "keywords": ["icao", "doc 9303", "epassport", "machine readable travel document", "aviation", "airport", "border", "contactless chip"]
+  },
+  {
+    "code": "EFPIA",
+    "url": "https://www.efpia.eu/",
+    "desc": "European Federation of Pharmaceutical Industries and Associations: pharmaceutical industry association, involved in medicines verification and anti-counterfeiting.",
+    "langs": ["all"],
+    "keywords": ["efpia", "european federation of pharmaceutical industries", "pharma", "pharmalogistik", "pharmazeut", "anti-counterfeiting", "fälschungssicherheit", "serialization", "fmd"]
+  },
+  {
+    "code": "MedTech Europe",
+    "url": "https://www.medtecheurope.org/",
+    "desc": "European medical technology industry association; EU MDR/IVDR and UDI implementation topics.",
+    "langs": ["all"],
+    "keywords": ["medtech europe", "unique device identification", "udi", "mdr", "ivdr", "medical device", "hospital", "healthcare", "sterilization", "autoclave"]
+  },
+  {
+    "code": "COCIR",
+    "url": "https://www.cocir.org/",
+    "desc": "European trade association for medical imaging, radiotherapy, electromedical and healthcare IT industries.",
+    "langs": ["all"],
+    "keywords": ["cocir", "electromedical", "healthcare it", "hospital", "medical equipment", "healthcare"]
+  },
+  {
+    "code": "Eurelectric",
+    "url": "https://www.eurelectric.org/",
+    "desc": "Union of the Electricity Industry: association of the European electricity, grid, nuclear and offshore wind sector.",
+    "langs": ["all"],
+    "keywords": ["eurelectric", "union of the electricity industry", "power plant", "nuclear", "réacteur", "reactor", "offshore wind", "havvindmøller", "offshore vind", "grid", "substation", "pue", "data centre", "data center"]
+  },
+  {
+    "code": "EFNMS",
+    "url": "https://efnms.eu/",
+    "desc": "European Federation of National Maintenance Societies: industrial maintenance and physical asset management network.",
+    "langs": ["all"],
+    "keywords": ["efnms", "european federation of national maintenance societies", "physical asset management", "predictive maintenance", "instandhaltung", "maintenance", "itam", "asset tracking"]
+  },
+  {
+    "code": "ELA",
+    "url": "https://www.elalog.eu/",
+    "desc": "European Logistics Association: umbrella of national logistics associations in Europe.",
+    "langs": ["all"],
+    "keywords": ["ela", "european logistics association", "logistics", "logistik", "logistique", "logistyka", "supply chain", "cold chain", "kühlkette", "kjølekjeden", "koldekæden", "warehouse", "pallet"]
+  },
+  {
+    "code": "ALICE",
+    "url": "https://www.etp-logistics.eu/",
+    "desc": "Alliance for Logistics Innovation through Collaboration in Europe: European technology platform for logistics research and innovation.",
+    "langs": ["all"],
+    "keywords": ["etp-logistics", "alliance for logistics innovation", "physical internet", "logistics", "supply chain", "intralogistics", "computer vision", "automated warehouse", "returkasser", "returnable"]
+  },
+  {
+    "code": "FEFPEB",
+    "url": "https://www.fefpeb.eu/",
+    "desc": "European Federation of Wooden Pallet and Packaging Manufacturers.",
+    "langs": ["all"],
+    "keywords": ["fefpeb", "wooden pallet", "pallet manufacturing", "pallet", "paletten", "blind pallet", "returnable", "packaging", "returkasser"]
+  },
+  {
+    "code": "EPAL",
+    "url": "https://www.epal-pallets.org/",
+    "desc": "European Pallet Association: quality standards and licensing for the EPAL exchange pallet pool.",
+    "langs": ["all"],
+    "keywords": ["epal", "epal pallet", "euro pallet", "pallet", "blind pallet", "returkasser", "keg", "returnable transport", "rti"]
+  },
+  {
+    "code": "DIGITALEUROPE",
+    "url": "https://www.digitaleurope.org/",
+    "desc": "European association of the digital technology industry.",
+    "langs": ["all"],
+    "keywords": ["digitaleurope", "data centre", "data center", "rechenzentren", "rechenzentrum", "blade server", "digital product passport", "dpp", "cyber resilience"]
+  },
+  {
+    "code": "Orgalim",
+    "url": "https://www.orgalim.eu/",
+    "desc": "European federation of mechanical engineering, electrical and electronics industries.",
+    "langs": ["all"],
+    "keywords": ["orgalim", "mechanical engineering", "industrial automation", "automatizare", "machinery", "manufacturing", "industrie 4.0", "robotics", "robotica"]
+  },
+  {
+    "code": "VDMA",
+    "url": "https://www.vdma.eu/",
+    "desc": "German mechanical and plant engineering industry association.",
+    "langs": ["de"],
+    "keywords": ["vdma", "mechanical engineering", "maschinenbau", "industrie 4.0", "roboterzellen", "shredder", "deutschland"]
+  },
+  {
+    "code": "ZVEI",
+    "url": "https://www.zvei.org/",
+    "desc": "German electrical and digital industry association.",
+    "langs": ["de"],
+    "keywords": ["zvei", "german electrical and digital industry", "industrie 4.0", "digitaler produktpass", "sensorik", "rechenzentren", "deutschland"]
+  },
+  {
+    "code": "ANIE Automazione",
+    "url": "https://anieautomazione.anie.it/",
+    "desc": "Italian industrial automation association within Federazione ANIE (Confindustria).",
+    "langs": ["it"],
+    "keywords": ["anie automazione", "federazione anie", "automazione", "industria 4.0", "italia", "italiano"]
+  },
+  {
+    "code": "NAMUR",
+    "url": "https://www.namur.net/",
+    "desc": "User association of automation technology in the European process industries; publishes NAMUR recommendations.",
+    "langs": ["de"],
+    "keywords": ["namur", "namur recommendation", "process industry", "prozessindustrie", "cip", "sip", "ehedg", "autoklav", "deutschland"]
+  },
+  {
+    "code": "BVL",
+    "url": "https://www.bvl.de/",
+    "desc": "Bundesvereinigung Logistik: German logistics association.",
+    "langs": ["de"],
+    "keywords": ["bvl", "bundesvereinigung logistik", "logistik", "kühlkette", "pharmalogistik", "verteidigungslogistik", "deutschland"]
+  },
+  {
+    "code": "AUTF",
+    "url": "https://www.autf.fr/",
+    "desc": "French association of freight transport users (shippers).",
+    "langs": ["fr"],
+    "keywords": ["autf", "association des utilisateurs de transport de fret", "logistique", "fret", "france"]
+  },
+  {
+    "code": "FNTR",
+    "url": "https://www.fntr.fr/",
+    "desc": "French national road haulage federation.",
+    "langs": ["fr"],
+    "keywords": ["fntr", "federation nationale des transports routiers", "logistique", "traçabilité", "france"]
+  },
+  {
+    "code": "NHO LT",
+    "url": "https://www.nholt.no/",
+    "desc": "NHO Logistikk og Transport: Norwegian industry and employer association for transport, logistics, forwarding, warehousing and terminal operations.",
+    "langs": ["no"],
+    "keywords": ["nho logistikk og transport", "nholt", "logistikk", "godstrafikk", "kjølekjeden", "returkasser", "norge", "norsk"]
+  },
+  {
+    "code": "Transportforetagen",
+    "url": "https://www.transportforetagen.se/",
+    "desc": "Swedish transport industry federation; includes Transportindustriforbundet for freight, warehousing and logistics services.",
+    "langs": ["sv"],
+    "keywords": ["transportforetagen", "transportindustriforbundet", "logistik", "sverige", "svensk"]
+  },
+  {
+    "code": "DTL",
+    "url": "https://dtl.eu/",
+    "desc": "DTL - Danske Vognmaend (Dansk Transport og Logistik): Danish road transport and logistics industry association.",
+    "langs": ["da"],
+    "keywords": ["dtl", "danske vognmaend", "dansk transport og logistik", "logistik", "koldekæden", "returkasser", "danmark", "dansk"]
+  },
+  {
+    "code": "TLB",
+    "url": "https://www.transportandlogisticsbelgium.be/",
+    "desc": "Transport & Logistics Belgium: umbrella confederation of Febetra, TLV and UPTR created in 2023.",
+    "langs": ["nl", "fr"],
+    "keywords": ["transport & logistics belgium", "febetra", "tlv", "uptr", "belgium", "belgië", "belgique"]
+  },
+  {
+    "code": "AIM-D",
+    "url": "https://www.aim-d.de/",
+    "desc": "AIM Deutschland: AIDC industry association for Germany, Switzerland and Austria.",
+    "langs": ["de"],
+    "keywords": ["aim-d", "aim deutschland", "deutschland", "d-a-ch", "schweiz", "österreich"]
+  },
+  {
+    "code": "AIM Europe",
+    "url": "https://www.aimeurope.org/",
+    "desc": "AIM Europe VZW (Leuven): European AIM chapter, participates in CEN and ETSI standardisation work.",
+    "langs": ["all"],
+    "keywords": ["aim europe", "aim europe vzw", "aidc", "auto-id", "european standardisation"]
+  },
+  {
+    "code": "Ofcom",
+    "url": "https://www.ofcom.org.uk/",
+    "desc": "UK communications regulator: telecommunications, post and radio spectrum (IR 2030 short-range devices).",
+    "langs": ["en"],
+    "keywords": ["ofcom", "ir 2030", "ir2030", "united kingdom", "uk", "britain", "british"]
+  },
+  {
+    "code": "BNetzA",
+    "url": "https://www.bundesnetzagentur.de/",
+    "desc": "German Federal Network Agency: regulator for telecommunications, post, energy and rail, including radio spectrum.",
+    "langs": ["de"],
+    "keywords": ["bnetza", "bundesnetzagentur", "germany", "deutschland", "deutsch", "frequenz", "funk"]
+  },
+  {
+    "code": "ANFR",
+    "url": "https://www.anfr.fr/",
+    "desc": "French National Frequency Agency: planning, management and control of radio spectrum use.",
+    "langs": ["fr"],
+    "keywords": ["anfr", "agence nationale des frequences", "france", "français", "française", "fréquence", "spectre"]
+  },
+  {
+    "code": "DIGST",
+    "url": "https://digst.dk/",
+    "desc": "Digitaliseringsstyrelsen (Danish Agency for Digital Government): telecom regulation and issuing of radio frequency licences in Denmark.",
+    "langs": ["da"],
+    "keywords": ["digitaliseringsstyrelsen", "digst", "frekvenstilladelse", "denmark", "danmark", "dansk", "frekvens"]
+  },
+  {
+    "code": "SETELECO",
+    "url": "https://digital.gob.es/",
+    "desc": "Spanish State Secretariat for Telecommunications and Digital Infrastructure; publishes the national frequency allocation table CNAF.",
+    "langs": ["es"],
+    "keywords": ["seteleco", "cnaf", "spain", "españa", "espana", "español", "espectro", "frecuencia"]
+  },
+  {
+    "code": "AGCOM",
+    "url": "https://www.agcom.it/",
+    "desc": "Italian Communications Authority: regulation of telecommunications, media and postal services, including spectrum.",
+    "langs": ["it"],
+    "keywords": ["agcom", "autorita per le garanzie nelle comunicazioni", "italy", "italia", "italiano", "spettro", "frequenze"]
+  },
+  {
+    "code": "RDI",
+    "url": "https://www.rdi.nl/",
+    "desc": "Rijksinspectie Digitale Infrastructuur: Dutch inspectorate for digital infrastructure and radio spectrum (former Agentschap Telecom).",
+    "langs": ["nl"],
+    "keywords": ["rdi", "rijksinspectie digitale infrastructuur", "agentschap telecom", "netherlands", "nederland", "nederlands", "frequentie"]
+  },
+  {
+    "code": "UKE",
+    "url": "https://uke.gov.pl/",
+    "desc": "Polish Office of Electronic Communications: telecommunications and postal regulator, spectrum management.",
+    "langs": ["pl"],
+    "keywords": ["uke", "urzad komunikacji elektronicznej", "urząd komunikacji elektronicznej", "poland", "polska", "polski", "częstotliwości"]
+  },
+  {
+    "code": "PTS",
+    "url": "https://www.pts.se/",
+    "desc": "Swedish Post and Telecom Authority: regulator for electronic communications and radio spectrum.",
+    "langs": ["sv"],
+    "keywords": ["pts", "post- och telestyrelsen", "sweden", "sverige", "svensk", "frekvens"]
+  },
+  {
+    "code": "Nkom",
+    "url": "https://www.nkom.no/",
+    "desc": "Norwegian Communications Authority: regulator for electronic communications, post and radio spectrum.",
+    "langs": ["no"],
+    "keywords": ["nkom", "nasjonal kommunikasjonsmyndighet", "norway", "norge", "norsk", "frekvens"]
+  },
+  {
+    "code": "Traficom",
+    "url": "https://www.traficom.fi/",
+    "desc": "Finnish Transport and Communications Agency: communications networks, radio spectrum and transport regulation.",
+    "langs": ["fi"],
+    "keywords": ["traficom", "finland", "suomi", "suomalainen", "taajuus"]
+  },
+  {
+    "code": "BAKOM",
+    "url": "https://www.bakom.admin.ch/",
+    "desc": "Swiss Federal Office of Communications (OFCOM/BAKOM): telecommunications and radio spectrum regulation.",
+    "langs": ["de", "fr", "it"],
+    "keywords": ["bakom", "ofcom switzerland", "switzerland", "schweiz", "suisse", "svizzera"]
+  },
+  {
+    "code": "RTR",
+    "url": "https://www.rtr.at/",
+    "desc": "Austrian Regulatory Authority for Broadcasting and Telecommunications; RTR GmbH handles spectrum and telecom regulation.",
+    "langs": ["de"],
+    "keywords": ["rtr", "rundfunk und telekom regulierung", "austria", "österreich", "osterreich"]
+  },
+  {
+    "code": "BIPT",
+    "url": "https://www.bipt.be/",
+    "desc": "Belgian Institute for Postal Services and Telecommunications: telecom regulator and spectrum manager.",
+    "langs": ["nl", "fr"],
+    "keywords": ["bipt", "ibpt", "belgium", "belgië", "belgique"]
+  },
+  {
+    "code": "CTU",
+    "url": "https://www.ctu.gov.cz/",
+    "desc": "Czech Telecommunication Office: electronic communications and postal regulator, spectrum management.",
+    "langs": ["cs"],
+    "keywords": ["ctu", "čtú", "cesky telekomunikacni urad", "český telekomunikační úřad", "czech republic", "česko"]
+  },
+  {
+    "code": "NCEC (NKEK)",
+    "url": "https://nkek.gov.ua/",
+    "desc": "National Commission for the State Regulation of Electronic Communications, Radiofrequency Spectrum and Postal Services (NCEC / NKEK), Ukraine.",
+    "langs": ["uk"],
+    "keywords": ["ncek", "ncec", "nkek", "nkrzi", "нкєк", "нкрек", "укрчастотнагляд", "ukraine", "україна", "україни", "україн"]
+  },
+  {
+    "code": "ComReg",
+    "url": "https://www.comreg.ie/",
+    "desc": "Irish Commission for Communications Regulation: electronic communications and radio spectrum.",
+    "langs": ["en"],
+    "keywords": ["comreg", "ireland", "irish"]
+  },
+  {
+    "code": "ANACOM",
+    "url": "https://www.anacom.pt/",
+    "desc": "Portuguese National Communications Authority: electronic communications, postal services and spectrum.",
+    "langs": ["pt"],
+    "keywords": ["anacom", "portugal", "português", "portuguesa", "espectro", "frequência"]
+  },
+  {
+    "code": "EETT",
+    "url": "https://www.eett.gr/",
+    "desc": "Hellenic Telecommunications and Post Commission: Greek regulator for electronic communications, post and spectrum.",
+    "langs": ["el"],
+    "keywords": ["eett", "greece", "greek"]
+  },
+  {
+    "code": "NMHH",
+    "url": "https://www.nmhh.hu/",
+    "desc": "Hungarian National Media and Infocommunications Authority: media, telecommunications and spectrum regulation.",
+    "langs": ["hu"],
+    "keywords": ["nmhh", "hungary", "hungarian"]
+  },
+  {
+    "code": "ANCOM",
+    "url": "https://www.ancom.ro/",
+    "desc": "Romanian National Authority for Management and Regulation in Communications: telecom and spectrum regulator.",
+    "langs": ["ro"],
+    "keywords": ["ancom", "romania", "românia", "român", "spectru", "frecvență"]
+  },
+  {
+    "code": "CRC",
+    "url": "https://www.crc.bg/",
+    "desc": "Bulgarian Communications Regulation Commission: electronic communications, postal services and spectrum.",
+    "langs": ["bg"],
+    "keywords": ["communications regulation commission", "crc bulgaria", "bulgaria", "българия", "крс"]
+  },
+  {
+    "code": "HAKOM",
+    "url": "https://www.hakom.hr/",
+    "desc": "Croatian Regulatory Authority for Network Industries: electronic communications, post, rail and spectrum regulation.",
+    "langs": ["hr"],
+    "keywords": ["hakom", "croatia"]
+  },
+  {
+    "code": "AKOS",
+    "url": "https://www.akos-rs.si/",
+    "desc": "Slovenian Communications Networks and Services Agency: electronic communications, post and spectrum regulator.",
+    "langs": ["sl"],
+    "keywords": ["akos", "slovenia"]
+  },
+  {
+    "code": "ILR",
+    "url": "https://www.ilr.lu/",
+    "desc": "Institut Luxembourgeois de Regulation: regulator for electronic communications, energy, transport and spectrum.",
+    "langs": ["fr"],
+    "keywords": ["ilr", "institut luxembourgeois de regulation", "luxembourg"]
+  },
+  {
+    "code": "MCA",
+    "url": "https://www.mca.org.mt/",
+    "desc": "Malta Communications Authority: electronic communications, postal services and spectrum regulation.",
+    "langs": ["en", "mt"],
+    "keywords": ["mca", "malta communications authority", "malta"]
+  },
+  {
+    "code": "ECOI",
+    "url": "https://www.fjarskiptastofa.is/",
+    "desc": "Electronic Communications Office of Iceland (Fjarskiptastofa), renamed from PFS in 2021: telecom and spectrum regulator.",
+    "langs": ["is"],
+    "keywords": ["ecoi", "fjarskiptastofa", "iceland"]
+  },
+  {
+    "code": "TTJA",
+    "url": "https://www.ttja.ee/",
+    "desc": "Estonian Consumer Protection and Technical Regulatory Authority: consumer, technical and communications regulation incl. spectrum.",
+    "langs": ["et"],
+    "keywords": ["ttja", "estonia", "eesti", "sagedus"]
+  },
+  {
+    "code": "SPRK",
+    "url": "https://www.sprk.gov.lv/",
+    "desc": "Latvian Public Utilities Commission: regulator for energy, telecommunications, post and rail, including spectrum.",
+    "langs": ["lv"],
+    "keywords": ["sprk", "latvia", "latvija"]
+  },
+  {
+    "code": "RRT",
+    "url": "https://www.rrt.lt/",
+    "desc": "Communications Regulatory Authority of the Republic of Lithuania: electronic communications, post and spectrum.",
+    "langs": ["lt"],
+    "keywords": ["rrt", "lithuania", "lietuva", "lietuvos"]
+  },
+  {
+    "code": "RU",
+    "url": "https://www.teleoff.gov.sk/",
+    "desc": "Slovak Regulatory Authority for Electronic Communications and Postal Services (Regulačný úrad): telecom, postal and spectrum regulation.",
+    "langs": ["sk"],
+    "keywords": ["teleoff", "regulacny urad", "regulačný úrad", "slovakia", "slovensko"]
+  },
+  {
+    "code": "OCECPR",
+    "url": "https://www.ocecpr.org.cy/",
+    "desc": "Cyprus Office of Electronic Communications and Postal Regulation: telecom, postal services and spectrum.",
+    "langs": ["el"],
+    "keywords": ["ocecpr", "cyprus"]
+  },
+  {
+    "code": "GS1 UK",
+    "url": "https://www.gs1uk.org/",
+    "desc": "National GS1 member organisation for UK: GS1 identification keys, EPC/RFID and Digital Link implementation.",
+    "langs": ["en"],
+    "keywords": ["gs1 uk", "united kingdom", "uk", "britain", "british"]
+  },
+  {
+    "code": "GS1 Germany",
+    "url": "https://www.gs1-germany.de/",
+    "desc": "National GS1 member organisation for Germany: GS1 identification keys, EPCIS 2.0 and RFID implementation.",
+    "langs": ["de"],
+    "keywords": ["gs1 germany", "gs1 deutschland", "germany", "deutschland", "deutsch"]
+  },
+  {
+    "code": "GS1 France",
+    "url": "https://www.gs1.fr/",
+    "desc": "National GS1 member organisation for France: GS1 identification keys, EPC/RFID and supply chain standards.",
+    "langs": ["fr"],
+    "keywords": ["gs1 france", "france", "français", "française"]
+  },
+  {
+    "code": "GS1 Italy",
+    "url": "https://gs1it.org/",
+    "desc": "National GS1 member organisation for Italy: GS1 identification keys and standard implementation.",
+    "langs": ["it"],
+    "keywords": ["gs1 italy", "italy", "italia", "italiano"]
+  },
+  {
+    "code": "GS1 Spain",
+    "url": "https://www.gs1es.org/",
+    "desc": "National GS1 member organisation for Spain: GS1 identification keys and standard implementation.",
+    "langs": ["es"],
+    "keywords": ["gs1 spain", "gs1 espana", "gs1 españa", "spain", "españa", "español"]
+  },
+  {
+    "code": "GS1 Netherlands",
+    "url": "https://www.gs1.nl/",
+    "desc": "National GS1 member organisation for Netherlands: GS1 identification keys and standard implementation.",
+    "langs": ["nl"],
+    "keywords": ["gs1 netherlands", "netherlands", "nederland", "nederlands"]
+  },
+  {
+    "code": "GS1 Poland",
+    "url": "https://gs1pl.org/",
+    "desc": "National GS1 member organisation for Poland: GS1 identification keys, Digital Link, DPP and EPCIS implementation.",
+    "langs": ["pl"],
+    "keywords": ["gs1 poland", "gs1 polska", "poland", "polska", "polski"]
+  },
+  {
+    "code": "GS1 Sweden",
+    "url": "https://gs1.se/",
+    "desc": "National GS1 member organisation for Sweden: GS1 identification keys and standard implementation.",
+    "langs": ["sv"],
+    "keywords": ["gs1 sweden", "sweden", "sverige", "svensk"]
+  },
+  {
+    "code": "GS1 Norway",
+    "url": "https://gs1.no/",
+    "desc": "National GS1 member organisation for Norway: GS1 identification keys and standard implementation.",
+    "langs": ["no"],
+    "keywords": ["gs1 norway", "gs1 norge", "norway", "norge", "norsk"]
+  },
+  {
+    "code": "GS1 Finland",
+    "url": "https://gs1.fi/",
+    "desc": "National GS1 member organisation for Finland: GS1 identification keys and standard implementation.",
+    "langs": ["fi"],
+    "keywords": ["gs1 finland", "finland", "suomi", "suomalainen"]
+  },
+  {
+    "code": "GS1 Switzerland",
+    "url": "https://www.gs1.ch/",
+    "desc": "National GS1 member organisation for Switzerland: GS1 identification keys and standard implementation.",
+    "langs": ["de", "fr", "it"],
+    "keywords": ["gs1 switzerland", "gs1 schweiz", "switzerland", "schweiz", "suisse", "svizzera"]
+  },
+  {
+    "code": "GS1 Austria",
+    "url": "https://www.gs1.at/",
+    "desc": "National GS1 member organisation for Austria: GS1 identification keys and standard implementation.",
+    "langs": ["de"],
+    "keywords": ["gs1 austria", "gs1 osterreich", "gs1 österreich", "austria", "österreich", "osterreich"]
+  },
+  {
+    "code": "GS1 Belgium & Luxembourg",
+    "url": "https://www.gs1belu.org/",
+    "desc": "National GS1 member organisation for Belgium & Luxembourg: GS1 identification keys and standard implementation.",
+    "langs": ["nl", "fr"],
+    "keywords": ["gs1 belu", "gs1 belgium", "gs1 luxembourg", "belgium", "luxembourg", "belgië", "belgique"]
+  },
+  {
+    "code": "GS1 Czech Republic",
+    "url": "https://www.gs1cz.org/",
+    "desc": "National GS1 member organisation for Czech Republic: GS1 identification keys and standard implementation.",
+    "langs": ["cs"],
+    "keywords": ["gs1 czech", "gs1 cz", "czech republic", "česko", "česká"]
+  },
+  {
+    "code": "GS1 Ukraine",
+    "url": "https://www.gs1ua.org/",
+    "desc": "National GS1 member organisation for Ukraine: GS1 identification keys, EPC/RFID and supply chain implementation.",
+    "langs": ["uk"],
+    "keywords": ["gs1 ukraine", "gs1 ua", "ukraine", "україна", "україни", "україн"]
+  },
+  {
+    "code": "GS1 Denmark",
+    "url": "https://www.gs1.dk/",
+    "desc": "National GS1 member organisation for Denmark: GS1 identification keys, EPCIS and supply chain standards.",
+    "langs": ["da"],
+    "keywords": ["gs1 denmark", "gs1 danmark", "denmark", "danmark", "dansk"]
+  },
+  {
+    "code": "GS1 Ireland",
+    "url": "https://www.gs1ie.org/",
+    "desc": "National GS1 member organisation for Ireland: GS1 identification keys and standard implementation.",
+    "langs": ["en"],
+    "keywords": ["gs1 ireland", "ireland", "irish"]
+  },
+  {
+    "code": "GS1 Portugal",
+    "url": "https://gs1pt.org/",
+    "desc": "National GS1 member organisation for Portugal: GS1 identification keys and standard implementation.",
+    "langs": ["pt"],
+    "keywords": ["gs1 portugal", "portugal", "português", "portuguesa"]
+  }
+]

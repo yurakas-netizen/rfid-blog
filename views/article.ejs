@@ -70,6 +70,39 @@
     </footer>
   </article>
 
+  <% if (typeof articleSources !== 'undefined' && articleSources && articleSources.length > 0 && typeof sourcesUi !== 'undefined') { %>
+    <section class="rfid-sources" aria-labelledby="rfid-sources-title">
+      <header class="rfid-sources__head">
+        <div class="rfid-sources__head-main">
+          <div class="rfid-sources__title-row">
+            <span class="rfid-sources__icon" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 4.5v5.5c0 4.5 -3.2 7.8 -8 9c-4.8 -1.2 -8 -4.5 -8 -9v-5.5z"/><path d="M9 12l2 2l4 -4"/></svg>
+            </span>
+            <h2 id="rfid-sources-title" class="rfid-sources__title"><%= sourcesUi.heading %></h2>
+          </div>
+          <p class="rfid-sources__subtitle"><%= sourcesUi.subtitle %></p>
+        </div>
+        <span class="rfid-sources__summary"><%= articleSources.length %> <%= sourcesUi.sourcesCountWord %></span>
+      </header>
+
+      <div class="rfid-sources__grid">
+        <% articleSources.forEach(function(src) { %>
+          <a class="rfid-sources__item<%= src.isLocal ? ' is-regional' : '' %>" href="<%= src.url %>" target="_blank" rel="noopener noreferrer">
+            <div class="rfid-sources__item-top">
+              <span class="rfid-sources__code"><%= src.code %></span>
+              <span class="rfid-sources__scope"><%= src.isLocal ? (src.regionCode + ' · ' + sourcesUi.regionalLabel) : sourcesUi.globalLabel %></span>
+            </div>
+            <p class="rfid-sources__desc"><%= src.desc %></p>
+            <div class="rfid-sources__foot">
+              <span class="rfid-sources__host"><%= src.host %></span>
+              <span class="rfid-sources__arrow" aria-hidden="true">↗</span>
+            </div>
+          </a>
+        <% }); %>
+      </div>
+    </section>
+  <% } %>
+
   <% if (relatedPosts && relatedPosts.length > 0) { %>
     <section class="related-section">
       <h2 class="widget-title" style="margin-bottom: 0;"><%= t.relatedPosts %></h2>

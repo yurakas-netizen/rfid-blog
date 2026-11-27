@@ -1,0 +1,241 @@
+{{- $page := . -}}
+{{- $sourcesData := hugo.Data.sources -}}
+{{- if and $sourcesData (gt (len $sourcesData) 0) (ne $page.Params.sources false) -}}
+    {{- $lang := $page.Language.Lang -}}
+
+    {{- /* Build normalized search corpora: metadata (high weight) + body plain text */ -}}
+    {{- $tk := string ($page.Params.translationkey | default $page.Params.translationKey | default "") -}}
+    {{- $tkReadable := replaceRE "[-_]+" " " $tk -}}
+    {{- $cats := delimit ($page.Params.categories | default slice) " " -}}
+    {{- $tags := delimit ($page.Params.tags | default slice) " " -}}
+    {{- $metaRaw := printf "%s %s %s %s %s %s" ($page.Title | default "") ($page.Params.description | default "") $cats $tags $tk $tkReadable -}}
+    {{- $metaLower := lower $metaRaw -}}
+    {{- $bodyRaw := $page.Plain | default "" -}}
+    {{- $bodyLower := lower $bodyRaw -}}
+
+    {{- $priors := dict "ETSI" 6 "GS1" 6 "RAIN RFID Alliance" 5 "ISO" 5 "IEC" 5 "EC" 4 "CEPT/ECO" 4 "CEN-CENELEC" 3 "AIM Global" 2 "AIM Europe" 2 -}}
+
+    {{- $localScored := slice -}}
+    {{- $generalScored := slice -}}
+
+    {{- range $idx, $entry := $sourcesData -}}
+        {{- $code := trim (string $entry.code) " " -}}
+        {{- $url := string $entry.url -}}
+        {{- $desc := string $entry.desc -}}
+        {{- $langs := $entry.langs | default slice -}}
+        {{- $keywords := $entry.keywords | default slice -}}
+
+        {{- $isLocal := in $langs $lang -}}
+        {{- $isGlobal := in $langs "all" -}}
+        {{- $contextScore := 0 -}}
+
+        {{- /* Score code match safely (prevent false matches on 2-letter codes like EC / RU) */ -}}
+        {{- if ge (len $code) 3 -}}
+            {{- $codeVariants := slice $code -}}
+            {{- $parenParts := findRE "^([^\\s(]+)\\s*\\(([^)]+)\\)$" $code 1 -}}
+            {{- if gt (len $parenParts) 0 -}}
+                {{- $p1 := replaceRE "^([^\\s(]+)\\s*\\(([^)]+)\\)$" "$1" $code -}}
+                {{- $p2 := replaceRE "^([^\\s(]+)\\s*\\(([^)]+)\\)$" "$2" $code -}}
+                {{- $codeVariants = $codeVariants | append $p1 $p2 -}}
+            {{- end -}}
+            {{- $codeMatched := false -}}
+            {{- range $variant := $codeVariants -}}
+                {{- if and (not $codeMatched) (ge (len $variant) 3) -}}
+                    {{- $vLower := lower $variant -}}
+                    {{- $vEsc := replaceRE "([.+*?^$(){}\\[\\]|\\\\])" "\\$1" $vLower -}}
+                    {{- $vPat := printf "(^|[^\\pL\\pN])%s($|[^\\pL\\pN])" $vEsc -}}
+                    {{- if and (in $metaLower $vLower) (gt (len (findRE $vPat $metaLower 1)) 0) -}}
+                        {{- $contextScore = add $contextScore 20 -}}
+                        {{- $codeMatched = true -}}
+                    {{- else if and (in $bodyLower $vLower) (gt (len (findRE $vPat $bodyLower 1)) 0) -}}
+                        {{- $contextScore = add $contextScore 8 -}}
+                        {{- $codeMatched = true -}}
+                    {{- end -}}
+                {{- end -}}
+            {{- end -}}
+        {{- else if eq $code "EC" -}}
+            {{- if and (in $metaRaw "EC") (gt (len (findRE "(^|[^\\pL\\pN])EC($|[^\\pL\\pN])" $metaRaw 1)) 0) -}}
+                {{- $contextScore = add $contextScore 14 -}}
+            {{- else if and (in $bodyRaw "EC") (gt (len (findRE "(^|[^\\pL\\pN])EC($|[^\\pL\\pN])" $bodyRaw 1)) 0) -}}
+                {{- $contextScore = add $contextScore 6 -}}
+            {{- end -}}
+        {{- else if and (eq $code "RU") (eq $lang "sk") -}}
+            {{- if and (in $metaRaw "RU") (gt (len (findRE "(^|[^\\pL\\pN])RU($|[^\\pL\\pN])" $metaRaw 1)) 0) -}}
+                {{- $contextScore = add $contextScore 14 -}}
+            {{- else if and (in $bodyRaw "RU") (gt (len (findRE "(^|[^\\pL\\pN])RU($|[^\\pL\\pN])" $bodyRaw 1)) 0) -}}
+                {{- $contextScore = add $contextScore 6 -}}
+            {{- end -}}
+        {{- end -}}
+
+        {{- /* Score keyword hits in metadata and body */ -}}
+        {{- $metaHits := 0 -}}
+        {{- $bodyHits := 0 -}}
+        {{- range $kw := $keywords -}}
+            {{- $term := lower (trim (string $kw) " ") -}}
+            {{- if $term -}}
+                {{- $esc := replaceRE "([.+*?^$(){}\\[\\]|\\\\])" "\\$1" $term -}}
+                {{- $pat := printf "(^|[^\\pL\\pN])%s($|[^\\pL\\pN])" $esc -}}
+                {{- if and (in $metaLower $term) (gt (len (findRE $pat $metaLower 1)) 0) -}}
+                    {{- $metaHits = add $metaHits 1 -}}
+                {{- else if and (in $bodyLower $term) (gt (len (findRE $pat $bodyLower 1)) 0) -}}
+                    {{- $bodyHits = add $bodyHits 1 -}}
+                {{- end -}}
+            {{- end -}}
+        {{- end -}}
+
+        {{- if gt $metaHits 4 -}}{{- $metaHits = 4 -}}{{- end -}}
+        {{- if gt $bodyHits 5 -}}{{- $bodyHits = 5 -}}{{- end -}}
+        {{- $contextScore = add $contextScore (add (mul $metaHits 14) (mul $bodyHits 6)) -}}
+
+        {{- if or $isLocal $isGlobal (ge $contextScore 14) -}}
+            {{- $host := strings.TrimPrefix "www." ((urls.Parse $url).Hostname | default "") -}}
+            {{- $prior := 0 -}}
+            {{- if $isGlobal -}}
+                {{- $prior = int (index $priors $code | default 0) -}}
+            {{- end -}}
+            {{- $localTie := 0 -}}
+            {{- if $isLocal -}}
+                {{- if or (hasPrefix (lower $host) "gs1") (hasPrefix $code "GS1 ") -}}
+                    {{- $localTie = 2 -}}
+                {{- else if gt (len (findRE "(?i)(regulator|communications|spectrum|telecom|telekom|frequency|authority)" $desc 1)) 0 -}}
+                    {{- $localTie = 2 -}}
+                {{- else -}}
+                    {{- $localTie = 1 -}}
+                {{- end -}}
+            {{- end -}}
+
+            {{- $totalScore := add $contextScore $prior -}}
+            {{- if $isLocal -}}
+                {{- $totalScore = add $totalScore (add 3 $localTie) -}}
+            {{- end -}}
+
+            {{- $matchedFlag := 0 -}}
+            {{- if gt $contextScore 0 -}}{{- $matchedFlag = 1 -}}{{- end -}}
+            {{- $localFallbackBoost := 0 -}}
+            {{- if and (eq $matchedFlag 0) $isLocal -}}{{- $localFallbackBoost = 1 -}}{{- end -}}
+
+            {{- $bucketSort := printf "%04d-%02d-%04d" $totalScore $localTie (sub 9999 $idx) -}}
+            {{- $finalSort := printf "%d-%d-%04d-%04d" $matchedFlag $localFallbackBoost $totalScore (sub 9999 $idx) -}}
+
+            {{- $item := dict
+                "Code" $code
+                "Url" $url
+                "Desc" $desc
+                "Host" $host
+                "IsLocal" $isLocal
+                "RegionCode" (cond $isLocal (upper $lang) "")
+                "ContextScore" $contextScore
+                "TotalScore" $totalScore
+                "BucketSort" $bucketSort
+                "FinalSort" $finalSort
+            -}}
+            {{- if $isLocal -}}
+                {{- $localScored = $localScored | append $item -}}
+            {{- else -}}
+                {{- $generalScored = $generalScored | append $item -}}
+            {{- end -}}
+        {{- end -}}
+    {{- end -}}
+
+    {{- $localSorted := sort $localScored "BucketSort" "desc" -}}
+    {{- $generalSorted := sort $generalScored "BucketSort" "desc" -}}
+
+    {{- $pickedLocal := first 2 $localSorted -}}
+    {{- $pickedUrls := slice -}}
+    {{- range $pickedLocal -}}
+        {{- $pickedUrls = $pickedUrls | append .Url -}}
+    {{- end -}}
+
+    {{- $contextualGeneral := slice -}}
+    {{- $fallbackGeneral := slice -}}
+    {{- range $generalSorted -}}
+        {{- if not (in $pickedUrls .Url) -}}
+            {{- if gt .ContextScore 0 -}}
+                {{- $contextualGeneral = $contextualGeneral | append . -}}
+            {{- else -}}
+                {{- $fallbackGeneral = $fallbackGeneral | append . -}}
+            {{- end -}}
+        {{- end -}}
+    {{- end -}}
+
+    {{- $maxTotal := 10 -}}
+    {{- $targetMin := 6 -}}
+    {{- $selected := $pickedLocal -}}
+
+    {{- range $contextualGeneral -}}
+        {{- if lt (len $selected) $maxTotal -}}
+            {{- $selected = $selected | append . -}}
+        {{- end -}}
+    {{- end -}}
+    {{- range $fallbackGeneral -}}
+        {{- if lt (len $selected) $targetMin -}}
+            {{- $selected = $selected | append . -}}
+        {{- end -}}
+    {{- end -}}
+
+    {{- $selected = sort $selected "FinalSort" "desc" -}}
+
+    {{- if gt (len $selected) 0 -}}
+        {{- /* Localized UI labels across all 20 supported languages */ -}}
+        {{- $uiMap := dict
+            "uk" (dict "heading" "Стандарти та авторитетні джерела" "subtitle" "Регулятори, стандартизаційні комітети та галузеві асоціації за темою матеріалу" "regional" "Регіональний" "global" "Міжнародний" "count" "джерел")
+            "ru" (dict "heading" "Стандарты и авторитетные источники" "subtitle" "Регуляторы, комитеты по стандартизации и отраслевые ассоциации по теме статьи" "regional" "Региональный" "global" "Международный" "count" "источников")
+            "en" (dict "heading" "Standards & Authoritative Sources" "subtitle" "Standards bodies, spectrum regulators, and industry associations relevant to this topic" "regional" "Regional" "global" "International" "count" "sources")
+            "da" (dict "heading" "Standarder og autoritative kilder" "subtitle" "Standardiseringsorganer, frekvensmyndigheder og brancheorganisationer for emnet" "regional" "Regional" "global" "International" "count" "kilder")
+            "de" (dict "heading" "Normen & maßgebliche Quellen" "subtitle" "Normungsgremien, Regulierungsbehörden und Fachverbände zum Thema dieses Beitrags" "regional" "Regional" "global" "International" "count" "Quellen")
+            "fr" (dict "heading" "Normes et sources de référence" "subtitle" "Organismes de normalisation, régulateurs radio et associations professionnelles liés au sujet" "regional" "Régional" "global" "International" "count" "sources")
+            "pl" (dict "heading" "Normy i wiarygodne źródła" "subtitle" "Organizacje normalizacyjne, regulatorzy widma i stowarzyszenia branżowe dla tego tematu" "regional" "Regionalny" "global" "Międzynarodowy" "count" "źródeł")
+            "es" (dict "heading" "Normas y fuentes de referencia" "subtitle" "Organismos de normalización, reguladores del espectro y asociaciones sectoriales del tema" "regional" "Regional" "global" "Internacional" "count" "fuentes")
+            "it" (dict "heading" "Standard e fonti autorevoli" "subtitle" "Enti di normazione, autorità per lo spettro e associazioni industriali pertinenti" "regional" "Regionale" "global" "Internazionale" "count" "fonti")
+            "nl" (dict "heading" "Normen en gezaghebbende bronnen" "subtitle" "Standaardisatie-organisaties, spectrumtoezichthouders en brancheverenigingen bij dit onderwerp" "regional" "Regionaal" "global" "Internationaal" "count" "bronnen")
+            "pt" (dict "heading" "Normas e fontes de referência" "subtitle" "Organismos de normalização, reguladores de espectro e associações setoriais relevantes" "regional" "Regional" "global" "Internacional" "count" "fontes")
+            "sv" (dict "heading" "Standarder och auktoritativa källor" "subtitle" "Standardiseringsorgan, spektrummyndigheter och branschorganisationer för ämnet" "regional" "Regional" "global" "Internationell" "count" "källor")
+            "no" (dict "heading" "Standarder og autoritative kilder" "subtitle" "Standardiseringsorganer, spektrummyndigheter og bransjeorganisasjoner for temaet" "regional" "Regional" "global" "Internasjonal" "count" "kilder")
+            "fi" (dict "heading" "Standardit ja viralliset lähteet" "subtitle" "Standardointijärjestöt, taajuusviranomaiset ja toimialajärjestöt aiheen mukaan" "regional" "Alueellinen" "global" "Kansainvälinen" "count" "lähdettä")
+            "cs" (dict "heading" "Normy a autoritativní zdroje" "subtitle" "Normalizační orgány, regulátoři spektra a oborové asociace související s tématem" "regional" "Regionální" "global" "Mezinárodní" "count" "zdrojů")
+            "sk" (dict "heading" "Normy a autoritatívne zdroje" "subtitle" "Normalizačné orgány, regulátori spektra a odborové združenia k téme článku" "regional" "Regionálny" "global" "Medzinárodný" "count" "zdrojov")
+            "ro" (dict "heading" "Standarde și surse de referință" "subtitle" "Organisme de standardizare, autorități de reglementare și asociații din domeniu" "regional" "Regional" "global" "Internațional" "count" "surse")
+            "bg" (dict "heading" "Стандарти и авторитетни източници" "subtitle" "Стандартизационни органи, регулатори на спектъра и браншови асоциации по темата" "regional" "Регионален" "global" "Международен" "count" "източника")
+            "et" (dict "heading" "Standardid ja autoriteetsed allikad" "subtitle" "Standardiorganisatsioonid, sagedusregulaatorid ja erialaliidud selle teema kohta" "regional" "Piirkondlik" "global" "Rahvusvaheline" "count" "allikat")
+            "lt" (dict "heading" "Standartai ir autoritetingi šaltiniai" "subtitle" "Standartizacijos institucijos, spektro reguliuotojai ir pramonės asociacijos pagal temą" "regional" "Regioninis" "global" "Tarptautinis" "count" "šaltiniai")
+        -}}
+        {{- $ui := index $uiMap $lang | default (index $uiMap "en") -}}
+
+        <section class="rfid-sources" aria-labelledby="rfid-sources-title">
+            <header class="rfid-sources__head">
+                <div class="rfid-sources__head-main">
+                    <div class="rfid-sources__title-row">
+                        <span class="rfid-sources__icon" aria-hidden="true">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 4.5v5.5c0 4.5 -3.2 7.8 -8 9c-4.8 -1.2 -8 -4.5 -8 -9v-5.5z"/><path d="M9 12l2 2l4 -4"/></svg>
+                        </span>
+                        <h2 id="rfid-sources-title" class="rfid-sources__title">{{ $ui.heading }}</h2>
+                    </div>
+                    <p class="rfid-sources__subtitle">{{ $ui.subtitle }}</p>
+                </div>
+                <span class="rfid-sources__summary">{{ len $selected }} {{ $ui.count }}</span>
+            </header>
+
+            <div class="rfid-sources__grid">
+                {{- range $selected -}}
+                    <a class="rfid-sources__item{{ if .IsLocal }} is-regional{{ end }}" href="{{ .Url }}" target="_blank" rel="noopener noreferrer">
+                        <div class="rfid-sources__item-top">
+                            <span class="rfid-sources__code">{{ .Code }}</span>
+                            <span class="rfid-sources__scope">
+                                {{- if .IsLocal -}}
+                                    {{ .RegionCode }} · {{ $ui.regional }}
+                                {{- else -}}
+                                    {{ $ui.global }}
+                                {{- end -}}
+                            </span>
+                        </div>
+                        <p class="rfid-sources__desc">{{ .Desc }}</p>
+                        <div class="rfid-sources__foot">
+                            <span class="rfid-sources__host">{{ .Host }}</span>
+                            <span class="rfid-sources__arrow" aria-hidden="true">↗</span>
+                        </div>
+                    </a>
+                {{- end -}}
+            </div>
+        </section>
+    {{- end -}}
+{{- end -}}

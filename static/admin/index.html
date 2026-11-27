@@ -2864,9 +2864,14 @@
       var PROMPT_TEMPLATE_KEY = 'rfid.cms.imgPromptTemplate';
       var PROMPT_MODE_KEY = 'rfid.cms.imgPromptSourceMode';
       var PROMPT_COLLAPSED_KEY = 'rfid.cms.imgPromptCollapsed';
-      var DEFAULT_PROMPT_TEMPLATE =
+      var LEGACY_DEFAULT_PROMPT_TEMPLATE =
         'Generate a realistic industrial photograph depicting the physical environment and equipment described in the source paragraph below. ' +
         'Visual style: authentic industrial photography, natural or factory lighting, realistic materials (rock, dust, dampness, mining equipment, industrial hardware, rugged sensors), shallow depth of field. ' +
+        'Visual constraints: completely clean surfaces with zero text, no words, no letters, no numbers, no signs, no labels, no screens with readable text, no barcodes, no QR codes, and no logos anywhere in the image.\n' +
+        'Source context:';
+      var DEFAULT_PROMPT_TEMPLATE =
+        'Generate a realistic industrial photograph depicting the physical environment and equipment described in the source paragraph below. ' +
+        'Visual style: authentic industrial photography, natural or factory lighting, realistic materials (brushed metal, concrete, industrial machinery, rugged housings, cabling, logistics or production environment), shallow depth of field. ' +
         'Visual constraints: completely clean surfaces with zero text, no words, no letters, no numbers, no signs, no labels, no screens with readable text, no barcodes, no QR codes, and no logos anywhere in the image.\n' +
         'Source context:';
 
@@ -3127,7 +3132,12 @@
         tplArea.className = 'rfid-prompt-textarea';
         tplArea.rows = 4;
         tplArea.spellcheck = false;
-        tplArea.value = readStorage(PROMPT_TEMPLATE_KEY, DEFAULT_PROMPT_TEMPLATE);
+        var savedTpl = readStorage(PROMPT_TEMPLATE_KEY, DEFAULT_PROMPT_TEMPLATE);
+        if (savedTpl === LEGACY_DEFAULT_PROMPT_TEMPLATE) {
+          savedTpl = DEFAULT_PROMPT_TEMPLATE;
+          writeStorage(PROMPT_TEMPLATE_KEY, DEFAULT_PROMPT_TEMPLATE);
+        }
+        tplArea.value = savedTpl;
         tplField.appendChild(tplHead);
         tplField.appendChild(tplArea);
 
