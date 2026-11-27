@@ -159,7 +159,7 @@
     },
     {
       "id": "links",
-      "enabled": true,
+      "enabled": false,
       "icon": "links",
       "defaultLabel": "Links",
       "defaultUrl": "/links/",
