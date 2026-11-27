@@ -6,7 +6,7 @@ date: 2026-11-13T10:00:00.000Z
 image: Image01.webp
 categories:
   - UHF RFID
-  - Промышленная автоматизация
+  - Промислова автоматизація
 tags:
   - GS1
   - GIAI
