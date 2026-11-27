@@ -9,7 +9,6 @@ categories:
 tags:
   - GS1 Healthcare
   - RTLS
-  - Интеграция EMR
 translationKey: rfid-healthcare-inventory-loss-reduction
 ---
 Hospitals and medical facilities face critical challenges: annual losses of medical supplies reach 10–30% due to inventory errors, theft, and expiration. This directly impacts institutional budgets and patient safety. Global implementation experience shows that using RFID technologies compliant with GS1 and ISO standards can reduce losses by 20–30%, increase equipment availability to ~99%, and accelerate medication dispensing by 15–25%.
