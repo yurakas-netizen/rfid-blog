@@ -139,6 +139,20 @@
       flex-shrink: 0;
     }
 
+    /* Fix Decap CMS dropdown menus clipped by hardcoded narrow widths on Russian labels */
+    ul[class*="DropdownList"] {
+      width: max-content !important;
+      min-width: 100% !important;
+      max-width: min(92vw, 400px) !important;
+    }
+
+    ul[class*="DropdownList"] > [role="menuitem"],
+    ul[class*="DropdownList"] > li {
+      gap: 12px !important;
+      white-space: nowrap !important;
+      box-sizing: border-box !important;
+    }
+
     /* Modal */
     .rfid-modal-backdrop {
       position: fixed;
