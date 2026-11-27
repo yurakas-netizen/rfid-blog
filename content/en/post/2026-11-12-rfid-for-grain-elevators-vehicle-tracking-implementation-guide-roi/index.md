@@ -1,8 +1,11 @@
 ---
 title: "RFID for Grain Elevators: Vehicle Tracking Implementation Guide & ROI"
 slug: rfid-for-grain-elevators-vehicle-tracking-implementation-guide-roi
-description: "Technical analysis of UHF RFID implementation at grain terminals: automatic vehicle identification, integration with weighing systems, reduction of losses and manipulation, compliance with GS1 and ISO 22005 standards."
+description: "Technical analysis of UHF RFID implementation at grain terminals:
+  automatic vehicle identification, integration with weighing systems, reduction
+  of losses and manipulation, compliance with GS1 and ISO 22005 standards."
 date: 2026-11-12T22:00:00.000Z
+image: image01_6.webp
 categories:
   - RFID Технологии
 tags:
