@@ -2631,6 +2631,18 @@
           ensureSidebarBuilderOverlay().open();
         });
 
+        var multilangBtn = document.createElement('button');
+        multilangBtn.type = 'button';
+        multilangBtn.className = 'rfid-io-btn';
+        multilangBtn.title = 'Открыть мультиязычную публикацию (якорная статья + переводы)';
+        multilangBtn.innerHTML =
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3.6 9h16.8"/><path d="M3.6 15h16.8"/><path d="M11.5 3a17 17 0 0 0 0 18"/><path d="M12.5 3a17 17 0 0 1 0 18"/></svg>' +
+          '<span>Мультиязык</span>';
+        multilangBtn.addEventListener('click', function () {
+          ensureMultilangOverlay().open();
+        });
+
+        group.appendChild(multilangBtn);
         group.appendChild(sidebarBtn);
         group.appendChild(homeBtn);
         group.appendChild(registryBtn);
@@ -2880,6 +2892,84 @@
         return sidebarBuilderOverlayEl;
       }
 
+      var multilangOverlayEl = null;
+
+      function ensureMultilangOverlay() {
+        if (multilangOverlayEl) return multilangOverlayEl;
+
+        var backdrop = document.createElement('div');
+        backdrop.className = 'rfid-modal-backdrop';
+
+        var dialog = document.createElement('div');
+        dialog.className = 'rfid-modal is-registry';
+        dialog.setAttribute('role', 'dialog');
+        dialog.setAttribute('aria-modal', 'true');
+
+        var header = document.createElement('div');
+        header.className = 'rfid-modal-header';
+
+        var leftHead = document.createElement('div');
+        leftHead.style.display = 'flex';
+        leftHead.style.alignItems = 'center';
+        leftHead.style.gap = '12px';
+        var titleEl = document.createElement('h3');
+        titleEl.className = 'rfid-modal-title';
+        titleEl.textContent = 'Мультиязычная публикация (якорь + переводы)';
+        var extLink = document.createElement('a');
+        extLink.href = '/admin/multilang-publisher.html';
+        extLink.target = '_blank';
+        extLink.rel = 'noopener noreferrer';
+        extLink.className = 'rfid-btn-secondary';
+        extLink.style.display = 'inline-flex';
+        extLink.style.alignItems = 'center';
+        extLink.style.height = '28px';
+        extLink.style.fontSize = '12px';
+        extLink.style.textDecoration = 'none';
+        extLink.textContent = 'Открыть в отдельной вкладке ↗';
+        leftHead.appendChild(titleEl);
+        leftHead.appendChild(extLink);
+
+        var closeBtn = document.createElement('button');
+        closeBtn.type = 'button';
+        closeBtn.className = 'rfid-modal-close';
+        closeBtn.innerHTML = '&times;';
+        closeBtn.title = 'Закрыть окно';
+
+        header.appendChild(leftHead);
+        header.appendChild(closeBtn);
+
+        var iframe = document.createElement('iframe');
+        iframe.className = 'rfid-registry-frame';
+        iframe.title = 'Мультиязычная публикация (якорь + переводы)';
+
+        dialog.appendChild(header);
+        dialog.appendChild(iframe);
+        backdrop.appendChild(dialog);
+        document.body.appendChild(backdrop);
+
+        function close() {
+          backdrop.classList.remove('is-open');
+        }
+
+        closeBtn.addEventListener('click', close);
+        backdrop.addEventListener('click', function (e) {
+          if (e.target === backdrop) close();
+        });
+        document.addEventListener('keydown', function (e) {
+          if (e.key === 'Escape' && backdrop.classList.contains('is-open')) {
+            close();
+          }
+        });
+
+        multilangOverlayEl = {
+          open: function () {
+            iframe.src = '/admin/multilang-publisher.html?t=' + Date.now();
+            backdrop.classList.add('is-open');
+          }
+        };
+        return multilangOverlayEl;
+      }
+
       function attachHeaderRegistryButton(headerEl) {
         if (!headerEl || headerEl.dataset.rfidRegistryBtn === '1') return;
         headerEl.dataset.rfidRegistryBtn = '1';
@@ -2926,9 +3016,22 @@
           ensureSidebarBuilderOverlay().open();
         });
 
+        var multilangHeaderBtn = document.createElement('button');
+        multilangHeaderBtn.type = 'button';
+        multilangHeaderBtn.className = 'rfid-io-btn';
+        multilangHeaderBtn.style.height = '32px';
+        multilangHeaderBtn.title = 'Открыть мультиязычную публикацию (якорная статья + переводы)';
+        multilangHeaderBtn.innerHTML =
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3.6 9h16.8"/><path d="M3.6 15h16.8"/><path d="M11.5 3a17 17 0 0 0 0 18"/><path d="M12.5 3a17 17 0 0 1 0 18"/></svg>' +
+          '<span>Мультиязык</span>';
+        multilangHeaderBtn.addEventListener('click', function () {
+          ensureMultilangOverlay().open();
+        });
+
         wrap.appendChild(btn);
         wrap.appendChild(homeBtn);
         wrap.appendChild(sidebarHeaderBtn);
+        wrap.appendChild(multilangHeaderBtn);
 
         var nav = headerEl.querySelector('nav');
         if (nav && nav.parentElement) {

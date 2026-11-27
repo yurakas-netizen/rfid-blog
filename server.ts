@@ -44,6 +44,11 @@ import {
   buildDefaultSidebarConfig,
   applySidebarUpdate,
 } from './src/sidebar.js';
+import {
+  loadMultilangState,
+  loadMultilangPostDetail,
+  publishMultilangBundle,
+} from './src/multilang.js';
 
 const ROOT_DIR = process.cwd();
 const PORT = 3000;
@@ -469,6 +474,39 @@ app.post('/api/sidebar-builder/apply', (req: Request, res: Response) => {
 
 app.get(['/sidebar-builder', '/sidebar-builder/'], (_req: Request, res: Response) => {
   res.redirect('/admin/sidebar-builder.html');
+});
+
+// Multi-Language Anchor-Linked Publisher API (local filesystem mode)
+app.use('/api/multilang', express.json({ limit: '25mb' }));
+
+app.get('/api/multilang/state', (_req: Request, res: Response) => {
+  res.json(loadMultilangState());
+});
+
+app.get('/api/multilang/post', (req: Request, res: Response) => {
+  try {
+    const relPath = String(req.query.relPath || '').trim();
+    const detail = loadMultilangPostDetail(relPath);
+    res.json({ ok: true, post: detail });
+  } catch (err) {
+    res.status(400).json({
+      ok: false,
+      error: err instanceof Error ? err.message : String(err),
+    });
+  }
+});
+
+app.post('/api/multilang/publish', (req: Request, res: Response) => {
+  if (!verifySameOrigin(req)) {
+    res.status(403).json({ ok: false, error: 'Запрос отклонён (несовпадение Origin)' });
+    return;
+  }
+  const result = publishMultilangBundle(req.body);
+  res.status(result.status).json(result);
+});
+
+app.get(['/multilang', '/multilang/'], (_req: Request, res: Response) => {
+  res.redirect('/admin/multilang-publisher.html');
 });
 
 // Serve page bundle assets at permalink/:filename

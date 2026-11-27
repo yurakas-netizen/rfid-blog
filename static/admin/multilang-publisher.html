@@ -1,0 +1,3003 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RFID Ukraine — Мультиязычная публикация (якорь + переводы)</title>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --surface-muted: #f1f5f9;
+      --border: #cbd5e1;
+      --border-soft: #e2e8f0;
+      --text: #0f172a;
+      --text-muted: #475569;
+      --text-soft: #64748b;
+      --accent: #0284c7;
+      --accent-hover: #0369a1;
+      --accent-soft: #e0f2fe;
+      --ok-bg: #dcfce7;
+      --ok-text: #166534;
+      --ok-border: #86efac;
+      --warn-bg: #fef3c7;
+      --warn-text: #92400e;
+      --warn-border: #fcd34d;
+      --err-bg: #fee2e2;
+      --err-text: #991b1b;
+      --err-border: #fca5a5;
+      --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      --sans: "Plus Jakarta Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 13.5px;
+      line-height: 1.48;
+    }
+
+    .app {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Top Bar */
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 10px 18px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .topbar-left {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-title {
+      margin: 0;
+      font-size: 15.5px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      white-space: nowrap;
+    }
+
+    .mode-meta {
+      font-family: var(--mono);
+      font-size: 11.5px;
+      color: var(--text-soft);
+      white-space: nowrap;
+    }
+
+    .topbar-center {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      font-size: 12.5px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .readiness-summary {
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+    .readiness-summary.is-ok { color: var(--ok-text); }
+    .readiness-summary.is-err { color: var(--err-text); }
+
+    .topbar-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      height: 34px;
+      padding: 0 13px;
+      border-radius: 7px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 12.5px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: background-color 0.14s ease, border-color 0.14s ease, color 0.14s ease;
+    }
+
+    .btn:hover:not(:disabled) {
+      background: var(--surface-muted);
+      border-color: #94a3b8;
+    }
+
+    .btn:focus-visible,
+    .input:focus-visible,
+    .select:focus-visible,
+    .textarea:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 1px;
+    }
+
+    .btn:disabled { opacity: 0.45; cursor: not-allowed; }
+    .btn-primary { background: var(--accent); border-color: var(--accent); color: #ffffff; }
+    .btn-primary:hover:not(:disabled) { background: var(--accent-hover); border-color: var(--accent-hover); }
+    .btn-accent-soft { background: var(--accent-soft); border-color: #7dd3fc; color: var(--accent-hover); }
+    .btn-accent-soft:hover:not(:disabled) { background: #bae6fd; border-color: #38bdf8; }
+    .btn-sm { height: 28px; padding: 0 9px; font-size: 12px; }
+    .btn-danger { background: #fff1f2; border-color: #fecdd3; color: #be123c; }
+    .btn-danger:hover:not(:disabled) { background: #ffe4e6; border-color: #fda4af; }
+
+    .auth-banner {
+      display: none;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      padding: 10px 18px;
+      background: #eff6ff;
+      border-bottom: 1px solid #bfdbfe;
+    }
+    .auth-banner.is-visible { display: flex; }
+
+    .input, .select, .textarea {
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      background: var(--surface);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 13px;
+      outline: none;
+    }
+
+    .input, .select {
+      height: 34px;
+      padding: 0 10px;
+      width: 100%;
+    }
+
+    .textarea {
+      width: 100%;
+      padding: 10px 12px;
+      resize: vertical;
+      line-height: 1.5;
+    }
+
+    .input.is-mono, .textarea.is-mono {
+      font-family: var(--mono);
+      font-size: 12.5px;
+    }
+
+    .input:focus, .select:focus, .textarea:focus {
+      border-color: var(--accent);
+    }
+
+    .input.is-invalid, .textarea.is-invalid {
+      border-color: #ef4444;
+      background: #fef2f2;
+    }
+
+    /* Workspace Layout */
+    .workspace {
+      display: grid;
+      grid-template-columns: 380px minmax(0, 1fr);
+      gap: 18px;
+      padding: 18px 20px 44px;
+      max-width: 1520px;
+      width: 100%;
+      margin: 0 auto;
+      align-items: start;
+    }
+
+    @media (max-width: 1120px) {
+      .workspace {
+        grid-template-columns: 1fr;
+        padding: 14px 14px 36px;
+      }
+    }
+
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .panel-section {
+      padding: 16px 18px;
+      border-bottom: 1px solid var(--border-soft);
+    }
+
+    .panel-section:last-child {
+      border-bottom: 0;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .section-title {
+      margin: 0;
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .section-note {
+      margin: 0 0 10px;
+      font-size: 12px;
+      color: var(--text-soft);
+      line-height: 1.45;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      margin-bottom: 12px;
+    }
+    .field:last-child { margin-bottom: 0; }
+
+    .field-label-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .field-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .req-star { color: #dc2626; }
+
+    .field-hint {
+      font-size: 11.5px;
+      color: var(--text-soft);
+      line-height: 1.4;
+    }
+
+    .field-err {
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--err-text);
+    }
+
+    .inline-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .inline-row > .input,
+    .inline-row > .select {
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+
+    /* Language Selector Grid */
+    .preset-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+
+    .lang-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 6px;
+    }
+
+    .lang-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      padding: 6px 9px;
+      border: 1px solid var(--border-soft);
+      border-radius: 7px;
+      background: var(--bg);
+      font-size: 12px;
+      transition: border-color 0.12s ease, background-color 0.12s ease;
+    }
+
+    .lang-item.is-checked {
+      background: #f0f9ff;
+      border-color: #7dd3fc;
+    }
+
+    .lang-item.is-checked.is-ready {
+      background: #f0fdf4;
+      border-color: #86efac;
+    }
+
+    .lang-item.is-checked.is-missing {
+      background: #fffbeb;
+      border-color: #fcd34d;
+    }
+
+    .lang-check-label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      min-width: 0;
+      flex: 1 1 auto;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .lang-check-label input {
+      margin: 0;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .lang-code {
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text);
+      flex-shrink: 0;
+    }
+
+    .lang-name {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: var(--text-muted);
+      font-size: 11.5px;
+    }
+
+    .lang-jump-btn {
+      border: 0;
+      background: transparent;
+      color: var(--accent);
+      font-family: inherit;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      padding: 2px 4px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .lang-jump-btn:hover { text-decoration: underline; }
+
+    /* Quick Taxonomy Suggestions */
+    .quick-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 4px;
+    }
+
+    .quick-item-btn {
+      border: 1px solid var(--border-soft);
+      background: var(--surface-muted);
+      color: var(--text-muted);
+      border-radius: 5px;
+      padding: 2px 7px;
+      font-family: inherit;
+      font-size: 11px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+    .quick-item-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    /* Image Dropzone */
+    .cover-box {
+      border: 1px dashed var(--border);
+      border-radius: 8px;
+      padding: 10px 12px;
+      background: var(--bg);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .cover-box.is-dragover {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .cover-preview-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .cover-thumb {
+      width: 84px;
+      height: 52px;
+      object-fit: cover;
+      border-radius: 6px;
+      border: 1px solid var(--border-soft);
+      background: #e2e8f0;
+      flex-shrink: 0;
+    }
+
+    .cover-meta {
+      min-width: 0;
+      flex: 1 1 auto;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .cover-meta-name {
+      font-family: var(--mono);
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    /* Right Editor Column */
+    .editor-col {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      min-width: 0;
+    }
+
+    .tabs-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 14px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+    }
+
+    .lang-tab {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      height: 32px;
+      padding: 0 11px;
+      border-radius: 7px;
+      border: 1px solid var(--border-soft);
+      background: var(--surface-muted);
+      color: var(--text-muted);
+      font-family: inherit;
+      font-size: 12.5px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background-color 0.14s ease, border-color 0.14s ease, color 0.14s ease;
+    }
+
+    .lang-tab:hover {
+      border-color: var(--border);
+      color: var(--text);
+    }
+
+    .lang-tab.is-active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #ffffff;
+    }
+
+    .tab-state {
+      font-size: 11px;
+      font-weight: 600;
+      opacity: 0.9;
+    }
+    .lang-tab:not(.is-active) .tab-state.is-ok { color: var(--ok-text); }
+    .lang-tab:not(.is-active) .tab-state.is-err { color: var(--warn-text); }
+
+    .validation-strip {
+      display: none;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px 14px;
+      padding: 10px 14px;
+      border-radius: 9px;
+      border: 1px solid var(--warn-border);
+      background: var(--warn-bg);
+      color: var(--warn-text);
+      font-size: 12.5px;
+    }
+    .validation-strip.is-visible { display: flex; }
+
+    .validation-link {
+      border: 0;
+      background: transparent;
+      padding: 0;
+      font-family: inherit;
+      font-size: 12.5px;
+      font-weight: 700;
+      color: #9a3412;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+
+    /* Active Editor Surface */
+    .editor-surface {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .editor-header {
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border-soft);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .editor-heading-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+    }
+
+    .editor-heading {
+      margin: 0;
+      font-size: 15.5px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .editor-subline {
+      font-size: 12px;
+      color: var(--text-soft);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .editor-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .inherited-bar {
+      padding: 10px 18px;
+      background: var(--surface-muted);
+      border-bottom: 1px solid var(--border-soft);
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    .inherited-bar strong {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .editor-body {
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .two-col-fields {
+      display: grid;
+      grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+      gap: 14px;
+    }
+    @media (max-width: 780px) {
+      .two-col-fields { grid-template-columns: 1fr; }
+    }
+
+    .body-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+
+    .body-textarea {
+      min-height: 360px;
+      font-family: var(--mono);
+      font-size: 12.5px;
+      line-height: 1.55;
+      tab-size: 2;
+    }
+
+    .body-textarea.is-dragover {
+      border-color: var(--accent);
+      background: #f0f9ff;
+    }
+
+    .preview-frame {
+      width: 100%;
+      min-height: 360px;
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      background: #ffffff;
+    }
+
+    /* Prompt Helper (Collapsible inside Anchor) */
+    .prompt-details {
+      border-top: 1px solid var(--border-soft);
+      padding: 12px 18px;
+      background: #f8fafc;
+    }
+
+    .prompt-summary-btn {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      border: 0;
+      background: transparent;
+      padding: 0;
+      font-family: inherit;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+
+    .prompt-box {
+      margin-top: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    /* Modals */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      background: rgba(15, 23, 42, 0.56);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+    }
+    .modal-backdrop.is-open { display: flex; }
+
+    .modal {
+      width: min(94vw, 820px);
+      max-height: 90vh;
+      background: var(--surface);
+      border-radius: 11px;
+      border: 1px solid var(--border);
+      box-shadow: 0 24px 60px rgba(15, 23, 42, 0.28);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .modal-head {
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border-soft);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .modal-title {
+      margin: 0;
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .modal-close {
+      border: 0;
+      background: transparent;
+      font-size: 22px;
+      line-height: 1;
+      color: var(--text-soft);
+      cursor: pointer;
+      padding: 2px 6px;
+    }
+    .modal-close:hover { color: var(--text); }
+
+    .modal-body {
+      padding: 16px 18px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .modal-foot {
+      padding: 12px 18px;
+      border-top: 1px solid var(--border-soft);
+      background: var(--bg);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .notice-box {
+      padding: 10px 12px;
+      border-radius: 7px;
+      border: 1px solid var(--border-soft);
+      background: var(--surface-muted);
+      font-size: 12.5px;
+      color: var(--text-muted);
+      line-height: 1.45;
+    }
+
+    .notice-box.is-info {
+      background: #f0f9ff;
+      border-color: #bae6fd;
+      color: #0c4a6e;
+    }
+
+    .notice-box.is-ok {
+      background: var(--ok-bg);
+      border-color: var(--ok-border);
+      color: var(--ok-text);
+    }
+
+    .notice-box.is-err {
+      background: var(--err-bg);
+      border-color: var(--err-border);
+      color: var(--err-text);
+    }
+
+    .check-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .check-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12.5px;
+      color: var(--text-muted);
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .check-label.is-locked {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+
+    .publish-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .publish-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 8px 11px;
+      border: 1px solid var(--border-soft);
+      border-radius: 7px;
+      background: var(--bg);
+      font-size: 12.5px;
+    }
+
+    .publish-row-path {
+      font-family: var(--mono);
+      font-size: 11.5px;
+      color: var(--text-muted);
+      word-break: break-all;
+    }
+
+    .post-picker-list {
+      max-height: 360px;
+      overflow-y: auto;
+      border: 1px solid var(--border-soft);
+      border-radius: 8px;
+    }
+
+    .post-picker-row {
+      width: 100%;
+      text-align: left;
+      border: 0;
+      border-bottom: 1px solid var(--border-soft);
+      background: var(--surface);
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .post-picker-row:last-child { border-bottom: 0; }
+    .post-picker-row:hover { background: var(--surface-muted); }
+
+    .post-picker-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .post-picker-meta {
+      font-size: 11.5px;
+      color: var(--text-soft);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .toast {
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      z-index: 200;
+      background: #0f172a;
+      color: #ffffff;
+      padding: 10px 15px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      box-shadow: 0 14px 36px rgba(15, 23, 42, 0.32);
+      display: none;
+    }
+    .toast.is-open { display: block; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="topbar-left">
+        <h1 class="brand-title">Мультиязычная публикация</h1>
+        <span id="modeBadge" class="mode-meta">Определение режима...</span>
+      </div>
+
+      <div class="topbar-center">
+        <span id="readinessSummary" class="readiness-summary">Проверка готовности...</span>
+      </div>
+
+      <div class="topbar-actions">
+        <button type="button" id="resetBtn" class="btn">Очистить форму</button>
+        <button type="button" id="publishAllBtn" class="btn btn-primary" disabled>Опубликовать все</button>
+      </div>
+    </header>
+
+    <div id="githubAuthBanner" class="auth-banner">
+      <strong style="font-size: 12.5px;">GitHub режим:</strong>
+      <input type="password" id="ghTokenInput" class="input" style="max-width: 280px;" placeholder="GitHub Token (если нет сессии CMS)" />
+      <button type="button" id="ghConnectBtn" class="btn btn-primary btn-sm">Подключиться</button>
+      <button type="button" id="ghFromDecapBtn" class="btn btn-sm">Взять из сессии CMS</button>
+      <span id="ghAuthStatus" style="font-size: 12px; color: var(--text-muted);"></span>
+    </div>
+
+    <main class="workspace">
+      <!-- Left Column: Anchor Language, Follower Checkboxes, Shared Constants -->
+      <aside class="panel">
+        <section class="panel-section">
+          <div class="section-head">
+            <h2 class="section-title">1. Якорный и ведомые языки</h2>
+          </div>
+          <p class="section-note">
+            Якорь задаёт общие константы для всей связки. Ведомые языки заполняются отдельно (через импорт или вручную) — публикация заблокирована, пока не готовы все выбранные языки.
+          </p>
+
+          <div class="field">
+            <label class="field-label" for="anchorLangSelect">Якорный язык</label>
+            <select id="anchorLangSelect" class="select"></select>
+          </div>
+
+          <div class="field">
+            <div class="field-label-row">
+              <span class="field-label">Ведомые языки (переводы) <span class="req-star">*</span></span>
+              <span id="followerCountText" class="field-hint"></span>
+            </div>
+            <div class="preset-row">
+              <button type="button" id="presetRuUaEnBtn" class="btn btn-sm btn-accent-soft">RU + UA + EN</button>
+              <button type="button" id="presetClearFollowersBtn" class="btn btn-sm">Снять все</button>
+            </div>
+            <div id="followersGrid" class="lang-grid"></div>
+          </div>
+        </section>
+
+        <section class="panel-section">
+          <div class="section-head">
+            <h2 class="section-title">2. Общие константы (из якоря)</h2>
+          </div>
+          <p class="section-note">
+            Записываются одинаково в якорную и во все ведомые статьи. При импорте ведомых языков эти поля игнорируются.
+          </p>
+
+          <div class="field">
+            <div class="field-label-row">
+              <label class="field-label" for="constTkInput">Ключ связи (translationKey) <span class="req-star">*</span></label>
+              <button type="button" id="tkFromSlugBtn" class="btn btn-sm">Из слага якоря</button>
+            </div>
+            <input type="text" id="constTkInput" class="input is-mono" placeholder="uhf-rfid-on-metal-guide" />
+            <span id="tkHint" class="field-hint">Объединяет переводы в одну группу и переключатель языков.</span>
+          </div>
+
+          <div class="field">
+            <div class="field-label-row">
+              <label class="field-label" for="constDateInput">Дата публикации <span class="req-star">*</span></label>
+              <button type="button" id="dateNowBtn" class="btn btn-sm">Сейчас</button>
+            </div>
+            <input type="datetime-local" id="constDateInput" class="input" />
+          </div>
+
+          <div class="field">
+            <div class="field-label-row">
+              <label class="field-label">Обложка (верхний баннер)</label>
+              <button type="button" id="clearCoverBtn" class="btn btn-sm" style="display:none;">Убрать</button>
+            </div>
+            <div id="coverDropBox" class="cover-box">
+              <div id="coverPreviewWrap" class="cover-preview-wrap" style="display:none;">
+                <img id="coverThumbImg" class="cover-thumb" alt="Предпросмотр обложки" />
+                <div class="cover-meta">
+                  <div id="coverFileName" class="cover-meta-name"></div>
+                  <div id="coverFileInfo"></div>
+                </div>
+              </div>
+              <div class="inline-row">
+                <input type="file" id="coverFileInput" accept="image/*" style="font-size: 12px; width: 100%;" />
+              </div>
+              <input type="text" id="constImageInput" class="input is-mono" placeholder="Или имя/URL: image01.webp или /images/..." />
+            </div>
+            <span class="field-hint">Файл обложки автоматически копируется в папку каждого выбранного языка.</span>
+          </div>
+
+          <div class="field">
+            <label class="field-label" for="constCategoriesInput">Категории (через запятую)</label>
+            <input type="text" id="constCategoriesInput" class="input" placeholder="RFID Solutions, Technical Guides" />
+            <div id="categorySuggestions" class="quick-list"></div>
+          </div>
+
+          <div class="field">
+            <label class="field-label" for="constTagsInput">Теги (через запятую)</label>
+            <input type="text" id="constTagsInput" class="input" placeholder="UHF RFID, EPC Gen2v2, ISO/IEC 18000-63" />
+            <div id="tagSuggestions" class="quick-list"></div>
+          </div>
+
+          <div class="field">
+            <label class="check-label">
+              <input type="checkbox" id="overwriteCheck" />
+              <span>Разрешить перезапись при совпадении слага/папки</span>
+            </label>
+          </div>
+        </section>
+      </aside>
+
+      <!-- Right Column: Language Tabs & Active Editor -->
+      <section class="editor-col">
+        <div id="langTabsBar" class="tabs-bar" role="tablist" aria-label="Языки публикации"></div>
+
+        <div id="validationStrip" class="validation-strip" role="status"></div>
+
+        <div class="editor-surface">
+          <div class="editor-header">
+            <div class="editor-heading-wrap">
+              <h2 id="editorHeading" class="editor-heading">Якорная статья</h2>
+              <span id="editorSubline" class="editor-subline"></span>
+            </div>
+            <div class="editor-actions">
+              <button type="button" id="loadExistingBtn" class="btn">Подтянуть статью с сайта</button>
+              <button type="button" id="openImportBtn" class="btn btn-accent-soft">Импорт (.md / .json)</button>
+            </div>
+          </div>
+
+          <div id="inheritedConstantsBar" class="inherited-bar" style="display:none;"></div>
+
+          <div class="editor-body">
+            <div class="two-col-fields">
+              <div class="field" style="margin-bottom:0;">
+                <div class="field-label-row">
+                  <label class="field-label" for="entryTitleInput">Заголовок статьи <span class="req-star">*</span></label>
+                </div>
+                <input type="text" id="entryTitleInput" class="input" placeholder="Введите или импортируйте заголовок..." />
+              </div>
+
+              <div class="field" style="margin-bottom:0;">
+                <div class="field-label-row">
+                  <label class="field-label" for="entrySlugInput">URL-слаг (латиницей) <span class="req-star">*</span></label>
+                  <button type="button" id="entrySlugBtn" class="btn btn-sm">Slug A-z</button>
+                </div>
+                <input type="text" id="entrySlugInput" class="input is-mono" placeholder="uhf-rfid-guide" />
+                <span id="entrySlugErr" class="field-err" style="display:none;"></span>
+              </div>
+            </div>
+
+            <div class="field" style="margin-bottom:0;">
+              <label class="field-label" for="entryDescInput">Описание (SEO / краткий анонс)</label>
+              <input type="text" id="entryDescInput" class="input" placeholder="Краткое техническое резюме статьи..." />
+            </div>
+
+            <div class="field" style="margin-bottom:0;">
+              <div class="body-toolbar">
+                <label class="field-label" for="entryBodyInput">
+                  Текст статьи (Markdown / HTML / KaTeX) <span class="req-star">*</span>
+                  <span id="entryBodyStats" class="field-hint" style="margin-left:8px; font-variant-numeric: tabular-nums;"></span>
+                </label>
+                <div class="inline-row">
+                  <button type="button" id="insertHtmlBtn" class="btn btn-sm">Вставить HTML</button>
+                  <button type="button" id="togglePreviewBtn" class="btn btn-sm">Предпросмотр</button>
+                </div>
+              </div>
+              <textarea
+                id="entryBodyInput"
+                class="textarea body-textarea"
+                spellcheck="false"
+                placeholder="Введите текст статьи на выбранном языке, вставьте Markdown/HTML или перетащите сюда файл .md / .json..."
+              ></textarea>
+              <iframe id="bodyPreviewFrame" class="preview-frame" sandbox="" style="display:none;" title="Предпросмотр текста"></iframe>
+            </div>
+          </div>
+
+          <div id="anchorPromptWrap" class="prompt-details">
+            <button type="button" id="togglePromptBtn" class="prompt-summary-btn">
+              <span>Промпт для генерации обложки (по 1-му абзацу якоря)</span>
+              <span id="promptToggleLabel">Показать</span>
+            </button>
+            <div id="promptBox" class="prompt-box" style="display:none;">
+              <textarea id="coverPromptOutput" class="textarea is-mono" rows="5" readonly></textarea>
+              <div class="inline-row" style="justify-content: space-between;">
+                <span id="promptSourceInfo" class="field-hint"></span>
+                <button type="button" id="copyPromptBtn" class="btn btn-sm">Скопировать промпт</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Import Modal -->
+  <div id="importModalBackdrop" class="modal-backdrop">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="importModalTitle">
+      <div class="modal-head">
+        <h3 id="importModalTitle" class="modal-title">Импорт статьи (.md или .json)</h3>
+        <button type="button" id="importCloseBtn" class="modal-close" aria-label="Закрыть">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div id="importFollowerNotice" class="notice-box is-info" style="display:none;">
+          <strong>Режим ведомого языка:</strong> импортируются только языковые переменные (Заголовок, URL-слаг, Описание, Текст статьи). Поля констант (Дата, Ключ перевода, Категории, Теги, Обложка) из файла игнорируются и берутся из якорной статьи.
+        </div>
+        <div class="check-row">
+          <input type="file" id="importFileInput" accept=".md,.markdown,.txt,.json" />
+          <label class="check-label">
+            <input type="checkbox" id="importStripImagesCheck" />
+            <span>Вырезать картинки из текста при импорте</span>
+          </label>
+        </div>
+        <div id="importFieldChecks" class="check-row">
+          <label class="check-label"><input type="checkbox" data-ifield="title" checked /><span>Заголовок</span></label>
+          <label class="check-label"><input type="checkbox" data-ifield="slug" checked /><span>URL-слаг</span></label>
+          <label class="check-label"><input type="checkbox" data-ifield="description" checked /><span>Описание</span></label>
+          <label class="check-label" data-const-wrap="1"><input type="checkbox" data-ifield="date" checked /><span>Дата</span></label>
+          <label class="check-label" data-const-wrap="1"><input type="checkbox" data-ifield="translationKey" checked /><span>Ключ перевода</span></label>
+          <label class="check-label" data-const-wrap="1"><input type="checkbox" data-ifield="categories" checked /><span>Категории</span></label>
+          <label class="check-label" data-const-wrap="1"><input type="checkbox" data-ifield="tags" checked /><span>Теги</span></label>
+          <label class="check-label"><input type="checkbox" data-ifield="body" checked /><span>Текст статьи</span></label>
+        </div>
+        <textarea id="importTextarea" class="textarea is-mono" rows="12" spellcheck="false" placeholder="Вставьте содержимое .md (с --- YAML ---) или .json, либо выберите файл выше..."></textarea>
+        <div id="importSummary" class="notice-box"></div>
+      </div>
+      <div class="modal-foot">
+        <span id="importStatus" class="field-hint"></span>
+        <div class="inline-row">
+          <button type="button" id="importCancelBtn" class="btn">Отмена</button>
+          <button type="button" id="importApplyBtn" class="btn btn-primary">Применить</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Raw HTML Modal -->
+  <div id="htmlModalBackdrop" class="modal-backdrop">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="htmlModalTitle">
+      <div class="modal-head">
+        <h3 id="htmlModalTitle" class="modal-title">Вставка HTML-кода (shortcodes / rawhtml)</h3>
+        <button type="button" id="htmlCloseBtn" class="modal-close" aria-label="Закрыть">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="check-row">
+          <label class="check-label">
+            <input type="checkbox" id="htmlWrapRawCheck" checked />
+            <span>Обернуть в блок <code>{{&lt; rawhtml &gt;}}...{{&lt; /rawhtml &gt;}}</code></span>
+          </label>
+        </div>
+        <textarea id="htmlTextarea" class="textarea is-mono" rows="12" spellcheck="false" placeholder="Вставьте HTML-код таблицы, схемы или интерактивного блока..."></textarea>
+      </div>
+      <div class="modal-foot">
+        <span class="field-hint">Вставляется в конец или вместо выделения в тексте текущего языка.</span>
+        <div class="inline-row">
+          <button type="button" id="htmlCancelBtn" class="btn">Отмена</button>
+          <button type="button" id="htmlApplyBtn" class="btn btn-primary">Вставить в текст</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Load Existing Post Picker Modal -->
+  <div id="pickerModalBackdrop" class="modal-backdrop">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="pickerModalTitle">
+      <div class="modal-head">
+        <h3 id="pickerModalTitle" class="modal-title">Загрузить существующую статью в якорь</h3>
+        <button type="button" id="pickerCloseBtn" class="modal-close" aria-label="Закрыть">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="inline-row">
+          <input type="search" id="pickerSearchInput" class="input" placeholder="Поиск по заголовку, слагу или translationKey..." />
+          <select id="pickerLangSelect" class="select" style="max-width: 190px;">
+            <option value="">Все языки</option>
+          </select>
+        </div>
+        <div id="pickerList" class="post-picker-list"></div>
+      </div>
+      <div class="modal-foot">
+        <span id="pickerCountHint" class="field-hint"></span>
+        <button type="button" id="pickerCancelBtn" class="btn">Закрыть</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Publish Confirmation Modal -->
+  <div id="publishModalBackdrop" class="modal-backdrop">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="publishModalTitle">
+      <div class="modal-head">
+        <h3 id="publishModalTitle" class="modal-title">Подтверждение мультиязычной публикации</h3>
+        <button type="button" id="publishCloseBtn" class="modal-close" aria-label="Закрыть">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div id="publishConstantsSummary" class="notice-box is-info"></div>
+        <div id="publishTargetList" class="publish-list"></div>
+        <div id="publishCommitWrap" class="field" style="display:none; margin-bottom:0;">
+          <label class="field-label" for="publishCommitMsg">Сообщение Git-коммита</label>
+          <input type="text" id="publishCommitMsg" class="input" />
+        </div>
+        <div id="publishResultBox" class="notice-box" style="display:none;"></div>
+      </div>
+      <div class="modal-foot">
+        <span id="publishModalStatus" class="field-hint"></span>
+        <div class="inline-row">
+          <button type="button" id="publishCancelBtn" class="btn">Закрыть</button>
+          <button type="button" id="publishConfirmBtn" class="btn btn-primary">Подтвердить и опубликовать</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast" role="status"></div>
+
+  <script>
+    (function () {
+      'use strict';
+
+      var SITE_LANGUAGES = [
+        { code: 'uk', shortLabel: 'UA', label: 'Українська (UA)', urlPrefix: '' },
+        { code: 'en', shortLabel: 'EN', label: 'English (EN)', urlPrefix: '/en' },
+        { code: 'da', shortLabel: 'DA', label: 'Dansk (DA)', urlPrefix: '/da' },
+        { code: 'de', shortLabel: 'DE', label: 'Deutsch (DE)', urlPrefix: '/de' },
+        { code: 'fr', shortLabel: 'FR', label: 'Français (FR)', urlPrefix: '/fr' },
+        { code: 'ru', shortLabel: 'RU', label: 'Русский (RU)', urlPrefix: '/ru' },
+        { code: 'pl', shortLabel: 'PL', label: 'Polski (PL)', urlPrefix: '/pl' },
+        { code: 'es', shortLabel: 'ES', label: 'Español (ES)', urlPrefix: '/es' },
+        { code: 'it', shortLabel: 'IT', label: 'Italiano (IT)', urlPrefix: '/it' },
+        { code: 'nl', shortLabel: 'NL', label: 'Nederlands (NL)', urlPrefix: '/nl' },
+        { code: 'pt', shortLabel: 'PT', label: 'Português (PT)', urlPrefix: '/pt' },
+        { code: 'sv', shortLabel: 'SV', label: 'Svenska (SV)', urlPrefix: '/sv' },
+        { code: 'no', shortLabel: 'NO', label: 'Norsk (NO)', urlPrefix: '/no' },
+        { code: 'fi', shortLabel: 'FI', label: 'Suomi (FI)', urlPrefix: '/fi' },
+        { code: 'cs', shortLabel: 'CS', label: 'Čeština (CS)', urlPrefix: '/cs' },
+        { code: 'sk', shortLabel: 'SK', label: 'Slovenčina (SK)', urlPrefix: '/sk' },
+        { code: 'ro', shortLabel: 'RO', label: 'Română (RO)', urlPrefix: '/ro' },
+        { code: 'bg', shortLabel: 'BG', label: 'Български (BG)', urlPrefix: '/bg' },
+        { code: 'et', shortLabel: 'ET', label: 'Eesti (ET)', urlPrefix: '/et' },
+        { code: 'lt', shortLabel: 'LT', label: 'Lietuvių (LT)', urlPrefix: '/lt' }
+      ];
+
+      var LANG_MAP = {};
+      SITE_LANGUAGES.forEach(function (l) { LANG_MAP[l.code] = l; });
+
+      var SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+      var DEFAULT_PROMPT_TEMPLATE =
+        'Generate a realistic industrial photograph depicting the physical environment and equipment described in the source paragraph below. ' +
+        'Visual style: authentic industrial photography, natural or factory lighting, realistic materials (brushed metal, concrete, industrial machinery, rugged housings, cabling, logistics or production environment), shallow depth of field. ' +
+        'Visual constraints: completely clean surfaces with zero text, no words, no letters, no numbers, no signs, no labels, no screens with readable text, no barcodes, no QR codes, and no logos anywhere in the image.\n' +
+        'Source context:';
+
+      var state = {
+        mode: 'local',
+        ghRepo: 'yurakas-netizen/rfid-blog',
+        ghBranch: 'master',
+        ghToken: '',
+        ghHeadCommitSha: '',
+        ghHeadTreeSha: '',
+        categoriesPool: [],
+        tagsPool: [],
+        existingSlugsByLang: {},
+        existingPosts: [],
+        anchorLang: 'ru',
+        followerLangs: ['uk', 'en'],
+        activeTabLang: 'ru',
+        previewOpen: false,
+        promptOpen: false,
+        overwrite: false,
+        constants: {
+          dateLocal: toLocalDatetimeValue(new Date()),
+          translationKey: '',
+          tkManual: false,
+          image: '',
+          categoriesText: '',
+          tagsText: '',
+          coverAsset: null, // { filename, base64, previewUrl, size, sourceRelPath, ghBlobSha }
+          extraAssets: []   // from loaded bundle
+        },
+        entries: {} // [lang]: { title, slug, slugManual, description, body }
+      };
+
+      /* ---------- Utilities ---------- */
+      function getEntry(lang) {
+        if (!state.entries[lang]) {
+          state.entries[lang] = {
+            title: '',
+            slug: '',
+            slugManual: false,
+            description: '',
+            body: ''
+          };
+        }
+        return state.entries[lang];
+      }
+
+      function toLocalDatetimeValue(dateInput) {
+        var d = dateInput instanceof Date ? dateInput : new Date(dateInput);
+        if (isNaN(d.getTime())) d = new Date();
+        var pad = function (n) { return n < 10 ? '0' + n : String(n); };
+        return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) +
+          'T' + pad(d.getHours()) + ':' + pad(d.getMinutes());
+      }
+
+      function normalizeIsoDate(val) {
+        if (!val) return '';
+        var d = new Date(val);
+        return isNaN(d.getTime()) ? '' : d.toISOString();
+      }
+
+      function toLatinSlug(text) {
+        var map = {
+          'а':'a','б':'b','в':'v','г':'g','ґ':'g','д':'d','е':'e','ё':'yo','є':'ye',
+          'ж':'zh','з':'z','и':'i','і':'i','ї':'yi','й':'y','к':'k','л':'l','м':'m',
+          'н':'n','о':'o','п':'p','р':'r','с':'s','т':'t','у':'u','ф':'f','х':'kh',
+          'ц':'ts','ч':'ch','ш':'sh','щ':'shch','ъ':'','ы':'y','ь':'','э':'e','ю':'yu','я':'ya',
+          'æ':'ae','ø':'o','å':'a','ß':'ss','ł':'l','đ':'d','ð':'d','þ':'th'
+        };
+        var lower = String(text || '').toLowerCase();
+        var out = '';
+        for (var i = 0; i < lower.length; i++) {
+          var ch = lower[i];
+          out += Object.prototype.hasOwnProperty.call(map, ch) ? map[ch] : ch;
+        }
+        out = out.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        out = out
+          .replace(/['’ʼ`]/g, '')
+          .replace(/[^a-z0-9]+/g, '-')
+          .replace(/^-+|-+$/g, '')
+          .replace(/-{2,}/g, '-');
+        if (out.length > 80) {
+          var cut = out.slice(0, 80);
+          var lastDash = cut.lastIndexOf('-');
+          out = (lastDash > 40 ? cut.slice(0, lastDash) : cut).replace(/-+$/g, '');
+        }
+        return out;
+      }
+
+      function splitCsvList(raw) {
+        var seen = {};
+        var out = [];
+        String(raw || '').split(',').forEach(function (part) {
+          var v = part.trim();
+          if (v && !seen[v]) {
+            seen[v] = true;
+            out.push(v);
+          }
+        });
+        return out;
+      }
+
+      function showToast(msg) {
+        var t = document.getElementById('toast');
+        t.textContent = msg;
+        t.classList.add('is-open');
+        clearTimeout(showToast._timer);
+        showToast._timer = setTimeout(function () { t.classList.remove('is-open'); }, 3200);
+      }
+
+      /* ---------- YAML / Import Parser (matches CMS Import) ---------- */
+      function stripQuotes(s) {
+        var str = String(s || '').trim();
+        if (str.length >= 2 && str[0] === '"' && str[str.length - 1] === '"') {
+          try { return JSON.parse(str); } catch (_) { return str.slice(1, -1); }
+        }
+        if (str.length >= 2 && str[0] === "'" && str[str.length - 1] === "'") {
+          return str.slice(1, -1).replace(/''/g, "'");
+        }
+        return str;
+      }
+
+      function parseYamlFrontmatter(yamlText) {
+        var lines = yamlText.replace(/\r\n/g, '\n').split('\n');
+        var out = {};
+        var i = 0;
+        while (i < lines.length) {
+          var line = lines[i];
+          if (!line.trim() || line.trim()[0] === '#') { i++; continue; }
+          var m = line.match(/^([A-Za-z0-9_-]+)\s*:\s*(.*)$/);
+          if (!m) { i++; continue; }
+          var key = m[1];
+          var rest = m[2];
+
+          if (rest === '|' || rest === '|-' || rest === '>' || rest === '>-') {
+            var block = [];
+            i++;
+            while (i < lines.length && (/^\s+/.test(lines[i]) || lines[i] === '')) {
+              block.push(lines[i].replace(/^\s{2}/, ''));
+              i++;
+            }
+            out[key] = block.join(rest[0] === '>' ? ' ' : '\n').trim();
+            continue;
+          }
+
+          if (rest.trim() === '') {
+            var arr = [];
+            var j = i + 1;
+            while (j < lines.length && /^\s*-\s+/.test(lines[j])) {
+              arr.push(stripQuotes(lines[j].replace(/^\s*-\s+/, '')));
+              j++;
+            }
+            if (arr.length > 0) {
+              out[key] = arr;
+              i = j;
+              continue;
+            }
+            out[key] = '';
+            i++;
+            continue;
+          }
+
+          var trimmed = rest.trim();
+          if (trimmed[0] === '[' && trimmed[trimmed.length - 1] === ']') {
+            var inner = trimmed.slice(1, -1).trim();
+            out[key] = inner
+              ? inner.split(',').map(function (x) { return stripQuotes(x); }).filter(Boolean)
+              : [];
+            i++;
+            continue;
+          }
+
+          var valParts = [rest];
+          var k = i + 1;
+          var startsQuote = trimmed[0] === '"' && !(trimmed.length > 1 && trimmed[trimmed.length - 1] === '"' && trimmed[trimmed.length - 2] !== '\\');
+          while (k < lines.length && /^\s+/.test(lines[k]) && !/^\s*-\s+/.test(lines[k])) {
+            valParts.push(lines[k].trim());
+            var joined = valParts.join(' ');
+            k++;
+            if (startsQuote && /[^\\]"$/.test(joined.trim())) break;
+          }
+          out[key] = stripQuotes(valParts.join(' '));
+          i = k;
+        }
+        return out;
+      }
+
+      function stripBodyImages(body) {
+        return String(body || '')
+          .replace(/!\[[^\]]*\]\([^)]*\)\s*/g, '')
+          .replace(/\{\{<\s*gallery[^>]*>\}\}[\s\S]*?\{\{<\s*\/gallery\s*>\}\}\s*/gi, '')
+          .replace(/\{\{<\s*figure[^>]*>\}\}\s*/gi, '')
+          .replace(/\n{3,}/g, '\n\n')
+          .trim();
+      }
+
+      function parseImportedArticle(rawText) {
+        var text = String(rawText || '').replace(/^\uFEFF/, '');
+        var trimmed = text.trim();
+        if (!trimmed) throw new Error('Пустой файл или текст');
+
+        if (trimmed[0] === '{') {
+          var obj = JSON.parse(trimmed);
+          return {
+            hasTitle: typeof obj.title === 'string' && obj.title.trim().length > 0,
+            title: typeof obj.title === 'string' ? obj.title : '',
+            hasSlug: typeof obj.slug === 'string' && obj.slug.trim().length > 0,
+            slug: typeof obj.slug === 'string' ? obj.slug.trim() : '',
+            hasDescription: typeof obj.description === 'string',
+            description: typeof obj.description === 'string' ? obj.description : '',
+            hasDate: Boolean(obj.date),
+            date: obj.date ? String(obj.date) : '',
+            hasTranslationKey: typeof obj.translationKey === 'string' && obj.translationKey.trim().length > 0,
+            translationKey: typeof obj.translationKey === 'string' ? obj.translationKey.trim() : '',
+            hasCategories: Array.isArray(obj.categories),
+            categories: Array.isArray(obj.categories) ? obj.categories.map(String).filter(Boolean) : [],
+            hasTags: Array.isArray(obj.tags),
+            tags: Array.isArray(obj.tags) ? obj.tags.map(String).filter(Boolean) : [],
+            hasImage: typeof obj.image === 'string' && obj.image.trim().length > 0,
+            image: typeof obj.image === 'string' ? obj.image.trim() : '',
+            hasBody: typeof obj.body === 'string',
+            body: typeof obj.body === 'string' ? obj.body : ''
+          };
+        }
+
+        var fmMatch = text.match(/^\s*---\r?\n([\s\S]*?)\r?\n---\r?\n?([\s\S]*)$/);
+        if (fmMatch) {
+          var meta = parseYamlFrontmatter(fmMatch[1]);
+          var body = (fmMatch[2] || '').replace(/^\r?\n/, '');
+          var cats = Array.isArray(meta.categories)
+            ? meta.categories
+            : (typeof meta.categories === 'string' && meta.categories ? meta.categories.split(',').map(function (s) { return s.trim(); }).filter(Boolean) : []);
+          var tags = Array.isArray(meta.tags)
+            ? meta.tags
+            : (typeof meta.tags === 'string' && meta.tags ? meta.tags.split(',').map(function (s) { return s.trim(); }).filter(Boolean) : []);
+          return {
+            hasTitle: typeof meta.title === 'string' && meta.title.trim().length > 0,
+            title: typeof meta.title === 'string' ? meta.title : '',
+            hasSlug: typeof meta.slug === 'string' && meta.slug.trim().length > 0,
+            slug: typeof meta.slug === 'string' ? meta.slug.trim() : '',
+            hasDescription: typeof meta.description === 'string',
+            description: typeof meta.description === 'string' ? meta.description : '',
+            hasDate: Boolean(meta.date),
+            date: meta.date ? String(meta.date) : '',
+            hasTranslationKey: typeof meta.translationKey === 'string' && meta.translationKey.trim().length > 0,
+            translationKey: typeof meta.translationKey === 'string' ? meta.translationKey.trim() : '',
+            hasCategories: 'categories' in meta,
+            categories: cats,
+            hasTags: 'tags' in meta,
+            tags: tags,
+            hasImage: typeof meta.image === 'string' && meta.image.trim().length > 0,
+            image: typeof meta.image === 'string' ? meta.image.trim() : '',
+            hasBody: true,
+            body: body
+          };
+        }
+
+        return {
+          hasTitle: false,
+          title: '',
+          hasSlug: false,
+          slug: '',
+          hasDescription: false,
+          description: '',
+          hasDate: false,
+          date: '',
+          hasTranslationKey: false,
+          translationKey: '',
+          hasCategories: false,
+          categories: [],
+          hasTags: false,
+          tags: [],
+          hasImage: false,
+          image: '',
+          hasBody: true,
+          body: text
+        };
+      }
+
+      /* ---------- Prompt Generator Helper ---------- */
+      function extractFirstParagraph(body) {
+        var src = String(body || '')
+          .replace(/\r\n?/g, '\n')
+          .replace(/\{\{<\s*rawhtml\s*>\}\}[\s\S]*?\{\{<\s*\/rawhtml\s*>\}\}/gi, '\n\n')
+          .replace(/\{\{[<%][\s\S]*?[>%]\}\}/g, '\n\n')
+          .replace(/```[\s\S]*?```/g, '\n\n');
+        var chunks = src.split(/\n\s*\n+/);
+        for (var i = 0; i < chunks.length; i++) {
+          var lines = chunks[i].split('\n').filter(function (ln) {
+            var t = ln.trim();
+            return t && !/^#{1,6}\s+/.test(t) && !/^!\[[^\]]*\]\([^)]*\)$/.test(t) && !/^[-*_]{3,}$/.test(t);
+          });
+          var cleaned = lines.join(' ')
+            .replace(/!\[[^\]]*\]\([^)]*\)/g, ' ')
+            .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')
+            .replace(/<[^>]+>/g, ' ')
+            .replace(/[*_`~]/g, '')
+            .replace(/\s+/g, ' ')
+            .trim();
+          if (cleaned && cleaned.charAt(0) !== '|') return cleaned;
+        }
+        return '';
+      }
+
+      /* ---------- Validation ---------- */
+      function validateEntry(lang) {
+        var e = getEntry(lang);
+        var issues = [];
+        if (!e.title.trim()) issues.push('заголовок');
+        var slug = e.slug.trim();
+        if (!slug) {
+          issues.push('слаг');
+        } else if (!SLUG_RE.test(slug) || slug.length > 120) {
+          issues.push('формат слага');
+        } else if (!state.overwrite) {
+          var used = state.existingSlugsByLang[lang] || [];
+          var datePrefix = (normalizeIsoDate(state.constants.dateLocal) || new Date().toISOString()).slice(0, 10);
+          var targetFolder = datePrefix + '-' + slug;
+          if (used.indexOf(slug) !== -1 || used.indexOf(targetFolder) !== -1) {
+            issues.push('слаг уже занят');
+          }
+        }
+        if (!e.body.trim()) issues.push('текст');
+        return {
+          ok: issues.length === 0,
+          issues: issues
+        };
+      }
+
+      function validateAll() {
+        var missingLangs = [];
+        var activeLangs = [state.anchorLang].concat(state.followerLangs);
+
+        var anchorVal = validateEntry(state.anchorLang);
+        if (!anchorVal.ok) {
+          missingLangs.push({ lang: state.anchorLang, role: 'якорь', issues: anchorVal.issues });
+        }
+
+        state.followerLangs.forEach(function (fl) {
+          var v = validateEntry(fl);
+          if (!v.ok) {
+            missingLangs.push({ lang: fl, role: 'ведомый', issues: v.issues });
+          }
+        });
+
+        var globalIssues = [];
+        if (state.followerLangs.length === 0) {
+          globalIssues.push('выберите хотя бы один ведомый язык');
+        }
+        if (!normalizeIsoDate(state.constants.dateLocal)) {
+          globalIssues.push('некорректная дата');
+        }
+        if (!state.constants.translationKey.trim()) {
+          globalIssues.push('не задан ключ связи (translationKey)');
+        }
+
+        return {
+          ok: missingLangs.length === 0 && globalIssues.length === 0,
+          activeLangs: activeLangs,
+          missingLangs: missingLangs,
+          globalIssues: globalIssues
+        };
+      }
+
+      /* ---------- Rendering ---------- */
+      function renderLanguageSelectors() {
+        var anchorSel = document.getElementById('anchorLangSelect');
+        if (!anchorSel.options.length) {
+          SITE_LANGUAGES.forEach(function (l) {
+            anchorSel.appendChild(new Option(l.label, l.code));
+          });
+        }
+        anchorSel.value = state.anchorLang;
+
+        var grid = document.getElementById('followersGrid');
+        grid.innerHTML = '';
+        SITE_LANGUAGES.forEach(function (l) {
+          if (l.code === state.anchorLang) return;
+          var checked = state.followerLangs.indexOf(l.code) !== -1;
+          var val = checked ? validateEntry(l.code) : null;
+
+          var row = document.createElement('div');
+          row.className = 'lang-item' +
+            (checked ? ' is-checked ' + (val.ok ? 'is-ready' : 'is-missing') : '');
+
+          var lbl = document.createElement('label');
+          lbl.className = 'lang-check-label';
+          var cb = document.createElement('input');
+          cb.type = 'checkbox';
+          cb.checked = checked;
+          cb.addEventListener('change', function () {
+            if (cb.checked) {
+              if (state.followerLangs.indexOf(l.code) === -1) {
+                state.followerLangs.push(l.code);
+              }
+              state.activeTabLang = l.code;
+            } else {
+              state.followerLangs = state.followerLangs.filter(function (c) { return c !== l.code; });
+              if (state.activeTabLang === l.code) state.activeTabLang = state.anchorLang;
+            }
+            renderAll();
+          });
+
+          var codeSpan = document.createElement('span');
+          codeSpan.className = 'lang-code';
+          codeSpan.textContent = l.shortLabel;
+
+          var nameSpan = document.createElement('span');
+          nameSpan.className = 'lang-name';
+          nameSpan.textContent = l.label.replace(/\s*\([^)]+\)$/, '');
+
+          lbl.appendChild(cb);
+          lbl.appendChild(codeSpan);
+          lbl.appendChild(nameSpan);
+          row.appendChild(lbl);
+
+          if (checked) {
+            var jumpBtn = document.createElement('button');
+            jumpBtn.type = 'button';
+            jumpBtn.className = 'lang-jump-btn';
+            jumpBtn.textContent = val.ok ? 'Готов' : 'Заполнить';
+            jumpBtn.addEventListener('click', function () {
+              state.activeTabLang = l.code;
+              renderTabsAndValidation();
+              renderActiveEditor();
+            });
+            row.appendChild(jumpBtn);
+          }
+
+          grid.appendChild(row);
+        });
+
+        document.getElementById('followerCountText').textContent =
+          'Выбрано: ' + state.followerLangs.length;
+      }
+
+      function renderConstantsPanel() {
+        document.getElementById('constTkInput').value = state.constants.translationKey;
+        document.getElementById('constDateInput').value = state.constants.dateLocal;
+        document.getElementById('constImageInput').value = state.constants.image;
+        document.getElementById('constCategoriesInput').value = state.constants.categoriesText;
+        document.getElementById('constTagsInput').value = state.constants.tagsText;
+        document.getElementById('overwriteCheck').checked = state.overwrite;
+
+        var previewWrap = document.getElementById('coverPreviewWrap');
+        var clearBtn = document.getElementById('clearCoverBtn');
+        var asset = state.constants.coverAsset;
+        if (asset && asset.previewUrl) {
+          previewWrap.style.display = 'flex';
+          clearBtn.style.display = 'inline-flex';
+          document.getElementById('coverThumbImg').src = asset.previewUrl;
+          document.getElementById('coverFileName').textContent = asset.filename;
+          document.getElementById('coverFileInfo').textContent = asset.size
+            ? Math.round(asset.size / 1024) + ' КБ · копируется во все языки'
+            : 'Файл из связки статьи';
+        } else if (state.constants.image) {
+          previewWrap.style.display = 'none';
+          clearBtn.style.display = 'inline-flex';
+        } else {
+          previewWrap.style.display = 'none';
+          clearBtn.style.display = 'none';
+        }
+
+        renderSuggestions('categorySuggestions', state.categoriesPool.slice(0, 12), 'constCategoriesInput', 'categoriesText');
+        renderSuggestions('tagSuggestions', state.tagsPool.slice(0, 14), 'constTagsInput', 'tagsText');
+      }
+
+      function renderSuggestions(containerId, items, inputId, stateKey) {
+        var box = document.getElementById(containerId);
+        box.innerHTML = '';
+        var current = splitCsvList(state.constants[stateKey]);
+        items.forEach(function (item) {
+          var btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'quick-item-btn';
+          btn.textContent = (current.indexOf(item) !== -1 ? '✓ ' : '+ ') + item;
+          btn.addEventListener('click', function () {
+            var list = splitCsvList(state.constants[stateKey]);
+            var idx = list.indexOf(item);
+            if (idx === -1) list.push(item);
+            else list.splice(idx, 1);
+            state.constants[stateKey] = list.join(', ');
+            document.getElementById(inputId).value = state.constants[stateKey];
+            renderSuggestions(containerId, items, inputId, stateKey);
+            renderInheritedBar();
+          });
+          box.appendChild(btn);
+        });
+      }
+
+      function renderTabsAndValidation() {
+        var tabsBar = document.getElementById('langTabsBar');
+        tabsBar.innerHTML = '';
+
+        var tabs = [state.anchorLang].concat(state.followerLangs);
+        if (tabs.indexOf(state.activeTabLang) === -1) {
+          state.activeTabLang = state.anchorLang;
+        }
+
+        tabs.forEach(function (code) {
+          var l = LANG_MAP[code];
+          var isAnchor = code === state.anchorLang;
+          var val = validateEntry(code);
+          var btn = document.createElement('button');
+          btn.type = 'button';
+          btn.role = 'tab';
+          btn.className = 'lang-tab' + (code === state.activeTabLang ? ' is-active' : '');
+
+          var lblSpan = document.createElement('span');
+          lblSpan.textContent = (isAnchor ? 'Якорь · ' : '') + l.shortLabel;
+
+          var stateSpan = document.createElement('span');
+          stateSpan.className = 'tab-state ' + (val.ok ? 'is-ok' : 'is-err');
+          stateSpan.textContent = val.ok ? '· Готов' : '· ' + val.issues.join(', ');
+
+          btn.appendChild(lblSpan);
+          btn.appendChild(stateSpan);
+          btn.addEventListener('click', function () {
+            state.activeTabLang = code;
+            state.previewOpen = false;
+            renderTabsAndValidation();
+            renderActiveEditor();
+          });
+          tabsBar.appendChild(btn);
+        });
+
+        var check = validateAll();
+        var pubBtn = document.getElementById('publishAllBtn');
+        pubBtn.disabled = !check.ok;
+        pubBtn.textContent = 'Опубликовать все (' + check.activeLangs.length + ')';
+
+        var readyFollowers = state.followerLangs.filter(function (c) { return validateEntry(c).ok; }).length;
+        var summaryEl = document.getElementById('readinessSummary');
+        if (check.ok) {
+          summaryEl.className = 'readiness-summary is-ok';
+          summaryEl.textContent = 'Готово к публикации: якорь ' + LANG_MAP[state.anchorLang].shortLabel +
+            ' + ведомых ' + readyFollowers + '/' + state.followerLangs.length;
+        } else {
+          summaryEl.className = 'readiness-summary is-err';
+          summaryEl.textContent = 'Публикация заблокирована · ведомых готово ' +
+            readyFollowers + '/' + state.followerLangs.length;
+        }
+
+        var strip = document.getElementById('validationStrip');
+        strip.innerHTML = '';
+        if (check.ok) {
+          strip.classList.remove('is-visible');
+        } else {
+          strip.classList.add('is-visible');
+          var prefix = document.createElement('strong');
+          prefix.textContent = 'Чтобы разблокировать сохранение, заполните:';
+          strip.appendChild(prefix);
+
+          check.globalIssues.forEach(function (gi) {
+            var span = document.createElement('span');
+            span.textContent = gi;
+            strip.appendChild(span);
+          });
+
+          check.missingLangs.forEach(function (ml) {
+            var jump = document.createElement('button');
+            jump.type = 'button';
+            jump.className = 'validation-link';
+            jump.textContent = LANG_MAP[ml.lang].shortLabel + ' (' + ml.issues.join(', ') + ')';
+            jump.addEventListener('click', function () {
+              state.activeTabLang = ml.lang;
+              renderTabsAndValidation();
+              renderActiveEditor();
+            });
+            strip.appendChild(jump);
+          });
+        }
+      }
+
+      function renderInheritedBar() {
+        var bar = document.getElementById('inheritedConstantsBar');
+        if (state.activeTabLang === state.anchorLang) {
+          bar.style.display = 'none';
+          return;
+        }
+        bar.style.display = 'block';
+        bar.innerHTML = '';
+
+        var cats = splitCsvList(state.constants.categoriesText);
+        var tags = splitCsvList(state.constants.tagsText);
+        var parts = [
+          'Ключ: ' + (state.constants.translationKey.trim() || '—'),
+          'Дата: ' + (state.constants.dateLocal ? state.constants.dateLocal.replace('T', ' ') : '—'),
+          'Обложка: ' + (state.constants.image.trim() || 'нет'),
+          'Категории: ' + (cats.length ? cats.join(', ') : 'нет'),
+          'Теги: ' + (tags.length ? tags.join(', ') : 'нет')
+        ];
+
+        var lead = document.createElement('strong');
+        lead.textContent = 'Константы наследуются из якоря: ';
+        var text = document.createElement('span');
+        text.textContent = parts.join(' · ');
+        bar.appendChild(lead);
+        bar.appendChild(text);
+      }
+
+      function renderPromptHelper() {
+        var wrap = document.getElementById('anchorPromptWrap');
+        if (state.activeTabLang !== state.anchorLang) {
+          wrap.style.display = 'none';
+          return;
+        }
+        wrap.style.display = 'block';
+        var anchorEntry = getEntry(state.anchorLang);
+        var para = extractFirstParagraph(anchorEntry.body);
+        var fullPrompt = DEFAULT_PROMPT_TEMPLATE + '\n' + (para || '[Добавьте первый абзац в текст якорной статьи]');
+        document.getElementById('coverPromptOutput').value = fullPrompt;
+        document.getElementById('promptSourceInfo').textContent = para
+          ? 'Источник: первый абзац якоря (' + para.length + ' симв.)'
+          : 'Первый абзац пока не найден';
+      }
+
+      function renderActiveEditor() {
+        var lang = state.activeTabLang;
+        var l = LANG_MAP[lang];
+        var isAnchor = lang === state.anchorLang;
+        var entry = getEntry(lang);
+
+        document.getElementById('editorHeading').textContent =
+          (isAnchor ? 'Якорная статья · ' : 'Ведомый перевод · ') + l.label;
+
+        var datePrefix = (normalizeIsoDate(state.constants.dateLocal) || new Date().toISOString()).slice(0, 10);
+        var effectiveSlug = entry.slug.trim() || 'slug';
+        document.getElementById('editorSubline').textContent =
+          'Путь файла: content/' + lang + '/post/' + datePrefix + '-' + effectiveSlug + '/index.md';
+
+        document.getElementById('loadExistingBtn').style.display = isAnchor ? 'inline-flex' : 'none';
+        document.getElementById('openImportBtn').textContent = isAnchor
+          ? 'Импорт в якорь (.md / .json)'
+          : 'Импорт в ' + l.shortLabel + ' (только переменные)';
+
+        renderInheritedBar();
+
+        var titleEl = document.getElementById('entryTitleInput');
+        var slugEl = document.getElementById('entrySlugInput');
+        var descEl = document.getElementById('entryDescInput');
+        var bodyEl = document.getElementById('entryBodyInput');
+        var slugErrEl = document.getElementById('entrySlugErr');
+
+        titleEl.value = entry.title;
+        slugEl.value = entry.slug;
+        descEl.value = entry.description;
+        bodyEl.value = entry.body;
+
+        titleEl.classList.toggle('is-invalid', !entry.title.trim());
+        var slugOk = Boolean(entry.slug.trim() && SLUG_RE.test(entry.slug.trim()));
+        slugEl.classList.toggle('is-invalid', !slugOk);
+
+        var val = validateEntry(lang);
+        if (entry.slug.trim() && !SLUG_RE.test(entry.slug.trim())) {
+          slugErrEl.textContent = 'Только строчная латиница, цифры и дефисы';
+          slugErrEl.style.display = 'block';
+        } else if (val.issues.indexOf('слаг уже занят') !== -1) {
+          slugErrEl.textContent = 'Слаг уже существует в разделе ' + l.shortLabel;
+          slugErrEl.style.display = 'block';
+        } else {
+          slugErrEl.style.display = 'none';
+        }
+
+        bodyEl.classList.toggle('is-invalid', !entry.body.trim());
+        var words = entry.body.trim() ? entry.body.trim().split(/\s+/).length : 0;
+        document.getElementById('entryBodyStats').textContent =
+          entry.body.length + ' симв. · ' + words + ' слов';
+
+        var pvFrame = document.getElementById('bodyPreviewFrame');
+        var pvBtn = document.getElementById('togglePreviewBtn');
+        if (state.previewOpen) {
+          bodyEl.style.display = 'none';
+          pvFrame.style.display = 'block';
+          pvBtn.textContent = 'Редактор';
+          pvFrame.srcdoc = buildSimplePreviewDoc(entry.title, entry.description, entry.body);
+        } else {
+          bodyEl.style.display = 'block';
+          pvFrame.style.display = 'none';
+          pvBtn.textContent = 'Предпросмотр';
+        }
+
+        renderPromptHelper();
+      }
+
+      function buildSimplePreviewDoc(title, desc, body) {
+        var esc = function (s) {
+          return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        };
+        // Convert markdown headings/paragraphs lightly for quick inspection inside sandbox=""
+        var htmlBody = esc(body)
+          .replace(/^### (.+)$/gm, '<h3>$1</h3>')
+          .replace(/^## (.+)$/gm, '<h2>$1</h2>')
+          .replace(/^# (.+)$/gm, '<h1>$1</h1>')
+          .replace(/\n\n+/g, '</p><p>')
+          .replace(/\n/g, '<br/>');
+        return '<!doctype html><html><head><meta charset="utf-8"><style>' +
+          'body{font-family:system-ui,-apple-system,sans-serif;padding:16px 20px;color:#0f172a;line-height:1.6;font-size:14px;margin:0;}' +
+          'h1,h2,h3{margin:1.1em 0 .45em;line-height:1.3;} .desc{color:#475569;margin-bottom:14px;}' +
+          '</style></head><body><h1>' + esc(title || '(без заголовка)') + '</h1>' +
+          (desc ? '<p class="desc">' + esc(desc) + '</p>' : '') +
+          '<p>' + htmlBody + '</p></body></html>';
+      }
+
+      function renderAll() {
+        renderLanguageSelectors();
+        renderConstantsPanel();
+        renderTabsAndValidation();
+        renderActiveEditor();
+      }
+
+      /* ---------- Input Event Handlers ---------- */
+      document.getElementById('anchorLangSelect').addEventListener('change', function () {
+        var nextAnchor = this.value;
+        if (!LANG_MAP[nextAnchor]) return;
+        state.anchorLang = nextAnchor;
+        state.followerLangs = state.followerLangs.filter(function (c) { return c !== nextAnchor; });
+        state.activeTabLang = nextAnchor;
+        renderAll();
+      });
+
+      document.getElementById('presetRuUaEnBtn').addEventListener('click', function () {
+        state.followerLangs = ['ru', 'uk', 'en'].filter(function (c) { return c !== state.anchorLang; });
+        if (state.followerLangs.indexOf(state.activeTabLang) === -1 && state.activeTabLang !== state.anchorLang) {
+          state.activeTabLang = state.anchorLang;
+        }
+        renderAll();
+      });
+
+      document.getElementById('presetClearFollowersBtn').addEventListener('click', function () {
+        state.followerLangs = [];
+        state.activeTabLang = state.anchorLang;
+        renderAll();
+      });
+
+      document.getElementById('constTkInput').addEventListener('input', function () {
+        state.constants.translationKey = this.value;
+        state.constants.tkManual = Boolean(this.value.trim());
+        renderTabsAndValidation();
+        renderInheritedBar();
+      });
+
+      document.getElementById('tkFromSlugBtn').addEventListener('click', function () {
+        var anchorSlug = getEntry(state.anchorLang).slug.trim() || toLatinSlug(getEntry(state.anchorLang).title);
+        if (!anchorSlug) {
+          showToast('Сначала введите заголовок или слаг в якорной статье');
+          return;
+        }
+        state.constants.translationKey = anchorSlug;
+        state.constants.tkManual = false;
+        document.getElementById('constTkInput').value = anchorSlug;
+        renderTabsAndValidation();
+        renderInheritedBar();
+      });
+
+      document.getElementById('constDateInput').addEventListener('input', function () {
+        state.constants.dateLocal = this.value;
+        renderTabsAndValidation();
+        renderActiveEditor();
+      });
+
+      document.getElementById('dateNowBtn').addEventListener('click', function () {
+        state.constants.dateLocal = toLocalDatetimeValue(new Date());
+        document.getElementById('constDateInput').value = state.constants.dateLocal;
+        renderTabsAndValidation();
+        renderActiveEditor();
+      });
+
+      document.getElementById('constImageInput').addEventListener('input', function () {
+        state.constants.image = this.value.trim();
+        if (!state.constants.image) {
+          state.constants.coverAsset = null;
+        } else if (state.constants.coverAsset && state.constants.coverAsset.filename !== state.constants.image) {
+          state.constants.coverAsset = null;
+        }
+        renderConstantsPanel();
+        renderInheritedBar();
+      });
+
+      function handleCoverFile(file) {
+        if (!file) return;
+        if (!/\.(png|jpe?g|webp|gif|svg|avif)$/i.test(file.name)) {
+          showToast('Поддерживаются только изображения: png, jpg, webp, gif, svg, avif');
+          return;
+        }
+        if (file.size > 10 * 1024 * 1024) {
+          showToast('Файл обложки превышает лимит 10 МБ');
+          return;
+        }
+        var reader = new FileReader();
+        reader.onload = function () {
+          var dataUrl = String(reader.result || '');
+          var safeName = file.name.replace(/[^\w.\-]+/g, '_');
+          state.constants.image = safeName;
+          state.constants.coverAsset = {
+            filename: safeName,
+            base64: dataUrl.replace(/^data:[^;]+;base64,/, ''),
+            previewUrl: dataUrl,
+            size: file.size,
+            sourceRelPath: ''
+          };
+          renderConstantsPanel();
+          renderInheritedBar();
+          showToast('Обложка «' + safeName + '» привязана ко всем языкам');
+        };
+        reader.readAsDataURL(file);
+      }
+
+      document.getElementById('coverFileInput').addEventListener('change', function () {
+        if (this.files && this.files[0]) handleCoverFile(this.files[0]);
+      });
+
+      var coverDrop = document.getElementById('coverDropBox');
+      coverDrop.addEventListener('dragover', function (e) {
+        e.preventDefault();
+        coverDrop.classList.add('is-dragover');
+      });
+      coverDrop.addEventListener('dragleave', function () {
+        coverDrop.classList.remove('is-dragover');
+      });
+      coverDrop.addEventListener('drop', function (e) {
+        e.preventDefault();
+        coverDrop.classList.remove('is-dragover');
+        if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]) {
+          handleCoverFile(e.dataTransfer.files[0]);
+        }
+      });
+
+      document.getElementById('clearCoverBtn').addEventListener('click', function () {
+        state.constants.image = '';
+        state.constants.coverAsset = null;
+        document.getElementById('coverFileInput').value = '';
+        renderConstantsPanel();
+        renderInheritedBar();
+      });
+
+      document.getElementById('constCategoriesInput').addEventListener('input', function () {
+        state.constants.categoriesText = this.value;
+        renderSuggestions('categorySuggestions', state.categoriesPool.slice(0, 12), 'constCategoriesInput', 'categoriesText');
+        renderInheritedBar();
+      });
+
+      document.getElementById('constTagsInput').addEventListener('input', function () {
+        state.constants.tagsText = this.value;
+        renderSuggestions('tagSuggestions', state.tagsPool.slice(0, 14), 'constTagsInput', 'tagsText');
+        renderInheritedBar();
+      });
+
+      document.getElementById('overwriteCheck').addEventListener('change', function () {
+        state.overwrite = this.checked;
+        renderTabsAndValidation();
+        renderLanguageSelectors();
+        renderActiveEditor();
+      });
+
+      // Editor field events
+      document.getElementById('entryTitleInput').addEventListener('input', function () {
+        var entry = getEntry(state.activeTabLang);
+        entry.title = this.value;
+        if (!entry.slugManual) {
+          entry.slug = toLatinSlug(entry.title);
+          document.getElementById('entrySlugInput').value = entry.slug;
+          if (state.activeTabLang === state.anchorLang && !state.constants.tkManual && entry.slug) {
+            state.constants.translationKey = entry.slug;
+            document.getElementById('constTkInput').value = entry.slug;
+          }
+        }
+        renderLanguageSelectors();
+        renderTabsAndValidation();
+        renderActiveEditor();
+      });
+
+      document.getElementById('entrySlugInput').addEventListener('input', function () {
+        var entry = getEntry(state.activeTabLang);
+        entry.slug = this.value.trim().toLowerCase();
+        entry.slugManual = Boolean(entry.slug);
+        if (state.activeTabLang === state.anchorLang && !state.constants.tkManual && entry.slug) {
+          state.constants.translationKey = entry.slug;
+          document.getElementById('constTkInput').value = entry.slug;
+        }
+        renderLanguageSelectors();
+        renderTabsAndValidation();
+        renderActiveEditor();
+      });
+
+      document.getElementById('entrySlugBtn').addEventListener('click', function () {
+        var entry = getEntry(state.activeTabLang);
+        var generated = toLatinSlug(entry.title);
+        if (!generated) {
+          showToast('Сначала введите заголовок');
+          return;
+        }
+        entry.slug = generated;
+        entry.slugManual = false;
+        if (state.activeTabLang === state.anchorLang && !state.constants.tkManual) {
+          state.constants.translationKey = generated;
+          document.getElementById('constTkInput').value = generated;
+        }
+        renderLanguageSelectors();
+        renderTabsAndValidation();
+        renderActiveEditor();
+      });
+
+      document.getElementById('entryDescInput').addEventListener('input', function () {
+        getEntry(state.activeTabLang).description = this.value;
+      });
+
+      var bodyTa = document.getElementById('entryBodyInput');
+      bodyTa.addEventListener('input', function () {
+        getEntry(state.activeTabLang).body = this.value;
+        renderLanguageSelectors();
+        renderTabsAndValidation();
+        renderPromptHelper();
+        var words = this.value.trim() ? this.value.trim().split(/\s+/).length : 0;
+        document.getElementById('entryBodyStats').textContent =
+          this.value.length + ' симв. · ' + words + ' слов';
+        this.classList.toggle('is-invalid', !this.value.trim());
+      });
+
+      // Drag-and-drop .md / .json file directly onto body textarea
+      bodyTa.addEventListener('dragover', function (e) {
+        e.preventDefault();
+        bodyTa.classList.add('is-dragover');
+      });
+      bodyTa.addEventListener('dragleave', function () {
+        bodyTa.classList.remove('is-dragover');
+      });
+      bodyTa.addEventListener('drop', function (e) {
+        e.preventDefault();
+        bodyTa.classList.remove('is-dragover');
+        var file = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+        if (!file) return;
+        var reader = new FileReader();
+        reader.onload = function () {
+          try {
+            var parsed = parseImportedArticle(String(reader.result || ''));
+            var isAnchor = state.activeTabLang === state.anchorLang;
+            applyParsedImportToLang(state.activeTabLang, parsed, {
+              isAnchor: isAnchor,
+              title: true,
+              slug: true,
+              description: true,
+              date: isAnchor,
+              translationKey: isAnchor,
+              categories: isAnchor,
+              tags: isAnchor,
+              body: true,
+              stripImages: false
+            });
+            showToast(isAnchor
+              ? 'Импортировано в якорь из файла ' + file.name
+              : 'Переменные языка ' + LANG_MAP[state.activeTabLang].shortLabel + ' импортированы (константы сохранены из якоря)');
+          } catch (err) {
+            showToast('Ошибка импорта: ' + err.message);
+          }
+        };
+        reader.readAsText(file, 'utf-8');
+      });
+
+      document.getElementById('togglePreviewBtn').addEventListener('click', function () {
+        state.previewOpen = !state.previewOpen;
+        renderActiveEditor();
+      });
+
+      document.getElementById('togglePromptBtn').addEventListener('click', function () {
+        state.promptOpen = !state.promptOpen;
+        document.getElementById('promptBox').style.display = state.promptOpen ? 'flex' : 'none';
+        document.getElementById('promptToggleLabel').textContent = state.promptOpen ? 'Свернуть' : 'Показать';
+      });
+
+      document.getElementById('copyPromptBtn').addEventListener('click', function () {
+        var ta = document.getElementById('coverPromptOutput');
+        navigator.clipboard.writeText(ta.value).then(function () {
+          showToast('Промпт скопирован в буфер обмена');
+        }).catch(function () {
+          ta.select();
+          document.execCommand('copy');
+          showToast('Промпт скопирован');
+        });
+      });
+
+      /* ---------- Import Modal (Anchor = Full, Follower = Variables ONLY) ---------- */
+      function applyParsedImportToLang(lang, parsed, opts) {
+        var entry = getEntry(lang);
+        if (opts.title && parsed.hasTitle) {
+          entry.title = parsed.title;
+        }
+        if (opts.slug) {
+          if (parsed.hasSlug) {
+            entry.slug = toLatinSlug(parsed.slug) || parsed.slug;
+            entry.slugManual = true;
+          } else if (parsed.hasTitle) {
+            entry.slug = toLatinSlug(parsed.title);
+            entry.slugManual = false;
+          }
+        }
+        if (opts.description && parsed.hasDescription) {
+          entry.description = parsed.description;
+        }
+        if (opts.body && parsed.hasBody) {
+          entry.body = opts.stripImages ? stripBodyImages(parsed.body) : parsed.body;
+        }
+
+        // STRICT RULE: Only Anchor may import constants! Followers NEVER touch constants.
+        if (opts.isAnchor && lang === state.anchorLang) {
+          if (opts.date && parsed.hasDate) {
+            state.constants.dateLocal = toLocalDatetimeValue(parsed.date);
+          }
+          if (opts.translationKey && parsed.hasTranslationKey) {
+            state.constants.translationKey = parsed.translationKey;
+            state.constants.tkManual = true;
+          } else if (!state.constants.tkManual && entry.slug) {
+            state.constants.translationKey = entry.slug;
+          }
+          if (opts.categories && parsed.hasCategories) {
+            state.constants.categoriesText = parsed.categories.join(', ');
+          }
+          if (opts.tags && parsed.hasTags) {
+            state.constants.tagsText = parsed.tags.join(', ');
+          }
+        }
+
+        renderAll();
+      }
+
+      function refreshImportSummary() {
+        var ta = document.getElementById('importTextarea');
+        var sum = document.getElementById('importSummary');
+        var isAnchor = state.activeTabLang === state.anchorLang;
+        if (!ta.value.trim()) {
+          sum.textContent = isAnchor
+            ? 'Выберите файл .md / .json или вставьте текст. Для якоря доступны все поля, включая константы.'
+            : 'Выберите файл .md / .json или вставьте перевод. Константы (дата, категории, теги, ключ, обложка) будут проигнорированы.';
+          return;
+        }
+        try {
+          var parsed = parseImportedArticle(ta.value);
+          var applied = [];
+          if (parsed.hasTitle) applied.push('Заголовок');
+          if (parsed.hasSlug) applied.push('URL-слаг');
+          if (parsed.hasDescription) applied.push('Описание');
+          if (parsed.hasBody) applied.push('Текст (' + parsed.body.length + ' симв.)');
+
+          var skipped = [];
+          if (!isAnchor) {
+            if (parsed.hasDate) skipped.push('Дата');
+            if (parsed.hasTranslationKey) skipped.push('Ключ перевода');
+            if (parsed.hasCategories) skipped.push('Категории');
+            if (parsed.hasTags) skipped.push('Теги');
+            if (parsed.hasImage) skipped.push('Обложка');
+          } else {
+            if (parsed.hasDate) applied.push('Дата');
+            if (parsed.hasTranslationKey) applied.push('Ключ перевода');
+            if (parsed.hasCategories) applied.push('Категории (' + parsed.categories.length + ')');
+            if (parsed.hasTags) applied.push('Теги (' + parsed.tags.length + ')');
+          }
+
+          var msg = 'Будет применено: ' + (applied.length ? applied.join(' · ') : 'только текст');
+          if (skipped.length) {
+            msg += ' | Игнорированы константы: ' + skipped.join(', ');
+          }
+          sum.textContent = msg;
+        } catch (err) {
+          sum.textContent = 'Ошибка разбора: ' + err.message;
+        }
+      }
+
+      function openImportModal() {
+        var lang = state.activeTabLang;
+        var isAnchor = lang === state.anchorLang;
+        var l = LANG_MAP[lang];
+        document.getElementById('importModalTitle').textContent = isAnchor
+          ? 'Импорт якорной статьи · ' + l.label
+          : 'Импорт перевода · ' + l.label + ' (только переменные)';
+        document.getElementById('importFollowerNotice').style.display = isAnchor ? 'none' : 'block';
+        document.getElementById('importTextarea').value = '';
+        document.getElementById('importFileInput').value = '';
+        document.getElementById('importStatus').textContent = '';
+
+        document.querySelectorAll('#importFieldChecks [data-const-wrap="1"]').forEach(function (lbl) {
+          var cb = lbl.querySelector('input');
+          if (isAnchor) {
+            lbl.classList.remove('is-locked');
+            cb.disabled = false;
+            cb.checked = true;
+          } else {
+            lbl.classList.add('is-locked');
+            cb.disabled = true;
+            cb.checked = false;
+          }
+        });
+
+        refreshImportSummary();
+        document.getElementById('importModalBackdrop').classList.add('is-open');
+        setTimeout(function () { document.getElementById('importTextarea').focus(); }, 30);
+      }
+
+      document.getElementById('openImportBtn').addEventListener('click', openImportModal);
+      document.getElementById('importCloseBtn').addEventListener('click', function () {
+        document.getElementById('importModalBackdrop').classList.remove('is-open');
+      });
+      document.getElementById('importCancelBtn').addEventListener('click', function () {
+        document.getElementById('importModalBackdrop').classList.remove('is-open');
+      });
+      document.getElementById('importTextarea').addEventListener('input', refreshImportSummary);
+      document.getElementById('importFileInput').addEventListener('change', function () {
+        var f = this.files && this.files[0];
+        if (!f) return;
+        var r = new FileReader();
+        r.onload = function () {
+          document.getElementById('importTextarea').value = String(r.result || '');
+          refreshImportSummary();
+        };
+        r.readAsText(f, 'utf-8');
+      });
+
+      document.getElementById('importApplyBtn').addEventListener('click', function () {
+        try {
+          var parsed = parseImportedArticle(document.getElementById('importTextarea').value);
+          var isAnchor = state.activeTabLang === state.anchorLang;
+          var checked = function (name) {
+            var cb = document.querySelector('#importFieldChecks input[data-ifield="' + name + '"]');
+            return Boolean(cb && cb.checked && !cb.disabled);
+          };
+          applyParsedImportToLang(state.activeTabLang, parsed, {
+            isAnchor: isAnchor,
+            title: checked('title'),
+            slug: checked('slug'),
+            description: checked('description'),
+            date: isAnchor && checked('date'),
+            translationKey: isAnchor && checked('translationKey'),
+            categories: isAnchor && checked('categories'),
+            tags: isAnchor && checked('tags'),
+            body: checked('body'),
+            stripImages: document.getElementById('importStripImagesCheck').checked
+          });
+          document.getElementById('importModalBackdrop').classList.remove('is-open');
+          showToast(isAnchor
+            ? 'Поля и константы якорной статьи заполнены'
+            : 'Переменные ' + LANG_MAP[state.activeTabLang].shortLabel + ' заполнены (константы сохранены)');
+        } catch (err) {
+          document.getElementById('importStatus').textContent = 'Ошибка: ' + err.message;
+        }
+      });
+
+      /* ---------- Raw HTML Modal ---------- */
+      document.getElementById('insertHtmlBtn').addEventListener('click', function () {
+        document.getElementById('htmlTextarea').value = '';
+        document.getElementById('htmlModalBackdrop').classList.add('is-open');
+        setTimeout(function () { document.getElementById('htmlTextarea').focus(); }, 30);
+      });
+      document.getElementById('htmlCloseBtn').addEventListener('click', function () {
+        document.getElementById('htmlModalBackdrop').classList.remove('is-open');
+      });
+      document.getElementById('htmlCancelBtn').addEventListener('click', function () {
+        document.getElementById('htmlModalBackdrop').classList.remove('is-open');
+      });
+      document.getElementById('htmlApplyBtn').addEventListener('click', function () {
+        var raw = document.getElementById('htmlTextarea').value;
+        if (!raw.trim()) return;
+        var wrap = document.getElementById('htmlWrapRawCheck').checked;
+        var chunk = wrap ? '\n{{< rawhtml >}}\n' + raw.trim() + '\n{{< /rawhtml >}}\n' : raw;
+        var ta = document.getElementById('entryBodyInput');
+        var start = typeof ta.selectionStart === 'number' ? ta.selectionStart : ta.value.length;
+        var end = typeof ta.selectionEnd === 'number' ? ta.selectionEnd : ta.value.length;
+        var nextVal = ta.value.slice(0, start) + chunk + ta.value.slice(end);
+        getEntry(state.activeTabLang).body = nextVal;
+        document.getElementById('htmlModalBackdrop').classList.remove('is-open');
+        renderTabsAndValidation();
+        renderActiveEditor();
+      });
+
+      /* ---------- Existing Post Picker (Transfer / Clone into Anchor) ---------- */
+      function renderPickerList() {
+        var q = document.getElementById('pickerSearchInput').value.trim().toLowerCase();
+        var langFilter = document.getElementById('pickerLangSelect').value;
+        var list = state.existingPosts.filter(function (p) {
+          if (langFilter && p.lang !== langFilter) return false;
+          if (!q) return true;
+          return p.title.toLowerCase().indexOf(q) !== -1 ||
+            p.slug.toLowerCase().indexOf(q) !== -1 ||
+            (p.translationKey && p.translationKey.toLowerCase().indexOf(q) !== -1);
+        });
+
+        var container = document.getElementById('pickerList');
+        container.innerHTML = '';
+        document.getElementById('pickerCountHint').textContent = 'Найдено статей: ' + list.length;
+
+        if (!list.length) {
+          var empty = document.createElement('div');
+          empty.style.padding = '16px';
+          empty.style.color = 'var(--text-soft)';
+          empty.textContent = 'Совпадений не найдено.';
+          container.appendChild(empty);
+          return;
+        }
+
+        list.slice(0, 80).forEach(function (p) {
+          var btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'post-picker-row';
+
+          var t = document.createElement('div');
+          t.className = 'post-picker-title';
+          t.textContent = '[' + p.lang.toUpperCase() + '] ' + p.title;
+
+          var m = document.createElement('div');
+          m.className = 'post-picker-meta';
+          m.textContent = [
+            'slug: ' + p.slug,
+            p.translationKey ? 'key: ' + p.translationKey : 'без ключа',
+            p.categories.length ? p.categories.join(', ') : 'без категорий'
+          ].join(' · ');
+
+          btn.appendChild(t);
+          btn.appendChild(m);
+          btn.addEventListener('click', function () {
+            loadPostIntoAnchor(p);
+          });
+          container.appendChild(btn);
+        });
+      }
+
+      async function loadPostIntoAnchor(postSummary) {
+        try {
+          var detail = null;
+          if (state.mode === 'local') {
+            var res = await fetch('/api/multilang/post?relPath=' + encodeURIComponent(postSummary.relPath));
+            var json = await res.json();
+            if (!res.ok || !json.ok) throw new Error(json.error || 'Не удалось прочитать статью');
+            detail = json.post;
+          } else {
+            var ghHeaders = { Accept: 'application/vnd.github+json', Authorization: 'Bearer ' + state.ghToken };
+            var fRes = await fetch('https://api.github.com/repos/' + state.ghRepo + '/contents/' +
+              postSummary.relPath.split('/').map(encodeURIComponent).join('/') +
+              '?ref=' + encodeURIComponent(state.ghBranch), { headers: ghHeaders });
+            if (!fRes.ok) throw new Error('GitHub HTTP ' + fRes.status);
+            var fJson = await fRes.json();
+            var rawMd = decodeBase64Utf8(fJson.content || '');
+            var parsed = parseImportedArticle(rawMd);
+            detail = {
+              relPath: postSummary.relPath,
+              lang: postSummary.lang,
+              title: parsed.title || postSummary.title,
+              slug: parsed.slug || postSummary.slug,
+              description: parsed.description || '',
+              date: parsed.date || postSummary.date,
+              image: parsed.image || postSummary.image || '',
+              categories: parsed.categories.length ? parsed.categories : postSummary.categories,
+              tags: parsed.tags.length ? parsed.tags : postSummary.tags,
+              translationKey: parsed.translationKey || postSummary.translationKey || '',
+              body: parsed.body || '',
+              assets: postSummary.assets || []
+            };
+          }
+
+          state.anchorLang = detail.lang;
+          state.followerLangs = state.followerLangs.filter(function (c) { return c !== detail.lang; });
+          state.activeTabLang = detail.lang;
+
+          var anchorEntry = getEntry(detail.lang);
+          anchorEntry.title = detail.title;
+          anchorEntry.slug = detail.slug;
+          anchorEntry.slugManual = true;
+          anchorEntry.description = detail.description;
+          anchorEntry.body = detail.body;
+
+          state.constants.dateLocal = toLocalDatetimeValue(detail.date);
+          state.constants.translationKey = detail.translationKey || detail.slug;
+          state.constants.tkManual = Boolean(detail.translationKey);
+          state.constants.categoriesText = (detail.categories || []).join(', ');
+          state.constants.tagsText = (detail.tags || []).join(', ');
+          state.constants.image = detail.image || '';
+          state.constants.extraAssets = [];
+
+          if (detail.image && !detail.image.startsWith('http') && !detail.image.startsWith('/')) {
+            var previewUrl = state.mode === 'local'
+              ? ((LANG_MAP[detail.lang].urlPrefix || '') + '/p/' + encodeURIComponent(detail.slug) + '/' + encodeURIComponent(detail.image))
+              : '';
+            state.constants.coverAsset = {
+              filename: detail.image,
+              base64: '',
+              previewUrl: previewUrl,
+              size: 0,
+              sourceRelPath: detail.relPath
+            };
+          } else {
+            state.constants.coverAsset = null;
+          }
+
+          (detail.assets || []).forEach(function (fname) {
+            if (fname !== detail.image) {
+              state.constants.extraAssets.push({ filename: fname, sourceRelPath: detail.relPath });
+            }
+          });
+
+          document.getElementById('pickerModalBackdrop').classList.remove('is-open');
+          renderAll();
+          showToast('Статья загружена в якорь (' + LANG_MAP[detail.lang].shortLabel + ')');
+        } catch (err) {
+          showToast('Ошибка загрузки: ' + err.message);
+        }
+      }
+
+      document.getElementById('loadExistingBtn').addEventListener('click', function () {
+        var sel = document.getElementById('pickerLangSelect');
+        if (sel.options.length <= 1) {
+          SITE_LANGUAGES.forEach(function (l) { sel.appendChild(new Option(l.label, l.code)); });
+        }
+        renderPickerList();
+        document.getElementById('pickerModalBackdrop').classList.add('is-open');
+      });
+      document.getElementById('pickerCloseBtn').addEventListener('click', function () {
+        document.getElementById('pickerModalBackdrop').classList.remove('is-open');
+      });
+      document.getElementById('pickerCancelBtn').addEventListener('click', function () {
+        document.getElementById('pickerModalBackdrop').classList.remove('is-open');
+      });
+      document.getElementById('pickerSearchInput').addEventListener('input', renderPickerList);
+      document.getElementById('pickerLangSelect').addEventListener('change', renderPickerList);
+
+      /* ---------- Publish Flow (Local & GitHub Atomic Commit) ---------- */
+      function buildPublishPayload() {
+        var isoDate = normalizeIsoDate(state.constants.dateLocal) || new Date().toISOString();
+        var cats = splitCsvList(state.constants.categoriesText);
+        var tags = splitCsvList(state.constants.tagsText);
+        var assets = [];
+        if (state.constants.coverAsset) {
+          assets.push({
+            filename: state.constants.coverAsset.filename,
+            base64: state.constants.coverAsset.base64 || undefined,
+            sourceRelPath: state.constants.coverAsset.sourceRelPath || undefined
+          });
+        }
+        (state.constants.extraAssets || []).forEach(function (ea) {
+          assets.push({ filename: ea.filename, sourceRelPath: ea.sourceRelPath });
+        });
+
+        var langs = [state.anchorLang].concat(state.followerLangs);
+        return {
+          anchorLang: state.anchorLang,
+          followerLangs: state.followerLangs.slice(),
+          overwrite: state.overwrite,
+          constants: {
+            date: isoDate,
+            translationKey: state.constants.translationKey.trim(),
+            image: state.constants.image.trim(),
+            categories: cats,
+            tags: tags,
+            assets: assets
+          },
+          entries: langs.map(function (code) {
+            var e = getEntry(code);
+            return {
+              lang: code,
+              title: e.title.trim(),
+              slug: e.slug.trim().toLowerCase(),
+              description: e.description.trim(),
+              body: e.body.trim()
+            };
+          })
+        };
+      }
+
+      function formatYamlScalarClient(value) {
+        var str = String(value || '');
+        if (
+          !str ||
+          /^\s|\s$/.test(str) ||
+          /^[-?:,&*!|>'"%@`\[{]/.test(str) ||
+          /:\s|\s#|^#|:$|[\r\n]/.test(str) ||
+          /^(true|false|yes|no|on|off|null|~|[+-]?(\d+\.?\d*|\.\d+)([eE][+-]?\d+)?)$/i.test(str)
+        ) {
+          return JSON.stringify(str);
+        }
+        return str;
+      }
+
+      function serializePostClient(entry, constants) {
+        var lines = ['---'];
+        lines.push('title: ' + formatYamlScalarClient(entry.title));
+        lines.push('slug: ' + formatYamlScalarClient(entry.slug));
+        if (entry.description) {
+          lines.push('description: ' + formatYamlScalarClient(entry.description));
+        }
+        lines.push('date: ' + constants.date);
+        if (constants.image) {
+          lines.push('image: ' + formatYamlScalarClient(constants.image));
+        }
+        if (constants.categories.length > 0) {
+          lines.push('categories:');
+          constants.categories.forEach(function (c) {
+            lines.push('  - ' + formatYamlScalarClient(c));
+          });
+        }
+        if (constants.tags.length > 0) {
+          lines.push('tags:');
+          constants.tags.forEach(function (t) {
+            lines.push('  - ' + formatYamlScalarClient(t));
+          });
+        }
+        lines.push('translationKey: ' + formatYamlScalarClient(constants.translationKey));
+        lines.push('---');
+        return lines.join('\n') + '\n' + entry.body.replace(/\r\n/g, '\n').replace(/^\n+/, '') + '\n';
+      }
+
+      document.getElementById('publishAllBtn').addEventListener('click', function () {
+        var check = validateAll();
+        if (!check.ok) return;
+
+        var payload = buildPublishPayload();
+        var datePrefix = payload.constants.date.slice(0, 10);
+
+        var summaryEl = document.getElementById('publishConstantsSummary');
+        summaryEl.textContent =
+          'Ключ: ' + payload.constants.translationKey +
+          ' · Дата: ' + datePrefix +
+          ' · Обложка: ' + (payload.constants.image || 'нет') +
+          ' · Категории: ' + (payload.constants.categories.join(', ') || 'нет') +
+          ' · Теги: ' + (payload.constants.tags.join(', ') || 'нет');
+
+        var listEl = document.getElementById('publishTargetList');
+        listEl.innerHTML = '';
+        payload.entries.forEach(function (item) {
+          var row = document.createElement('div');
+          row.className = 'publish-row';
+          var left = document.createElement('div');
+          var role = item.lang === payload.anchorLang ? 'Якорь' : 'Ведомый';
+          var strong = document.createElement('strong');
+          strong.textContent = role + ' · ' + LANG_MAP[item.lang].shortLabel + ': ';
+          var titleSpan = document.createElement('span');
+          titleSpan.textContent = item.title;
+          left.appendChild(strong);
+          left.appendChild(titleSpan);
+
+          var right = document.createElement('div');
+          right.className = 'publish-row-path';
+          right.textContent = 'content/' + item.lang + '/post/' + datePrefix + '-' + item.slug + '/index.md';
+
+          row.appendChild(left);
+          row.appendChild(right);
+          listEl.appendChild(row);
+        });
+
+        document.getElementById('publishCommitWrap').style.display = state.mode === 'github' ? 'flex' : 'none';
+        document.getElementById('publishCommitMsg').value =
+          'feat(content): publish linked ' + payload.constants.translationKey +
+          ' (' + payload.entries.map(function (e) { return e.lang; }).join(', ') + ')';
+        document.getElementById('publishResultBox').style.display = 'none';
+        document.getElementById('publishModalStatus').textContent = 'Готово к записи ' + payload.entries.length + ' языковых версий';
+        document.getElementById('publishConfirmBtn').disabled = false;
+        document.getElementById('publishConfirmBtn').style.display = 'inline-flex';
+        document.getElementById('publishModalBackdrop').classList.add('is-open');
+      });
+
+      document.getElementById('publishCloseBtn').addEventListener('click', function () {
+        document.getElementById('publishModalBackdrop').classList.remove('is-open');
+      });
+      document.getElementById('publishCancelBtn').addEventListener('click', function () {
+        document.getElementById('publishModalBackdrop').classList.remove('is-open');
+      });
+
+      document.getElementById('publishConfirmBtn').addEventListener('click', async function () {
+        var btn = this;
+        var statusEl = document.getElementById('publishModalStatus');
+        var resBox = document.getElementById('publishResultBox');
+        btn.disabled = true;
+        statusEl.textContent = 'Публикация...';
+        resBox.style.display = 'none';
+
+        try {
+          var payload = buildPublishPayload();
+          if (state.mode === 'local') {
+            var res = await fetch('/api/multilang/publish', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(payload)
+            });
+            var json = await res.json();
+            if (!res.ok || !json.ok) throw new Error(json.error || 'Ошибка публикации');
+
+            resBox.className = 'notice-box is-ok';
+            resBox.textContent = 'Опубликовано версий: ' + json.created.length +
+              ' (' + json.created.map(function (c) { return c.lang.toUpperCase(); }).join(', ') + ')';
+            resBox.style.display = 'block';
+            statusEl.textContent = 'Готово';
+            btn.style.display = 'none';
+            showToast('Все языковые версии опубликованы!');
+            await loadState();
+          } else {
+            if (!state.ghToken) throw new Error('Не задан GitHub Token');
+            var headers = {
+              Accept: 'application/vnd.github+json',
+              'Content-Type': 'application/json',
+              Authorization: 'Bearer ' + state.ghToken
+            };
+            var refCheck = await fetch('https://api.github.com/repos/' + state.ghRepo + '/git/ref/heads/' + encodeURIComponent(state.ghBranch), { headers: headers });
+            if (!refCheck.ok) throw new Error('Не удалось проверить HEAD ветки');
+            var refData = await refCheck.json();
+            if (refData.object.sha !== state.ghHeadCommitSha) {
+              throw new Error('В ветке появились новые коммиты — обновите состояние');
+            }
+
+            // Upload shared binary assets once and reuse their Git blob SHA across all languages
+            var sharedAssetShas = [];
+            for (var ai = 0; ai < payload.constants.assets.length; ai++) {
+              var asset = payload.constants.assets[ai];
+              var b64 = asset.base64 || '';
+              if (!b64 && asset.sourceRelPath) {
+                var srcFolderPath = asset.sourceRelPath.replace(/\/index\.md$/, '') + '/' + asset.filename;
+                var srcRes = await fetch('https://api.github.com/repos/' + state.ghRepo + '/contents/' +
+                  srcFolderPath.split('/').map(encodeURIComponent).join('/') +
+                  '?ref=' + encodeURIComponent(state.ghBranch), { headers: headers });
+                if (srcRes.ok) {
+                  var srcJson = await srcRes.json();
+                  if (srcJson.sha) {
+                    sharedAssetShas.push({ filename: asset.filename, sha: srcJson.sha });
+                    continue;
+                  }
+                }
+              }
+              if (b64) {
+                var aBlobRes = await fetch('https://api.github.com/repos/' + state.ghRepo + '/git/blobs', {
+                  method: 'POST',
+                  headers: headers,
+                  body: JSON.stringify({ content: b64, encoding: 'base64' })
+                });
+                if (!aBlobRes.ok) throw new Error('Ошибка загрузки изображения ' + asset.filename);
+                var aBlob = await aBlobRes.json();
+                sharedAssetShas.push({ filename: asset.filename, sha: aBlob.sha });
+              }
+            }
+
+            var datePrefix = payload.constants.date.slice(0, 10);
+            var treeEntries = [];
+
+            for (var ei = 0; ei < payload.entries.length; ei++) {
+              var ent = payload.entries[ei];
+              var folder = datePrefix + '-' + ent.slug;
+              var mdPath = 'content/' + ent.lang + '/post/' + folder + '/index.md';
+              var mdText = serializePostClient(ent, payload.constants);
+
+              var mdBlobRes = await fetch('https://api.github.com/repos/' + state.ghRepo + '/git/blobs', {
+                method: 'POST',
+                headers: headers,
+                body: JSON.stringify({ content: mdText, encoding: 'utf-8' })
+              });
+              if (!mdBlobRes.ok) throw new Error('Ошибка создания blob для ' + ent.lang);
+              var mdBlob = await mdBlobRes.json();
+              treeEntries.push({ path: mdPath, mode: '100644', type: 'blob', sha: mdBlob.sha });
+
+              sharedAssetShas.forEach(function (sa) {
+                treeEntries.push({
+                  path: 'content/' + ent.lang + '/post/' + folder + '/' + sa.filename,
+                  mode: '100644',
+                  type: 'blob',
+                  sha: sa.sha
+                });
+              });
+            }
+
+            var treeRes = await fetch('https://api.github.com/repos/' + state.ghRepo + '/git/trees', {
+              method: 'POST',
+              headers: headers,
+              body: JSON.stringify({ base_tree: state.ghHeadTreeSha, tree: treeEntries })
+            });
+            if (!treeRes.ok) throw new Error('Ошибка создания Git tree');
+            var treeJson = await treeRes.json();
+
+            var commitMsg = document.getElementById('publishCommitMsg').value.trim() ||
+              ('feat(content): publish linked ' + payload.constants.translationKey);
+            var commitRes = await fetch('https://api.github.com/repos/' + state.ghRepo + '/git/commits', {
+              method: 'POST',
+              headers: headers,
+              body: JSON.stringify({ message: commitMsg, tree: treeJson.sha, parents: [state.ghHeadCommitSha] })
+            });
+            if (!commitRes.ok) throw new Error('Ошибка создания коммита');
+            var commitJson = await commitRes.json();
+
+            var patchRes = await fetch('https://api.github.com/repos/' + state.ghRepo + '/git/refs/heads/' + encodeURIComponent(state.ghBranch), {
+              method: 'PATCH',
+              headers: headers,
+              body: JSON.stringify({ sha: commitJson.sha, force: false })
+            });
+            if (!patchRes.ok) throw new Error('Ошибка обновления ветки (HTTP ' + patchRes.status + ')');
+
+            resBox.className = 'notice-box is-ok';
+            resBox.textContent = 'Создан коммит ' + commitJson.sha.slice(0, 7) +
+              ' · опубликовано версий: ' + payload.entries.length;
+            resBox.style.display = 'block';
+            statusEl.textContent = 'Готово';
+            btn.style.display = 'none';
+            showToast('Создан коммит ' + commitJson.sha.slice(0, 7));
+            await loadFromGithub();
+          }
+        } catch (err) {
+          resBox.className = 'notice-box is-err';
+          resBox.textContent = 'Ошибка: ' + err.message;
+          resBox.style.display = 'block';
+          statusEl.textContent = 'Ошибка публикации';
+          btn.disabled = false;
+        }
+      });
+
+      document.getElementById('resetBtn').addEventListener('click', function () {
+        state.entries = {};
+        state.constants = {
+          dateLocal: toLocalDatetimeValue(new Date()),
+          translationKey: '',
+          tkManual: false,
+          image: '',
+          categoriesText: '',
+          tagsText: '',
+          coverAsset: null,
+          extraAssets: []
+        };
+        document.getElementById('coverFileInput').value = '';
+        state.activeTabLang = state.anchorLang;
+        renderAll();
+        showToast('Форма очищена');
+      });
+
+      /* ---------- Dual-Mode Bootstrap (Local Server / GitHub API) ---------- */
+      function decodeBase64Utf8(b64) {
+        var bin = atob(String(b64 || '').replace(/\n/g, ''));
+        var bytes = new Uint8Array(bin.length);
+        for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+        return new TextDecoder('utf-8').decode(bytes);
+      }
+
+      function readDecapToken() {
+        var keys = ['decap-cms-user', 'netlify-cms-user'];
+        for (var i = 0; i < keys.length; i++) {
+          try {
+            var raw = localStorage.getItem(keys[i]);
+            if (!raw) continue;
+            var obj = JSON.parse(raw);
+            if (obj && obj.token) return obj;
+          } catch (_) {}
+        }
+        return null;
+      }
+
+      async function loadFromGithub() {
+        var tokenInput = document.getElementById('ghTokenInput').value.trim();
+        if (tokenInput) state.ghToken = tokenInput;
+        if (!state.ghToken) throw new Error('Введите GitHub Token или войдите в Decap CMS');
+
+        var statusEl = document.getElementById('ghAuthStatus');
+        statusEl.textContent = 'Синхронизация с GitHub...';
+
+        var headers = { Accept: 'application/vnd.github+json', Authorization: 'Bearer ' + state.ghToken };
+        var refRes = await fetch('https://api.github.com/repos/' + state.ghRepo + '/git/ref/heads/' + encodeURIComponent(state.ghBranch), { headers: headers });
+        if (!refRes.ok) throw new Error('GitHub HTTP ' + refRes.status);
+        var refJson = await refRes.json();
+        state.ghHeadCommitSha = refJson.object.sha;
+
+        var commitRes = await fetch('https://api.github.com/repos/' + state.ghRepo + '/git/commits/' + state.ghHeadCommitSha, { headers: headers });
+        if (!commitRes.ok) throw new Error('Не удалось загрузить commit');
+        var commitJson = await commitRes.json();
+        state.ghHeadTreeSha = commitJson.tree.sha;
+
+        var treeRes = await fetch('https://api.github.com/repos/' + state.ghRepo + '/git/trees/' + state.ghHeadTreeSha + '?recursive=1', { headers: headers });
+        if (treeRes.ok) {
+          var treeJson = await treeRes.json();
+          var slugsByLang = {};
+          var posts = [];
+          (treeJson.tree || []).forEach(function (node) {
+            var m = String(node.path || '').match(/^content\/([a-z]{2})\/post\/([^/]+)\/index\.md$/);
+            if (!m) return;
+            var lang = m[1];
+            var folder = m[2];
+            var slugPart = folder.replace(/^\d{4}-\d{2}-\d{2}-/, '');
+            if (!slugsByLang[lang]) slugsByLang[lang] = [];
+            slugsByLang[lang].push(folder, slugPart);
+            posts.push({
+              relPath: node.path,
+              lang: lang,
+              folder: folder,
+              title: folder,
+              slug: slugPart,
+              date: '',
+              image: '',
+              categories: [],
+              tags: [],
+              translationKey: '',
+              assets: []
+            });
+          });
+          state.existingSlugsByLang = slugsByLang;
+          state.existingPosts = posts;
+        }
+
+        state.mode = 'github';
+        document.getElementById('modeBadge').textContent = 'GitHub · ' + state.ghRepo + '@' + state.ghBranch;
+        statusEl.textContent = 'Подключено (' + state.existingPosts.length + ' постов в индексе)';
+        renderAll();
+      }
+
+      async function loadState() {
+        try {
+          var res = await fetch('/api/multilang/state');
+          if (res.ok) {
+            var json = await res.json();
+            if (json && json.mode === 'local') {
+              state.mode = 'local';
+              state.categoriesPool = json.categories || [];
+              state.tagsPool = json.tags || [];
+              state.existingSlugsByLang = json.existingSlugsByLang || {};
+              state.existingPosts = json.posts || [];
+              document.getElementById('modeBadge').textContent = 'Локальный диск · content/<lang>/post';
+              document.getElementById('githubAuthBanner').classList.remove('is-visible');
+              renderAll();
+              return;
+            }
+          }
+        } catch (_) {}
+
+        state.mode = 'github';
+        document.getElementById('modeBadge').textContent = 'GitHub API режим';
+        document.getElementById('githubAuthBanner').classList.add('is-visible');
+        var decap = readDecapToken();
+        if (decap && decap.token) {
+          state.ghToken = decap.token;
+          await loadFromGithub().catch(function (err) {
+            document.getElementById('ghAuthStatus').textContent = 'Ошибка: ' + err.message;
+            renderAll();
+          });
+        } else {
+          document.getElementById('ghAuthStatus').textContent = 'Войдите в CMS или введите GitHub Token';
+          renderAll();
+        }
+      }
+
+      document.getElementById('ghConnectBtn').addEventListener('click', function () {
+        loadFromGithub().catch(function (err) {
+          document.getElementById('ghAuthStatus').textContent = 'Ошибка: ' + err.message;
+        });
+      });
+
+      document.getElementById('ghFromDecapBtn').addEventListener('click', function () {
+        var decap = readDecapToken();
+        if (decap && decap.token) {
+          state.ghToken = decap.token;
+          loadFromGithub().catch(function (err) {
+            document.getElementById('ghAuthStatus').textContent = 'Ошибка: ' + err.message;
+          });
+        } else {
+          document.getElementById('ghAuthStatus').textContent = 'Сессия Decap CMS не найдена';
+        }
+      });
+
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') {
+          document.getElementById('importModalBackdrop').classList.remove('is-open');
+          document.getElementById('htmlModalBackdrop').classList.remove('is-open');
+          document.getElementById('pickerModalBackdrop').classList.remove('is-open');
+          document.getElementById('publishModalBackdrop').classList.remove('is-open');
+        }
+      });
+
+      loadState();
+    })();
+  </script>
+</body>
+</html>
