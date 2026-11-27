@@ -1,8 +1,13 @@
 ---
-title: "RFID in Railways: AAR S-918 Standard & Global Case Studies on Wagon Tracking Automation"
+title: "RFID in Railways: AAR S-918 Standard & Global Case Studies on Wagon
+  Tracking Automation"
 slug: rfid-in-railways-aar-s-918-standard-global-case-studies-on-wagon-tracking
-description: "Technical analysis of Automatic Equipment Identification (AEI) systems in the railway industry: AAR S-918 standard, integration with machine vision, Norfolk Southern and CPKC case studies, reduction of rolling stock losses."
+description: "Technical analysis of Automatic Equipment Identification (AEI)
+  systems in the railway industry: AAR S-918 standard, integration with machine
+  vision, Norfolk Southern and CPKC case studies, reduction of rolling stock
+  losses."
 date: 2026-11-12T22:00:00.000Z
+image: image01_7.webp
 categories:
   - RFID Технологии
 tags:
