@@ -6,7 +6,7 @@ description: "Analyse technique des étiquettes RFID UHF pour textiles militaire
   STANAG 2233, AQAP 4107, MIL-STD-810H, ETSI EN 302 208 et TCO sur cinq ans en
   EUR pour 5 000 tenues de combat."
 date: 2026-11-14T22:00:00.000Z
-image: next-gen_industrial_rfid_applications-2_1.jpg
+image: image01_7.webp
 categories:
   - RFID Solutions
 tags:
