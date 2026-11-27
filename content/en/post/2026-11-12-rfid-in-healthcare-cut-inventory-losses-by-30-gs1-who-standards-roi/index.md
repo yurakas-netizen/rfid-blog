@@ -7,11 +7,8 @@ image: Image01_5.webp
 categories:
   - RFID Технологии
 tags:
-  - Здравоохранение
   - GS1 Healthcare
-  - Холодовая цепь
   - RTLS
-  - Безопасность пациентов
   - Интеграция EMR
 translationKey: rfid-healthcare-inventory-loss-reduction
 ---

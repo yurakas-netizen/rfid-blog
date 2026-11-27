@@ -11,12 +11,9 @@ image: image01_7.webp
 categories:
   - RFID Технологии
 tags:
-  - Железная дорога
   - AAR S-918
   - AEI
   - Norfolk Southern
-  - Логистика
-  - Предиктивное обслуживание
 translationKey: rfid-railways-aar-s918-automation
 ---
 The railway industry represents one of the most complex sectors for implementing automatic identification technologies due to extreme operating conditions, high train speeds, and critical reliability requirements. Automatic Equipment Identification (AEI) systems based on passive UHF RFID tags have become the global de facto standard for managing rolling stock. Implementing these systems enables a transition from manual accounting to fully automated real-time monitoring of location, condition, and maintenance history for every wagon.

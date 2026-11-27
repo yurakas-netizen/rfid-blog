@@ -9,11 +9,7 @@ image: image01_6.webp
 categories:
   - RFID Технологии
 tags:
-  - Агросектор
-  - Элеваторы
   - GS1
-  - Логистика зерна
-  - Весовой контроль
   - ISO 22005
 translationKey: rfid-grain-elevator-vehicle-tracking
 ---

@@ -7,8 +7,6 @@ image: Image01_3.webp
 categories:
   - RFID Технологии
 tags:
-  - Ритейл
-  - Инвентаризация
   - SGTIN-96
   - Omnichannel
   - Zara

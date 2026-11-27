@@ -7,12 +7,8 @@ image: Image01_8.webp
 categories:
   - RFID Технологии
 tags:
-  - Логистика
-  - Склад
   - WMS
-  - Инвентаризация
   - GS1
-  - Автоматизация
 translationKey: rfid-logistics-implementation-guide
 ---
 Modern warehouse logistics faces increasing pressure: the need to process large volumes of goods quickly, the demand for real-time data accuracy, and a shortage of qualified personnel. Traditional accounting methods based on barcodes and manual entry have become a bottleneck limiting the throughput of distribution centers. UHF RFID (Radio Frequency Identification) technology offers a radical solution, transforming the warehouse from a storage location into a dynamic hub of automated data processing. Implementing RFID enables inventory accuracy up to 99%, accelerates receiving and shipping processes significantly, and ensures full supply chain transparency.

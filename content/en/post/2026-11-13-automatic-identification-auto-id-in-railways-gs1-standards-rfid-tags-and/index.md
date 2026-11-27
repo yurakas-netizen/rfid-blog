@@ -11,9 +11,6 @@ tags:
   - GS1
   - GIAI
   - EPC Gen2
-  - RFID на ЖД
-  - колесные пары
-  - цифровой двойник
 translationKey: auto-id-railway-gs1-rfid
 ---
 The global railway industry is on the brink of a major digital transformation. A key element is the creation of a "digital twin" for physical assets—from individual components to entire trains. Automatic Identification (Auto-ID), particularly Radio-Frequency Identification (RFID) technologies, provides the foundational layer that links a physical object to its digital record, enabling end-to-end traceability, enhanced safety, and cost optimization.

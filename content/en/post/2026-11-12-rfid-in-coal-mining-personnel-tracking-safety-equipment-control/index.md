@@ -7,12 +7,9 @@ image: Image01.webp
 categories:
   - RFID Технологии
 tags:
-  - Горнодобывающая промышленность
-  - Безопасность труда
   - ATEX
   - IECEx
   - ISO 45001
-  - Трекинг персонала
 translationKey: rfid-coal-mining-safety-personnel-tracking
 ---
 The coal mining industry faces unique safety challenges requiring innovative solutions to protect human lives and optimize operations. Traditional communication systems often fail in deep mines, complicating worker localization during emergencies. RFID technology fundamentally transforms the industry, providing unprecedented levels of safety and operational efficiency. Modern solutions enable real-time personnel location tracking, equipment condition monitoring, and accident prevention. Key benefits include a 45–67% reduction in workplace accidents, a 20–30% increase in productivity, and a reduction in evacuation search time from 45 to 5–7 minutes (an 85% improvement). ROI is achieved in 12–18 months.

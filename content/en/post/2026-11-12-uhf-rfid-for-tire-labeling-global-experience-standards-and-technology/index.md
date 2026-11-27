@@ -7,12 +7,9 @@ image: Image01_2.webp
 categories:
   - RFID Технологии
 tags:
-  - Шинная промышленность
   - ISO 20909
   - ASTM D8331
   - SGTIN-96
-  - Вулканизация
-  - Расширенная ответственность производителя
 translationKey: uhf-rfid-tire-labeling-global-standards
 ---
 The use of Ultra-High Frequency (UHF) RFID tags in the tire industry is a mature response to the complex challenges of global supply chains. The technology allows for unique identification of each tire, from the production stage to disposal, creating its digital twin. What began as an experimental approach is now becoming an industry standard for traceability, anti-counterfeiting, and automated logistics: the tag is either vulcanized into the tire's construction at the factory or applied as a tread label for warehouse and dealer operations, and the data it carries is anchored in a standards framework that spans ISO, ASTM, GS1, UNECE and the GDSO industry consortium.
