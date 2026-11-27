@@ -15,6 +15,8 @@ tags:
   - Algorytm Q
   - TCO
 translationKey: uhf-rfid-chemical-industry-atex-seveso
+categories:
+  - RFID Solutions
 ---
 Przemysł chemiczny, a w szczególności zakłady wielkiej syntezy, to środowisko ekstremalne dla elektroniki. Kontakt z kwasem azotowym (HNO₃), amoniakiem (NH₃) czy ługiem sodowym (NaOH), w połączeniu ze strefami zagrożenia wybuchem (ATEX) oraz wymogami dyrektywy Seveso III, sprawia, że standardowe etykiety UHF ulegają zniszczeniu w ciągu kilku tygodni. Niniejsza analiza techniczna przedstawia architekturę identyfikacji opartą na etykietach PVDF i ceramicznych, adaptacyjnym algorytmie Q oraz integracji z GS1 EPCIS 2.0 dla 20 000 opakowań (big-bagów i IBC) rocznie. Omówiono wymogi ATEX, odporność chemiczną materiałów oraz 5-letni TCO w PLN.
 

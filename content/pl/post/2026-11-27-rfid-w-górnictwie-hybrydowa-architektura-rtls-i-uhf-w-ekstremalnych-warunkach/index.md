@@ -16,6 +16,8 @@ tags:
   - EPCIS 2.0
   - TCO
 translationKey: hybrid-uhf-rtls-mining-atex-500m
+categories:
+  - RFID Solutions
 ---
 Górnictwo podziemne w ekstremalnych warunkach klimatycznych to jedno z najtrudniejszych środowisk dla systemów identyfikacji. Temperatury spadające do -40 °C, wysokie stężenie pyłu, wilgoć oraz wymóg zachowania ciągłej łączności i bezpieczeństwa na poziomach o długości 500 metrów sprawiają, że standardowe etykiety pasywne UHF są niewystarczające. Niniejsza analiza techniczna porównuje ręczną ewidencję z hybrydową architekturą RTLS (aktywny RFID 433 MHz o mocy 10 mW ERP do śledzenia załogi i maszyn) oraz pasywnym UHF (do bram i kontroli sprzętu). Omówiono normy ATEX (IEC 60079), odporność baterii Li-SOCl₂ na mróz oraz 5-letni TCO w PLN.
 

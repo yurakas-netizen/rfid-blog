@@ -14,6 +14,8 @@ tags:
   - EU GDP
   - TCO
 translationKey: uhf-rfid-cold-chain-q-algorithm-bap
+categories:
+  - RFID Solutions
 ---
 Łańcuch chłodniczy w przemyśle wytwórczym wymaga rygorystycznej identyfikowalności partii, od surowca po produkt gotowy. W typowym zakładzie 50 000 jednostek rocznie przechodzi przez strefy mroźnicze, gdzie temperatura spada do -30 °C, oraz strefy mycia i pakowania, gdzie sięga +80 °C. Standardowe etykiety UHF tracą czytelność po kilku tygodniach z powodu kondensacji i rozszerzania się lodu wewnątrz obudowy. Niniejsza analiza techniczna porównuje ręczną dokumentację partii z systemem UHF RFID opartym na adaptacyjnym antykolizyjnym algorytmie Q, ze szczególnym uwzględnieniem fizyki propagacji, norm EU GDP i DIN EN 12830 oraz 5-letniego TCO w PLN.
 
