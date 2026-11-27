@@ -192,7 +192,7 @@
     },
     {
       "id": "admin",
-      "enabled": true,
+      "enabled": false,
       "icon": "admin",
       "defaultLabel": "Admin (CMS)",
       "defaultUrl": "/admin/",
