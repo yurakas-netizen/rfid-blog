@@ -364,6 +364,246 @@
       color: #0369a1;
       font-weight: 600;
     }
+
+    /* Cover Image Prompt Generator in Right Preview Pane */
+    [class*="PreviewPaneContainer"].rfid-has-prompt-panel {
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 10px !important;
+      padding: 10px 14px 12px 14px !important;
+      background: #eff0f4 !important;
+      box-sizing: border-box !important;
+      overflow: hidden !important;
+    }
+
+    [class*="PreviewPaneContainer"].rfid-has-prompt-panel > iframe#preview-pane {
+      flex: 1 1 0 !important;
+      min-height: 170px !important;
+      height: auto !important;
+      width: 100% !important;
+      border: 1px solid #dfdfe3 !important;
+      border-radius: 8px !important;
+      background: #ffffff !important;
+    }
+
+    .rfid-prompt-panel {
+      flex: 0 0 auto;
+      display: flex;
+      flex-direction: column;
+      max-height: 56%;
+      background: #ffffff;
+      border: 1px solid #d5dce6;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+      overflow: hidden;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: #0f172a;
+    }
+
+    .rfid-prompt-panel.is-collapsed {
+      max-height: none;
+    }
+
+    .rfid-prompt-panel.is-collapsed .rfid-prompt-body {
+      display: none;
+    }
+
+    .rfid-prompt-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 86px 7px 10px;
+      background: #f8fafc;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .rfid-prompt-panel.is-collapsed .rfid-prompt-header {
+      border-bottom-color: transparent;
+    }
+
+    .rfid-prompt-title {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12.5px;
+      font-weight: 700;
+      color: #0f172a;
+      margin-right: 2px;
+      white-space: nowrap;
+    }
+
+    .rfid-prompt-title svg {
+      width: 14px;
+      height: 14px;
+      color: #0284c7;
+      flex-shrink: 0;
+    }
+
+    .rfid-prompt-select {
+      height: 28px;
+      padding: 0 8px;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      background: #ffffff;
+      color: #1e293b;
+      font-size: 12px;
+      font-weight: 500;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .rfid-prompt-select:focus {
+      border-color: #0284c7;
+    }
+
+    .rfid-prompt-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      height: 28px;
+      padding: 0 9px;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      background: #ffffff;
+      color: #334155;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background-color 0.14s ease, border-color 0.14s ease, color 0.14s ease;
+    }
+
+    .rfid-prompt-btn:hover {
+      background: #f1f5f9;
+      border-color: #94a3b8;
+    }
+
+    .rfid-prompt-btn.is-active {
+      background: #e0f2fe;
+      border-color: #7dd3fc;
+      color: #0369a1;
+    }
+
+    .rfid-prompt-btn-copy {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      height: 28px;
+      padding: 0 11px;
+      border: 0;
+      border-radius: 6px;
+      background: #0284c7;
+      color: #ffffff;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background-color 0.14s ease;
+    }
+
+    .rfid-prompt-btn-copy:hover {
+      background: #0369a1;
+    }
+
+    .rfid-prompt-btn-copy.is-copied {
+      background: #059669;
+    }
+
+    .rfid-prompt-btn-copy svg {
+      width: 13px;
+      height: 13px;
+      flex-shrink: 0;
+    }
+
+    .rfid-prompt-body {
+      padding: 8px 10px 10px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      overflow-y: auto;
+    }
+
+    .rfid-prompt-settings {
+      display: none;
+      flex-direction: column;
+      gap: 8px;
+      padding: 8px 9px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 7px;
+    }
+
+    .rfid-prompt-settings.is-open {
+      display: flex;
+    }
+
+    .rfid-prompt-field {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .rfid-prompt-field-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: #475569;
+    }
+
+    .rfid-prompt-link-btn {
+      border: 0;
+      background: transparent;
+      padding: 0;
+      color: #0284c7;
+      font-size: 11.5px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .rfid-prompt-link-btn:hover {
+      text-decoration: underline;
+    }
+
+    .rfid-prompt-textarea {
+      width: 100%;
+      padding: 7px 9px;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 11.5px;
+      line-height: 1.45;
+      color: #0f172a;
+      background: #ffffff;
+      resize: vertical;
+      box-sizing: border-box;
+      outline: none;
+    }
+
+    .rfid-prompt-textarea:focus {
+      border-color: #0284c7;
+    }
+
+    .rfid-prompt-textarea.is-final {
+      min-height: 108px;
+      background: #f8fafc;
+    }
+
+    .rfid-prompt-textarea.is-final:focus {
+      background: #ffffff;
+    }
+
+    .rfid-prompt-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      font-size: 11.5px;
+      color: #64748b;
+    }
   </style>
 </head>
 <body>
@@ -1865,6 +2105,10 @@
             } catch (_) {}
           });
         }
+
+        if (typeof schedulePromptSync === 'function') {
+          setTimeout(schedulePromptSync, 60);
+        }
       }
 
       /* =========================================================
@@ -2614,6 +2858,519 @@
         }
       }, true);
 
+      /* =========================================================
+         6. Cover Image Prompt Generator
+         ========================================================= */
+      var PROMPT_TEMPLATE_KEY = 'rfid.cms.imgPromptTemplate';
+      var PROMPT_MODE_KEY = 'rfid.cms.imgPromptSourceMode';
+      var PROMPT_COLLAPSED_KEY = 'rfid.cms.imgPromptCollapsed';
+      var DEFAULT_PROMPT_TEMPLATE =
+        'Generate a realistic industrial photograph depicting the physical environment and equipment described in the source paragraph below. ' +
+        'Visual style: authentic industrial photography, natural or factory lighting, realistic materials (rock, dust, dampness, mining equipment, industrial hardware, rugged sensors), shallow depth of field. ' +
+        'Visual constraints: completely clean surfaces with zero text, no words, no letters, no numbers, no signs, no labels, no screens with readable text, no barcodes, no QR codes, and no logos anywhere in the image.\n' +
+        'Source context:';
+
+      function readStorage(key, fallback) {
+        try {
+          var v = localStorage.getItem(key);
+          return v === null ? fallback : v;
+        } catch (_) {
+          return fallback;
+        }
+      }
+
+      function writeStorage(key, value) {
+        try {
+          localStorage.setItem(key, value);
+        } catch (_) {}
+      }
+
+      function decodeBasicEntities(str) {
+        return String(str || '')
+          .replace(/&nbsp;/gi, ' ')
+          .replace(/&amp;/gi, '&')
+          .replace(/&lt;/gi, '<')
+          .replace(/&gt;/gi, '>')
+          .replace(/&quot;/gi, '"')
+          .replace(/&#39;/gi, "'");
+      }
+
+      function stripMarkdownForPrompt(raw) {
+        var s = String(raw || '').replace(/\r\n?/g, '\n');
+        s = s
+          .replace(/\{\{<\s*rawhtml\s*>\}\}[\s\S]*?\{\{<\s*\/rawhtml\s*>\}\}/gi, ' ')
+          .replace(/\{\{[<%][\s\S]*?[>%]\}\}/g, ' ')
+          .replace(/<!--[\s\S]*?-->/g, ' ')
+          .replace(/!\[[^\]]*\]\([^)]*\)/g, ' ')
+          .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')
+          .replace(/<br\s*\/?>/gi, ' ')
+          .replace(/<\/?(?:sub|sup|strong|b|em|i|code|span|mark|small|u|s|del|ins|a)[^>]*>/gi, '')
+          .replace(/<[^>]+>/g, ' ')
+          .replace(/`([^`]+)`/g, '$1')
+          .replace(/(\*\*|__)([\s\S]*?)\1/g, '$2')
+          .replace(/~~([\s\S]*?)~~/g, '$1')
+          .replace(/\*([^*\n]+)\*/g, '$1')
+          .replace(/(^|[^\w\u0400-\u04FF])_([^_\n]+)_(?=[^\w\u0400-\u04FF]|$)/g, '$1$2');
+        s = decodeBasicEntities(s);
+        return s.replace(/\s+/g, ' ').trim();
+      }
+
+      function cleanLeadingBlockMarkers(chunk) {
+        var lines = String(chunk || '').split('\n');
+        while (lines.length) {
+          var first = lines[0].trim();
+          if (
+            !first ||
+            /^#{1,6}\s+/.test(first) ||
+            /^!\[[^\]]*\]\([^)]*\)$/.test(first) ||
+            /^[-*_]{3,}$/.test(first) ||
+            /^[=-]{3,}$/.test(first)
+          ) {
+            lines.shift();
+            continue;
+          }
+          break;
+        }
+        return lines.map(function (ln) {
+          return ln.replace(/^\s*>\s?/, '');
+        }).join('\n').trim();
+      }
+
+      function isNonProseBlock(block) {
+        if (!block) return true;
+        var lines = block.split('\n').map(function (l) { return l.trim(); }).filter(Boolean);
+        if (!lines.length) return true;
+        var allTable = lines.every(function (l) { return l.charAt(0) === '|'; });
+        if (allTable) return true;
+        var allList = lines.every(function (l) { return /^(?:[-*+]|\d+[.)])\s+/.test(l); });
+        if (allList) return true;
+        var allHrOrHeading = lines.every(function (l) { return /^#{1,6}\s+/.test(l) || /^[-*_]{3,}$/.test(l); });
+        return allHrOrHeading;
+      }
+
+      function extractParagraphsFromBody(body) {
+        var src = String(body || '').replace(/\r\n?/g, '\n');
+        src = src
+          .replace(/\{\{<\s*rawhtml\s*>\}\}[\s\S]*?\{\{<\s*\/rawhtml\s*>\}\}/gi, '\n\n')
+          .replace(/\{\{[<%][\s\S]*?[>%]\}\}/g, '\n\n')
+          .replace(/<!--[\s\S]*?-->/g, '\n\n')
+          .replace(/```[\s\S]*?```/g, '\n\n')
+          .replace(/~~~[\s\S]*?~~~/g, '\n\n');
+
+        var rawChunks = src.split(/\n\s*\n+/);
+        var proseParagraphs = [];
+        var fallbackParagraphs = [];
+
+        for (var i = 0; i < rawChunks.length; i++) {
+          var cleanedBlock = cleanLeadingBlockMarkers(rawChunks[i]);
+          if (!cleanedBlock) continue;
+          var text = stripMarkdownForPrompt(cleanedBlock);
+          if (!text) continue;
+          fallbackParagraphs.push(text);
+          if (!isNonProseBlock(cleanedBlock)) {
+            proseParagraphs.push(text);
+          }
+        }
+        return proseParagraphs.length ? proseParagraphs : fallbackParagraphs;
+      }
+
+      function extractSourceTextFromEntry(data, mode) {
+        var d = data || {};
+        var m = mode || 'first_paragraph';
+        var title = stripMarkdownForPrompt(d.title || '');
+        var desc = stripMarkdownForPrompt(d.description || '');
+        if (m === 'title') return title;
+        if (m === 'description') return desc;
+        if (m === 'title_desc') {
+          if (title && desc) return title + ' — ' + desc;
+          return title || desc;
+        }
+        var paras = extractParagraphsFromBody(d.body || '');
+        if (m === 'two_paragraphs') {
+          return paras.slice(0, 2).join('\n\n');
+        }
+        return paras[0] || '';
+      }
+
+      function buildCombinedPrompt(template, sourceText) {
+        var tpl = String(template || '').replace(/\r\n?/g, '\n');
+        var src = String(sourceText || '').trim();
+        if (tpl.indexOf('{{source}}') !== -1) {
+          return tpl.split('{{source}}').join(src);
+        }
+        if (!src) return tpl.replace(/\s+$/, '');
+        return tpl.replace(/\s+$/, '') + '\n' + src;
+      }
+
+      function entryHasBodyField(ctxProps) {
+        if (!ctxProps || !ctxProps.fields || typeof ctxProps.fields.find !== 'function') return false;
+        return !!ctxProps.fields.find(function (f) { return f.get('name') === 'body'; });
+      }
+
+      function copyPlainText(text, onDone) {
+        if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+          navigator.clipboard.writeText(text).then(function () {
+            onDone(true);
+          }).catch(function () {
+            fallbackCopy();
+          });
+          return;
+        }
+        fallbackCopy();
+
+        function fallbackCopy() {
+          try {
+            var ta = document.createElement('textarea');
+            ta.value = text;
+            ta.style.position = 'fixed';
+            ta.style.opacity = '0';
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand('copy');
+            document.body.removeChild(ta);
+            onDone(true);
+          } catch (_) {
+            onDone(false);
+          }
+        }
+      }
+
+      var promptSyncTimer = null;
+
+      function schedulePromptSync() {
+        if (promptSyncTimer) return;
+        promptSyncTimer = setTimeout(function () {
+          promptSyncTimer = null;
+          syncAllPromptPanels();
+        }, 60);
+      }
+
+      function createPromptPanelInstance() {
+        var panel = document.createElement('section');
+        panel.className = 'rfid-prompt-panel';
+        if (readStorage(PROMPT_COLLAPSED_KEY, '0') === '1') {
+          panel.classList.add('is-collapsed');
+        }
+
+        var header = document.createElement('div');
+        header.className = 'rfid-prompt-header';
+
+        var title = document.createElement('span');
+        title.className = 'rfid-prompt-title';
+        title.innerHTML =
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5 -5l-11 11"/></svg>' +
+          '<span>Промпт обложки</span>';
+
+        var modeSelect = document.createElement('select');
+        modeSelect.className = 'rfid-prompt-select';
+        modeSelect.title = 'Откуда автоматически брать уникальный контекст статьи';
+        [
+          ['first_paragraph', 'Первый абзац'],
+          ['two_paragraphs', 'Первые 2 абзаца'],
+          ['description', 'Описание (description)'],
+          ['title_desc', 'Заголовок + описание'],
+          ['title', 'Заголовок']
+        ].forEach(function (opt) {
+          var o = document.createElement('option');
+          o.value = opt[0];
+          o.textContent = opt[1];
+          modeSelect.appendChild(o);
+        });
+        modeSelect.value = readStorage(PROMPT_MODE_KEY, 'first_paragraph');
+
+        var editToggleBtn = document.createElement('button');
+        editToggleBtn.type = 'button';
+        editToggleBtn.className = 'rfid-prompt-btn';
+        editToggleBtn.textContent = 'Шаблон / фрагмент';
+        editToggleBtn.title = 'Редактировать постоянный шаблон и исходный фрагмент по отдельности';
+
+        var copyBtn = document.createElement('button');
+        copyBtn.type = 'button';
+        copyBtn.className = 'rfid-prompt-btn-copy';
+        copyBtn.innerHTML =
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>' +
+          '<span>Скопировать</span>';
+
+        var collapseBtn = document.createElement('button');
+        collapseBtn.type = 'button';
+        collapseBtn.className = 'rfid-prompt-btn';
+        collapseBtn.title = 'Свернуть или развернуть генератор промпта';
+        collapseBtn.textContent = panel.classList.contains('is-collapsed') ? 'Развернуть' : 'Свернуть';
+
+        header.appendChild(title);
+        header.appendChild(modeSelect);
+        header.appendChild(editToggleBtn);
+        header.appendChild(copyBtn);
+        header.appendChild(collapseBtn);
+
+        var body = document.createElement('div');
+        body.className = 'rfid-prompt-body';
+
+        var settings = document.createElement('div');
+        settings.className = 'rfid-prompt-settings';
+
+        // Constant template field
+        var tplField = document.createElement('div');
+        tplField.className = 'rfid-prompt-field';
+        var tplHead = document.createElement('div');
+        tplHead.className = 'rfid-prompt-field-head';
+        var tplLabel = document.createElement('span');
+        tplLabel.textContent = 'Постоянная часть (шаблон промпта, сохраняется в браузере)';
+        var tplResetBtn = document.createElement('button');
+        tplResetBtn.type = 'button';
+        tplResetBtn.className = 'rfid-prompt-link-btn';
+        tplResetBtn.textContent = 'Сбросить шаблон';
+        tplHead.appendChild(tplLabel);
+        tplHead.appendChild(tplResetBtn);
+
+        var tplArea = document.createElement('textarea');
+        tplArea.className = 'rfid-prompt-textarea';
+        tplArea.rows = 4;
+        tplArea.spellcheck = false;
+        tplArea.value = readStorage(PROMPT_TEMPLATE_KEY, DEFAULT_PROMPT_TEMPLATE);
+        tplField.appendChild(tplHead);
+        tplField.appendChild(tplArea);
+
+        // Extracted source paragraph field
+        var srcField = document.createElement('div');
+        srcField.className = 'rfid-prompt-field';
+        var srcHead = document.createElement('div');
+        srcHead.className = 'rfid-prompt-field-head';
+        var srcLabel = document.createElement('span');
+        srcLabel.textContent = 'Уникальный фрагмент статьи (Source context)';
+        var srcAutoBtn = document.createElement('button');
+        srcAutoBtn.type = 'button';
+        srcAutoBtn.className = 'rfid-prompt-link-btn';
+        srcAutoBtn.textContent = 'Вернуть авто из текста';
+        srcAutoBtn.style.display = 'none';
+        srcHead.appendChild(srcLabel);
+        srcHead.appendChild(srcAutoBtn);
+
+        var srcArea = document.createElement('textarea');
+        srcArea.className = 'rfid-prompt-textarea';
+        srcArea.rows = 3;
+        srcArea.placeholder = 'Первый абзац появится автоматически после ввода или импорта текста статьи...';
+        srcField.appendChild(srcHead);
+        srcField.appendChild(srcArea);
+
+        settings.appendChild(tplField);
+        settings.appendChild(srcField);
+
+        var metaRow = document.createElement('div');
+        metaRow.className = 'rfid-prompt-meta';
+        var statusSpan = document.createElement('span');
+        statusSpan.textContent = 'Ожидание текста статьи...';
+        var finalResetBtn = document.createElement('button');
+        finalResetBtn.type = 'button';
+        finalResetBtn.className = 'rfid-prompt-link-btn';
+        finalResetBtn.textContent = 'Синхронизировать с текстом';
+        finalResetBtn.style.display = 'none';
+        metaRow.appendChild(statusSpan);
+        metaRow.appendChild(finalResetBtn);
+
+        var finalArea = document.createElement('textarea');
+        finalArea.className = 'rfid-prompt-textarea is-final';
+        finalArea.rows = 5;
+        finalArea.spellcheck = false;
+        finalArea.setAttribute('aria-label', 'Итоговый промпт для генерации обложки');
+
+        body.appendChild(settings);
+        body.appendChild(metaRow);
+        body.appendChild(finalArea);
+
+        panel.appendChild(header);
+        panel.appendChild(body);
+
+        var state = {
+          lastRouteHash: '',
+          lastEntrySig: null,
+          autoSourceText: '',
+          isSourceCustom: false,
+          isFinalCustom: false,
+          copyTimer: null
+        };
+
+        function recomputeFromFields() {
+          var sourceVal = state.isSourceCustom ? srcArea.value : state.autoSourceText;
+          if (!state.isSourceCustom && srcArea.value !== sourceVal) {
+            srcArea.value = sourceVal;
+          }
+          srcAutoBtn.style.display = state.isSourceCustom ? 'inline' : 'none';
+
+          if (!state.isFinalCustom) {
+            finalArea.value = buildCombinedPrompt(tplArea.value, sourceVal);
+          }
+          finalResetBtn.style.display = state.isFinalCustom ? 'inline' : 'none';
+
+          var modeLabel = modeSelect.options[modeSelect.selectedIndex]
+            ? modeSelect.options[modeSelect.selectedIndex].textContent
+            : 'Первый абзац';
+          if (state.isFinalCustom) {
+            statusSpan.textContent = 'Итоговый промпт изменён вручную · ' + finalArea.value.length + ' симв.';
+          } else if (state.isSourceCustom) {
+            statusSpan.textContent = 'Фрагмент изменён вручную · ' + finalArea.value.length + ' симв.';
+          } else if (sourceVal) {
+            statusSpan.textContent = 'Авто (' + modeLabel + ': ' + sourceVal.length + ' симв.) · всего ' + finalArea.value.length + ' симв.';
+          } else {
+            statusSpan.textContent = 'Введите или импортируйте текст статьи — фрагмент подставится автоматически';
+          }
+        }
+
+        function sync() {
+          var routeHash = String(window.location.hash || '');
+          if (routeHash !== state.lastRouteHash) {
+            state.lastRouteHash = routeHash;
+            state.isSourceCustom = false;
+            state.isFinalCustom = false;
+            state.lastEntrySig = null;
+          }
+
+          var current = readCurrentEntryData();
+          if (!current || !entryHasBodyField(current.ctx)) {
+            panel.style.display = 'none';
+            return;
+          }
+          panel.style.display = 'flex';
+
+          var d = current.data;
+          var sig = modeSelect.value + '\0' + d.title + '\0' + d.description + '\0' + d.body;
+          if (sig === state.lastEntrySig) return;
+          state.lastEntrySig = sig;
+          state.autoSourceText = extractSourceTextFromEntry(d, modeSelect.value);
+          recomputeFromFields();
+        }
+
+        modeSelect.addEventListener('change', function () {
+          writeStorage(PROMPT_MODE_KEY, modeSelect.value);
+          state.isSourceCustom = false;
+          state.isFinalCustom = false;
+          state.lastEntrySig = null;
+          sync();
+        });
+
+        editToggleBtn.addEventListener('click', function () {
+          var open = settings.classList.toggle('is-open');
+          editToggleBtn.classList.toggle('is-active', open);
+        });
+
+        collapseBtn.addEventListener('click', function () {
+          var collapsed = panel.classList.toggle('is-collapsed');
+          collapseBtn.textContent = collapsed ? 'Развернуть' : 'Свернуть';
+          writeStorage(PROMPT_COLLAPSED_KEY, collapsed ? '1' : '0');
+        });
+
+        tplArea.addEventListener('input', function () {
+          writeStorage(PROMPT_TEMPLATE_KEY, tplArea.value);
+          state.isFinalCustom = false;
+          recomputeFromFields();
+        });
+
+        tplResetBtn.addEventListener('click', function () {
+          tplArea.value = DEFAULT_PROMPT_TEMPLATE;
+          writeStorage(PROMPT_TEMPLATE_KEY, DEFAULT_PROMPT_TEMPLATE);
+          state.isFinalCustom = false;
+          recomputeFromFields();
+        });
+
+        srcArea.addEventListener('input', function () {
+          state.isSourceCustom = true;
+          state.isFinalCustom = false;
+          recomputeFromFields();
+        });
+
+        srcAutoBtn.addEventListener('click', function () {
+          state.isSourceCustom = false;
+          state.isFinalCustom = false;
+          recomputeFromFields();
+        });
+
+        finalArea.addEventListener('input', function () {
+          state.isFinalCustom = true;
+          recomputeFromFields();
+        });
+
+        finalResetBtn.addEventListener('click', function () {
+          state.isSourceCustom = false;
+          state.isFinalCustom = false;
+          state.lastEntrySig = null;
+          sync();
+        });
+
+        copyBtn.addEventListener('click', function () {
+          var text = finalArea.value;
+          copyPlainText(text, function (ok) {
+            if (!ok) return;
+            var labelEl = copyBtn.querySelector('span');
+            if (labelEl) labelEl.textContent = 'Скопировано ✓';
+            copyBtn.classList.add('is-copied');
+            if (state.copyTimer) clearTimeout(state.copyTimer);
+            state.copyTimer = setTimeout(function () {
+              if (labelEl) labelEl.textContent = 'Скопировать';
+              copyBtn.classList.remove('is-copied');
+            }, 1800);
+          });
+        });
+
+        panel._rfidSyncPrompt = sync;
+        return panel;
+      }
+
+      function attachPreviewPromptPanel(previewContainer) {
+        if (!previewContainer) return;
+        var current = readCurrentEntryData();
+        if (!current || !entryHasBodyField(current.ctx)) {
+          previewContainer.classList.remove('rfid-has-prompt-panel');
+          return;
+        }
+        var iframe = previewContainer.querySelector('iframe#preview-pane');
+        var panel = previewContainer.querySelector(':scope > .rfid-prompt-panel');
+        if (!panel) {
+          panel = createPromptPanelInstance();
+          if (iframe) {
+            previewContainer.insertBefore(panel, iframe);
+          } else {
+            previewContainer.insertBefore(panel, previewContainer.firstChild);
+          }
+        } else if (iframe && panel.nextElementSibling !== iframe) {
+          previewContainer.insertBefore(panel, iframe);
+        }
+        previewContainer.classList.add('rfid-has-prompt-panel');
+        if (typeof panel._rfidSyncPrompt === 'function') {
+          panel._rfidSyncPrompt();
+        }
+      }
+
+      function syncAllPromptPanels() {
+        var panels = document.querySelectorAll('.rfid-prompt-panel');
+        for (var i = 0; i < panels.length; i++) {
+          if (typeof panels[i]._rfidSyncPrompt === 'function') {
+            panels[i]._rfidSyncPrompt();
+          }
+        }
+      }
+
+      document.addEventListener('input', function (e) {
+        var target = e.target;
+        if (target && target.closest && target.closest('.rfid-prompt-panel')) return;
+        if (document.querySelector('.rfid-prompt-panel')) {
+          schedulePromptSync();
+        }
+      }, true);
+
+      document.addEventListener('keyup', function (e) {
+        var target = e.target;
+        if (target && target.closest && target.closest('.rfid-prompt-panel')) return;
+        if (document.querySelector('.rfid-prompt-panel')) {
+          schedulePromptSync();
+        }
+      }, true);
+
+      setInterval(function () {
+        if (document.querySelector('.rfid-prompt-panel')) {
+          syncAllPromptPanels();
+        }
+      }, 350);
+
       function scanDom() {
         var bars = document.querySelectorAll('[class*="EditorControlBar"]');
         for (var i = 0; i < bars.length; i++) {
@@ -2626,6 +3383,10 @@
         var appHeaders = document.querySelectorAll('[class*="AppHeaderContent"]');
         for (var k = 0; k < appHeaders.length; k++) {
           attachHeaderRegistryButton(appHeaders[k]);
+        }
+        var previewContainers = document.querySelectorAll('[class*="PreviewPaneContainer"]');
+        for (var p = 0; p < previewContainers.length; p++) {
+          attachPreviewPromptPanel(previewContainers[p]);
         }
       }
 
