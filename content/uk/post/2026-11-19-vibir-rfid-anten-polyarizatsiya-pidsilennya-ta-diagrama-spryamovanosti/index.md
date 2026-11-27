@@ -7,10 +7,6 @@ image: Image01_1.webp
 categories:
   - Архитектура RFID-систем
 tags:
-  - RFID-антенны
-  - поляризация
-  - усиление
-  - диаграмма направленности
   - ETSI EN 302 208
   - VSWR
 translationKey: rfid-antenna-polarization-gain-beamwidth

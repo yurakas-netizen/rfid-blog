@@ -7,11 +7,7 @@ image: Image01_4.webp
 categories:
   - RFID Технологии
 tags:
-  - Прачечные
-  - Термостойкие метки
-  - Отраслевой учет
   - ROI
-  - Циркулярная экономика
   - ISO 15883
 translationKey: rfid-commercial-laundry-loss-reduction
 ---
