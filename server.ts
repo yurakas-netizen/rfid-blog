@@ -38,6 +38,12 @@ import {
   type ShowcaseSaveInput,
 } from './src/showcase.js';
 import { selectArticleSources, getSourcesUiStrings } from './src/sources.js';
+import {
+  loadSidebarState,
+  resolveSidebarForLang,
+  buildDefaultSidebarConfig,
+  applySidebarUpdate,
+} from './src/sidebar.js';
 
 const ROOT_DIR = process.cwd();
 const PORT = 3000;
@@ -145,6 +151,8 @@ function buildViewContext(
   const { posts: langPosts } = getPostsForLanguageView(siteContent, lang);
   const taxonomies = computeTaxonomies(langPosts, siteContent.categoryStyles);
 
+  const sidebar = resolveSidebarForLang(lang);
+
   return {
     site: SITE_CONFIG,
     lang,
@@ -153,6 +161,7 @@ function buildViewContext(
     t,
     orderedLanguages: ORDERED_LANGUAGES,
     langPostCounts: getLangPostCounts(siteContent),
+    sidebar,
     formatDate,
     slugify,
     archivesByYear: taxonomies.archivesByYear,
@@ -420,6 +429,46 @@ app.post('/api/home-builder/apply', (req: Request, res: Response) => {
 
 app.get(['/home-builder', '/home-builder/'], (_req: Request, res: Response) => {
   res.redirect('/admin/home-builder.html');
+});
+
+// Left Sidebar Builder API (local filesystem mode)
+app.use('/api/sidebar-builder', express.json({ limit: '2mb' }));
+
+app.get('/api/sidebar-builder/state', (_req: Request, res: Response) => {
+  const sidebarState = loadSidebarState();
+  res.json({
+    mode: 'local',
+    repo: 'yurakas-netizen/rfid-blog',
+    branch: 'master',
+    exists: sidebarState.exists,
+    relPath: sidebarState.relPath,
+    fileHash: sidebarState.fileHash,
+    config: sidebarState.config,
+    defaults: buildDefaultSidebarConfig(),
+    siteLanguages: ORDERED_LANGUAGES.map((l) => ({
+      code: l.code,
+      shortLabel: l.shortLabel,
+      label: l.label,
+      urlPrefix: l.urlPrefix,
+      defaultSubtitle: I18N[l.code].subtitle,
+    })),
+  });
+});
+
+app.post('/api/sidebar-builder/apply', (req: Request, res: Response) => {
+  if (!verifySameOrigin(req)) {
+    res.status(403).json({ ok: false, error: 'Запрос отклонён (несовпадение Origin)' });
+    return;
+  }
+  const result = applySidebarUpdate({
+    config: req.body?.config,
+    expectedHash: typeof req.body?.expectedHash === 'string' ? req.body.expectedHash : '',
+  });
+  res.status(result.status).json(result);
+});
+
+app.get(['/sidebar-builder', '/sidebar-builder/'], (_req: Request, res: Response) => {
+  res.redirect('/admin/sidebar-builder.html');
 });
 
 // Serve page bundle assets at permalink/:filename

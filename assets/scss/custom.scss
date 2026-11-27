@@ -1599,5 +1599,124 @@ html[data-scheme="dark"] .rfid-sources__item:hover {
     }
 }
 
+/* =========================================================
+   12. Configurable Left Sidebar Notices & Logo Visibility
+   ========================================================= */
+.left-sidebar.is-logo-hidden > header {
+    grid-template-columns: 1fr !important;
+
+    .site-avatar {
+        display: none !important;
+    }
+
+    .site-name {
+        grid-column: 1 !important;
+    }
+}
+
+.rfid-sidebar-notice-li {
+    list-style: none !important;
+    margin: 4px 0 !important;
+    padding: 0 !important;
+}
+
+.rfid-sidebar-notice {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding: 11px 12px;
+    border-radius: 10px;
+    border: 1px solid var(--card-separator-color);
+    background: var(--card-background);
+    color: var(--card-text-color-main);
+    font-size: 12.5px;
+    line-height: 1.45;
+    box-shadow: var(--shadow-l1);
+}
+
+.rfid-sidebar-notice.is-subtle {
+    background: var(--card-background-selected);
+}
+
+.rfid-sidebar-notice.is-info {
+    border-color: rgba(14, 165, 233, 0.35);
+    background: rgba(14, 165, 233, 0.06);
+}
+
+.rfid-sidebar-notice.is-accent {
+    border-color: rgba(16, 185, 129, 0.35);
+    background: rgba(16, 185, 129, 0.06);
+}
+
+.rfid-sidebar-notice.is-warn {
+    border-color: rgba(245, 158, 11, 0.42);
+    background: rgba(245, 158, 11, 0.08);
+}
+
+html[data-scheme="dark"] .rfid-sidebar-notice.is-info {
+    border-color: rgba(56, 189, 248, 0.3);
+    background: linear-gradient(155deg, rgba(14, 165, 233, 0.12) 0%, #111827 80%);
+}
+
+html[data-scheme="dark"] .rfid-sidebar-notice.is-accent {
+    border-color: rgba(52, 211, 153, 0.3);
+    background: linear-gradient(155deg, rgba(16, 185, 129, 0.12) 0%, #111827 80%);
+}
+
+html[data-scheme="dark"] .rfid-sidebar-notice.is-warn {
+    border-color: rgba(251, 191, 36, 0.34);
+    background: linear-gradient(155deg, rgba(245, 158, 11, 0.12) 0%, #111827 80%);
+}
+
+.rfid-sidebar-notice__badge {
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--accent-color);
+    line-height: 1.2;
+}
+
+.rfid-sidebar-notice.is-warn .rfid-sidebar-notice__badge {
+    color: #d97706;
+}
+
+html[data-scheme="dark"] .rfid-sidebar-notice.is-warn .rfid-sidebar-notice__badge {
+    color: #fbbf24;
+}
+
+.rfid-sidebar-notice__title {
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.3;
+    color: var(--card-text-color-main);
+}
+
+.rfid-sidebar-notice__text {
+    margin: 0;
+    font-size: 12px;
+    line-height: 1.48;
+    color: var(--card-text-color-secondary);
+}
+
+.rfid-sidebar-notice__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 2px;
+    padding: 0 !important;
+    background: transparent !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    color: var(--accent-color) !important;
+    text-decoration: none;
+    width: fit-content;
+
+    &:hover {
+        text-decoration: underline;
+    }
+}
+
+
 
 

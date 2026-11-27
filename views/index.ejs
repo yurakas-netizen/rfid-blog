@@ -16,7 +16,8 @@
       <div class="section-card">
         <p style="margin: 0 0 8px; font-weight: 600; color: var(--card-text-color-main);"><%= t.noPostsInLang %></p>
         <p style="margin: 0; font-size: 0.92rem; color: var(--card-text-color-secondary);"><%= t.emptyDocsHint %></p>
-        <% const populatedLangs = orderedLanguages.filter(function(l) { return l.code !== lang && langPostCounts[l.code] > 0; }); %>
+        <% const hiddenHub = (typeof sidebar !== 'undefined' && sidebar && sidebar.hiddenBuiltInLangs) ? sidebar.hiddenBuiltInLangs : new Set(); %>
+        <% const populatedLangs = orderedLanguages.filter(function(l) { return l.code !== lang && !hiddenHub.has(l.code) && langPostCounts[l.code] > 0; }); %>
         <% if (populatedLangs.length > 0) { %>
           <div style="margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--card-separator-color); display: flex; flex-wrap: wrap; align-items: center; gap: 10px;">
             <span style="font-size: 0.86rem; color: var(--card-text-color-tertiary);"><%= t.availableLangs %></span>

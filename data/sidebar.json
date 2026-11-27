@@ -1,0 +1,370 @@
+{
+  "version": 1,
+  "brand": {
+    "showLogo": true,
+    "defaultTitle": "RFID Ukraine",
+    "defaultSubtitle": "Інженерна платформа UHF RFID, RTLS та IIoT",
+    "titles": {
+      "uk": "RFID Ukraine",
+      "en": "RFID Ukraine",
+      "da": "RFID Ukraine",
+      "de": "RFID Ukraine",
+      "fr": "RFID Ukraine",
+      "ru": "RFID Ukraine",
+      "pl": "RFID Ukraine",
+      "es": "RFID Ukraine",
+      "it": "RFID Ukraine",
+      "nl": "RFID Ukraine",
+      "pt": "RFID Ukraine",
+      "sv": "RFID Ukraine",
+      "no": "RFID Ukraine",
+      "fi": "RFID Ukraine",
+      "cs": "RFID Ukraine",
+      "sk": "RFID Ukraine",
+      "ro": "RFID Ukraine",
+      "bg": "RFID Ukraine",
+      "et": "RFID Ukraine",
+      "lt": "RFID Ukraine"
+    },
+    "subtitles": {
+      "uk": "Інженерна платформа UHF RFID, RTLS та IIoT",
+      "en": "UHF RFID, RTLS & IIoT Engineering Platform",
+      "da": "UHF RFID, RTLS & IIoT-ingeniørplatform",
+      "de": "Ingenieurplattform für UHF RFID, RTLS & IIoT",
+      "fr": "Plateforme d’ingénierie UHF RFID, RTLS & IIoT",
+      "ru": "Инженерная платформа UHF RFID, RTLS и IIoT",
+      "pl": "Platforma inżynieryjna UHF RFID, RTLS i IIoT",
+      "es": "Plataforma de ingeniería UHF RFID, RTLS e IIoT",
+      "it": "Piattaforma ingegneristica UHF RFID, RTLS e IIoT",
+      "nl": "Engineeringplatform voor UHF RFID, RTLS & IIoT",
+      "pt": "Plataforma de engenharia UHF RFID, RTLS e IIoT",
+      "sv": "Ingenjörsplattform för UHF RFID, RTLS och IIoT",
+      "no": "Ingeniørplattform for UHF RFID, RTLS og IIoT",
+      "fi": "UHF RFID-, RTLS- ja IIoT-suunnittelualusta",
+      "cs": "Inženýrská platforma UHF RFID, RTLS a IIoT",
+      "sk": "Inžinierska platforma UHF RFID, RTLS a IIoT",
+      "ro": "Platformă de inginerie UHF RFID, RTLS și IIoT",
+      "bg": "Инженерна платформа за UHF RFID, RTLS и IIoT",
+      "et": "UHF RFID, RTLS ja IIoT inseneriplatvorm",
+      "lt": "UHF RFID, RTLS ir IIoT inžinerinė platforma"
+    }
+  },
+  "controls": {
+    "showLanguageSwitcher": true,
+    "showLanguageCounts": true,
+    "showThemeToggle": true,
+    "showMobileSearch": true,
+    "showMobileCategories": true,
+    "syncHiddenLangsToHomeHub": true
+  },
+  "menuItems": [
+    {
+      "id": "home",
+      "enabled": true,
+      "icon": "home",
+      "defaultLabel": "Home",
+      "defaultUrl": "/",
+      "newTab": false,
+      "visibilityMode": "all",
+      "visibilityLangs": [],
+      "labels": {
+        "uk": "Головна",
+        "en": "Home",
+        "da": "Hjem",
+        "de": "Startseite",
+        "fr": "Accueil",
+        "ru": "Главная",
+        "pl": "Strona główna",
+        "es": "Inicio",
+        "it": "Home",
+        "nl": "Start",
+        "pt": "Início",
+        "sv": "Hem",
+        "no": "Hjem",
+        "fi": "Etusivu",
+        "cs": "Domů",
+        "sk": "Domov",
+        "ro": "Acasă",
+        "bg": "Начало",
+        "et": "Avaleht",
+        "lt": "Pradžia"
+      },
+      "urls": {}
+    },
+    {
+      "id": "archives",
+      "enabled": true,
+      "icon": "archives",
+      "defaultLabel": "Archives",
+      "defaultUrl": "/archives/",
+      "newTab": false,
+      "visibilityMode": "all",
+      "visibilityLangs": [],
+      "labels": {
+        "uk": "Архіви",
+        "en": "Archives",
+        "da": "Arkiv",
+        "de": "Archiv",
+        "fr": "Archives",
+        "ru": "Архивы",
+        "pl": "Archiwum",
+        "es": "Archivos",
+        "it": "Archivio",
+        "nl": "Archief",
+        "pt": "Arquivos",
+        "sv": "Arkiv",
+        "no": "Arkiv",
+        "fi": "Arkisto",
+        "cs": "Archiv",
+        "sk": "Archív",
+        "ro": "Arhivă",
+        "bg": "Архив",
+        "et": "Arhiiv",
+        "lt": "Archyvas"
+      },
+      "urls": {}
+    },
+    {
+      "id": "search",
+      "enabled": true,
+      "icon": "search",
+      "defaultLabel": "Search",
+      "defaultUrl": "/search/",
+      "newTab": false,
+      "visibilityMode": "all",
+      "visibilityLangs": [],
+      "labels": {
+        "uk": "Пошук",
+        "en": "Search",
+        "da": "Søg",
+        "de": "Suche",
+        "fr": "Recherche",
+        "ru": "Поиск",
+        "pl": "Szukaj",
+        "es": "Buscar",
+        "it": "Cerca",
+        "nl": "Zoeken",
+        "pt": "Pesquisar",
+        "sv": "Sök",
+        "no": "Søk",
+        "fi": "Haku",
+        "cs": "Hledat",
+        "sk": "Hľadať",
+        "ro": "Căutare",
+        "bg": "Търсене",
+        "et": "Otsing",
+        "lt": "Paieška"
+      },
+      "urls": {}
+    },
+    {
+      "id": "links",
+      "enabled": true,
+      "icon": "links",
+      "defaultLabel": "Links",
+      "defaultUrl": "/links/",
+      "newTab": false,
+      "visibilityMode": "all",
+      "visibilityLangs": [],
+      "labels": {
+        "uk": "Посилання",
+        "en": "Links",
+        "da": "Links",
+        "de": "Links",
+        "fr": "Liens",
+        "ru": "Ссылки",
+        "pl": "Linki",
+        "es": "Enlaces",
+        "it": "Link",
+        "nl": "Links",
+        "pt": "Links",
+        "sv": "Länkar",
+        "no": "Lenker",
+        "fi": "Linkit",
+        "cs": "Odkazy",
+        "sk": "Odkazy",
+        "ro": "Linkuri",
+        "bg": "Връзки",
+        "et": "Lingid",
+        "lt": "Nuorodos"
+      },
+      "urls": {}
+    },
+    {
+      "id": "admin",
+      "enabled": true,
+      "icon": "admin",
+      "defaultLabel": "Admin (CMS)",
+      "defaultUrl": "/admin/",
+      "newTab": false,
+      "visibilityMode": "all",
+      "visibilityLangs": [],
+      "labels": {
+        "uk": "Адмінка (CMS)",
+        "en": "Admin (CMS)",
+        "da": "Admin (CMS)",
+        "de": "Admin (CMS)",
+        "fr": "Admin (CMS)",
+        "ru": "Админка (CMS)",
+        "pl": "Admin (CMS)",
+        "es": "Admin (CMS)",
+        "it": "Admin (CMS)",
+        "nl": "Admin (CMS)",
+        "pt": "Admin (CMS)",
+        "sv": "Admin (CMS)",
+        "no": "Admin (CMS)",
+        "fi": "Admin (CMS)",
+        "cs": "Admin (CMS)",
+        "sk": "Admin (CMS)",
+        "ro": "Admin (CMS)",
+        "bg": "Админ (CMS)",
+        "et": "Admin (CMS)",
+        "lt": "Admin (CMS)"
+      },
+      "urls": {}
+    }
+  ],
+  "languages": [
+    {
+      "code": "uk",
+      "label": "Українська (UA)",
+      "enabled": true,
+      "customUrl": "",
+      "isCustom": false
+    },
+    {
+      "code": "en",
+      "label": "English (EN)",
+      "enabled": true,
+      "customUrl": "",
+      "isCustom": false
+    },
+    {
+      "code": "da",
+      "label": "Dansk (DA)",
+      "enabled": true,
+      "customUrl": "",
+      "isCustom": false
+    },
+    {
+      "code": "de",
+      "label": "Deutsch (DE)",
+      "enabled": true,
+      "customUrl": "",
+      "isCustom": false
+    },
+    {
+      "code": "fr",
+      "label": "Français (FR)",
+      "enabled": true,
+      "customUrl": "",
+      "isCustom": false
+    },
+    {
+      "code": "ru",
+      "label": "Русский (RU)",
+      "enabled": true,
+      "customUrl": "",
+      "isCustom": false
+    },
+    {
+      "code": "pl",
+      "label": "Polski (PL)",
+      "enabled": true,
+      "customUrl": "",
+      "isCustom": false
+    },
+    {
+      "code": "es",
+      "label": "Español (ES)",
+      "enabled": true,
+      "customUrl": "",
+      "isCustom": false
+    },
+    {
+      "code": "it",
+      "label": "Italiano (IT)",
+      "enabled": true,
+      "customUrl": "",
+      "isCustom": false
+    },
+    {
+      "code": "nl",
+      "label": "Nederlands (NL)",
+      "enabled": true,
+      "customUrl": "",
+      "isCustom": false
+    },
+    {
+      "code": "pt",
+      "label": "Português (PT)",
+      "enabled": true,
+      "customUrl": "",
+      "isCustom": false
+    },
+    {
+      "code": "sv",
+      "label": "Svenska (SV)",
+      "enabled": true,
+      "customUrl": "",
+      "isCustom": false
+    },
+    {
+      "code": "no",
+      "label": "Norsk (NO)",
+      "enabled": true,
+      "customUrl": "",
+      "isCustom": false
+    },
+    {
+      "code": "fi",
+      "label": "Suomi (FI)",
+      "enabled": true,
+      "customUrl": "",
+      "isCustom": false
+    },
+    {
+      "code": "cs",
+      "label": "Čeština (CS)",
+      "enabled": true,
+      "customUrl": "",
+      "isCustom": false
+    },
+    {
+      "code": "sk",
+      "label": "Slovenčina (SK)",
+      "enabled": true,
+      "customUrl": "",
+      "isCustom": false
+    },
+    {
+      "code": "ro",
+      "label": "Română (RO)",
+      "enabled": true,
+      "customUrl": "",
+      "isCustom": false
+    },
+    {
+      "code": "bg",
+      "label": "Български (BG)",
+      "enabled": true,
+      "customUrl": "",
+      "isCustom": false
+    },
+    {
+      "code": "et",
+      "label": "Eesti (ET)",
+      "enabled": true,
+      "customUrl": "",
+      "isCustom": false
+    },
+    {
+      "code": "lt",
+      "label": "Lietuvių (LT)",
+      "enabled": true,
+      "customUrl": "",
+      "isCustom": false
+    }
+  ],
+  "announcements": []
+}

@@ -8,6 +8,7 @@ import {
   type LangCode,
 } from './config.js';
 import { computeTaxonomies, slugify, type PostItem, type SiteContent } from './content.js';
+import { getHiddenHubLangs, loadSidebarConfig } from './sidebar.js';
 
 const ROOT_DIR = process.cwd();
 const DATA_HOME_ROOT = path.resolve(ROOT_DIR, 'data', 'home');
@@ -1204,15 +1205,25 @@ export function resolveShowcaseForLang(
     ? langPosts.slice(0, config.latest.limit)
     : [];
 
+  const hiddenHubLangs = getHiddenHubLangs(siteContent);
+  const sidebarCfg = loadSidebarConfig();
+  const sidebarLangMap = new Map(sidebarCfg.languages.map((l) => [l.code, l]));
+
   const populatedLangs = ORDERED_LANGUAGES.filter(
-    (l) => l.code !== lang && (siteContent.postsByLang[l.code]?.length || 0) > 0
-  ).map((l) => ({
-    code: l.code,
-    shortLabel: l.shortLabel,
-    label: l.label,
-    urlPrefix: l.urlPrefix ? `${l.urlPrefix}/` : '/',
-    count: siteContent.postsByLang[l.code]?.length || 0,
-  }));
+    (l) =>
+      l.code !== lang &&
+      !hiddenHubLangs.has(l.code) &&
+      (siteContent.postsByLang[l.code]?.length || 0) > 0
+  ).map((l) => {
+    const sl = sidebarLangMap.get(l.code);
+    return {
+      code: l.code,
+      shortLabel: l.shortLabel,
+      label: sl?.label || l.label,
+      urlPrefix: sl?.customUrl || (l.urlPrefix ? `${l.urlPrefix}/` : '/'),
+      count: siteContent.postsByLang[l.code]?.length || 0,
+    };
+  });
 
   return {
     config: {

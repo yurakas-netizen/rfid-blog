@@ -1,0 +1,53 @@
+{{- $n := .Notice -}}
+{{- $lang := .Lang -}}
+{{- $show := default true $n.enabled -}}
+{{- if $show -}}
+    {{- $vMode := default "all" $n.visibilityMode -}}
+    {{- $vLangs := default (slice) $n.visibilityLangs -}}
+    {{- if eq $vMode "only" -}}
+        {{- $show = in $vLangs $lang -}}
+    {{- else if eq $vMode "except" -}}
+        {{- $show = not (in $vLangs $lang) -}}
+    {{- end -}}
+{{- end -}}
+{{- if $show -}}
+    {{- $badge := default "" $n.badge -}}
+    {{- $title := default "" $n.title -}}
+    {{- $text := default "" $n.text -}}
+    {{- $linkLabel := default "" $n.linkLabel -}}
+    {{- $rawUrl := default "" $n.linkUrl -}}
+    {{- with $n.i18n -}}
+        {{- with index . $lang -}}
+            {{- if .badge -}}{{- $badge = .badge -}}{{- end -}}
+            {{- if .title -}}{{- $title = .title -}}{{- end -}}
+            {{- if .text -}}{{- $text = .text -}}{{- end -}}
+            {{- if .linkLabel -}}{{- $linkLabel = .linkLabel -}}{{- end -}}
+            {{- if .linkUrl -}}{{- $rawUrl = .linkUrl -}}{{- end -}}
+        {{- end -}}
+    {{- end -}}
+    {{- if or $badge $title $text $linkLabel -}}
+        {{- $style := default "info" $n.style -}}
+        {{- $resolvedUrl := "" -}}
+        {{- if $rawUrl -}}
+            {{- if or (strings.HasPrefix $rawUrl "http://") (strings.HasPrefix $rawUrl "https://") (strings.HasPrefix $rawUrl "mailto:") (strings.HasPrefix $rawUrl "tel:") (strings.HasPrefix $rawUrl "#") (eq $rawUrl "/admin") (strings.HasPrefix $rawUrl "/admin/") (strings.HasPrefix $rawUrl "/static/") (strings.HasPrefix $rawUrl "/assets/") -}}
+                {{- $resolvedUrl = $rawUrl -}}
+            {{- else -}}
+                {{- $resolvedUrl = partial "home/resolve-url.html" (dict "Url" $rawUrl "Lang" $lang) -}}
+            {{- end -}}
+        {{- end -}}
+        <div class="rfid-sidebar-notice is-{{ $style }}">
+            {{- with $badge -}}
+                <div class="rfid-sidebar-notice__badge">{{ . }}</div>
+            {{- end -}}
+            {{- with $title -}}
+                <div class="rfid-sidebar-notice__title">{{ . }}</div>
+            {{- end -}}
+            {{- with $text -}}
+                <p class="rfid-sidebar-notice__text">{{ . }}</p>
+            {{- end -}}
+            {{- if and $linkLabel $resolvedUrl -}}
+                <a class="rfid-sidebar-notice__link" href="{{ $resolvedUrl }}"{{ if $n.newTab }} target="_blank" rel="noopener noreferrer"{{ end }}>{{ $linkLabel }} &rarr;</a>
+            {{- end -}}
+        </div>
+    {{- end -}}
+{{- end -}}

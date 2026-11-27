@@ -1,27 +1,71 @@
-<aside class="sidebar left-sidebar">
+<%
+function renderSidebarIcon(name) {
+  switch (name) {
+    case 'home':
+      return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l-2 0l9 -9l9 9l-2 0"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7"/><path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6"/></svg>';
+    case 'archives':
+      return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4m0 2a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v0a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2z"/><path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10"/><path d="M10 12l4 0"/></svg>';
+    case 'search':
+      return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0"/><path d="M21 21l-6 -6"/></svg>';
+    case 'links':
+      return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 15l6 -6"/><path d="M11 6l.463 -.536a5 5 0 0 1 7.071 7.072l-.534 .464"/><path d="M13 18l-.397 .534a5.068 5.068 0 0 1 -7.127 0a4.972 4.972 0 0 1 0 -7.071l.524 -.463"/></svg>';
+    case 'admin':
+      return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.325 4.317c.426 -1.756 2.924 -1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543 -.94 3.31 .826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756 .426 1.756 2.924 0 3.35a1.724 1.724 0 0 0 -1.066 2.573c.94 1.543 -.826 3.31 -2.37 2.37a1.724 1.724 0 0 0 -2.572 1.065c-.426 1.756 -2.924 1.756 -3.35 0a1.724 1.724 0 0 0 -2.573 -1.066c-1.543 .94 -3.31 -.826 -2.37 -2.37a1.724 1.724 0 0 0 -1.065 -2.572c-1.756 -.426 -1.756 -2.924 0 -3.35a1.724 1.724 0 0 0 1.066 -2.573c-.94 -1.543 .826 -3.31 2.37 -2.37c1 .608 2.296 .07 2.572 -1.065z"/><path d="M9 12a3 3 0 1 0 6 0a3 3 0 0 0 -6 0"/></svg>';
+    case 'tag':
+      return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7.5 7.5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"/><path d="M3 6v5.172a2 2 0 0 0 .586 1.414l7.71 7.71a2.41 2.41 0 0 0 3.408 0l5.592 -5.592a2.41 2.41 0 0 0 0 -3.408l-7.71 -7.71a2 2 0 0 0 -1.414 -.586h-5.172a3 3 0 0 0 -3 3z"/></svg>';
+    case 'categories':
+      return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h6v6h-6z"/><path d="M14 4h6v6h-6z"/><path d="M4 14h6v6h-6z"/><path d="M17 17m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"/></svg>';
+    case 'book':
+      return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 19a9 9 0 0 1 9 0a9 9 0 0 1 9 0"/><path d="M3 6a9 9 0 0 1 9 0a9 9 0 0 1 9 0"/><path d="M3 6l0 13"/><path d="M12 6l0 13"/><path d="M21 6l0 13"/></svg>';
+    case 'mail':
+      return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v10a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-10z"/><path d="M3 7l9 6l9 -6"/></svg>';
+    case 'shield':
+      return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a12 12 0 0 0 8.5 3a12 12 0 0 1 -8.5 15a12 12 0 0 1 -8.5 -15a12 12 0 0 0 8.5 -3"/><path d="M9 12l2 2l4 -4"/></svg>';
+    case 'globe':
+      return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0"/><path d="M3.6 9h16.8"/><path d="M3.6 15h16.8"/><path d="M11.5 3a17 17 0 0 0 0 18"/><path d="M12.5 3a17 17 0 0 1 0 18"/></svg>';
+    case 'sparkles':
+      return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.9 5.1l5.1 1.9l-5.1 1.9l-1.9 5.1l-1.9 -5.1l-5.1 -1.9l5.1 -1.9z"/><path d="M5 17l.8 2.2l2.2 .8l-2.2 .8l-.8 2.2l-.8 -2.2l-2.2 -.8l2.2 -.8z"/></svg>';
+    case 'external':
+      return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 6h-6a2 2 0 0 0 -2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-6"/><path d="M11 13l9 -9"/><path d="M15 4h5v5"/></svg>';
+    case 'alert':
+      return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>';
+    case 'phone':
+      return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h4l2 5l-2.5 1.5a11 11 0 0 0 5 5l1.5 -2.5l5 2v4a2 2 0 0 1 -2 2a16 16 0 0 1 -15 -15a2 2 0 0 1 2 -2"/></svg>';
+    case 'file':
+      return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3v4a1 1 0 0 0 1 1h4"/><path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z"/><path d="M9 9l1 0"/><path d="M9 13l6 0"/><path d="M9 17l6 0"/></svg>';
+    case 'none':
+      return '';
+    default:
+      return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 15l6 -6"/><path d="M11 6l.463 -.536a5 5 0 0 1 7.071 7.072l-.534 .464"/><path d="M13 18l-.397 .534a5.068 5.068 0 0 1 -7.127 0a4.972 4.972 0 0 1 0 -7.071l.524 -.463"/></svg>';
+  }
+}
+%>
+<aside class="sidebar left-sidebar<%= sidebar.brand.showLogo ? '' : ' is-logo-hidden' %>">
   <header>
     <div class="sidebar-top-row">
       <a href="<%= langPrefix || '/' %>" class="brand-mark">
-        <span class="brand-icon" aria-hidden="true">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 896.41 595.46" role="img" aria-label="RFID Ukraine">
-            <path class="logo-primary" d="M175.35,468.61l-59.34-186.01h-38.67v186.01H0V1.9h120.68c70.67,0,117.34,28,117.34,98.67v83.34c0,44.67-18.67,72.67-50.67,86.67l66.67,198.01h-78.67ZM77.34,215.92h40.67c25.34,0,42.67-9.33,42.67-42.67v-60.67c0-33.34-17.33-42.67-42.67-42.67h-40.67v146.01Z"/>
-            <path class="logo-primary" d="M295.35,1.9h202.02v68h-124.68v131.34h104.01v68h-104.01v199.35h-77.34V1.9Z"/>
-            <path class="logo-primary" d="M538.69,468.61V1.9h77.34v466.7h-77.34Z"/>
-            <path class="logo-secondary" d="M59.09,564.97c0,10.27-2.61,17.92-7.84,22.95-5.23,5.03-12.43,7.54-21.61,7.54s-16.27-2.51-21.48-7.54c-5.21-5.03-7.81-12.68-7.81-22.95v-51.32h14.43v51.42c0,6.49,1.21,11.2,3.63,14.15,2.42,2.95,6.17,4.43,11.23,4.43s8.93-1.48,11.37-4.43c2.44-2.95,3.66-7.67,3.66-14.15v-51.42h14.43v51.32Z"/>
-            <path class="logo-secondary" d="M176.42,554.58l.38-11.09,32.24,50.77h-15.9l-24.65-39.67,6.67.93-12.41,16.61,1.26-9.13v31.26h-14.37v-80.61h14.37v42.68l-2.73-1.86,30.6-40.82h15.41l-30.88,40.93Z"/>
-            <path class="logo-secondary" d="M295.66,594.26v-80.61h31.04c8.12,0,14.23,1.86,18.31,5.57,4.08,3.72,6.12,9.18,6.12,16.39,0,4.23-.8,7.81-2.4,10.77-1.6,2.95-3.55,5.23-5.85,6.83-2.29,1.6-4.48,2.51-6.56,2.73,2.11.15,4.15.69,6.12,1.64,1.97.95,3.58,2.43,4.84,4.45,1.26,2.02,1.89,4.75,1.89,8.17v16.34c0,1.71.15,3.29.44,4.73.29,1.44.66,2.43,1.09,2.98h-14.48c-.36-.66-.68-1.67-.96-3.03-.27-1.37-.41-2.92-.41-4.67v-14.65c0-3.31-.93-5.83-2.79-7.54-1.86-1.71-4.66-2.57-8.42-2.57h-17.76l3.83-4.86v37.33h-14.04ZM309.7,555.73l-3.83-5.41h17.87c2.37,0,4.5-.55,6.39-1.67,1.89-1.11,3.4-2.67,4.51-4.67,1.11-2,1.67-4.35,1.67-7.05,0-3.93-1.13-6.89-3.39-8.85-2.26-1.97-5.46-2.95-9.62-2.95h-17.82l4.21-5.08v35.68Z"/>
-            <path class="logo-secondary" d="M436.65,594.26l20.82-80.72h22.73l20.66,80.72h-14.81l-17.27-71.81h.11l-17.43,71.81h-14.81ZM450.09,574.64v-11.53h37.49v11.53h-37.49Z"/>
-            <path class="logo-secondary" d="M587.42,594.26v-80.61h14.21v80.61h-14.21Z"/>
-            <path class="logo-secondary" d="M706.34,594.26h-13.99v-80.61h22.57l29.46,74.76-2.13.6v-75.36h14.04v80.61h-22.9l-29.35-74.59,2.3-.55v75.14Z"/>
-            <path class="logo-secondary" d="M854.82,525.13l6.5-7.16v34.43l-3.39-4.32h30.17v11.48h-30.17l3.39-4.26v34.65l-6.5-7.16h39.35v11.48h-47.33v-80.61h47.33v11.48h-39.35Z"/>
-            <path class="logo-accent" d="M779.07,0h-119.34v69.93h124.42c27.79,3.38,34.23,18.06,35.32,44.2v243.8c-1.32,31.13-15.1,41.44-37.89,42.43l-44.08.16.02-271.95h24.58s-.29,168.47,0,247.18h12.86c11.84-1.17,18.15-8.71,19.3-19.72v-227.46c-.69-14.9-3.45-32.33-32.16-34.11h-102.34l-.03,372.24h119.34c70.67,0,117.34-28,117.34-98.67V98.67c0-70.67-46.67-98.67-117.34-98.67Z"/>
-          </svg>
-        </span>
+        <% if (sidebar.brand.showLogo) { %>
+          <span class="brand-icon" aria-hidden="true">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 896.41 595.46" role="img" aria-label="<%= sidebar.brand.title %>">
+              <path class="logo-primary" d="M175.35,468.61l-59.34-186.01h-38.67v186.01H0V1.9h120.68c70.67,0,117.34,28,117.34,98.67v83.34c0,44.67-18.67,72.67-50.67,86.67l66.67,198.01h-78.67ZM77.34,215.92h40.67c25.34,0,42.67-9.33,42.67-42.67v-60.67c0-33.34-17.33-42.67-42.67-42.67h-40.67v146.01Z"/>
+              <path class="logo-primary" d="M295.35,1.9h202.02v68h-124.68v131.34h104.01v68h-104.01v199.35h-77.34V1.9Z"/>
+              <path class="logo-primary" d="M538.69,468.61V1.9h77.34v466.7h-77.34Z"/>
+              <path class="logo-secondary" d="M59.09,564.97c0,10.27-2.61,17.92-7.84,22.95-5.23,5.03-12.43,7.54-21.61,7.54s-16.27-2.51-21.48-7.54c-5.21-5.03-7.81-12.68-7.81-22.95v-51.32h14.43v51.42c0,6.49,1.21,11.2,3.63,14.15,2.42,2.95,6.17,4.43,11.23,4.43s8.93-1.48,11.37-4.43c2.44-2.95,3.66-7.67,3.66-14.15v-51.42h14.43v51.32Z"/>
+              <path class="logo-secondary" d="M176.42,554.58l.38-11.09,32.24,50.77h-15.9l-24.65-39.67,6.67.93-12.41,16.61,1.26-9.13v31.26h-14.37v-80.61h14.37v42.68l-2.73-1.86,30.6-40.82h15.41l-30.88,40.93Z"/>
+              <path class="logo-secondary" d="M295.66,594.26v-80.61h31.04c8.12,0,14.23,1.86,18.31,5.57,4.08,3.72,6.12,9.18,6.12,16.39,0,4.23-.8,7.81-2.4,10.77-1.6,2.95-3.55,5.23-5.85,6.83-2.29,1.6-4.48,2.51-6.56,2.73,2.11.15,4.15.69,6.12,1.64,1.97.95,3.58,2.43,4.84,4.45,1.26,2.02,1.89,4.75,1.89,8.17v16.34c0,1.71.15,3.29.44,4.73.29,1.44.66,2.43,1.09,2.98h-14.48c-.36-.66-.68-1.67-.96-3.03-.27-1.37-.41-2.92-.41-4.67v-14.65c0-3.31-.93-5.83-2.79-7.54-1.86-1.71-4.66-2.57-8.42-2.57h-17.76l3.83-4.86v37.33h-14.04ZM309.7,555.73l-3.83-5.41h17.87c2.37,0,4.5-.55,6.39-1.67,1.89-1.11,3.4-2.67,4.51-4.67,1.11-2,1.67-4.35,1.67-7.05,0-3.93-1.13-6.89-3.39-8.85-2.26-1.97-5.46-2.95-9.62-2.95h-17.82l4.21-5.08v35.68Z"/>
+              <path class="logo-secondary" d="M436.65,594.26l20.82-80.72h22.73l20.66,80.72h-14.81l-17.27-71.81h.11l-17.43,71.81h-14.81ZM450.09,574.64v-11.53h37.49v11.53h-37.49Z"/>
+              <path class="logo-secondary" d="M587.42,594.26v-80.61h14.21v80.61h-14.21Z"/>
+              <path class="logo-secondary" d="M706.34,594.26h-13.99v-80.61h22.57l29.46,74.76-2.13.6v-75.36h14.04v80.61h-22.9l-29.35-74.59,2.3-.55v75.14Z"/>
+              <path class="logo-secondary" d="M854.82,525.13l6.5-7.16v34.43l-3.39-4.32h30.17v11.48h-30.17l3.39-4.26v34.65l-6.5-7.16h39.35v11.48h-47.33v-80.61h47.33v11.48h-39.35Z"/>
+              <path class="logo-accent" d="M779.07,0h-119.34v69.93h124.42c27.79,3.38,34.23,18.06,35.32,44.2v243.8c-1.32,31.13-15.1,41.44-37.89,42.43l-44.08.16.02-271.95h24.58s-.29,168.47,0,247.18h12.86c11.84-1.17,18.15-8.71,19.3-19.72v-227.46c-.69-14.9-3.45-32.33-32.16-34.11h-102.34l-.03,372.24h119.34c70.67,0,117.34-28,117.34-98.67V98.67c0-70.67-46.67-98.67-117.34-98.67Z"/>
+            </svg>
+          </span>
+        <% } %>
         <div class="site-meta">
           <% if (typeof isHome !== 'undefined' && isHome) { %>
-            <h1 class="site-name"><%= langConfig.title %></h1>
+            <h1 class="site-name"><%= sidebar.brand.title %></h1>
           <% } else { %>
-            <div class="site-name"><%= langConfig.title %></div>
+            <div class="site-name"><%= sidebar.brand.title %></div>
           <% } %>
         </div>
       </a>
@@ -34,114 +78,102 @@
       </button>
     </div>
 
-    <div class="site-meta">
-      <div class="site-description"><%= t.subtitle %></div>
-    </div>
+    <% if (sidebar.brand.subtitle) { %>
+      <div class="site-meta">
+        <div class="site-description"><%= sidebar.brand.subtitle %></div>
+      </div>
+    <% } %>
   </header>
 
-  <div class="mobile-sidebar-widgets">
-    <form action="<%= langPrefix %>/search/" method="get" class="search-form mobile-search-form">
-      <input type="search" name="keyword" required placeholder="<%= t.searchPlaceholder %>" aria-label="<%= t.search %>" />
-      <button type="submit" aria-label="<%= t.searchButton %>" title="<%= t.search %>">
-        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0"></path>
-          <path d="M21 21l-6 -6"></path>
-        </svg>
-      </button>
-    </form>
+  <% sidebar.announcementsTop.forEach(function(notice) { %>
+    <div class="rfid-sidebar-notice is-<%= notice.style %>">
+      <% if (notice.badge) { %><div class="rfid-sidebar-notice__badge"><%= notice.badge %></div><% } %>
+      <% if (notice.title) { %><div class="rfid-sidebar-notice__title"><%= notice.title %></div><% } %>
+      <% if (notice.text) { %><p class="rfid-sidebar-notice__text"><%= notice.text %></p><% } %>
+      <% if (notice.linkLabel && notice.linkUrl) { %>
+        <a class="rfid-sidebar-notice__link" href="<%= notice.linkUrl %>" <%= notice.newTab ? 'target="_blank" rel="noopener noreferrer"' : '' %>><%= notice.linkLabel %> &rarr;</a>
+      <% } %>
+    </div>
+  <% }); %>
 
-    <% if (typeof categories !== 'undefined' && categories && categories.length > 0) { %>
-      <nav class="mobile-categories-bar" aria-label="<%= t.categories %>">
-        <span class="mobile-categories-icon" title="<%= t.categories %>" aria-hidden="true">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M4 4h6v6h-6z"></path>
-            <path d="M14 4h6v6h-6z"></path>
-            <path d="M4 14h6v6h-6z"></path>
-            <path d="M17 17m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"></path>
-          </svg>
-        </span>
-        <div class="mobile-categories-list">
-          <% categories.slice(0, site.widgets.categoriesLimit).forEach(function(cat) { %>
-            <a href="<%= langPrefix %>/categories/<%= encodeURIComponent(cat.slug) %>/"><%= cat.name %> (<%= cat.count %>)</a>
-          <% }); %>
-        </div>
-      </nav>
-    <% } %>
-  </div>
+  <% if (sidebar.controls.showMobileSearch || (sidebar.controls.showMobileCategories && typeof categories !== 'undefined' && categories && categories.length > 0)) { %>
+    <div class="mobile-sidebar-widgets">
+      <% if (sidebar.controls.showMobileSearch) { %>
+        <form action="<%= langPrefix %>/search/" method="get" class="search-form mobile-search-form">
+          <input type="search" name="keyword" required placeholder="<%= t.searchPlaceholder %>" aria-label="<%= t.search %>" />
+          <button type="submit" aria-label="<%= t.searchButton %>" title="<%= t.search %>">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0"></path>
+              <path d="M21 21l-6 -6"></path>
+            </svg>
+          </button>
+        </form>
+      <% } %>
+
+      <% if (sidebar.controls.showMobileCategories && typeof categories !== 'undefined' && categories && categories.length > 0) { %>
+        <nav class="mobile-categories-bar" aria-label="<%= t.categories %>">
+          <span class="mobile-categories-icon" title="<%= t.categories %>" aria-hidden="true">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 4h6v6h-6z"></path>
+              <path d="M14 4h6v6h-6z"></path>
+              <path d="M4 14h6v6h-6z"></path>
+              <path d="M17 17m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"></path>
+            </svg>
+          </span>
+          <div class="mobile-categories-list">
+            <% categories.slice(0, site.widgets.categoriesLimit).forEach(function(cat) { %>
+              <a href="<%= langPrefix %>/categories/<%= encodeURIComponent(cat.slug) %>/"><%= cat.name %> (<%= cat.count %>)</a>
+            <% }); %>
+          </div>
+        </nav>
+      <% } %>
+    </div>
+  <% } %>
 
   <ol class="menu" id="main-menu">
-    <li class="<%= activeNav === 'home' ? 'current' : '' %>">
-      <a href="<%= langPrefix || '/' %>">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M5 12l-2 0l9 -9l9 9l-2 0"></path>
-          <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7"></path>
-          <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6"></path>
-        </svg>
-        <span><%= t.home %></span>
-      </a>
-    </li>
+    <% sidebar.menuItems.forEach(function(item) { %>
+      <li class="<%= activeNav === item.navKey ? 'current' : '' %>">
+        <a href="<%= item.url %>" <%= item.newTab ? 'target="_blank" rel="noopener noreferrer"' : '' %>>
+          <%- renderSidebarIcon(item.icon) %>
+          <span><%= item.label %></span>
+        </a>
+      </li>
+    <% }); %>
 
-    <li class="<%= activeNav === 'archives' ? 'current' : '' %>">
-      <a href="<%= langPrefix %>/archives/">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M3 4m0 2a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v0a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2z"></path>
-          <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10"></path>
-          <path d="M10 12l4 0"></path>
-        </svg>
-        <span><%= t.archives %></span>
-      </a>
-    </li>
-
-    <li class="<%= activeNav === 'search' ? 'current' : '' %>">
-      <a href="<%= langPrefix %>/search/">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0"></path>
-          <path d="M21 21l-6 -6"></path>
-        </svg>
-        <span><%= t.search %></span>
-      </a>
-    </li>
-
-    <li class="<%= activeNav === 'links' ? 'current' : '' %>">
-      <a href="<%= langPrefix %>/links/">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M9 15l6 -6"></path>
-          <path d="M11 6l.463 -.536a5 5 0 0 1 7.071 7.072l-.534 .464"></path>
-          <path d="M13 18l-.397 .534a5.068 5.068 0 0 1 -7.127 0a4.972 4.972 0 0 1 0 -7.071l.524 -.463"></path>
-        </svg>
-        <span><%= t.links %></span>
-      </a>
-    </li>
-
-    <li>
-      <a href="/admin/">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M10.325 4.317c.426 -1.756 2.924 -1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543 -.94 3.31 .826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756 .426 1.756 2.924 0 3.35a1.724 1.724 0 0 0 -1.066 2.573c.94 1.543 -.826 3.31 -2.37 2.37a1.724 1.724 0 0 0 -2.572 1.065c-.426 1.756 -2.924 1.756 -3.35 0a1.724 1.724 0 0 0 -2.573 -1.066c-1.543 .94 -3.31 -.826 -2.37 -2.37a1.724 1.724 0 0 0 -1.065 -2.572c-1.756 -.426 -1.756 -2.924 0 -3.35a1.724 1.724 0 0 0 1.066 -2.573c-.94 -1.543 .826 -3.31 2.37 -2.37c1 .608 2.296 .07 2.572 -1.065z"></path>
-          <path d="M9 12a3 3 0 1 0 6 0a3 3 0 0 0 -6 0"></path>
-        </svg>
-        <span><%= t.adminCms %></span>
-      </a>
-    </li>
+    <% sidebar.announcementsMid.forEach(function(notice) { %>
+      <li class="rfid-sidebar-notice-li">
+        <div class="rfid-sidebar-notice is-<%= notice.style %>">
+          <% if (notice.badge) { %><div class="rfid-sidebar-notice__badge"><%= notice.badge %></div><% } %>
+          <% if (notice.title) { %><div class="rfid-sidebar-notice__title"><%= notice.title %></div><% } %>
+          <% if (notice.text) { %><p class="rfid-sidebar-notice__text"><%= notice.text %></p><% } %>
+          <% if (notice.linkLabel && notice.linkUrl) { %>
+            <a class="rfid-sidebar-notice__link" href="<%= notice.linkUrl %>" <%= notice.newTab ? 'target="_blank" rel="noopener noreferrer"' : '' %>><%= notice.linkLabel %> &rarr;</a>
+          <% } %>
+        </div>
+      </li>
+    <% }); %>
 
     <li class="menu-bottom-section">
-      <div class="i18n-switcher">
-        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M4 5h7"></path>
-          <path d="M9 3v2c0 4.418 -2.239 8 -5 8"></path>
-          <path d="M5 9c0 2.144 2.952 3.908 6.7 4"></path>
-          <path d="M12 20l4 -9l4 9"></path>
-          <path d="M19.1 18h-6.2"></path>
-        </svg>
-        <select id="language-select" aria-label="<%= t.languageLabel %>">
-          <% orderedLanguages.forEach(function(l) { %>
-            <option value="<%= l.urlPrefix || '/' %>" <%= l.code === lang ? 'selected' : '' %>>
-              <%= l.label %><%= langPostCounts[l.code] ? ' (' + langPostCounts[l.code] + ')' : '' %>
-            </option>
-          <% }); %>
-        </select>
-      </div>
+      <% if (sidebar.controls.showLanguageSwitcher && sidebar.languages.length > 0) { %>
+        <div class="i18n-switcher">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 5h7"></path>
+            <path d="M9 3v2c0 4.418 -2.239 8 -5 8"></path>
+            <path d="M5 9c0 2.144 2.952 3.908 6.7 4"></path>
+            <path d="M12 20l4 -9l4 9"></path>
+            <path d="M19.1 18h-6.2"></path>
+          </svg>
+          <select id="language-select" aria-label="<%= t.languageLabel %>">
+            <% sidebar.languages.forEach(function(l) { %>
+              <option value="<%= l.url %>" <%= l.code === lang ? 'selected' : '' %>>
+                <%= l.label %><%= sidebar.controls.showLanguageCounts && langPostCounts[l.code] ? ' (' + langPostCounts[l.code] + ')' : '' %>
+              </option>
+            <% }); %>
+          </select>
+        </div>
+      <% } %>
 
-      <% if (site.colorSchemeToggle) { %>
+      <% if (site.colorSchemeToggle && sidebar.controls.showThemeToggle) { %>
         <button id="dark-mode-toggle" class="color-scheme-toggle" type="button" data-dark-label="<%= t.darkMode %>" data-light-label="<%= t.lightMode %>">
           <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
             <path d="M12 12m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0"></path>
@@ -153,6 +185,17 @@
           <span class="toggle-label"><%= t.lightMode %></span>
         </button>
       <% } %>
+
+      <% sidebar.announcementsBottom.forEach(function(notice) { %>
+        <div class="rfid-sidebar-notice is-<%= notice.style %>">
+          <% if (notice.badge) { %><div class="rfid-sidebar-notice__badge"><%= notice.badge %></div><% } %>
+          <% if (notice.title) { %><div class="rfid-sidebar-notice__title"><%= notice.title %></div><% } %>
+          <% if (notice.text) { %><p class="rfid-sidebar-notice__text"><%= notice.text %></p><% } %>
+          <% if (notice.linkLabel && notice.linkUrl) { %>
+            <a class="rfid-sidebar-notice__link" href="<%= notice.linkUrl %>" <%= notice.newTab ? 'target="_blank" rel="noopener noreferrer"' : '' %>><%= notice.linkLabel %> &rarr;</a>
+          <% } %>
+        </div>
+      <% }); %>
     </li>
   </ol>
 </aside>

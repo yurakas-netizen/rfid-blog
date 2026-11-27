@@ -1,0 +1,2383 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RFID Ukraine — Конструктор левой панели</title>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --surface-muted: #f1f5f9;
+      --border: #cbd5e1;
+      --border-soft: #e2e8f0;
+      --text: #0f172a;
+      --text-muted: #475569;
+      --text-soft: #64748b;
+      --accent: #0284c7;
+      --accent-hover: #0369a1;
+      --accent-soft: #e0f2fe;
+      --ok-bg: #dcfce7;
+      --ok-text: #166534;
+      --ok-border: #86efac;
+      --warn-bg: #fef3c7;
+      --warn-text: #92400e;
+      --warn-border: #fcd34d;
+      --err-bg: #fee2e2;
+      --err-text: #991b1b;
+      --err-border: #fca5a5;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      --sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .app {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 10px 16px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .topbar-left {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-title {
+      margin: 0;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
+    .mode-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 8px;
+      border-radius: 5px;
+      background: var(--surface-muted);
+      border: 1px solid var(--border);
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .mode-badge.is-local { background: #ecfeff; border-color: #a5f3fc; color: #0e7490; }
+    .mode-badge.is-github { background: #eef2ff; border-color: #c7d2fe; color: #3730a3; }
+
+    .topbar-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      height: 32px;
+      padding: 0 11px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 12.5px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .btn:hover:not(:disabled) {
+      background: var(--surface-muted);
+      border-color: #94a3b8;
+    }
+
+    .btn:disabled { opacity: 0.45; cursor: not-allowed; }
+    .btn-primary { background: var(--accent); border-color: var(--accent); color: #ffffff; }
+    .btn-primary:hover:not(:disabled) { background: var(--accent-hover); border-color: var(--accent-hover); }
+    .btn-sm { height: 26px; padding: 0 8px; font-size: 11.5px; }
+    .btn-danger { background: #fff1f2; border-color: #fecdd3; color: #be123c; }
+    .btn-danger:hover:not(:disabled) { background: #ffe4e6; border-color: #fda4af; }
+    .btn-accent-soft { background: var(--accent-soft); border-color: #7dd3fc; color: var(--accent-hover); }
+
+    .dirty-pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 9px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      background: var(--surface-muted);
+      border: 1px solid var(--border-soft);
+      color: var(--text-muted);
+    }
+
+    .dirty-pill.has-dirty {
+      background: var(--warn-bg);
+      border-color: var(--warn-border);
+      color: var(--warn-text);
+    }
+
+    .auth-banner {
+      display: none;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      padding: 10px 16px;
+      background: #eff6ff;
+      border-bottom: 1px solid #bfdbfe;
+    }
+
+    .auth-banner.is-visible { display: flex; }
+
+    .input, .select, .textarea {
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--surface);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 12.5px;
+      outline: none;
+    }
+
+    .input, .select {
+      height: 32px;
+      padding: 0 9px;
+      width: 100%;
+    }
+
+    .textarea {
+      width: 100%;
+      padding: 8px 10px;
+      resize: vertical;
+      min-height: 62px;
+      line-height: 1.45;
+    }
+
+    .input:focus, .select:focus, .textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.12);
+    }
+
+    /* Main Workspace Grid: Editor + Live Sidebar Preview */
+    .workspace {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 340px;
+      gap: 18px;
+      padding: 16px 20px 44px;
+      max-width: 1460px;
+      width: 100%;
+      margin: 0 auto;
+      align-items: start;
+    }
+
+    @media (max-width: 1060px) {
+      .workspace {
+        grid-template-columns: 1fr;
+        padding: 12px 14px 36px;
+      }
+    }
+
+    .editor-col {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      min-width: 0;
+    }
+
+    .subbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 14px;
+    }
+
+    .tabs {
+      display: inline-flex;
+      flex-wrap: wrap;
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      overflow: hidden;
+    }
+
+    .tab-btn {
+      border: 0;
+      border-right: 1px solid var(--border-soft);
+      background: var(--surface-muted);
+      color: var(--text-muted);
+      padding: 6px 13px;
+      font-family: inherit;
+      font-size: 12.5px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .tab-btn:last-child { border-right: 0; }
+
+    .tab-btn.is-active {
+      background: var(--accent);
+      color: #ffffff;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .card-head {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border-soft);
+    }
+
+    .card-title {
+      margin: 0;
+      font-size: 14.5px;
+      font-weight: 700;
+    }
+
+    .card-sub {
+      margin: 2px 0 0;
+      font-size: 12px;
+      color: var(--text-soft);
+    }
+
+    .item-box {
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      background: #fcfdff;
+      padding: 13px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .item-box.is-disabled {
+      opacity: 0.72;
+      background: #f8fafc;
+    }
+
+    .item-head {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .item-title-row {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+      font-size: 13px;
+    }
+
+    .icon-preview-box {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent);
+      flex-shrink: 0;
+    }
+
+    .icon-preview-box svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    @media (max-width: 720px) {
+      .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .field-label {
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .check-row {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 12.5px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .vis-box {
+      border: 1px solid var(--border-soft);
+      border-radius: 8px;
+      background: var(--surface);
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .vis-top {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .lang-pill-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(76px, 1fr));
+      gap: 5px;
+    }
+
+    .lang-toggle-chip {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      padding: 4px 6px;
+      border-radius: 5px;
+      border: 1px solid var(--border);
+      background: var(--surface-muted);
+      color: var(--text-muted);
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .lang-toggle-chip.is-selected {
+      background: var(--accent-soft);
+      border-color: #38bdf8;
+      color: var(--accent-hover);
+    }
+
+    .lang-toggle-chip.is-excluded.is-selected {
+      background: var(--err-bg);
+      border-color: var(--err-border);
+      color: var(--err-text);
+    }
+
+    details.i18n-details {
+      border: 1px solid var(--border-soft);
+      border-radius: 7px;
+      background: var(--surface);
+      padding: 6px 10px;
+    }
+
+    details.i18n-details summary {
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      user-select: none;
+    }
+
+    .i18n-table {
+      margin-top: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .i18n-row {
+      display: grid;
+      grid-template-columns: 54px minmax(0, 1fr) minmax(0, 1fr);
+      gap: 8px;
+      align-items: center;
+    }
+
+    .i18n-code {
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-soft);
+      padding: 4px 6px;
+      background: var(--surface-muted);
+      border-radius: 4px;
+      text-align: center;
+    }
+
+    .lang-row {
+      display: grid;
+      grid-template-columns: auto 66px minmax(140px, 1fr) minmax(140px, 1fr) auto;
+      gap: 8px;
+      align-items: center;
+      padding: 8px 10px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #fcfdff;
+    }
+
+    .lang-row.is-disabled { opacity: 0.65; background: #f8fafc; }
+
+    @media (max-width: 780px) {
+      .lang-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Live Sticky Sidebar Preview */
+    .preview-col {
+      position: sticky;
+      top: 64px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    @media (max-width: 1060px) {
+      .preview-col { position: static; }
+    }
+
+    .pv-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 8px 10px;
+    }
+
+    .pv-sidebar-frame {
+      border-radius: 14px;
+      border: 1px solid #cbd5e1;
+      background: #f5f5fa;
+      color: #0f172a;
+      padding: 18px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      box-shadow: 0 12px 28px -12px rgba(15, 23, 42, 0.16);
+    }
+
+    .pv-sidebar-frame.is-dark {
+      background: #090d16;
+      color: #f8fafc;
+      border-color: rgba(56, 189, 248, 0.25);
+    }
+
+    .pv-head-grid {
+      display: grid;
+      grid-template-columns: 58px 1fr;
+      align-items: center;
+      column-gap: 10px;
+      row-gap: 8px;
+    }
+
+    .pv-head-grid.no-logo {
+      grid-template-columns: 1fr;
+    }
+
+    .pv-logo {
+      width: 58px;
+      height: 40px;
+      padding: 5px 7px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, rgba(14, 165, 233, 0.18) 0%, rgba(56, 189, 248, 0.06) 100%);
+      border: 1px solid rgba(56, 189, 248, 0.48);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .pv-logo svg { width: 100%; height: 100%; display: block; }
+    .pv-site-title { font-size: 16px; font-weight: 700; line-height: 1.25; }
+    .pv-site-sub { grid-column: 1 / -1; font-size: 12px; line-height: 1.4; opacity: 0.72; }
+
+    .pv-menu {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .pv-menu-link {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 7px 10px;
+      border-radius: 8px;
+      font-size: 13.5px;
+      font-weight: 500;
+      color: inherit;
+      opacity: 0.78;
+      text-decoration: none;
+    }
+
+    .pv-menu-link.is-first {
+      background: rgba(14, 165, 233, 0.12);
+      color: #0284c7;
+      opacity: 1;
+      font-weight: 600;
+    }
+
+    .pv-sidebar-frame.is-dark .pv-menu-link.is-first {
+      background: #1e293b;
+      color: #38bdf8;
+    }
+
+    .pv-menu-link svg {
+      width: 17px;
+      height: 17px;
+      flex-shrink: 0;
+    }
+
+    .pv-bottom {
+      margin-top: 4px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(148, 163, 184, 0.28);
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .pv-control-box {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 7px 10px;
+      border-radius: 8px;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      background: rgba(255, 255, 255, 0.7);
+      font-size: 12.5px;
+    }
+
+    .pv-sidebar-frame.is-dark .pv-control-box {
+      background: #111827;
+      border-color: rgba(56, 189, 248, 0.18);
+    }
+
+    .pv-control-box select {
+      width: 100%;
+      border: 0;
+      background: transparent;
+      color: inherit;
+      font-size: 12.5px;
+      outline: none;
+    }
+
+    .pv-control-box option {
+      background: #ffffff;
+      color: #0f172a;
+    }
+
+    .pv-sidebar-frame.is-dark .pv-control-box option {
+      background: #111827;
+      color: #f8fafc;
+    }
+
+    .pv-notice {
+      padding: 9px 11px;
+      border-radius: 9px;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      font-size: 12px;
+      line-height: 1.4;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .pv-notice.is-info { border-color: rgba(14, 165, 233, 0.4); background: rgba(14, 165, 233, 0.08); }
+    .pv-notice.is-accent { border-color: rgba(16, 185, 129, 0.4); background: rgba(16, 185, 129, 0.08); }
+    .pv-notice.is-warn { border-color: rgba(245, 158, 11, 0.45); background: rgba(245, 158, 11, 0.1); }
+    .pv-notice.is-subtle { background: rgba(148, 163, 184, 0.12); }
+
+    .pv-notice-badge { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #0284c7; }
+    .pv-sidebar-frame.is-dark .pv-notice-badge { color: #38bdf8; }
+    .pv-notice.is-warn .pv-notice-badge { color: #d97706; }
+    .pv-sidebar-frame.is-dark .pv-notice.is-warn .pv-notice-badge { color: #fbbf24; }
+    .pv-notice-title { font-weight: 700; font-size: 12.5px; }
+    .pv-notice-link { font-weight: 600; color: #0284c7; font-size: 11.5px; text-decoration: none; }
+    .pv-sidebar-frame.is-dark .pv-notice-link { color: #38bdf8; }
+
+    .pv-stats {
+      font-size: 11.5px;
+      color: var(--text-soft);
+      padding: 0 4px;
+    }
+
+    /* Modals */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      background: rgba(15, 23, 42, 0.56);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .modal-backdrop.is-open { display: flex; }
+
+    .modal {
+      width: min(94vw, 860px);
+      max-height: 90vh;
+      background: var(--surface);
+      border-radius: 11px;
+      box-shadow: 0 24px 64px rgba(15, 23, 42, 0.35);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .modal-head {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border-soft);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .modal-title { margin: 0; font-size: 14.5px; font-weight: 700; }
+
+    .modal-body {
+      padding: 14px 16px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .modal-foot {
+      padding: 10px 16px;
+      border-top: 1px solid var(--border-soft);
+      background: var(--surface-muted);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .code-area {
+      width: 100%;
+      min-height: 290px;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-family: var(--mono);
+      font-size: 12px;
+      line-height: 1.5;
+      background: #0f172a;
+      color: #f8fafc;
+      resize: vertical;
+    }
+
+    .diff-pre {
+      margin: 0;
+      padding: 10px 12px;
+      font-family: var(--mono);
+      font-size: 11.5px;
+      line-height: 1.5;
+      max-height: 360px;
+      overflow: auto;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #fafafa;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .diff-line.is-add { background: #ecfdf5; color: #166534; display: block; }
+    .diff-line.is-del { background: #fef2f2; color: #991b1b; display: block; }
+
+    .toast {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      z-index: 200;
+      padding: 9px 14px;
+      border-radius: 8px;
+      background: #0f172a;
+      color: #f8fafc;
+      font-size: 12.5px;
+      font-weight: 600;
+      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.3);
+      display: none;
+    }
+
+    .toast.is-visible { display: block; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="topbar-left">
+        <a href="/admin/" class="btn btn-sm">&larr; В CMS</a>
+        <h1 class="brand-title">Конструктор левой панели</h1>
+        <span id="modeBadge" class="mode-badge">Определение режима...</span>
+        <span id="dirtyPill" class="dirty-pill">Нет изменений</span>
+      </div>
+      <div class="topbar-actions">
+        <button type="button" id="ioModalBtn" class="btn">Экспорт / Импорт пакетом</button>
+        <button type="button" id="resetDefaultBtn" class="btn">Сбросить к стандарту</button>
+        <button type="button" id="saveBtn" class="btn btn-primary" disabled>Сохранить изменения</button>
+      </div>
+    </header>
+
+    <div id="githubAuthBanner" class="auth-banner">
+      <strong>GitHub API:</strong>
+      <input type="text" id="ghRepoInput" class="input" style="width:210px;" value="yurakas-netizen/rfid-blog" placeholder="owner/repo" />
+      <input type="text" id="ghBranchInput" class="input" style="width:100px;" value="master" placeholder="branch" />
+      <input type="password" id="ghTokenInput" class="input" style="width:230px;" placeholder="GitHub Token (или сессия CMS)" />
+      <button type="button" id="ghConnectBtn" class="btn btn-primary btn-sm">Подключиться</button>
+      <button type="button" id="ghFromDecapBtn" class="btn btn-sm">Из сессии CMS</button>
+      <span id="ghAuthStatus" style="font-size:12px; color:var(--text-muted);"></span>
+    </div>
+
+    <div class="workspace">
+      <div class="editor-col">
+        <div class="subbar">
+          <div class="tabs" role="tablist">
+            <button type="button" class="tab-btn is-active" data-tab="menu">Пункты меню</button>
+            <button type="button" class="tab-btn" data-tab="languages">Языки</button>
+            <button type="button" class="tab-btn" data-tab="announcements">Объявления и тексты</button>
+            <button type="button" class="tab-btn" data-tab="brand">Бренд и виджеты</button>
+            <button type="button" class="tab-btn" data-tab="json">JSON</button>
+          </div>
+          <span id="tabHint" style="font-size:12px; color:var(--text-soft);">Единый файл конфигурации: <code style="font-family:var(--mono);">data/sidebar.json</code></span>
+        </div>
+
+        <div id="tabMenu"></div>
+        <div id="tabLanguages" style="display:none;"></div>
+        <div id="tabAnnouncements" style="display:none;"></div>
+        <div id="tabBrand" style="display:none;"></div>
+        <div id="tabJson" style="display:none;"></div>
+      </div>
+
+      <aside class="preview-col" aria-label="Предпросмотр левой панели">
+        <div class="pv-toolbar">
+          <select id="pvLangSelect" class="select" style="width:auto; min-width:165px; height:28px; font-size:12px;"></select>
+          <button type="button" id="pvThemeBtn" class="btn btn-sm">Светлая тема</button>
+        </div>
+        <div id="pvSidebarBox" class="pv-sidebar-frame is-dark"></div>
+        <div id="pvStats" class="pv-stats"></div>
+      </aside>
+    </div>
+  </div>
+
+  <!-- Import / Export Modal -->
+  <div id="ioModalBackdrop" class="modal-backdrop">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="ioModalTitle">
+      <div class="modal-head">
+        <h3 id="ioModalTitle" class="modal-title">Пакетный экспорт / импорт настроек левой панели</h3>
+        <button type="button" id="ioCloseBtn" class="btn btn-sm">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div style="display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:space-between;">
+          <div class="tabs">
+            <button type="button" class="tab-btn is-active" data-iomode="export">Экспорт (скачать)</button>
+            <button type="button" class="tab-btn" data-iomode="import">Импорт (загрузить)</button>
+          </div>
+          <input type="file" id="ioFileInput" accept=".json,application/json" style="display:none; font-size:12px;" />
+        </div>
+        <div id="ioSummary" style="font-size:12px; color:var(--text-muted);"></div>
+        <textarea id="ioTextarea" class="code-area" spellcheck="false"></textarea>
+      </div>
+      <div class="modal-foot">
+        <span id="ioStatus" style="font-size:12px; color:var(--text-muted);"></span>
+        <div style="display:flex; gap:8px;">
+          <button type="button" id="ioCopyBtn" class="btn">Копировать JSON</button>
+          <button type="button" id="ioDownloadBtn" class="btn btn-primary">Скачать sidebar-config.json</button>
+          <button type="button" id="ioApplyBtn" class="btn btn-primary" style="display:none;">Применить импорт</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Save / Diff Modal -->
+  <div id="saveModalBackdrop" class="modal-backdrop">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="saveModalTitle">
+      <div class="modal-head">
+        <h3 id="saveModalTitle" class="modal-title">Сохранение настроек левой панели (data/sidebar.json)</h3>
+        <button type="button" id="saveCloseBtn" class="btn btn-sm">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div id="saveCommitWrap" class="field" style="display:none;">
+          <label class="field-label" for="saveCommitMsg">Сообщение коммита (GitHub):</label>
+          <input type="text" id="saveCommitMsg" class="input" value="feat(sidebar): update left sidebar configuration" />
+        </div>
+        <div id="saveDiffPre" class="diff-pre"></div>
+      </div>
+      <div class="modal-foot">
+        <span id="saveModalStatus" style="font-size:12px; color:var(--text-muted);"></span>
+        <div style="display:flex; gap:8px;">
+          <button type="button" id="saveCancelBtn" class="btn">Отмена</button>
+          <button type="button" id="saveConfirmBtn" class="btn btn-primary">Подтвердить и сохранить</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <script>
+    (function () {
+      var SITE_LANGUAGES = [
+        { code: 'uk', shortLabel: 'UA', label: 'Українська (UA)', urlPrefix: '', defaultSubtitle: 'Інженерна платформа UHF RFID, RTLS та IIoT', home: 'Головна', archives: 'Архіви', search: 'Пошук', links: 'Посилання', adminCms: 'Адмінка (CMS)' },
+        { code: 'en', shortLabel: 'EN', label: 'English (EN)', urlPrefix: '/en', defaultSubtitle: 'UHF RFID, RTLS & IIoT Engineering Platform', home: 'Home', archives: 'Archives', search: 'Search', links: 'Links', adminCms: 'Admin (CMS)' },
+        { code: 'da', shortLabel: 'DA', label: 'Dansk (DA)', urlPrefix: '/da', defaultSubtitle: 'UHF RFID, RTLS & IIoT-ingeniørplatform', home: 'Hjem', archives: 'Arkiv', search: 'Søg', links: 'Links', adminCms: 'Admin (CMS)' },
+        { code: 'de', shortLabel: 'DE', label: 'Deutsch (DE)', urlPrefix: '/de', defaultSubtitle: 'Ingenieurplattform für UHF RFID, RTLS & IIoT', home: 'Startseite', archives: 'Archiv', search: 'Suche', links: 'Links', adminCms: 'Admin (CMS)' },
+        { code: 'fr', shortLabel: 'FR', label: 'Français (FR)', urlPrefix: '/fr', defaultSubtitle: 'Plateforme d’ingénierie UHF RFID, RTLS & IIoT', home: 'Accueil', archives: 'Archives', search: 'Recherche', links: 'Liens', adminCms: 'Admin (CMS)' },
+        { code: 'ru', shortLabel: 'RU', label: 'Русский (RU)', urlPrefix: '/ru', defaultSubtitle: 'Инженерная платформа UHF RFID, RTLS и IIoT', home: 'Главная', archives: 'Архивы', search: 'Поиск', links: 'Ссылки', adminCms: 'Админка (CMS)' },
+        { code: 'pl', shortLabel: 'PL', label: 'Polski (PL)', urlPrefix: '/pl', defaultSubtitle: 'Platforma inżynieryjna UHF RFID, RTLS i IIoT', home: 'Strona główna', archives: 'Archiwum', search: 'Szukaj', links: 'Linki', adminCms: 'Admin (CMS)' },
+        { code: 'es', shortLabel: 'ES', label: 'Español (ES)', urlPrefix: '/es', defaultSubtitle: 'Plataforma de ingeniería UHF RFID, RTLS e IIoT', home: 'Inicio', archives: 'Archivos', search: 'Buscar', links: 'Enlaces', adminCms: 'Admin (CMS)' },
+        { code: 'it', shortLabel: 'IT', label: 'Italiano (IT)', urlPrefix: '/it', defaultSubtitle: 'Piattaforma ingegneristica UHF RFID, RTLS e IIoT', home: 'Home', archives: 'Archivio', search: 'Cerca', links: 'Link', adminCms: 'Admin (CMS)' },
+        { code: 'nl', shortLabel: 'NL', label: 'Nederlands (NL)', urlPrefix: '/nl', defaultSubtitle: 'Engineeringplatform voor UHF RFID, RTLS & IIoT', home: 'Start', archives: 'Archief', search: 'Zoeken', links: 'Links', adminCms: 'Admin (CMS)' },
+        { code: 'pt', shortLabel: 'PT', label: 'Português (PT)', urlPrefix: '/pt', defaultSubtitle: 'Plataforma de engenharia UHF RFID, RTLS e IIoT', home: 'Início', archives: 'Arquivos', search: 'Pesquisar', links: 'Links', adminCms: 'Admin (CMS)' },
+        { code: 'sv', shortLabel: 'SV', label: 'Svenska (SV)', urlPrefix: '/sv', defaultSubtitle: 'Ingenjörsplattform för UHF RFID, RTLS och IIoT', home: 'Hem', archives: 'Arkiv', search: 'Sök', links: 'Länkar', adminCms: 'Admin (CMS)' },
+        { code: 'no', shortLabel: 'NO', label: 'Norsk (NO)', urlPrefix: '/no', defaultSubtitle: 'Ingeniørplattform for UHF RFID, RTLS og IIoT', home: 'Hjem', archives: 'Arkiv', search: 'Søk', links: 'Lenker', adminCms: 'Admin (CMS)' },
+        { code: 'fi', shortLabel: 'FI', label: 'Suomi (FI)', urlPrefix: '/fi', defaultSubtitle: 'UHF RFID-, RTLS- ja IIoT-suunnittelualusta', home: 'Etusivu', archives: 'Arkisto', search: 'Haku', links: 'Linkit', adminCms: 'Admin (CMS)' },
+        { code: 'cs', shortLabel: 'CS', label: 'Čeština (CS)', urlPrefix: '/cs', defaultSubtitle: 'Inženýrská platforma UHF RFID, RTLS a IIoT', home: 'Domů', archives: 'Archiv', search: 'Hledat', links: 'Odkazy', adminCms: 'Admin (CMS)' },
+        { code: 'sk', shortLabel: 'SK', label: 'Slovenčina (SK)', urlPrefix: '/sk', defaultSubtitle: 'Inžinierska platforma UHF RFID, RTLS a IIoT', home: 'Domov', archives: 'Archív', search: 'Hľadať', links: 'Odkazy', adminCms: 'Admin (CMS)' },
+        { code: 'ro', shortLabel: 'RO', label: 'Română (RO)', urlPrefix: '/ro', defaultSubtitle: 'Platformă de inginerie UHF RFID, RTLS și IIoT', home: 'Acasă', archives: 'Arhivă', search: 'Căutare', links: 'Linkuri', adminCms: 'Admin (CMS)' },
+        { code: 'bg', shortLabel: 'BG', label: 'Български (BG)', urlPrefix: '/bg', defaultSubtitle: 'Инженерна платформа за UHF RFID, RTLS и IIoT', home: 'Начало', archives: 'Архив', search: 'Търсене', links: 'Връзки', adminCms: 'Админ (CMS)' },
+        { code: 'et', shortLabel: 'ET', label: 'Eesti (ET)', urlPrefix: '/et', defaultSubtitle: 'UHF RFID, RTLS ja IIoT inseneriplatvorm', home: 'Avaleht', archives: 'Arhiiv', search: 'Otsing', links: 'Lingid', adminCms: 'Admin (CMS)' },
+        { code: 'lt', shortLabel: 'LT', label: 'Lietuvių (LT)', urlPrefix: '/lt', defaultSubtitle: 'UHF RFID, RTLS ir IIoT inžinerinė platforma', home: 'Pradžia', archives: 'Archyvas', search: 'Paieška', links: 'Nuorodos', adminCms: 'Admin (CMS)' }
+      ];
+
+      var ICON_OPTIONS = [
+        { id: 'home', label: 'Домой (Home)' },
+        { id: 'archives', label: 'Архивы (Archives)' },
+        { id: 'search', label: 'Поиск (Search)' },
+        { id: 'links', label: 'Ссылка (Link)' },
+        { id: 'admin', label: 'Шестерёнка (Admin)' },
+        { id: 'tag', label: 'Тег (Tag)' },
+        { id: 'categories', label: 'Категории (Grid)' },
+        { id: 'book', label: 'Документация (Book)' },
+        { id: 'file', label: 'Документ (File)' },
+        { id: 'shield', label: 'Стандарт / Защита (Shield)' },
+        { id: 'globe', label: 'Глобус (Globe)' },
+        { id: 'mail', label: 'Почта (Mail)' },
+        { id: 'phone', label: 'Телефон (Phone)' },
+        { id: 'alert', label: 'Уведомление (Alert)' },
+        { id: 'sparkles', label: 'Избранное (Sparkles)' },
+        { id: 'external', label: 'Внешняя ссылка (External)' },
+        { id: 'none', label: 'Без иконки' }
+      ];
+
+      var ICON_PATHS = {
+        home: '<path d="M5 12l-2 0l9 -9l9 9l-2 0"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7"/><path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6"/>',
+        archives: '<path d="M3 4m0 2a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v0a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2z"/><path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10"/><path d="M10 12l4 0"/>',
+        search: '<path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0"/><path d="M21 21l-6 -6"/>',
+        links: '<path d="M9 15l6 -6"/><path d="M11 6l.463 -.536a5 5 0 0 1 7.071 7.072l-.534 .464"/><path d="M13 18l-.397 .534a5.068 5.068 0 0 1 -7.127 0a4.972 4.972 0 0 1 0 -7.071l.524 -.463"/>',
+        admin: '<path d="M10.325 4.317c.426 -1.756 2.924 -1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543 -.94 3.31 .826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756 .426 1.756 2.924 0 3.35a1.724 1.724 0 0 0 -1.066 2.573c.94 1.543 -.826 3.31 -2.37 2.37a1.724 1.724 0 0 0 -2.572 1.065c-.426 1.756 -2.924 1.756 -3.35 0a1.724 1.724 0 0 0 -2.573 -1.066c-1.543 .94 -3.31 -.826 -2.37 -2.37a1.724 1.724 0 0 0 -1.065 -2.572c-1.756 -.426 -1.756 -2.924 0 -3.35a1.724 1.724 0 0 0 1.066 -2.573c-.94 -1.543 .826 -3.31 2.37 -2.37c1 .608 2.296 .07 2.572 -1.065z"/><path d="M9 12a3 3 0 1 0 6 0a3 3 0 0 0 -6 0"/>',
+        tag: '<path d="M7.5 7.5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"/><path d="M3 6v5.172a2 2 0 0 0 .586 1.414l7.71 7.71a2.41 2.41 0 0 0 3.408 0l5.592 -5.592a2.41 2.41 0 0 0 0 -3.408l-7.71 -7.71a2 2 0 0 0 -1.414 -.586h-5.172a3 3 0 0 0 -3 3z"/>',
+        categories: '<path d="M4 4h6v6h-6z"/><path d="M14 4h6v6h-6z"/><path d="M4 14h6v6h-6z"/><path d="M17 17m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"/>',
+        book: '<path d="M3 19a9 9 0 0 1 9 0a9 9 0 0 1 9 0"/><path d="M3 6a9 9 0 0 1 9 0a9 9 0 0 1 9 0"/><path d="M3 6l0 13"/><path d="M12 6l0 13"/><path d="M21 6l0 13"/>',
+        file: '<path d="M14 3v4a1 1 0 0 0 1 1h4"/><path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z"/><path d="M9 9l1 0"/><path d="M9 13l6 0"/><path d="M9 17l6 0"/>',
+        shield: '<path d="M12 3a12 12 0 0 0 8.5 3a12 12 0 0 1 -8.5 15a12 12 0 0 1 -8.5 -15a12 12 0 0 0 8.5 -3"/><path d="M9 12l2 2l4 -4"/>',
+        globe: '<path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0"/><path d="M3.6 9h16.8"/><path d="M3.6 15h16.8"/><path d="M11.5 3a17 17 0 0 0 0 18"/><path d="M12.5 3a17 17 0 0 1 0 18"/>',
+        mail: '<path d="M3 7a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v10a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-10z"/><path d="M3 7l9 6l9 -6"/>',
+        phone: '<path d="M5 4h4l2 5l-2.5 1.5a11 11 0 0 0 5 5l1.5 -2.5l5 2v4a2 2 0 0 1 -2 2a16 16 0 0 1 -15 -15a2 2 0 0 1 2 -2"/>',
+        alert: '<path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0"/><path d="M12 8v4"/><path d="M12 16h.01"/>',
+        sparkles: '<path d="M12 3l1.9 5.1l5.1 1.9l-5.1 1.9l-1.9 5.1l-1.9 -5.1l-5.1 -1.9l5.1 -1.9z"/><path d="M5 17l.8 2.2l2.2 .8l-2.2 .8l-.8 2.2l-.8 -2.2l-2.2 -.8l2.2 -.8z"/>',
+        external: '<path d="M12 6h-6a2 2 0 0 0 -2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-6"/><path d="M11 13l9 -9"/><path d="M15 4h5v5"/>'
+      };
+
+      function svgIconHtml(name) {
+        if (!name || name === 'none') return '';
+        var inner = ICON_PATHS[name] || ICON_PATHS.links;
+        return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">' + inner + '</svg>';
+      }
+
+      var state = {
+        mode: 'local',
+        activeTab: 'menu',
+        previewLang: 'uk',
+        previewDark: true,
+        ioMode: 'export',
+        config: null,
+        originalJson: '',
+        fileHash: '',
+        exists: false,
+        ghRepo: 'yurakas-netizen/rfid-blog',
+        ghBranch: 'master',
+        ghToken: '',
+        ghHeadCommitSha: '',
+        ghHeadTreeSha: ''
+      };
+
+      function showToast(msg) {
+        var t = document.getElementById('toast');
+        t.textContent = msg;
+        t.classList.add('is-visible');
+        clearTimeout(t._timer);
+        t._timer = setTimeout(function () { t.classList.remove('is-visible'); }, 3200);
+      }
+
+      function el(tag, attrs, text) {
+        var node = document.createElement(tag);
+        if (attrs) {
+          Object.keys(attrs).forEach(function (k) {
+            if (k === 'className') node.className = attrs[k];
+            else if (k === 'style') node.setAttribute('style', attrs[k]);
+            else if (k === 'checked') node.checked = Boolean(attrs[k]);
+            else if (k === 'disabled') node.disabled = Boolean(attrs[k]);
+            else if (k === 'value') node.value = attrs[k];
+            else node.setAttribute(k, attrs[k]);
+          });
+        }
+        if (text !== undefined && text !== null) node.textContent = text;
+        return node;
+      }
+
+      function makeField(labelText, control) {
+        var f = el('div', { className: 'field' });
+        f.appendChild(el('label', { className: 'field-label' }, labelText));
+        f.appendChild(control);
+        return f;
+      }
+
+      function buildDefaultConfig() {
+        var titles = {}, subtitles = {}, homeLabels = {}, archLabels = {}, searchLabels = {}, linksLabels = {}, adminLabels = {};
+        SITE_LANGUAGES.forEach(function (l) {
+          titles[l.code] = 'RFID Ukraine';
+          subtitles[l.code] = l.defaultSubtitle;
+          homeLabels[l.code] = l.home;
+          archLabels[l.code] = l.archives;
+          searchLabels[l.code] = l.search;
+          linksLabels[l.code] = l.links;
+          adminLabels[l.code] = l.adminCms;
+        });
+        return {
+          version: 1,
+          brand: {
+            showLogo: true,
+            defaultTitle: 'RFID Ukraine',
+            defaultSubtitle: SITE_LANGUAGES[0].defaultSubtitle,
+            titles: titles,
+            subtitles: subtitles
+          },
+          controls: {
+            showLanguageSwitcher: true,
+            showLanguageCounts: true,
+            showThemeToggle: true,
+            showMobileSearch: true,
+            showMobileCategories: true,
+            syncHiddenLangsToHomeHub: true
+          },
+          menuItems: [
+            { id: 'home', enabled: true, icon: 'home', defaultLabel: 'Home', defaultUrl: '/', newTab: false, visibilityMode: 'all', visibilityLangs: [], labels: homeLabels, urls: {} },
+            { id: 'archives', enabled: true, icon: 'archives', defaultLabel: 'Archives', defaultUrl: '/archives/', newTab: false, visibilityMode: 'all', visibilityLangs: [], labels: archLabels, urls: {} },
+            { id: 'search', enabled: true, icon: 'search', defaultLabel: 'Search', defaultUrl: '/search/', newTab: false, visibilityMode: 'all', visibilityLangs: [], labels: searchLabels, urls: {} },
+            { id: 'links', enabled: true, icon: 'links', defaultLabel: 'Links', defaultUrl: '/links/', newTab: false, visibilityMode: 'all', visibilityLangs: [], labels: linksLabels, urls: {} },
+            { id: 'admin', enabled: true, icon: 'admin', defaultLabel: 'Admin (CMS)', defaultUrl: '/admin/', newTab: false, visibilityMode: 'all', visibilityLangs: [], labels: adminLabels, urls: {} }
+          ],
+          languages: SITE_LANGUAGES.map(function (l) {
+            return { code: l.code, label: l.label, enabled: true, customUrl: '', isCustom: false };
+          }),
+          announcements: []
+        };
+      }
+
+      function normalizeClientConfig(raw) {
+        var def = buildDefaultConfig();
+        if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return def;
+
+        var rb = raw.brand && typeof raw.brand === 'object' ? raw.brand : {};
+        var brand = {
+          showLogo: typeof rb.showLogo === 'boolean' ? rb.showLogo : def.brand.showLogo,
+          defaultTitle: String(rb.defaultTitle || def.brand.defaultTitle).trim(),
+          defaultSubtitle: String(rb.defaultSubtitle || def.brand.defaultSubtitle).trim(),
+          titles: Object.assign({}, def.brand.titles, rb.titles && typeof rb.titles === 'object' ? rb.titles : {}),
+          subtitles: Object.assign({}, def.brand.subtitles, rb.subtitles && typeof rb.subtitles === 'object' ? rb.subtitles : {})
+        };
+
+        var rc = raw.controls && typeof raw.controls === 'object' ? raw.controls : {};
+        var controls = {
+          showLanguageSwitcher: typeof rc.showLanguageSwitcher === 'boolean' ? rc.showLanguageSwitcher : true,
+          showLanguageCounts: typeof rc.showLanguageCounts === 'boolean' ? rc.showLanguageCounts : true,
+          showThemeToggle: typeof rc.showThemeToggle === 'boolean' ? rc.showThemeToggle : true,
+          showMobileSearch: typeof rc.showMobileSearch === 'boolean' ? rc.showMobileSearch : true,
+          showMobileCategories: typeof rc.showMobileCategories === 'boolean' ? rc.showMobileCategories : true,
+          syncHiddenLangsToHomeHub: typeof rc.syncHiddenLangsToHomeHub === 'boolean' ? rc.syncHiddenLangsToHomeHub : true
+        };
+
+        var menuItems = (Array.isArray(raw.menuItems) ? raw.menuItems : def.menuItems).map(function (m, idx) {
+          var mode = (m.visibilityMode === 'only' || m.visibilityMode === 'except') ? m.visibilityMode : 'all';
+          return {
+            id: String(m.id || ('item-' + (idx + 1))).trim(),
+            enabled: typeof m.enabled === 'boolean' ? m.enabled : true,
+            icon: String(m.icon || 'links'),
+            defaultLabel: String(m.defaultLabel || m.id || 'Item'),
+            defaultUrl: String(m.defaultUrl || '/'),
+            newTab: Boolean(m.newTab),
+            visibilityMode: mode,
+            visibilityLangs: Array.isArray(m.visibilityLangs) ? m.visibilityLangs.map(String) : [],
+            labels: m.labels && typeof m.labels === 'object' ? Object.assign({}, m.labels) : {},
+            urls: m.urls && typeof m.urls === 'object' ? Object.assign({}, m.urls) : {}
+          };
+        });
+
+        var builtInSet = {};
+        SITE_LANGUAGES.forEach(function (l) { builtInSet[l.code] = l; });
+        var languages = (Array.isArray(raw.languages) ? raw.languages : def.languages).map(function (l) {
+          var code = String(l.code || '').trim().toLowerCase();
+          return {
+            code: code,
+            label: String(l.label || (builtInSet[code] ? builtInSet[code].label : code.toUpperCase())),
+            enabled: typeof l.enabled === 'boolean' ? l.enabled : true,
+            customUrl: String(l.customUrl || ''),
+            isCustom: !builtInSet[code]
+          };
+        }).filter(function (l) { return Boolean(l.code); });
+
+        var announcements = (Array.isArray(raw.announcements) ? raw.announcements : []).map(function (n, idx) {
+          var pos = (n.position === 'top' || n.position === 'bottom') ? n.position : 'mid';
+          var style = (n.style === 'subtle' || n.style === 'accent' || n.style === 'warn') ? n.style : 'info';
+          var mode = (n.visibilityMode === 'only' || n.visibilityMode === 'except') ? n.visibilityMode : 'all';
+          return {
+            id: String(n.id || ('notice-' + (idx + 1))).trim(),
+            enabled: typeof n.enabled === 'boolean' ? n.enabled : true,
+            position: pos,
+            style: style,
+            visibilityMode: mode,
+            visibilityLangs: Array.isArray(n.visibilityLangs) ? n.visibilityLangs.map(String) : [],
+            badge: String(n.badge || ''),
+            title: String(n.title || ''),
+            text: String(n.text || ''),
+            linkLabel: String(n.linkLabel || ''),
+            linkUrl: String(n.linkUrl || ''),
+            newTab: Boolean(n.newTab),
+            i18n: n.i18n && typeof n.i18n === 'object' ? JSON.parse(JSON.stringify(n.i18n)) : {}
+          };
+        });
+
+        return {
+          version: 1,
+          brand: brand,
+          controls: controls,
+          menuItems: menuItems,
+          languages: languages,
+          announcements: announcements
+        };
+      }
+
+      function isDirty() {
+        if (!state.config) return false;
+        return JSON.stringify(state.config) !== state.originalJson;
+      }
+
+      function updateStatusUI() {
+        var dirty = isDirty();
+        var pill = document.getElementById('dirtyPill');
+        pill.textContent = dirty ? 'Есть несохранённые изменения' : 'Нет изменений';
+        pill.className = 'dirty-pill' + (dirty ? ' has-dirty' : '');
+        document.getElementById('saveBtn').disabled = !dirty;
+      }
+
+      function onMutate() {
+        updateStatusUI();
+        renderLivePreview();
+      }
+
+      function isVisible(enabled, mode, langs, lang) {
+        if (!enabled) return false;
+        if (mode === 'only') return langs.indexOf(lang) !== -1;
+        if (mode === 'except') return langs.indexOf(lang) === -1;
+        return true;
+      }
+
+      function resolveUrlClient(rawUrl, lang) {
+        var u = String(rawUrl || '/').trim() || '/';
+        if (/^(https?:|mailto:|tel:|#)/i.test(u)) return u;
+        if (u === '/admin' || u.indexOf('/admin/') === 0 || u.indexOf('/static/') === 0 || u.indexOf('/assets/') === 0) return u;
+        var langObj = SITE_LANGUAGES.find(function (l) { return l.code === lang; });
+        var prefix = langObj ? langObj.urlPrefix : '';
+        if (!prefix) return u.charAt(0) === '/' ? u : '/' + u;
+        var norm = u.charAt(0) === '/' ? u : '/' + u;
+        if (norm === prefix || norm.indexOf(prefix + '/') === 0) return norm;
+        return norm === '/' ? (prefix + '/') : (prefix + norm);
+      }
+
+      /* ---------- Visibility Rules Editor Component ---------- */
+      function buildVisibilityBox(obj, onChange) {
+        var box = el('div', { className: 'vis-box' });
+        var top = el('div', { className: 'vis-top' });
+        top.appendChild(el('span', { className: 'field-label' }, 'Видимость по языкам'));
+
+        var modeSel = el('select', { className: 'select', style: 'width:auto; min-width:230px; height:28px; font-size:12px;' });
+        modeSel.appendChild(new Option('Показывать на всех языках', 'all'));
+        modeSel.appendChild(new Option('Только для выбранных языков', 'only'));
+        modeSel.appendChild(new Option('На всех, КРОМЕ выбранных', 'except'));
+        modeSel.value = obj.visibilityMode;
+        modeSel.addEventListener('change', function () {
+          obj.visibilityMode = this.value;
+          onMutate();
+          renderActiveTab();
+        });
+        top.appendChild(modeSel);
+        box.appendChild(top);
+
+        if (obj.visibilityMode !== 'all') {
+          var helperRow = el('div', { style: 'display:flex; justify-content:space-between; align-items:center; gap:8px; font-size:11.5px; color:var(--text-soft);' });
+          helperRow.appendChild(el('span', {}, obj.visibilityMode === 'only'
+            ? 'Пункт будет виден ТОЛЬКО на отмеченных языках:'
+            : 'Пункт будет СКРЫТ на отмеченных языках:'));
+          var quickBtns = el('div', { style: 'display:flex; gap:6px;' });
+          var selAllBtn = el('button', { type: 'button', className: 'btn btn-sm' }, 'Все');
+          selAllBtn.addEventListener('click', function () {
+            obj.visibilityLangs = SITE_LANGUAGES.map(function (l) { return l.code; });
+            onMutate();
+            renderActiveTab();
+          });
+          var clrBtn = el('button', { type: 'button', className: 'btn btn-sm' }, 'Снять');
+          clrBtn.addEventListener('click', function () {
+            obj.visibilityLangs = [];
+            onMutate();
+            renderActiveTab();
+          });
+          quickBtns.appendChild(selAllBtn);
+          quickBtns.appendChild(clrBtn);
+          helperRow.appendChild(quickBtns);
+          box.appendChild(helperRow);
+
+          var grid = el('div', { className: 'lang-pill-grid' });
+          SITE_LANGUAGES.forEach(function (l) {
+            var active = obj.visibilityLangs.indexOf(l.code) !== -1;
+            var chip = el('button', {
+              type: 'button',
+              className: 'lang-toggle-chip' +
+                (obj.visibilityMode === 'except' ? ' is-excluded' : '') +
+                (active ? ' is-selected' : '')
+            }, (active ? (obj.visibilityMode === 'except' ? '✕ ' : '✓ ') : '') + l.shortLabel);
+            chip.title = l.label;
+            chip.addEventListener('click', function () {
+              var idx = obj.visibilityLangs.indexOf(l.code);
+              if (idx === -1) obj.visibilityLangs.push(l.code);
+              else obj.visibilityLangs.splice(idx, 1);
+              onMutate();
+              renderActiveTab();
+            });
+            grid.appendChild(chip);
+          });
+          box.appendChild(grid);
+        }
+
+        return box;
+      }
+
+      /* ---------- Tab 1: Menu Items ---------- */
+      function renderMenuTab() {
+        var wrap = document.getElementById('tabMenu');
+        wrap.innerHTML = '';
+
+        var card = el('section', { className: 'card' });
+        var head = el('div', { className: 'card-head' });
+        var left = el('div');
+        left.appendChild(el('h2', { className: 'card-title' }, 'Пункты навигации левой панели (' + state.config.menuItems.length + ')'));
+        left.appendChild(el('p', { className: 'card-sub' }, 'Добавляйте, скрывайте, меняйте порядок, иконки и видимость каждого пункта для отдельных языков.'));
+        head.appendChild(left);
+
+        var addBtn = el('button', { type: 'button', className: 'btn btn-primary btn-sm' }, '+ Добавить пункт меню');
+        addBtn.addEventListener('click', function () {
+          var n = state.config.menuItems.length + 1;
+          state.config.menuItems.push({
+            id: 'custom-' + n,
+            enabled: true,
+            icon: 'sparkles',
+            defaultLabel: 'Новый раздел',
+            defaultUrl: '/archives/',
+            newTab: false,
+            visibilityMode: 'all',
+            visibilityLangs: [],
+            labels: {},
+            urls: {}
+          });
+          onMutate();
+          renderMenuTab();
+        });
+        head.appendChild(addBtn);
+        card.appendChild(head);
+
+        state.config.menuItems.forEach(function (item, idx) {
+          var box = el('div', { className: 'item-box' + (item.enabled ? '' : ' is-disabled') });
+          var top = el('div', { className: 'item-head' });
+
+          var titleRow = el('div', { className: 'item-title-row' });
+          var iconBox = el('span', { className: 'icon-preview-box' });
+          iconBox.innerHTML = svgIconHtml(item.icon) || '<span style="font-size:10px;opacity:0.5;">—</span>';
+          titleRow.appendChild(iconBox);
+          titleRow.appendChild(el('span', {}, '#' + (idx + 1) + ' · ' + (item.labels[state.previewLang] || item.defaultLabel || item.id)));
+          top.appendChild(titleRow);
+
+          var btns = el('div', { style: 'display:flex; flex-wrap:wrap; align-items:center; gap:6px;' });
+          var enLbl = el('label', { className: 'check-row', style: 'margin-right:6px;' });
+          var enCb = el('input', { type: 'checkbox', checked: item.enabled });
+          enCb.addEventListener('change', function () {
+            item.enabled = this.checked;
+            onMutate();
+            renderMenuTab();
+          });
+          enLbl.appendChild(enCb);
+          enLbl.appendChild(document.createTextNode('Показывать'));
+          btns.appendChild(enLbl);
+
+          var upBtn = el('button', { type: 'button', className: 'btn btn-sm', disabled: idx === 0 }, '↑');
+          upBtn.addEventListener('click', function () {
+            var tmp = state.config.menuItems[idx - 1];
+            state.config.menuItems[idx - 1] = item;
+            state.config.menuItems[idx] = tmp;
+            onMutate();
+            renderMenuTab();
+          });
+          var dnBtn = el('button', { type: 'button', className: 'btn btn-sm', disabled: idx === state.config.menuItems.length - 1 }, '↓');
+          dnBtn.addEventListener('click', function () {
+            var tmp = state.config.menuItems[idx + 1];
+            state.config.menuItems[idx + 1] = item;
+            state.config.menuItems[idx] = tmp;
+            onMutate();
+            renderMenuTab();
+          });
+          var delBtn = el('button', { type: 'button', className: 'btn btn-sm btn-danger' }, 'Удалить');
+          delBtn.addEventListener('click', function () {
+            state.config.menuItems.splice(idx, 1);
+            onMutate();
+            renderMenuTab();
+          });
+          btns.appendChild(upBtn);
+          btns.appendChild(dnBtn);
+          btns.appendChild(delBtn);
+          top.appendChild(btns);
+          box.appendChild(top);
+
+          var g = el('div', { className: 'grid-4' });
+          var idIn = el('input', { type: 'text', className: 'input', value: item.id, placeholder: 'home' });
+          idIn.addEventListener('input', function () { item.id = this.value; onMutate(); });
+
+          var icSel = el('select', { className: 'select' });
+          ICON_OPTIONS.forEach(function (opt) { icSel.appendChild(new Option(opt.label, opt.id)); });
+          icSel.value = item.icon;
+          icSel.addEventListener('change', function () {
+            item.icon = this.value;
+            iconBox.innerHTML = svgIconHtml(item.icon) || '<span style="font-size:10px;opacity:0.5;">—</span>';
+            onMutate();
+          });
+
+          var lblIn = el('input', { type: 'text', className: 'input', value: item.defaultLabel });
+          lblIn.addEventListener('input', function () { item.defaultLabel = this.value; onMutate(); });
+
+          var urlIn = el('input', { type: 'text', className: 'input', value: item.defaultUrl, placeholder: '/archives/ или https://...' });
+          urlIn.addEventListener('input', function () { item.defaultUrl = this.value; onMutate(); });
+
+          g.appendChild(makeField('Системный ID', idIn));
+          g.appendChild(makeField('Иконка', icSel));
+          g.appendChild(makeField('Базовое название', lblIn));
+          g.appendChild(makeField('Базовый URL', urlIn));
+          box.appendChild(g);
+
+          var ntLbl = el('label', { className: 'check-row' });
+          var ntCb = el('input', { type: 'checkbox', checked: item.newTab });
+          ntCb.addEventListener('change', function () { item.newTab = this.checked; onMutate(); });
+          ntLbl.appendChild(ntCb);
+          ntLbl.appendChild(document.createTextNode('Открывать в новой вкладке (target="_blank")'));
+          box.appendChild(ntLbl);
+
+          box.appendChild(buildVisibilityBox(item));
+
+          var det = el('details', { className: 'i18n-details' });
+          var trCount = Object.keys(item.labels).filter(function (k) { return Boolean(item.labels[k]); }).length;
+          det.appendChild(el('summary', {}, 'Названия и индивидуальные URL по языкам (заполнено: ' + trCount + ')'));
+          var table = el('div', { className: 'i18n-table' });
+          SITE_LANGUAGES.forEach(function (l) {
+            var row = el('div', { className: 'i18n-row' });
+            row.appendChild(el('span', { className: 'i18n-code', title: l.label }, l.shortLabel));
+            var lLbl = el('input', { type: 'text', className: 'input', value: item.labels[l.code] || '', placeholder: item.defaultLabel });
+            lLbl.addEventListener('input', function () {
+              if (this.value.trim()) item.labels[l.code] = this.value;
+              else delete item.labels[l.code];
+              onMutate();
+            });
+            var lUrl = el('input', { type: 'text', className: 'input', value: item.urls[l.code] || '', placeholder: 'Авто из базового URL (' + item.defaultUrl + ')' });
+            lUrl.addEventListener('input', function () {
+              if (this.value.trim()) item.urls[l.code] = this.value.trim();
+              else delete item.urls[l.code];
+              onMutate();
+            });
+            row.appendChild(lLbl);
+            row.appendChild(lUrl);
+            table.appendChild(row);
+          });
+          det.appendChild(table);
+          box.appendChild(det);
+
+          card.appendChild(box);
+        });
+
+        wrap.appendChild(card);
+      }
+
+      /* ---------- Tab 2: Languages ---------- */
+      function renderLanguagesTab() {
+        var wrap = document.getElementById('tabLanguages');
+        wrap.innerHTML = '';
+
+        var card = el('section', { className: 'card' });
+        var head = el('div', { className: 'card-head' });
+        var left = el('div');
+        left.appendChild(el('h2', { className: 'card-title' }, 'Языки в переключателе левой панели (' + state.config.languages.length + ')'));
+        left.appendChild(el('p', { className: 'card-sub' }, 'Управляйте порядком, названиями, видимостью языков в списке и добавляйте внешние языковые ссылки.'));
+        head.appendChild(left);
+        card.appendChild(head);
+
+        var ctrlRow = el('div', { style: 'display:flex; flex-wrap:wrap; gap:16px; padding-bottom:6px;' });
+        [
+          ['showLanguageSwitcher', 'Показывать переключатель языков'],
+          ['showLanguageCounts', 'Показывать счётчик статей (в Node-превью)'],
+          ['syncHiddenLangsToHomeHub', 'Скрывать отключённые языки и в языковой плашке на главной']
+        ].forEach(function (pair) {
+          var lbl = el('label', { className: 'check-row' });
+          var cb = el('input', { type: 'checkbox', checked: state.config.controls[pair[0]] });
+          cb.addEventListener('change', function () {
+            state.config.controls[pair[0]] = this.checked;
+            onMutate();
+          });
+          lbl.appendChild(cb);
+          lbl.appendChild(document.createTextNode(pair[1]));
+          ctrlRow.appendChild(lbl);
+        });
+        card.appendChild(ctrlRow);
+
+        var list = el('div', { style: 'display:flex; flex-direction:column; gap:7px;' });
+        state.config.languages.forEach(function (langItem, idx) {
+          var row = el('div', { className: 'lang-row' + (langItem.enabled ? '' : ' is-disabled') });
+
+          var enLbl = el('label', { className: 'check-row' });
+          var enCb = el('input', { type: 'checkbox', checked: langItem.enabled });
+          enCb.addEventListener('change', function () {
+            langItem.enabled = this.checked;
+            onMutate();
+            renderLanguagesTab();
+          });
+          enLbl.appendChild(enCb);
+          enLbl.appendChild(document.createTextNode('Вкл'));
+          row.appendChild(enLbl);
+
+          row.appendChild(el('span', { className: 'i18n-code' }, langItem.code.toUpperCase()));
+
+          var lblIn = el('input', { type: 'text', className: 'input', value: langItem.label, placeholder: 'Название языка' });
+          lblIn.addEventListener('input', function () { langItem.label = this.value; onMutate(); });
+          row.appendChild(lblIn);
+
+          var urlIn = el('input', {
+            type: 'text',
+            className: 'input',
+            value: langItem.customUrl,
+            placeholder: langItem.isCustom ? 'URL (обязательно, напр. https://...)' : 'Свой URL (пусто = стандартный маршрут)'
+          });
+          urlIn.addEventListener('input', function () { langItem.customUrl = this.value.trim(); onMutate(); });
+          row.appendChild(urlIn);
+
+          var btns = el('div', { style: 'display:flex; gap:5px;' });
+          var up = el('button', { type: 'button', className: 'btn btn-sm', disabled: idx === 0 }, '↑');
+          up.addEventListener('click', function () {
+            var tmp = state.config.languages[idx - 1];
+            state.config.languages[idx - 1] = langItem;
+            state.config.languages[idx] = tmp;
+            onMutate();
+            renderLanguagesTab();
+          });
+          var dn = el('button', { type: 'button', className: 'btn btn-sm', disabled: idx === state.config.languages.length - 1 }, '↓');
+          dn.addEventListener('click', function () {
+            var tmp = state.config.languages[idx + 1];
+            state.config.languages[idx + 1] = langItem;
+            state.config.languages[idx] = tmp;
+            onMutate();
+            renderLanguagesTab();
+          });
+          var del = el('button', { type: 'button', className: 'btn btn-sm btn-danger' }, 'Удалить');
+          del.addEventListener('click', function () {
+            state.config.languages.splice(idx, 1);
+            onMutate();
+            renderLanguagesTab();
+          });
+          btns.appendChild(up);
+          btns.appendChild(dn);
+          btns.appendChild(del);
+          row.appendChild(btns);
+
+          list.appendChild(row);
+        });
+        card.appendChild(list);
+
+        // Restore missing built-in languages or add custom language link
+        var presentCodes = new Set(state.config.languages.map(function (l) { return l.code; }));
+        var missingBuiltIns = SITE_LANGUAGES.filter(function (l) { return !presentCodes.has(l.code); });
+
+        var footBar = el('div', { style: 'display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:space-between; padding-top:8px; border-top:1px solid var(--border-soft);' });
+
+        if (missingBuiltIns.length) {
+          var resGroup = el('div', { style: 'display:flex; gap:6px; align-items:center;' });
+          var resSel = el('select', { className: 'select', style: 'width:auto; min-width:190px;' });
+          missingBuiltIns.forEach(function (l) { resSel.appendChild(new Option(l.label + ' [' + l.code + ']', l.code)); });
+          var resBtn = el('button', { type: 'button', className: 'btn btn-accent-soft btn-sm' }, '+ Вернуть язык сайта');
+          resBtn.addEventListener('click', function () {
+            var found = SITE_LANGUAGES.find(function (l) { return l.code === resSel.value; });
+            if (!found) return;
+            state.config.languages.push({ code: found.code, label: found.label, enabled: true, customUrl: '', isCustom: false });
+            onMutate();
+            renderLanguagesTab();
+          });
+          resGroup.appendChild(resSel);
+          resGroup.appendChild(resBtn);
+          footBar.appendChild(resGroup);
+        }
+
+        var addCustGroup = el('div', { style: 'display:flex; flex-wrap:wrap; gap:6px; align-items:center;' });
+        var cCode = el('input', { type: 'text', className: 'input', style: 'width:76px;', placeholder: 'ar' });
+        var cLbl = el('input', { type: 'text', className: 'input', style: 'width:150px;', placeholder: 'العربية (AR)' });
+        var cUrl = el('input', { type: 'text', className: 'input', style: 'width:190px;', placeholder: 'https://...' });
+        var cBtn = el('button', { type: 'button', className: 'btn btn-sm' }, '+ Добавить свой язык');
+        cBtn.addEventListener('click', function () {
+          var code = cCode.value.trim().toLowerCase().replace(/[^a-z0-9_-]/g, '');
+          if (!code) { showToast('Укажите код языка (например, ar)'); return; }
+          if (presentCodes.has(code)) { showToast('Язык с кодом ' + code + ' уже есть в списке'); return; }
+          state.config.languages.push({
+            code: code,
+            label: cLbl.value.trim() || code.toUpperCase(),
+            enabled: true,
+            customUrl: cUrl.value.trim() || ('/' + code + '/'),
+            isCustom: true
+          });
+          onMutate();
+          renderLanguagesTab();
+        });
+        addCustGroup.appendChild(cCode);
+        addCustGroup.appendChild(cLbl);
+        addCustGroup.appendChild(cUrl);
+        addCustGroup.appendChild(cBtn);
+        footBar.appendChild(addCustGroup);
+
+        card.appendChild(footBar);
+        wrap.appendChild(card);
+      }
+
+      /* ---------- Tab 3: Announcements & Text Blocks ---------- */
+      function renderAnnouncementsTab() {
+        var wrap = document.getElementById('tabAnnouncements');
+        wrap.innerHTML = '';
+
+        var card = el('section', { className: 'card' });
+        var head = el('div', { className: 'card-head' });
+        var left = el('div');
+        left.appendChild(el('h2', { className: 'card-title' }, 'Объявления и текстовые блоки в левой панели (' + state.config.announcements.length + ')'));
+        left.appendChild(el('p', { className: 'card-sub' }, 'Размещайте новости, контакты или уведомления под логотипом, над переключателем языков или в самом низу панели.'));
+        head.appendChild(left);
+
+        var addBtn = el('button', { type: 'button', className: 'btn btn-primary btn-sm' }, '+ Добавить объявление / текст');
+        addBtn.addEventListener('click', function () {
+          var n = state.config.announcements.length + 1;
+          state.config.announcements.push({
+            id: 'notice-' + n,
+            enabled: true,
+            position: 'mid',
+            style: 'info',
+            visibilityMode: 'all',
+            visibilityLangs: [],
+            badge: 'INFO',
+            title: 'Инженерная поддержка',
+            text: 'Консультации по UHF RFID и расчёт RF-бюджета для промышленных объектов.',
+            linkLabel: 'Связаться',
+            linkUrl: '/links/',
+            newTab: false,
+            i18n: {}
+          });
+          onMutate();
+          renderAnnouncementsTab();
+        });
+        head.appendChild(addBtn);
+        card.appendChild(head);
+
+        if (!state.config.announcements.length) {
+          card.appendChild(el('div', { style: 'padding:16px; border:1px dashed var(--border); border-radius:8px; color:var(--text-soft); text-align:center;' },
+            'Пока нет ни одного текстового блока или объявления. Нажмите «+ Добавить объявление / текст», чтобы разместить заметку в левой панели.'));
+        }
+
+        state.config.announcements.forEach(function (notice, idx) {
+          var box = el('div', { className: 'item-box' + (notice.enabled ? '' : ' is-disabled') });
+          var top = el('div', { className: 'item-head' });
+          top.appendChild(el('div', { className: 'item-title-row' }, 'Блок #' + (idx + 1) + ' · ' + (notice.title || notice.badge || notice.id)));
+
+          var btns = el('div', { style: 'display:flex; flex-wrap:wrap; align-items:center; gap:6px;' });
+          var enLbl = el('label', { className: 'check-row', style: 'margin-right:6px;' });
+          var enCb = el('input', { type: 'checkbox', checked: notice.enabled });
+          enCb.addEventListener('change', function () {
+            notice.enabled = this.checked;
+            onMutate();
+            renderAnnouncementsTab();
+          });
+          enLbl.appendChild(enCb);
+          enLbl.appendChild(document.createTextNode('Показывать'));
+          btns.appendChild(enLbl);
+
+          var upBtn = el('button', { type: 'button', className: 'btn btn-sm', disabled: idx === 0 }, '↑');
+          upBtn.addEventListener('click', function () {
+            var tmp = state.config.announcements[idx - 1];
+            state.config.announcements[idx - 1] = notice;
+            state.config.announcements[idx] = tmp;
+            onMutate();
+            renderAnnouncementsTab();
+          });
+          var dnBtn = el('button', { type: 'button', className: 'btn btn-sm', disabled: idx === state.config.announcements.length - 1 }, '↓');
+          dnBtn.addEventListener('click', function () {
+            var tmp = state.config.announcements[idx + 1];
+            state.config.announcements[idx + 1] = notice;
+            state.config.announcements[idx] = tmp;
+            onMutate();
+            renderAnnouncementsTab();
+          });
+          var delBtn = el('button', { type: 'button', className: 'btn btn-sm btn-danger' }, 'Удалить');
+          delBtn.addEventListener('click', function () {
+            state.config.announcements.splice(idx, 1);
+            onMutate();
+            renderAnnouncementsTab();
+          });
+          btns.appendChild(upBtn);
+          btns.appendChild(dnBtn);
+          btns.appendChild(delBtn);
+          top.appendChild(btns);
+          box.appendChild(top);
+
+          var g1 = el('div', { className: 'grid-3' });
+          var posSel = el('select', { className: 'select' });
+          posSel.appendChild(new Option('Над меню (под логотипом)', 'top'));
+          posSel.appendChild(new Option('Между меню и переключателем', 'mid'));
+          posSel.appendChild(new Option('В самом низу панели', 'bottom'));
+          posSel.value = notice.position;
+          posSel.addEventListener('change', function () { notice.position = this.value; onMutate(); });
+
+          var stSel = el('select', { className: 'select' });
+          stSel.appendChild(new Option('Инфо (голубой контур)', 'info'));
+          stSel.appendChild(new Option('Акцент (изумрудный контур)', 'accent'));
+          stSel.appendChild(new Option('Предупреждение (янтарный)', 'warn'));
+          stSel.appendChild(new Option('Спокойный (нейтральный)', 'subtle'));
+          stSel.value = notice.style;
+          stSel.addEventListener('change', function () { notice.style = this.value; onMutate(); });
+
+          var idIn = el('input', { type: 'text', className: 'input', value: notice.id });
+          idIn.addEventListener('input', function () { notice.id = this.value; onMutate(); });
+
+          g1.appendChild(makeField('Позиция в панели', posSel));
+          g1.appendChild(makeField('Оформление', stSel));
+          g1.appendChild(makeField('ID блока', idIn));
+          box.appendChild(g1);
+
+          var g2 = el('div', { className: 'grid-2' });
+          var bIn = el('input', { type: 'text', className: 'input', value: notice.badge, placeholder: 'Например: ВАЖНО / INFO' });
+          bIn.addEventListener('input', function () { notice.badge = this.value; onMutate(); });
+          var tIn = el('input', { type: 'text', className: 'input', value: notice.title, placeholder: 'Заголовок блока' });
+          tIn.addEventListener('input', function () { notice.title = this.value; onMutate(); });
+          g2.appendChild(makeField('Бейдж / метка (необязательно)', bIn));
+          g2.appendChild(makeField('Заголовок', tIn));
+          box.appendChild(g2);
+
+          var txtIn = el('textarea', { className: 'textarea', placeholder: 'Основной текст объявления или контактная заметка...' });
+          txtIn.value = notice.text;
+          txtIn.addEventListener('input', function () { notice.text = this.value; onMutate(); });
+          box.appendChild(makeField('Текст сообщения', txtIn));
+
+          var g3 = el('div', { className: 'grid-2' });
+          var llIn = el('input', { type: 'text', className: 'input', value: notice.linkLabel, placeholder: 'Подробнее' });
+          llIn.addEventListener('input', function () { notice.linkLabel = this.value; onMutate(); });
+          var luIn = el('input', { type: 'text', className: 'input', value: notice.linkUrl, placeholder: '/links/ или https://...' });
+          luIn.addEventListener('input', function () { notice.linkUrl = this.value; onMutate(); });
+          g3.appendChild(makeField('Текст ссылки (необязательно)', llIn));
+          g3.appendChild(makeField('URL ссылки', luIn));
+          box.appendChild(g3);
+
+          var ntLbl = el('label', { className: 'check-row' });
+          var ntCb = el('input', { type: 'checkbox', checked: notice.newTab });
+          ntCb.addEventListener('change', function () { notice.newTab = this.checked; onMutate(); });
+          ntLbl.appendChild(ntCb);
+          ntLbl.appendChild(document.createTextNode('Открывать ссылку в новой вкладке'));
+          box.appendChild(ntLbl);
+
+          box.appendChild(buildVisibilityBox(notice));
+
+          var det = el('details', { className: 'i18n-details' });
+          var trKeys = Object.keys(notice.i18n || {}).length;
+          det.appendChild(el('summary', {}, 'Локализация текста для отдельных языков (переводов: ' + trKeys + ')'));
+          var table = el('div', { className: 'i18n-table' });
+          SITE_LANGUAGES.forEach(function (l) {
+            var cur = (notice.i18n && notice.i18n[l.code]) || {};
+            var row = el('div', { style: 'display:grid; grid-template-columns:54px repeat(4, minmax(0, 1fr)); gap:6px; align-items:center;' });
+            row.appendChild(el('span', { className: 'i18n-code', title: l.label }, l.shortLabel));
+
+            function bindTr(fieldKey, placeholder) {
+              var inp = el('input', { type: 'text', className: 'input', value: cur[fieldKey] || '', placeholder: placeholder });
+              inp.addEventListener('input', function () {
+                if (!notice.i18n) notice.i18n = {};
+                if (!notice.i18n[l.code]) notice.i18n[l.code] = {};
+                if (this.value.trim()) notice.i18n[l.code][fieldKey] = this.value;
+                else delete notice.i18n[l.code][fieldKey];
+                if (Object.keys(notice.i18n[l.code]).length === 0) delete notice.i18n[l.code];
+                onMutate();
+              });
+              return inp;
+            }
+
+            row.appendChild(bindTr('title', notice.title || 'Заголовок'));
+            row.appendChild(bindTr('text', notice.text || 'Текст'));
+            row.appendChild(bindTr('linkLabel', notice.linkLabel || 'Ссылка'));
+            row.appendChild(bindTr('linkUrl', notice.linkUrl || 'URL'));
+            table.appendChild(row);
+          });
+          det.appendChild(table);
+          box.appendChild(det);
+
+          card.appendChild(box);
+        });
+
+        wrap.appendChild(card);
+      }
+
+      /* ---------- Tab 4: Brand & Widgets ---------- */
+      function renderBrandTab() {
+        var wrap = document.getElementById('tabBrand');
+        wrap.innerHTML = '';
+
+        var bCard = el('section', { className: 'card' });
+        var bHead = el('div', { className: 'card-head' });
+        bHead.appendChild(el('h2', { className: 'card-title' }, 'Шапка бренда и виджеты левой панели'));
+        bCard.appendChild(bHead);
+
+        var flags = el('div', { style: 'display:flex; flex-wrap:wrap; gap:16px;' });
+        var logoLbl = el('label', { className: 'check-row' });
+        var logoCb = el('input', { type: 'checkbox', checked: state.config.brand.showLogo });
+        logoCb.addEventListener('change', function () { state.config.brand.showLogo = this.checked; onMutate(); });
+        logoLbl.appendChild(logoCb);
+        logoLbl.appendChild(document.createTextNode('Показывать неоновый логотип RFID'));
+        flags.appendChild(logoLbl);
+
+        [
+          ['showThemeToggle', 'Показывать переключатель темы (Dark/Light)'],
+          ['showMobileSearch', 'Показывать поиск на мобильных'],
+          ['showMobileCategories', 'Показывать быстрые категории на мобильных']
+        ].forEach(function (pair) {
+          var lbl = el('label', { className: 'check-row' });
+          var cb = el('input', { type: 'checkbox', checked: state.config.controls[pair[0]] });
+          cb.addEventListener('change', function () { state.config.controls[pair[0]] = this.checked; onMutate(); });
+          lbl.appendChild(cb);
+          lbl.appendChild(document.createTextNode(pair[1]));
+          flags.appendChild(lbl);
+        });
+        bCard.appendChild(flags);
+
+        var bg = el('div', { className: 'grid-2' });
+        var dtIn = el('input', { type: 'text', className: 'input', value: state.config.brand.defaultTitle });
+        dtIn.addEventListener('input', function () { state.config.brand.defaultTitle = this.value; onMutate(); });
+        var dsIn = el('input', { type: 'text', className: 'input', value: state.config.brand.defaultSubtitle });
+        dsIn.addEventListener('input', function () { state.config.brand.defaultSubtitle = this.value; onMutate(); });
+        bg.appendChild(makeField('Заголовок бренда (по умолчанию)', dtIn));
+        bg.appendChild(makeField('Подзаголовок / слоган (по умолчанию)', dsIn));
+        bCard.appendChild(bg);
+
+        var i18nHead = el('div', { style: 'font-size:12px; font-weight:700; color:var(--text-muted); margin-top:4px;' }, 'Заголовок и подзаголовок по языкам');
+        bCard.appendChild(i18nHead);
+        var table = el('div', { className: 'i18n-table' });
+        SITE_LANGUAGES.forEach(function (l) {
+          var row = el('div', { className: 'i18n-row' });
+          row.appendChild(el('span', { className: 'i18n-code', title: l.label }, l.shortLabel));
+          var tIn = el('input', { type: 'text', className: 'input', value: state.config.brand.titles[l.code] || '', placeholder: state.config.brand.defaultTitle });
+          tIn.addEventListener('input', function () {
+            state.config.brand.titles[l.code] = this.value;
+            onMutate();
+          });
+          var sIn = el('input', { type: 'text', className: 'input', value: state.config.brand.subtitles[l.code] || '', placeholder: state.config.brand.defaultSubtitle });
+          sIn.addEventListener('input', function () {
+            state.config.brand.subtitles[l.code] = this.value;
+            onMutate();
+          });
+          row.appendChild(tIn);
+          row.appendChild(sIn);
+          table.appendChild(row);
+        });
+        bCard.appendChild(table);
+        wrap.appendChild(bCard);
+      }
+
+      /* ---------- Tab 5: Raw JSON ---------- */
+      function renderJsonTab() {
+        var wrap = document.getElementById('tabJson');
+        wrap.innerHTML = '';
+
+        var card = el('section', { className: 'card' });
+        var head = el('div', { className: 'card-head' });
+        head.appendChild(el('h2', { className: 'card-title' }, 'data/sidebar.json'));
+        var applyBtn = el('button', { type: 'button', className: 'btn btn-primary btn-sm' }, 'Применить JSON в редактор');
+        head.appendChild(applyBtn);
+        card.appendChild(head);
+
+        var ta = el('textarea', { className: 'code-area', style: 'min-height:480px;' });
+        ta.value = JSON.stringify(state.config, null, 2);
+        var errEl = el('div', { style: 'font-size:12px; color:#be123c;' });
+
+        applyBtn.addEventListener('click', function () {
+          try {
+            var parsed = JSON.parse(ta.value);
+            state.config = normalizeClientConfig(parsed);
+            errEl.textContent = '';
+            onMutate();
+            showToast('JSON применён в конструктор');
+          } catch (err) {
+            errEl.textContent = 'Ошибка JSON: ' + err.message;
+          }
+        });
+
+        card.appendChild(ta);
+        card.appendChild(errEl);
+        wrap.appendChild(card);
+      }
+
+      /* ---------- Live Sidebar Preview ---------- */
+      function renderLivePreview() {
+        var box = document.getElementById('pvSidebarBox');
+        var stats = document.getElementById('pvStats');
+        if (!state.config) return;
+        var lang = state.previewLang;
+        var cfg = state.config;
+
+        box.className = 'pv-sidebar-frame' + (state.previewDark ? ' is-dark' : '');
+        box.innerHTML = '';
+
+        var header = el('div', { className: 'pv-head-grid' + (cfg.brand.showLogo ? '' : ' no-logo') });
+        if (cfg.brand.showLogo) {
+          var logo = el('div', { className: 'pv-logo' });
+          logo.innerHTML =
+            '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 896.41 595.46">' +
+            '<path fill="' + (state.previewDark ? '#f8fafc' : '#2c2b27') + '" d="M175.35,468.61l-59.34-186.01h-38.67v186.01H0V1.9h120.68c70.67,0,117.34,28,117.34,98.67v83.34c0,44.67-18.67,72.67-50.67,86.67l66.67,198.01h-78.67ZM77.34,215.92h40.67c25.34,0,42.67-9.33,42.67-42.67v-60.67c0-33.34-17.33-42.67-42.67-42.67h-40.67v146.01Z"/>' +
+            '<path fill="' + (state.previewDark ? '#f8fafc' : '#2c2b27') + '" d="M295.35,1.9h202.02v68h-124.68v131.34h104.01v68h-104.01v199.35h-77.34V1.9Z"/>' +
+            '<path fill="' + (state.previewDark ? '#f8fafc' : '#2c2b27') + '" d="M538.69,468.61V1.9h77.34v466.7h-77.34Z"/>' +
+            '<path fill="#e94539" d="M779.07,0h-119.34v69.93h124.42c27.79,3.38,34.23,18.06,35.32,44.2v243.8c-1.32,31.13-15.1,41.44-37.89,42.43l-44.08.16.02-271.95h24.58s-.29,168.47,0,247.18h12.86c11.84-1.17,18.15-8.71,19.3-19.72v-227.46c-.69-14.9-3.45-32.33-32.16-34.11h-102.34l-.03,372.24h119.34c70.67,0,117.34-28,117.34-98.67V98.67c0-70.67-46.67-98.67-117.34-98.67Z"/>' +
+            '</svg>';
+          header.appendChild(logo);
+        }
+        var titleText = (cfg.brand.titles && cfg.brand.titles[lang]) || cfg.brand.defaultTitle;
+        var subText = (cfg.brand.subtitles && cfg.brand.subtitles[lang]) || cfg.brand.defaultSubtitle;
+        header.appendChild(el('div', { className: 'pv-site-title' }, titleText));
+        if (subText) header.appendChild(el('div', { className: 'pv-site-sub' }, subText));
+        box.appendChild(header);
+
+        function renderNoticeEl(n) {
+          var tr = (n.i18n && n.i18n[lang]) || {};
+          var badge = tr.badge || n.badge;
+          var title = tr.title || n.title;
+          var text = tr.text || n.text;
+          var linkLabel = tr.linkLabel || n.linkLabel;
+          if (!badge && !title && !text && !linkLabel) return null;
+          var d = el('div', { className: 'pv-notice is-' + (n.style || 'info') });
+          if (badge) d.appendChild(el('div', { className: 'pv-notice-badge' }, badge));
+          if (title) d.appendChild(el('div', { className: 'pv-notice-title' }, title));
+          if (text) d.appendChild(el('div', { style: 'opacity:0.85;' }, text));
+          if (linkLabel) d.appendChild(el('span', { className: 'pv-notice-link' }, linkLabel + ' →'));
+          return d;
+        }
+
+        var visibleNotices = cfg.announcements.filter(function (n) {
+          return isVisible(n.enabled, n.visibilityMode, n.visibilityLangs, lang);
+        });
+
+        visibleNotices.filter(function (n) { return n.position === 'top'; }).forEach(function (n) {
+          var nel = renderNoticeEl(n);
+          if (nel) box.appendChild(nel);
+        });
+
+        var visibleItems = cfg.menuItems.filter(function (m) {
+          return isVisible(m.enabled, m.visibilityMode, m.visibilityLangs, lang);
+        });
+
+        var menuUl = el('ul', { className: 'pv-menu' });
+        visibleItems.forEach(function (m, i) {
+          var li = el('li');
+          var a = el('a', {
+            href: 'javascript:void(0)',
+            className: 'pv-menu-link' + (i === 0 ? ' is-first' : ''),
+            title: resolveUrlClient(m.urls[lang] || m.defaultUrl, lang)
+          });
+          if (m.icon && m.icon !== 'none') {
+            var icSpan = el('span', { style: 'display:inline-flex; align-items:center;' });
+            icSpan.innerHTML = svgIconHtml(m.icon);
+            a.appendChild(icSpan);
+          }
+          a.appendChild(el('span', {}, m.labels[lang] || m.defaultLabel));
+          li.appendChild(a);
+          menuUl.appendChild(li);
+        });
+        box.appendChild(menuUl);
+
+        visibleNotices.filter(function (n) { return n.position === 'mid'; }).forEach(function (n) {
+          var nel = renderNoticeEl(n);
+          if (nel) box.appendChild(nel);
+        });
+
+        var activeLangs = cfg.languages.filter(function (l) { return l.enabled; });
+        var hasBottom = (cfg.controls.showLanguageSwitcher && activeLangs.length > 0) ||
+          cfg.controls.showThemeToggle ||
+          visibleNotices.some(function (n) { return n.position === 'bottom'; });
+
+        if (hasBottom) {
+          var bot = el('div', { className: 'pv-bottom' });
+          if (cfg.controls.showLanguageSwitcher && activeLangs.length > 0) {
+            var sw = el('div', { className: 'pv-control-box' });
+            sw.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h7"/><path d="M9 3v2c0 4.418 -2.239 8 -5 8"/><path d="M5 9c0 2.144 2.952 3.908 6.7 4"/><path d="M12 20l4 -9l4 9"/><path d="M19.1 18h-6.2"/></svg>';
+            var sel = el('select');
+            activeLangs.forEach(function (l) {
+              var opt = new Option(l.label, l.code);
+              if (l.code === lang) opt.selected = true;
+              sel.appendChild(opt);
+            });
+            sel.addEventListener('change', function () {
+              if (SITE_LANGUAGES.some(function (sl) { return sl.code === sel.value; })) {
+                state.previewLang = sel.value;
+                document.getElementById('pvLangSelect').value = sel.value;
+                renderLivePreview();
+                renderActiveTab();
+              }
+            });
+            sw.appendChild(sel);
+            bot.appendChild(sw);
+          }
+
+          if (cfg.controls.showThemeToggle) {
+            var th = el('div', { className: 'pv-control-box' });
+            th.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 12m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0"/><path d="M3 12h1m8 -9v1m8 8h1m-9 8v1m-6.4 -15.4l.7 .7m12.1 -.7l-.7 .7m0 11.4l.7 .7m-12.1 -.7l-.7 .7"/></svg>';
+            th.appendChild(el('span', {}, state.previewDark ? 'Светлая тема' : 'Тёмная тема'));
+            bot.appendChild(th);
+          }
+
+          visibleNotices.filter(function (n) { return n.position === 'bottom'; }).forEach(function (n) {
+            var nel = renderNoticeEl(n);
+            if (nel) bot.appendChild(nel);
+          });
+
+          box.appendChild(bot);
+        }
+
+        stats.textContent =
+          'Для ' + lang.toUpperCase() + ': пунктов меню ' + visibleItems.length + '/' + cfg.menuItems.length +
+          ' · языков в списке ' + activeLangs.length + '/' + cfg.languages.length +
+          ' · объявлений ' + visibleNotices.length;
+      }
+
+      function renderActiveTab() {
+        document.getElementById('tabMenu').style.display = state.activeTab === 'menu' ? 'block' : 'none';
+        document.getElementById('tabLanguages').style.display = state.activeTab === 'languages' ? 'block' : 'none';
+        document.getElementById('tabAnnouncements').style.display = state.activeTab === 'announcements' ? 'block' : 'none';
+        document.getElementById('tabBrand').style.display = state.activeTab === 'brand' ? 'block' : 'none';
+        document.getElementById('tabJson').style.display = state.activeTab === 'json' ? 'block' : 'none';
+
+        if (state.activeTab === 'menu') renderMenuTab();
+        else if (state.activeTab === 'languages') renderLanguagesTab();
+        else if (state.activeTab === 'announcements') renderAnnouncementsTab();
+        else if (state.activeTab === 'brand') renderBrandTab();
+        else renderJsonTab();
+      }
+
+      function renderAll() {
+        updateStatusUI();
+        renderActiveTab();
+        renderLivePreview();
+      }
+
+      /* ---------- Loading (Local Express vs GitHub API) ---------- */
+      function readDecapToken() {
+        var keys = ['decap-cms-user', 'netlify-cms-user'];
+        for (var i = 0; i < keys.length; i++) {
+          try {
+            var raw = localStorage.getItem(keys[i]);
+            if (!raw) continue;
+            var obj = JSON.parse(raw);
+            if (obj && obj.token) return { token: String(obj.token), login: obj.login || '' };
+          } catch (_) {}
+        }
+        return null;
+      }
+
+      function decodeBase64Utf8(b64) {
+        var bin = atob(String(b64 || '').replace(/\s+/g, ''));
+        var bytes = new Uint8Array(bin.length);
+        for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+        return new TextDecoder('utf-8').decode(bytes);
+      }
+
+      async function loadFromGithub() {
+        var repo = document.getElementById('ghRepoInput').value.trim() || state.ghRepo;
+        var branch = document.getElementById('ghBranchInput').value.trim() || state.ghBranch;
+        var tokenIn = document.getElementById('ghTokenInput').value.trim();
+        if (tokenIn) state.ghToken = tokenIn;
+        state.ghRepo = repo;
+        state.ghBranch = branch;
+
+        var statusEl = document.getElementById('ghAuthStatus');
+        var headers = { Accept: 'application/vnd.github+json' };
+        if (state.ghToken) headers.Authorization = 'Bearer ' + state.ghToken;
+
+        statusEl.textContent = 'Загрузка data/sidebar.json из GitHub...';
+        var refRes = await fetch('https://api.github.com/repos/' + repo + '/git/ref/heads/' + encodeURIComponent(branch), { headers: headers });
+        if (!refRes.ok) throw new Error('GitHub HTTP ' + refRes.status);
+        var refJson = await refRes.json();
+        state.ghHeadCommitSha = refJson.object.sha;
+
+        var commitRes = await fetch('https://api.github.com/repos/' + repo + '/git/commits/' + state.ghHeadCommitSha, { headers: headers });
+        if (!commitRes.ok) throw new Error('Не удалось загрузить commit');
+        var commitJson = await commitRes.json();
+        state.ghHeadTreeSha = commitJson.tree.sha;
+
+        var fileRes = await fetch('https://api.github.com/repos/' + repo + '/contents/data/sidebar.json?ref=' + encodeURIComponent(branch), { headers: headers });
+        if (fileRes.ok) {
+          var fileJson = await fileRes.json();
+          var text = decodeBase64Utf8(fileJson.content || '');
+          state.config = normalizeClientConfig(JSON.parse(text));
+          state.originalJson = JSON.stringify(state.config);
+          state.exists = true;
+          statusEl.textContent = 'Загружен data/sidebar.json';
+        } else if (fileRes.status === 404) {
+          state.config = buildDefaultConfig();
+          state.originalJson = '';
+          state.exists = false;
+          statusEl.textContent = 'data/sidebar.json ещё не создан — загружен шаблон';
+        } else {
+          throw new Error('GitHub HTTP ' + fileRes.status);
+        }
+
+        state.mode = 'github';
+        var badge = document.getElementById('modeBadge');
+        badge.className = 'mode-badge is-github';
+        badge.textContent = 'GitHub · ' + repo + '@' + branch;
+        renderAll();
+      }
+
+      async function loadState() {
+        try {
+          var res = await fetch('/api/sidebar-builder/state');
+          if (res.ok) {
+            var json = await res.json();
+            if (json && json.mode === 'local') {
+              state.mode = 'local';
+              state.exists = Boolean(json.exists);
+              state.fileHash = json.fileHash || '';
+              state.config = normalizeClientConfig(json.config);
+              state.originalJson = state.exists ? JSON.stringify(state.config) : '';
+              var badge = document.getElementById('modeBadge');
+              badge.className = 'mode-badge is-local';
+              badge.textContent = 'Локальный диск · data/sidebar.json';
+              document.getElementById('githubAuthBanner').classList.remove('is-visible');
+              renderAll();
+              return;
+            }
+          }
+        } catch (_) {}
+
+        state.mode = 'github';
+        document.getElementById('modeBadge').className = 'mode-badge is-github';
+        document.getElementById('modeBadge').textContent = 'GitHub API режим';
+        document.getElementById('githubAuthBanner').classList.add('is-visible');
+
+        var decap = readDecapToken();
+        if (decap && decap.token) {
+          state.ghToken = decap.token;
+          await loadFromGithub().catch(function (err) {
+            document.getElementById('ghAuthStatus').textContent = 'Ошибка: ' + err.message;
+            state.config = buildDefaultConfig();
+            state.originalJson = '';
+            renderAll();
+          });
+        } else {
+          document.getElementById('ghAuthStatus').textContent = 'Войдите в CMS или введите GitHub Token и нажмите «Подключиться»';
+          state.config = buildDefaultConfig();
+          state.originalJson = '';
+          renderAll();
+        }
+      }
+
+      /* ---------- Batch Import / Export ---------- */
+      function refreshIoModal() {
+        var ta = document.getElementById('ioTextarea');
+        var sum = document.getElementById('ioSummary');
+        var fileIn = document.getElementById('ioFileInput');
+        var copyBtn = document.getElementById('ioCopyBtn');
+        var dlBtn = document.getElementById('ioDownloadBtn');
+        var applyBtn = document.getElementById('ioApplyBtn');
+
+        if (state.ioMode === 'export') {
+          ta.readOnly = true;
+          fileIn.style.display = 'none';
+          copyBtn.style.display = 'inline-flex';
+          dlBtn.style.display = 'inline-flex';
+          applyBtn.style.display = 'none';
+          ta.value = JSON.stringify(state.config, null, 2);
+          var activeLangs = state.config.languages.filter(function (l) { return l.enabled; }).length;
+          sum.textContent = 'Готовый пакет (пунктов меню: ' + state.config.menuItems.length +
+            ', языков: ' + activeLangs + '/' + state.config.languages.length +
+            ', объявлений: ' + state.config.announcements.length + ').';
+        } else {
+          ta.readOnly = false;
+          fileIn.style.display = 'inline-block';
+          copyBtn.style.display = 'none';
+          dlBtn.style.display = 'none';
+          applyBtn.style.display = 'inline-flex';
+          updateImportSummary();
+        }
+      }
+
+      function parseImportedPackage(rawText) {
+        var txt = String(rawText || '').trim();
+        if (!txt) throw new Error('Вставьте JSON или выберите файл sidebar-config.json');
+        var obj = JSON.parse(txt);
+        if (!obj || typeof obj !== 'object' || Array.isArray(obj)) {
+          throw new Error('Ожидается JSON-объект конфигурации левой панели');
+        }
+        if (!Array.isArray(obj.menuItems) && !Array.isArray(obj.languages) && !Array.isArray(obj.announcements) && !obj.brand) {
+          throw new Error('В объекте не найдены секции menuItems, languages, announcements или brand');
+        }
+        return normalizeClientConfig(obj);
+      }
+
+      function updateImportSummary() {
+        var sum = document.getElementById('ioSummary');
+        var txt = document.getElementById('ioTextarea').value;
+        if (!txt.trim()) {
+          sum.textContent = 'Вставьте содержимое sidebar-config.json или загрузите файл с диска.';
+          return;
+        }
+        try {
+          var cfg = parseImportedPackage(txt);
+          var activeL = cfg.languages.filter(function (l) { return l.enabled; }).length;
+          sum.textContent = 'Проверено: пунктов меню — ' + cfg.menuItems.length +
+            ', языков — ' + activeL + '/' + cfg.languages.length +
+            ', объявлений — ' + cfg.announcements.length + '.';
+        } catch (err) {
+          sum.textContent = 'Ошибка разбора: ' + err.message;
+        }
+      }
+
+      /* ---------- Save / Diff Modal ---------- */
+      function computeLineDiff(beforeText, afterText) {
+        var a = beforeText ? beforeText.split('\n') : [];
+        var b = afterText ? afterText.split('\n') : [];
+        var max = Math.max(a.length, b.length);
+        var out = [];
+        for (var i = 0; i < max; i++) {
+          if (a[i] === b[i]) continue;
+          if (a[i] !== undefined) out.push({ type: 'del', text: a[i] });
+          if (b[i] !== undefined) out.push({ type: 'add', text: b[i] });
+        }
+        return out.slice(0, 120);
+      }
+
+      function openSaveModal() {
+        if (!isDirty()) return;
+        document.getElementById('saveCommitWrap').style.display = state.mode === 'github' ? 'flex' : 'none';
+        document.getElementById('saveModalStatus').textContent = state.exists ? 'Обновление data/sidebar.json' : 'Создание data/sidebar.json';
+        document.getElementById('saveConfirmBtn').disabled = false;
+
+        var beforePretty = state.originalJson ? JSON.stringify(JSON.parse(state.originalJson), null, 2) : '';
+        var afterPretty = JSON.stringify(state.config, null, 2);
+        var diffLines = computeLineDiff(beforePretty, afterPretty);
+
+        var pre = document.getElementById('saveDiffPre');
+        pre.innerHTML = '';
+        if (!diffLines.length) {
+          pre.textContent = 'Изменения форматирования.';
+        } else {
+          diffLines.forEach(function (dl) {
+            pre.appendChild(el('span', { className: 'diff-line is-' + dl.type }, (dl.type === 'del' ? '- ' : '+ ') + dl.text));
+          });
+        }
+        document.getElementById('saveModalBackdrop').classList.add('is-open');
+      }
+
+      async function confirmSave() {
+        var btn = document.getElementById('saveConfirmBtn');
+        var statusEl = document.getElementById('saveModalStatus');
+        btn.disabled = true;
+        statusEl.textContent = 'Сохранение...';
+
+        try {
+          if (state.mode === 'local') {
+            var res = await fetch('/api/sidebar-builder/apply', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ expectedHash: state.fileHash, config: state.config })
+            });
+            var json = await res.json();
+            if (!res.ok || !json.ok) throw new Error(json.error || 'Ошибка сохранения');
+            document.getElementById('saveModalBackdrop').classList.remove('is-open');
+            showToast('Настройки левой панели сохранены');
+            await loadState();
+          } else {
+            var repo = state.ghRepo;
+            var branch = state.ghBranch;
+            var headers = {
+              Accept: 'application/vnd.github+json',
+              'Content-Type': 'application/json',
+              Authorization: 'Bearer ' + state.ghToken
+            };
+            var refCheck = await fetch('https://api.github.com/repos/' + repo + '/git/ref/heads/' + encodeURIComponent(branch), { headers: headers });
+            if (!refCheck.ok) throw new Error('Не удалось проверить HEAD ветки');
+            var refData = await refCheck.json();
+            if (refData.object.sha !== state.ghHeadCommitSha) {
+              throw new Error('В ветке появились новые коммиты — перезагрузите страницу');
+            }
+
+            var content = JSON.stringify(state.config, null, 2) + '\n';
+            var blobRes = await fetch('https://api.github.com/repos/' + repo + '/git/blobs', {
+              method: 'POST',
+              headers: headers,
+              body: JSON.stringify({ content: content, encoding: 'utf-8' })
+            });
+            if (!blobRes.ok) throw new Error('Ошибка создания blob в GitHub');
+            var blobJson = await blobRes.json();
+
+            var treeRes = await fetch('https://api.github.com/repos/' + repo + '/git/trees', {
+              method: 'POST',
+              headers: headers,
+              body: JSON.stringify({
+                base_tree: state.ghHeadTreeSha,
+                tree: [{ path: 'data/sidebar.json', mode: '100644', type: 'blob', sha: blobJson.sha }]
+              })
+            });
+            if (!treeRes.ok) throw new Error('Ошибка создания Git tree');
+            var treeJson = await treeRes.json();
+
+            var commitMsg = document.getElementById('saveCommitMsg').value.trim() || 'feat(sidebar): update left sidebar configuration';
+            var commitRes = await fetch('https://api.github.com/repos/' + repo + '/git/commits', {
+              method: 'POST',
+              headers: headers,
+              body: JSON.stringify({ message: commitMsg, tree: treeJson.sha, parents: [state.ghHeadCommitSha] })
+            });
+            if (!commitRes.ok) throw new Error('Ошибка создания коммита');
+            var commitJson = await commitRes.json();
+
+            var patchRes = await fetch('https://api.github.com/repos/' + repo + '/git/refs/heads/' + encodeURIComponent(branch), {
+              method: 'PATCH',
+              headers: headers,
+              body: JSON.stringify({ sha: commitJson.sha, force: false })
+            });
+            if (!patchRes.ok) throw new Error('Ошибка обновления ветки (HTTP ' + patchRes.status + ')');
+
+            document.getElementById('saveModalBackdrop').classList.remove('is-open');
+            showToast('Создан коммит ' + commitJson.sha.slice(0, 7));
+            await loadFromGithub();
+          }
+        } catch (err) {
+          statusEl.textContent = 'Ошибка: ' + err.message;
+          btn.disabled = false;
+        }
+      }
+
+      /* ---------- Init & Event Wiring ---------- */
+      var pvLangSel = document.getElementById('pvLangSelect');
+      SITE_LANGUAGES.forEach(function (l) { pvLangSel.appendChild(new Option(l.label, l.code)); });
+      pvLangSel.value = state.previewLang;
+      pvLangSel.addEventListener('change', function () {
+        state.previewLang = this.value;
+        renderLivePreview();
+        if (state.activeTab === 'menu') renderMenuTab();
+      });
+
+      document.getElementById('pvThemeBtn').addEventListener('click', function () {
+        state.previewDark = !state.previewDark;
+        this.textContent = state.previewDark ? 'Светлая тема' : 'Тёмная тема';
+        renderLivePreview();
+      });
+
+      document.querySelectorAll('.tab-btn[data-tab]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          document.querySelectorAll('.tab-btn[data-tab]').forEach(function (b) { b.classList.remove('is-active'); });
+          btn.classList.add('is-active');
+          state.activeTab = btn.getAttribute('data-tab');
+          renderActiveTab();
+        });
+      });
+
+      document.getElementById('resetDefaultBtn').addEventListener('click', function () {
+        state.config = buildDefaultConfig();
+        onMutate();
+        renderActiveTab();
+        showToast('Загружены стандартные настройки (нажмите «Сохранить изменения» для записи)');
+      });
+
+      document.getElementById('ioModalBtn').addEventListener('click', function () {
+        document.getElementById('ioStatus').textContent = '';
+        refreshIoModal();
+        document.getElementById('ioModalBackdrop').classList.add('is-open');
+      });
+      document.getElementById('ioCloseBtn').addEventListener('click', function () {
+        document.getElementById('ioModalBackdrop').classList.remove('is-open');
+      });
+      document.querySelectorAll('.tab-btn[data-iomode]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          document.querySelectorAll('.tab-btn[data-iomode]').forEach(function (b) { b.classList.remove('is-active'); });
+          btn.classList.add('is-active');
+          state.ioMode = btn.getAttribute('data-iomode');
+          if (state.ioMode === 'import') document.getElementById('ioTextarea').value = '';
+          refreshIoModal();
+        });
+      });
+      document.getElementById('ioTextarea').addEventListener('input', function () {
+        if (state.ioMode === 'import') updateImportSummary();
+      });
+      document.getElementById('ioFileInput').addEventListener('change', function () {
+        var f = this.files && this.files[0];
+        if (!f) return;
+        var r = new FileReader();
+        r.onload = function () {
+          document.getElementById('ioTextarea').value = String(r.result || '');
+          updateImportSummary();
+        };
+        r.readAsText(f, 'utf-8');
+      });
+      document.getElementById('ioCopyBtn').addEventListener('click', function () {
+        var ta = document.getElementById('ioTextarea');
+        navigator.clipboard.writeText(ta.value).then(function () {
+          document.getElementById('ioStatus').textContent = 'Скопировано в буфер обмена';
+        }).catch(function () {
+          ta.select();
+          document.execCommand('copy');
+          document.getElementById('ioStatus').textContent = 'Скопировано';
+        });
+      });
+      document.getElementById('ioDownloadBtn').addEventListener('click', function () {
+        var text = document.getElementById('ioTextarea').value;
+        var blob = new Blob([text], { type: 'application/json;charset=utf-8' });
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url;
+        a.download = 'sidebar-config.json';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      });
+      document.getElementById('ioApplyBtn').addEventListener('click', function () {
+        try {
+          state.config = parseImportedPackage(document.getElementById('ioTextarea').value);
+          document.getElementById('ioModalBackdrop').classList.remove('is-open');
+          onMutate();
+          renderActiveTab();
+          showToast('Пакет настроек импортирован — проверьте и сохраните изменения');
+        } catch (err) {
+          document.getElementById('ioStatus').textContent = 'Ошибка: ' + err.message;
+        }
+      });
+
+      document.getElementById('saveBtn').addEventListener('click', openSaveModal);
+      document.getElementById('saveCloseBtn').addEventListener('click', function () {
+        document.getElementById('saveModalBackdrop').classList.remove('is-open');
+      });
+      document.getElementById('saveCancelBtn').addEventListener('click', function () {
+        document.getElementById('saveModalBackdrop').classList.remove('is-open');
+      });
+      document.getElementById('saveConfirmBtn').addEventListener('click', confirmSave);
+
+      document.getElementById('ghConnectBtn').addEventListener('click', function () {
+        loadFromGithub().catch(function (err) {
+          document.getElementById('ghAuthStatus').textContent = 'Ошибка: ' + err.message;
+        });
+      });
+      document.getElementById('ghFromDecapBtn').addEventListener('click', function () {
+        var decap = readDecapToken();
+        if (decap && decap.token) {
+          state.ghToken = decap.token;
+          loadFromGithub().catch(function (err) {
+            document.getElementById('ghAuthStatus').textContent = 'Ошибка: ' + err.message;
+          });
+        } else {
+          document.getElementById('ghAuthStatus').textContent = 'Сессия Decap CMS не найдена';
+        }
+      });
+
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') {
+          document.getElementById('ioModalBackdrop').classList.remove('is-open');
+          document.getElementById('saveModalBackdrop').classList.remove('is-open');
+        }
+      });
+
+      loadState();
+    })();
+  </script>
+</body>
+</html>

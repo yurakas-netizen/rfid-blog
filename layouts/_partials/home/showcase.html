@@ -51,22 +51,52 @@
             {{- end -}}
         </section>
 
-             {{- /* Языковой хаб по всем заполненным веткам сайта */ -}}
+        {{- /* Языковой хаб по всем заполненным веткам сайта */ -}}
+        {{- $sidebarData := hugo.Data.sidebar -}}
+        {{- $syncHub := true -}}
+        {{- $enabledHubCodes := slice -}}
+        {{- $hubLabelMap := dict -}}
+        {{- if $sidebarData -}}
+            {{- with $sidebarData.controls -}}
+                {{- if isset . "syncHiddenLangsToHomeHub" -}}
+                    {{- $syncHub = .syncHiddenLangsToHomeHub -}}
+                {{- end -}}
+            {{- end -}}
+            {{- with $sidebarData.languages -}}
+                {{- range . -}}
+                    {{- if .enabled -}}
+                        {{- $enabledHubCodes = $enabledHubCodes | append .code -}}
+                    {{- end -}}
+                    {{- if .label -}}
+                        {{- $hubLabelMap = merge $hubLabelMap (dict .code .label) -}}
+                    {{- end -}}
+                {{- end -}}
+            {{- end -}}
+        {{- end -}}
         {{- $populated := slice -}}
         {{- range .Site.Home.AllTranslations -}}
             {{- if ne .Language.Lang $lang -}}
-                {{- $otherPosts := where .Site.RegularPages "Type" "in" .Site.Params.mainSections -}}
-                {{- if gt (len $otherPosts) 0 -}}
-                    {{- $populated = $populated | append (dict "Lang" .Language "Permalink" .RelPermalink "Count" (len $otherPosts)) -}}
+                {{- $allowLang := true -}}
+                {{- if and $syncHub (gt (len $enabledHubCodes) 0) -}}
+                    {{- $allowLang = in $enabledHubCodes .Language.Lang -}}
+                {{- else if and $syncHub $sidebarData $sidebarData.languages -}}
+                    {{- $allowLang = false -}}
+                {{- end -}}
+                {{- if $allowLang -}}
+                    {{- $otherPosts := where .Site.RegularPages "Type" "in" .Site.Params.mainSections -}}
+                    {{- if gt (len $otherPosts) 0 -}}
+                        {{- $dispLabel := default .Language.Label (index $hubLabelMap .Language.Lang) -}}
+                        {{- $populated = $populated | append (dict "Lang" .Language "DisplayLabel" $dispLabel "Permalink" .RelPermalink "Count" (len $otherPosts)) -}}
+                    {{- end -}}
                 {{- end -}}
             {{- end -}}
         {{- end -}}
         {{- if gt (len $populated) 0 -}}
             <section class="sc-empty-branch">
-                                <div class="sc-empty-branch__links">
+                <div class="sc-empty-branch__links">
                     {{- range $populated -}}
                         <a class="sc-lang-jump" href="{{ .Permalink }}">
-                            <span>{{ .Lang.Label }}</span>
+                            <span>{{ .DisplayLabel }}</span>
                             <span class="sc-lang-jump__count">{{ .Count }}</span>
                         </a>
                     {{- end -}}

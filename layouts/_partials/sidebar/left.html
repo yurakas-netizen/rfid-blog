@@ -1,4 +1,44 @@
-<aside class="sidebar left-sidebar sticky {{ if .Site.Params.sidebar.compact }}compact{{ end }}">
+{{- $lang := .Language.Lang -}}
+{{- $sidebar := hugo.Data.sidebar -}}
+{{- $brandTitle := .Site.Title -}}
+{{- $brandSubtitle := .Site.Params.sidebar.subtitle -}}
+{{- $showLogo := true -}}
+{{- $showLanguageSwitcher := true -}}
+{{- $showThemeToggle := .Site.Params.colorScheme.toggle -}}
+{{- $showMobileSearch := true -}}
+{{- $showMobileCategories := true -}}
+
+{{- if $sidebar -}}
+    {{- with $sidebar.brand -}}
+        {{- if isset . "showLogo" -}}
+            {{- $showLogo = .showLogo -}}
+        {{- end -}}
+        {{- if .defaultTitle -}}
+            {{- $brandTitle = .defaultTitle -}}
+        {{- end -}}
+        {{- with .titles -}}
+            {{- with index . $lang -}}
+                {{- $brandTitle = . -}}
+            {{- end -}}
+        {{- end -}}
+        {{- if .defaultSubtitle -}}
+            {{- $brandSubtitle = .defaultSubtitle -}}
+        {{- end -}}
+        {{- with .subtitles -}}
+            {{- with index . $lang -}}
+                {{- $brandSubtitle = . -}}
+            {{- end -}}
+        {{- end -}}
+    {{- end -}}
+    {{- with $sidebar.controls -}}
+        {{- if isset . "showLanguageSwitcher" -}}{{- $showLanguageSwitcher = .showLanguageSwitcher -}}{{- end -}}
+        {{- if isset . "showThemeToggle" -}}{{- $showThemeToggle = .showThemeToggle -}}{{- end -}}
+        {{- if isset . "showMobileSearch" -}}{{- $showMobileSearch = .showMobileSearch -}}{{- end -}}
+        {{- if isset . "showMobileCategories" -}}{{- $showMobileCategories = .showMobileCategories -}}{{- end -}}
+    {{- end -}}
+{{- end -}}
+
+<aside class="sidebar left-sidebar sticky {{ if .Site.Params.sidebar.compact }}compact{{ end }}{{ if not $showLogo }} is-logo-hidden{{ end }}">
     <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="{{ T `toggleMenu` }}">
         <span class="hamburger-box">
             <span class="hamburger-inner"></span>
@@ -25,38 +65,52 @@
 
         <div class="site-meta">
             {{- if .IsHome -}}
-                <h1 class="site-name"><a href="{{ .Site.Home.RelPermalink }}">{{ .Site.Title }}</a></h1>
+                <h1 class="site-name"><a href="{{ .Site.Home.RelPermalink }}">{{ $brandTitle }}</a></h1>
             {{- else -}}
-                <div class="site-name"><a href="{{ .Site.Home.RelPermalink }}">{{ .Site.Title }}</a></div>
+                <div class="site-name"><a href="{{ .Site.Home.RelPermalink }}">{{ $brandTitle }}</a></div>
             {{- end -}}
-            <div class="site-description">{{ .Site.Params.sidebar.subtitle }}</div>
+            <div class="site-description">{{ $brandSubtitle }}</div>
         </div>
     </header>
 
+    {{- if $sidebar -}}
+        {{- with $sidebar.announcements -}}
+            {{- range . -}}
+                {{- if eq (default "mid" .position) "top" -}}
+                    {{ partial "sidebar/notice.html" (dict "Notice" . "Lang" $lang) }}
+                {{- end -}}
+            {{- end -}}
+        {{- end -}}
+    {{- end -}}
+
     {{- $searchQuery := first 1 (where .Site.Pages "Layout" "==" "search") -}}
     {{- $categories := .Site.Taxonomies.categories -}}
-    {{- if or $searchQuery $categories -}}
+    {{- if or (and $showMobileSearch $searchQuery) (and $showMobileCategories $categories) -}}
         <div class="mobile-sidebar-widgets">
-            {{- with $searchQuery -}}
-                {{- $searchPage := index . 0 -}}
-                <form action="{{ $searchPage.RelPermalink }}" method="get" class="search-form mobile-search-form">
-                    <input type="search" name="keyword" required placeholder="{{ T `search.placeholder` }}" aria-label="{{ T `search.title` }}" />
-                    <button type="submit" aria-label="{{ T `search.title` }}" title="{{ T `search.title` }}">
-                        {{ partial "helper/icon" "search" }}
-                    </button>
-                </form>
+            {{- if $showMobileSearch -}}
+                {{- with $searchQuery -}}
+                    {{- $searchPage := index . 0 -}}
+                    <form action="{{ $searchPage.RelPermalink }}" method="get" class="search-form mobile-search-form">
+                        <input type="search" name="keyword" required placeholder="{{ T `search.placeholder` }}" aria-label="{{ T `search.title` }}" />
+                        <button type="submit" aria-label="{{ T `search.title` }}" title="{{ T `search.title` }}">
+                            {{ partial "helper/icon" "search" }}
+                        </button>
+                    </form>
+                {{- end -}}
             {{- end -}}
-            {{- with $categories -}}
-                <nav class="mobile-categories-bar" aria-label="{{ T `widget.categoriesCloud.title` }}">
-                    <span class="mobile-categories-icon" title="{{ T `widget.categoriesCloud.title` }}" aria-hidden="true">
-                        {{ partial "helper/icon" "categories" }}
-                    </span>
-                    <div class="mobile-categories-list">
-                        {{- range first 10 .ByCount -}}
-                            <a href="{{ .Page.RelPermalink }}">{{ .Page.Title }} ({{ .Count }})</a>
-                        {{- end -}}
-                    </div>
-                </nav>
+            {{- if $showMobileCategories -}}
+                {{- with $categories -}}
+                    <nav class="mobile-categories-bar" aria-label="{{ T `widget.categoriesCloud.title` }}">
+                        <span class="mobile-categories-icon" title="{{ T `widget.categoriesCloud.title` }}" aria-hidden="true">
+                            {{ partial "helper/icon" "categories" }}
+                        </span>
+                        <div class="mobile-categories-list">
+                            {{- range first 10 .ByCount -}}
+                                <a href="{{ .Page.RelPermalink }}">{{ .Page.Title }} ({{ .Count }})</a>
+                            {{- end -}}
+                        </div>
+                    </nav>
+                {{- end -}}
             {{- end -}}
         </div>
     {{- end -}}
@@ -83,43 +137,144 @@
 
     <ol class="menu" id="main-menu">
         {{ $currentPage := . }}
-        {{ range .Site.Menus.main }}
-        {{ $active := or (eq $currentPage.RelPermalink .URL) (or ($currentPage.HasMenuCurrent "main" .) ($currentPage.IsMenuCurrent "main" .)) }}
-        <li {{ if $active }} class='current'{{ end }}>
-            <a href='{{ .URL }}' {{ if .Params.newTab }}target="_blank"{{ end }}>
-                {{ with .Params.Icon }}
-                    {{ partial "helper/icon" . }}
-                {{ end }}
-                <span>{{- .Name -}}</span>
-            </a>
-        </li>
-        {{ end }}
+        {{- if and $sidebar $sidebar.menuItems -}}
+            {{- range $item := $sidebar.menuItems -}}
+                {{- $show := default true $item.enabled -}}
+                {{- if $show -}}
+                    {{- $vMode := default "all" $item.visibilityMode -}}
+                    {{- $vLangs := default (slice) $item.visibilityLangs -}}
+                    {{- if eq $vMode "only" -}}
+                        {{- $show = in $vLangs $lang -}}
+                    {{- else if eq $vMode "except" -}}
+                        {{- $show = not (in $vLangs $lang) -}}
+                    {{- end -}}
+                {{- end -}}
+                {{- if $show -}}
+                    {{- $label := default $item.id $item.defaultLabel -}}
+                    {{- with $item.labels -}}
+                        {{- with index . $lang -}}
+                            {{- $label = . -}}
+                        {{- end -}}
+                    {{- end -}}
+                    {{- $rawUrl := default "/" $item.defaultUrl -}}
+                    {{- with $item.urls -}}
+                        {{- with index . $lang -}}
+                            {{- $rawUrl = . -}}
+                        {{- end -}}
+                    {{- end -}}
+                    {{- $resolvedUrl := $rawUrl -}}
+                    {{- if or (strings.HasPrefix $rawUrl "http://") (strings.HasPrefix $rawUrl "https://") (strings.HasPrefix $rawUrl "mailto:") (strings.HasPrefix $rawUrl "tel:") (strings.HasPrefix $rawUrl "#") (eq $rawUrl "/admin") (strings.HasPrefix $rawUrl "/admin/") (strings.HasPrefix $rawUrl "/static/") (strings.HasPrefix $rawUrl "/assets/") -}}
+                        {{- $resolvedUrl = $rawUrl -}}
+                    {{- else -}}
+                        {{- $resolvedUrl = partial "home/resolve-url.html" (dict "Url" $rawUrl "Lang" $lang) -}}
+                    {{- end -}}
+                    {{- $isHomeTarget := or (eq $resolvedUrl "/") (eq $resolvedUrl (printf "/%s/" $lang)) -}}
+                    {{- $active := false -}}
+                    {{- if $isHomeTarget -}}
+                        {{- $active = eq $currentPage.RelPermalink $resolvedUrl -}}
+                    {{- else if strings.HasPrefix $resolvedUrl "/" -}}
+                        {{- $active = or (eq $currentPage.RelPermalink $resolvedUrl) (strings.HasPrefix $currentPage.RelPermalink $resolvedUrl) -}}
+                    {{- end -}}
+                    <li{{ if $active }} class="current"{{ end }}>
+                        <a href="{{ $resolvedUrl }}"{{ if $item.newTab }} target="_blank" rel="noopener noreferrer"{{ end }}>
+                            {{- $iconName := default "links" $item.icon -}}
+                            {{- if ne $iconName "none" -}}
+                                {{ partial "sidebar/icon.html" $iconName }}
+                            {{- end -}}
+                            <span>{{- $label -}}</span>
+                        </a>
+                    </li>
+                {{- end -}}
+            {{- end -}}
+        {{- else -}}
+            {{ range .Site.Menus.main }}
+            {{ $active := or (eq $currentPage.RelPermalink .URL) (or ($currentPage.HasMenuCurrent "main" .) ($currentPage.IsMenuCurrent "main" .)) }}
+            <li {{ if $active }} class='current'{{ end }}>
+                <a href='{{ .URL }}' {{ if .Params.newTab }}target="_blank"{{ end }}>
+                    {{ with .Params.Icon }}
+                        {{ partial "helper/icon" . }}
+                    {{ end }}
+                    <span>{{- .Name -}}</span>
+                </a>
+            </li>
+            {{ end }}
+        {{- end -}}
+
+        {{- if $sidebar -}}
+            {{- with $sidebar.announcements -}}
+                {{- range . -}}
+                    {{- if eq (default "mid" .position) "mid" -}}
+                        {{- $midHtml := partial "sidebar/notice.html" (dict "Notice" . "Lang" $lang) -}}
+                        {{- if strings.TrimSpace $midHtml -}}
+                            <li class="rfid-sidebar-notice-li">{{ $midHtml }}</li>
+                        {{- end -}}
+                    {{- end -}}
+                {{- end -}}
+            {{- end -}}
+        {{- end -}}
+
         <li class="menu-bottom-section">
             <ol class="menu">
-                {{- $currentLanguageCode := .Language.Name -}}
-                {{ if hugo.IsMultilingual }}
+                {{- $currentLanguageCode := .Language.Lang -}}
+                {{ if and hugo.IsMultilingual $showLanguageSwitcher }}
+                    {{- $langUrls := dict -}}
+                    {{- range .Site.Home.AllTranslations -}}
+                        {{- $target := . -}}
+                        {{- range $.AllTranslations -}}
+                            {{- if eq .Language.Lang $target.Language.Lang -}}
+                                {{- $target = . -}}
+                            {{- end -}}
+                        {{- end -}}
+                        {{- $langUrls = merge $langUrls (dict .Language.Lang $target.RelPermalink) -}}
+                    {{- end -}}
                     <li id="i18n-switch">
                         {{ partial "helper/icon" "language" }}
                         <select name="language" title="language" onchange="window.location.href = this.selectedOptions[0].value">
-                            {{ range .Site.Home.AllTranslations }}
-                                {{ $target := . }}
-                                {{ range $.AllTranslations }}
-                                    {{ if eq .Language.Name $target.Language.Name }}
-                                        {{ $target = . }}
+                            {{- if and $sidebar $sidebar.languages -}}
+                                {{- range $sl := $sidebar.languages -}}
+                                    {{- if $sl.enabled -}}
+                                        {{- $optUrl := default "" $sl.customUrl -}}
+                                        {{- if not $optUrl -}}
+                                            {{- $optUrl = index $langUrls $sl.code -}}
+                                        {{- end -}}
+                                        {{- if $optUrl -}}
+                                            <option value="{{ $optUrl }}" {{ if eq $sl.code $currentLanguageCode }}selected{{ end }}>{{ $sl.label }}</option>
+                                        {{- end -}}
+                                    {{- end -}}
+                                {{- end -}}
+                            {{- else -}}
+                                {{ range .Site.Home.AllTranslations }}
+                                    {{ $target := . }}
+                                    {{ range $.AllTranslations }}
+                                        {{ if eq .Language.Lang $target.Language.Lang }}
+                                            {{ $target = . }}
+                                        {{ end }}
                                     {{ end }}
+                                    <option value="{{ $target.RelPermalink }}" {{ if eq $target.Language.Lang $currentLanguageCode }}selected{{ end }}>{{ .Language.Label }}</option>
                                 {{ end }}
-                                <option value="{{ $target.RelPermalink }}" {{ if eq $target.Language.Name $currentLanguageCode }}selected{{ end }}>{{ .Language.Label }}</option>
-                            {{ end }}
+                            {{- end -}}
                         </select>
                     </li>
                 {{ end }}
-                {{ if .Site.Params.colorScheme.toggle }}
+                {{ if $showThemeToggle }}
                     <li id="dark-mode-toggle">
                         {{ partial "helper/icon" "toggle-left" }}
                         {{ partial "helper/icon" "toggle-right" }}
                         <span>{{ T "darkMode" }}</span>
                     </li>
                 {{ end }}
+                {{- if $sidebar -}}
+                    {{- with $sidebar.announcements -}}
+                        {{- range . -}}
+                            {{- if eq (default "mid" .position) "bottom" -}}
+                                {{- $botHtml := partial "sidebar/notice.html" (dict "Notice" . "Lang" $lang) -}}
+                                {{- if strings.TrimSpace $botHtml -}}
+                                    <li class="rfid-sidebar-notice-li">{{ $botHtml }}</li>
+                                {{- end -}}
+                            {{- end -}}
+                        {{- end -}}
+                    {{- end -}}
+                {{- end -}}
             </ol>
         </li>
     </ol>
