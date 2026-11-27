@@ -7,9 +7,6 @@ description: Analiza techniczna wdrożeń identyfikacji UHF RFID w ekstremalnych
   normatywne ATEX i Seveso III.
 date: 2026-11-15T10:00:00.000Z
 image: magnific_ov3euiy829.jpeg
-categories:
-  - UHF RFID
-  - Przemysłowa automatyzacja
 tags:
   - ATEX
   - Seveso III

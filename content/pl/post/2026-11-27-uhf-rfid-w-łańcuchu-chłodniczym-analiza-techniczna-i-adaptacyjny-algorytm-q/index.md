@@ -7,17 +7,12 @@ description: Analiza techniczna wdrożeń UHF RFID w łańcuchu chłodniczym,
   zgodność z normami EU GDP, DIN EN 12830 oraz 5-letni TCO w PLN.
 date: 2026-11-15T10:00:00.000Z
 image: image01.webp
-categories:
-  - UHF RFID
-  - Przemysłowa automatyzacja
 tags:
   - UHF RFID
-  - algorytm Q
   - EPCIS 2.0
   - BAP
   - EU GDP
   - TCO
-  - ""
 translationKey: uhf-rfid-cold-chain-q-algorithm-bap
 ---
 Łańcuch chłodniczy w przemyśle wytwórczym wymaga rygorystycznej identyfikowalności partii, od surowca po produkt gotowy. W typowym zakładzie 50 000 jednostek rocznie przechodzi przez strefy mroźnicze, gdzie temperatura spada do -30 °C, oraz strefy mycia i pakowania, gdzie sięga +80 °C. Standardowe etykiety UHF tracą czytelność po kilku tygodniach z powodu kondensacji i rozszerzania się lodu wewnątrz obudowy. Niniejsza analiza techniczna porównuje ręczną dokumentację partii z systemem UHF RFID opartym na adaptacyjnym antykolizyjnym algorytmie Q, ze szczególnym uwzględnieniem fizyki propagacji, norm EU GDP i DIN EN 12830 oraz 5-letniego TCO w PLN.
