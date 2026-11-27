@@ -6,7 +6,7 @@ description: "Teknisk analyse af IP69K-kapslede UHF RFID-transpondere til
   AutoTune-chips, Q = 8 ved 200 kasser, 2 % NaOH ved 80–85 °C, GS1 GRAI/EPCIS
   2.0 og TCO/ROI for 80.000 kasser."
 date: 2026-06-08T22:00:00.000Z
-image: industrial_rfid_in_extreme_environments-5_4.jpg
+image: image01_1.webp
 categories:
   - RFID Solutions
 tags:
