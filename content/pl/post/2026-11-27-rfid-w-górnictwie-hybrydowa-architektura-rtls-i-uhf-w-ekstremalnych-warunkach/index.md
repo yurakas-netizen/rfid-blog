@@ -7,7 +7,7 @@ description: Analiza techniczna wdrożeń hybrydowych systemów RTLS (aktywny RF
   Li-SOCl₂ na temperatury -40°C, normy ATEX (IEC 60079), adaptacyjny algorytm Q
   oraz 5-letni TCO w PLN.
 date: 2026-11-15T10:00:00.000Z
-image: magnific_visual-constraints-completely-clean-surfaces_rgo5qoaxtc-1-.jpg
+image: 123.webp
 categories:
   - RTLS
   - UHF RFID
