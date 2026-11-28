@@ -108,6 +108,7 @@
 
             {{- /* 2. FEATURED SECTION */ -}}
             {{- $feat := $cfg.featured -}}
+            {{- $featuredPermalinks := slice -}}
             {{- if and $feat (ne $feat.enabled false) -}}
                 {{- $featLimit := int (default 150 $feat.limit) -}}
                 {{- $featPosts := slice -}}
@@ -145,6 +146,9 @@
                     {{- end -}}
                 {{- end -}}
                 {{- $featPosts = first $featLimit $featPosts -}}
+                {{- range $featPosts -}}
+                    {{- $featuredPermalinks = $featuredPermalinks | append .RelPermalink -}}
+                {{- end -}}
                 {{- if gt (len $featPosts) 0 -}}
                     <section class="sc-section">
                         <header class="sc-section__head">
@@ -170,6 +174,7 @@
             {{- end -}}
 
             {{- /* 3. CURATED TRACKS */ -}}
+
             {{- range $track := $cfg.tracks -}}
                 {{- $tLimit := int (default 2 $track.limit) -}}
                 {{- $tType := default "latest" $track.filterType -}}
@@ -221,10 +226,61 @@
                         {{- end -}}
                     {{- end -}}
                 {{- else -}}
-                    {{- $tMatched = $posts -}}
+                    {{- $nonFeat := slice -}}
+                    {{- range $p := $posts -}}
+                        {{- if not (in $featuredPermalinks $p.RelPermalink) -}}
+                            {{- $nonFeat = $nonFeat | append $p -}}
+                        {{- end -}}
+                    {{- end -}}
+                    {{- if gt (len $nonFeat) 0 -}}
+                        {{- $tMatched = $nonFeat -}}
+                    {{- else -}}
+                        {{- $tMatched = $posts -}}
+                    {{- end -}}
                 {{- end -}}
 
-                {{- $tPosts := first $tLimit $tMatched -}}
+                {{- if and (ne $tType "manual") (ne $tType "latest") (ne $tLayout "compact") -}}
+                    {{- $nonFeatM := slice -}}
+                    {{- $inFeatM := slice -}}
+                    {{- range $p := $tMatched -}}
+                        {{- if in $featuredPermalinks $p.RelPermalink -}}
+                            {{- $inFeatM = $inFeatM | append $p -}}
+                        {{- else -}}
+                            {{- $nonFeatM = $nonFeatM | append $p -}}
+                        {{- end -}}
+                    {{- end -}}
+                    {{- if gt (len $nonFeatM) 0 -}}
+                        {{- $tMatched = $nonFeatM -}}
+                        {{- range $inFeatM -}}
+                            {{- $tMatched = $tMatched | append . -}}
+                        {{- end -}}
+                    {{- end -}}
+                {{- end -}}
+
+                {{- if and (ne $tLayout "compact") (gt (len $tMatched) 1) -}}
+                    {{- $withImgT := slice -}}
+                    {{- $withoutImgT := slice -}}
+                    {{- range $p := $tMatched -}}
+                        {{- if $p.Params.image -}}
+                            {{- $withImgT = $withImgT | append $p -}}
+                        {{- else -}}
+                            {{- $withoutImgT = $withoutImgT | append $p -}}
+                        {{- end -}}
+                    {{- end -}}
+                    {{- $tMatched = $withImgT -}}
+                    {{- range $withoutImgT -}}
+                        {{- $tMatched = $tMatched | append . -}}
+                    {{- end -}}
+                {{- end -}}
+
+                {{- $effectiveLimit := $tLimit -}}
+                {{- if ne $tLayout "compact" -}}
+                    {{- if lt $effectiveLimit 12 -}}
+                        {{- $effectiveLimit = 12 -}}
+                    {{- end -}}
+                {{- end -}}
+
+                {{- $tPosts := first $effectiveLimit $tMatched -}}
                 {{- if gt (len $tPosts) 0 -}}
                     {{- $tRawUrl := default "" $track.linkUrl -}}
                     {{- if not $tRawUrl -}}
@@ -239,7 +295,7 @@
                         {{- end -}}
                     {{- end -}}
                     {{- $tLink := partial "home/resolve-url.html" (dict "Url" $tRawUrl "Lang" $lang) -}}
-                    <section class="sc-section">
+                    <section class="sc-section"{{ if ne $tLayout "compact" }} data-sc-carousel{{ end }}>
                         <header class="sc-section__head">
                             <div>
                                 <h2 class="sc-section__title">{{ $track.title }}</h2>
@@ -247,9 +303,18 @@
                                     <p class="sc-section__sub">{{ . }}</p>
                                 {{- end -}}
                             </div>
-                            {{- if $track.linkLabel -}}
-                                <a class="sc-section__more" href="{{ $tLink }}">{{ $track.linkLabel }} &rarr;</a>
-                            {{- end -}}
+                            <div class="sc-section__actions">
+                                {{- if and (ne $tLayout "compact") (gt (len $tPosts) 1) -}}
+                                    <div class="sc-carousel__nav" hidden>
+                                        <button type="button" class="sc-carousel__btn" data-sc-prev aria-label="Previous">&#8249;</button>
+                                        <span class="sc-carousel__counter" data-sc-counter></span>
+                                        <button type="button" class="sc-carousel__btn" data-sc-next aria-label="Next">&#8250;</button>
+                                    </div>
+                                {{- end -}}
+                                {{- if $track.linkLabel -}}
+                                    <a class="sc-section__more" href="{{ $tLink }}">{{ $track.linkLabel }} &rarr;</a>
+                                {{- end -}}
+                            </div>
                         </header>
                         {{- if eq $tLayout "compact" -}}
                             <div class="sc-compact-list">
@@ -267,10 +332,17 @@
                                 {{- end -}}
                             </div>
                         {{- else -}}
-                            <div class="sc-grid sc-grid--2">
-                                {{- range $tPosts -}}
-                                    {{ partial "home/card.html" (dict "Page" . "Variant" "standard") }}
-                                {{- end -}}
+                            <div class="sc-carousel">
+                                <div class="sc-carousel__viewport">
+                                    <div class="sc-carousel__track">
+                                        {{- range $tPosts -}}
+                                            <div class="sc-carousel__slide">
+                                                {{ partial "home/card.html" (dict "Page" . "Variant" "standard") }}
+                                            </div>
+                                        {{- end -}}
+                                    </div>
+                                </div>
+                                <div class="sc-carousel__dots" data-sc-dots aria-hidden="true"></div>
                             </div>
                         {{- end -}}
                     </section>
@@ -344,4 +416,166 @@
             </section>
         {{- end -}}
     </div>
+    <script>
+    (function () {
+        var carousels = document.querySelectorAll('[data-sc-carousel]');
+        if (!carousels.length) return;
+
+        function createTimeSeed(salt) {
+            var now = new Date();
+            var ymd = now.getFullYear() * 10000 + (now.getMonth() + 1) * 100 + now.getDate();
+            var hms = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
+            var seed = Math.imul(ymd, 2654435761) ^ Math.imul(hms + 1, 2246822519) ^ Math.imul(now.getMilliseconds() + 1, 3266489917) ^ Math.imul(salt + 1, 1013904223);
+            return seed >>> 0;
+        }
+
+        function mulberry32(a) {
+            return function () {
+                a = (a + 0x6d2b79f5) | 0;
+                var t = Math.imul(a ^ (a >>> 15), 1 | a);
+                t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+                return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+            };
+        }
+
+        var reducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        carousels.forEach(function (section, cIdx) {
+            if (section.dataset.scReady === '1') return;
+            section.dataset.scReady = '1';
+
+            var track = section.querySelector('.sc-carousel__track');
+            var viewport = section.querySelector('.sc-carousel__viewport');
+            var nav = section.querySelector('.sc-carousel__nav');
+            var prevBtn = section.querySelector('[data-sc-prev]');
+            var nextBtn = section.querySelector('[data-sc-next]');
+            var counter = section.querySelector('[data-sc-counter]');
+            var dotsWrap = section.querySelector('[data-sc-dots]');
+            if (!track || !viewport) return;
+
+            var slides = Array.prototype.slice.call(track.children);
+            if (slides.length > 1) {
+                var rng = mulberry32(createTimeSeed(cIdx));
+                for (var i = slides.length - 1; i > 0; i--) {
+                    var j = Math.floor(rng() * (i + 1));
+                    var tmp = slides[i];
+                    slides[i] = slides[j];
+                    slides[j] = tmp;
+                }
+                slides.forEach(function (el) { track.appendChild(el); });
+            }
+
+            var current = 0;
+            var timer = null;
+
+            function getPerView() {
+                return window.innerWidth >= 640 ? 2 : 1;
+            }
+
+            function getMaxIndex() {
+                return Math.max(0, slides.length - getPerView());
+            }
+
+            function renderDots(maxIndex) {
+                if (!dotsWrap) return;
+                dotsWrap.innerHTML = '';
+                if (maxIndex <= 0) return;
+                for (var i = 0; i <= maxIndex; i++) {
+                    (function (idx) {
+                        var dot = document.createElement('button');
+                        dot.type = 'button';
+                        dot.className = 'sc-carousel__dot' + (idx === current ? ' is-active' : '');
+                        dot.setAttribute('aria-label', String(idx + 1));
+                        dot.addEventListener('click', function () { goTo(idx); });
+                        dotsWrap.appendChild(dot);
+                    })(i);
+                }
+            }
+
+            function update() {
+                var maxIndex = getMaxIndex();
+                if (current > maxIndex) current = maxIndex;
+                if (current < 0) current = 0;
+
+                var isStatic = maxIndex === 0;
+                section.classList.toggle('is-static', isStatic);
+                if (nav) nav.hidden = isStatic;
+                if (dotsWrap) dotsWrap.hidden = isStatic;
+
+                if (isStatic) {
+                    track.style.transform = '';
+                } else {
+                    var targetSlide = slides[current];
+                    var offset = targetSlide ? targetSlide.offsetLeft : 0;
+                    track.style.transform = 'translate3d(' + (-offset) + 'px, 0, 0)';
+                }
+
+                if (counter && !isStatic) {
+                    counter.textContent = (current + 1) + ' / ' + (maxIndex + 1);
+                }
+                if (dotsWrap) {
+                    var dots = dotsWrap.querySelectorAll('.sc-carousel__dot');
+                    if (dots.length !== (maxIndex > 0 ? maxIndex + 1 : 0)) {
+                        renderDots(maxIndex);
+                    } else {
+                        dots.forEach(function (d, idx) {
+                            d.classList.toggle('is-active', idx === current);
+                        });
+                    }
+                }
+            }
+
+            function goTo(nextIdx) {
+                var maxIndex = getMaxIndex();
+                if (maxIndex <= 0) return;
+                if (nextIdx > maxIndex) current = 0;
+                else if (nextIdx < 0) current = maxIndex;
+                else current = nextIdx;
+                update();
+            }
+
+            function stopAuto() {
+                if (timer) {
+                    clearInterval(timer);
+                    timer = null;
+                }
+            }
+
+            function startAuto() {
+                stopAuto();
+                if (reducedMotion || getMaxIndex() <= 0) return;
+                timer = setInterval(function () {
+                    if (!document.hidden) goTo(current + 1);
+                }, 6500);
+            }
+
+            if (prevBtn) prevBtn.addEventListener('click', function () { goTo(current - 1); startAuto(); });
+            if (nextBtn) nextBtn.addEventListener('click', function () { goTo(current + 1); startAuto(); });
+
+            section.addEventListener('mouseenter', stopAuto);
+            section.addEventListener('mouseleave', startAuto);
+            section.addEventListener('focusin', stopAuto);
+            section.addEventListener('focusout', startAuto);
+
+            var touchStartX = 0;
+            viewport.addEventListener('touchstart', function (e) {
+                if (e.touches && e.touches.length === 1) touchStartX = e.touches[0].clientX;
+                stopAuto();
+            }, { passive: true });
+            viewport.addEventListener('touchend', function (e) {
+                if (!touchStartX || !e.changedTouches || !e.changedTouches.length) return;
+                var dx = e.changedTouches[0].clientX - touchStartX;
+                touchStartX = 0;
+                if (Math.abs(dx) > 40) {
+                    goTo(dx < 0 ? current + 1 : current - 1);
+                }
+                startAuto();
+            }, { passive: true });
+
+            window.addEventListener('resize', update);
+            update();
+            startAuto();
+        });
+    })();
+    </script>
 {{- end -}}

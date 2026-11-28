@@ -10,22 +10,6 @@
         </div>
       <% } %>
       <div class="article-details">
-        <div class="article-category">
-          <span class="lang-badge"><%= post.lang %></span>
-          <% post.categories.forEach(function(cat) { %>
-            <a href="<%= langPrefix %>/categories/<%= encodeURIComponent(slugify(cat)) %>/"><%= cat %></a>
-          <% }); %>
-        </div>
-        <h1 class="article-title"><%= post.title %></h1>
-        <% if (post.description) { %>
-          <h2 class="article-subtitle"><%= post.description %></h2>
-        <% } %>
-        <footer class="article-time">
-          <div>
-            <time datetime="<%= post.date.toISOString() %>"><%= formatDate(post.date, lang) %></time>
-          </div>
-          <div><%= post.readingTime %> <%= t.minRead %> (<%= post.wordCount %> <%= t.wordsLabel %>)</div>
-        </footer>
         <% if (typeof translatedPosts !== 'undefined' && translatedPosts && translatedPosts.length > 0) { %>
           <nav class="article-translations" aria-label="<%= t.languageLabel %>">
             <span class="article-translations__icon" aria-hidden="true">
@@ -48,6 +32,22 @@
             </div>
           </nav>
         <% } %>
+        <div class="article-category">
+          <span class="lang-badge"><%= post.lang %></span>
+          <% post.categories.forEach(function(cat) { %>
+            <a href="<%= langPrefix %>/categories/<%= encodeURIComponent(slugify(cat)) %>/"><%= cat %></a>
+          <% }); %>
+        </div>
+        <h1 class="article-title"><%= post.title %></h1>
+        <% if (post.description) { %>
+          <h2 class="article-subtitle"><%= post.description %></h2>
+        <% } %>
+        <footer class="article-time">
+          <div>
+            <time datetime="<%= post.date.toISOString() %>"><%= formatDate(post.date, lang) %></time>
+          </div>
+          <div><%= post.readingTime %> <%= t.minRead %> (<%= post.wordCount %> <%= t.wordsLabel %>)</div>
+        </footer>
       </div>
     </header>
 

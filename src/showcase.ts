@@ -1157,6 +1157,7 @@ export function resolveShowcaseForLang(
 
   const leadPost = featuredPosts[0] || null;
   const secondaryPosts = featuredPosts.slice(1);
+  const featuredIds = new Set<string>(featuredPosts.map((p) => p.id));
 
   const resolvedTracks: ResolvedTrack[] = config.tracks.map((track) => {
     let matched: PostItem[] = [];
@@ -1178,8 +1179,25 @@ export function resolveShowcaseForLang(
         (p) => p.translationKey && tokens.includes(p.translationKey.toLowerCase())
       );
     } else {
-      matched = langPosts;
+      const nonFeatured = langPosts.filter((p) => !featuredIds.has(p.id));
+      matched = nonFeatured.length > 0 ? nonFeatured : langPosts;
     }
+
+    if (track.filterType !== 'manual' && track.filterType !== 'latest' && track.layout !== 'compact') {
+      const nonFeat = matched.filter((p) => !featuredIds.has(p.id));
+      const inFeat = matched.filter((p) => featuredIds.has(p.id));
+      if (nonFeat.length > 0) {
+        matched = [...nonFeat, ...inFeat];
+      }
+    }
+
+    if (track.layout !== 'compact' && matched.length > 1) {
+      const withImg = matched.filter((p) => existingImagesMap[p.id]);
+      const withoutImg = matched.filter((p) => !existingImagesMap[p.id]);
+      matched = [...withImg, ...withoutImg];
+    }
+
+    const effectiveLimit = track.layout === 'compact' ? track.limit : Math.max(track.limit, 12);
 
     let resolvedLinkUrl = track.linkUrl;
     if (!resolvedLinkUrl) {
@@ -1196,7 +1214,7 @@ export function resolveShowcaseForLang(
 
     return {
       ...track,
-      posts: matched.slice(0, track.limit),
+      posts: matched.slice(0, effectiveLimit),
       resolvedLinkUrl: getLocalizedUrl(resolvedLinkUrl, lang),
     };
   });

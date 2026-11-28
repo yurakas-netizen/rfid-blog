@@ -1,6 +1,9 @@
 {{- $IsList := .IsList -}}
 {{- $Page := .Page -}}
 <div class="article-details">
+    {{ if not $IsList }}
+        {{ partial "article/components/translations" $Page }}
+    {{ end }}
     {{ if $Page.Params.categories }}
     <header class="article-category">
         {{ range ($Page.GetTerms "categories") }}
@@ -70,9 +73,5 @@
             </div>
         {{ end }}
     </footer>
-    {{ end }}
-
-    {{ if not $IsList }}
-        {{ partial "article/components/translations" $Page }}
     {{ end }}
 </div>
