@@ -2896,3 +2896,18 @@ html[data-scheme="dark"] .rfid-cat-section {
     font-size: 13.5px;
     color: var(--card-text-color-tertiary);
 }
+/* Вписываем фото оборудования целиком без обрезки краёв */
+.catalog-card__media img,
+.catalog-item__media img,
+.catalog-hero__media img,
+.article-list--catalog .article-image img,
+.catalog-detail__image img,
+[class*="catalog"] img {
+    object-fit: contain !important;
+    width: 100% !important;
+    height: 100% !important;
+    padding: 14px;
+    background: radial-gradient(circle at center, rgba(30, 41, 59, 0.7) 0%, rgba(11, 17, 32, 0.95) 100%);
+    box-sizing: border-box;
+}
+
