@@ -2934,5 +2934,27 @@ html[data-scheme="dark"] [class*="catalog"] img {
 html[data-scheme="light"] [class*="catalog"] img {
     border: 1px solid rgba(15, 23, 42, 0.08);
 }
+/* Снимаем обрезку и ставим студийную рамку внутри самой карточки товара */
+main section:first-of-type img,
+.main-article > div:first-child img,
+[class*="product"] img,
+[class*="item"] img,
+[class*="hardware"] img,
+[class*="equip"] img {
+    object-fit: contain !important;
+    width: 100% !important;
+    height: auto !important;
+    max-height: 360px !important;
+    border-radius: 12px !important;
+    box-sizing: border-box !important;
+}
+
+html[data-scheme="dark"] main section:first-of-type figure,
+html[data-scheme="dark"] main section:first-of-type > div:first-child > div:first-child {
+    background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%) !important;
+    border-radius: 14px;
+    padding: 12px;
+}
+
 
 
