@@ -15,6 +15,7 @@ price: 1480
 currency: "EUR"
 priceUnit: "/ шт."
 commentsMode: "all"
+math: true
 highlights:
   - "4 незалежних RP-TNC порти з інтегрованим мультиплексором та детектором КСХН (VSWR)"
   - "Чіпсет Impinj E710 · чутливість приймача до -90 dBm при DRM-модуляції"

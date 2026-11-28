@@ -15,6 +15,7 @@ price: 1480
 currency: "EUR"
 priceUnit: "/ unit"
 commentsMode: "all"
+math: true
 highlights:
   - "4 independent RP-TNC antenna ports with integrated multiplexer and VSWR fault guard"
   - "Impinj E710 RF core · up to -90 dBm receiver sensitivity in Dense Reader Mode"

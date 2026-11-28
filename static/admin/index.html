@@ -3067,8 +3067,21 @@
         var wrap = document.createElement('div');
         wrap.style.display = 'inline-flex';
         wrap.style.alignItems = 'center';
+        wrap.style.flexWrap = 'wrap';
         wrap.style.gap = '8px';
         wrap.style.marginLeft = '12px';
+
+        var catalogHeaderBtn = document.createElement('button');
+        catalogHeaderBtn.type = 'button';
+        catalogHeaderBtn.className = 'rfid-io-btn';
+        catalogHeaderBtn.style.height = '32px';
+        catalogHeaderBtn.title = 'Открыть админку каталога оборудования, меток и ПО';
+        catalogHeaderBtn.innerHTML =
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="6" width="12" height="12" rx="2"/><rect x="9.5" y="9.5" width="5" height="5" rx="0.5"/><path d="M9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4"/></svg>' +
+          '<span>Каталог</span>';
+        catalogHeaderBtn.addEventListener('click', function () {
+          ensureCatalogOverlay().open();
+        });
 
         var btn = document.createElement('button');
         btn.type = 'button';
@@ -3122,6 +3135,7 @@
         wrap.appendChild(homeBtn);
         wrap.appendChild(sidebarHeaderBtn);
         wrap.appendChild(multilangHeaderBtn);
+        wrap.appendChild(catalogHeaderBtn);
 
         var nav = headerEl.querySelector('nav');
         if (nav && nav.parentElement) {

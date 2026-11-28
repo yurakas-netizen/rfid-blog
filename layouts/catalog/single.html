@@ -180,6 +180,10 @@
   </article>
 {{- end -}}
 
+{{- if and .Content (ne .Params.math false) -}}
+  {{ partial "article/components/math.html" . }}
+{{- end -}}
+
 {{- if ne $cMode "disabled" -}}
   {{ partial "comments/include" . }}
 {{- end -}}

@@ -851,6 +851,7 @@ function serializeCatalogMarkdown(c: CatalogSaveConstantsInput, e: CatalogSaveEn
   lines.push(`currency: ${formatYamlScalar(c.currency || 'EUR')}`);
   if (c.priceUnit) lines.push(`priceUnit: ${formatYamlScalar(c.priceUnit)}`);
   lines.push(`commentsMode: ${formatYamlScalar(c.commentsMode)}`);
+  lines.push('math: true');
 
   if (e.highlights.length > 0) {
     lines.push('highlights:');
