@@ -227,6 +227,33 @@
       display: none;
     }
     .toast.is-visible { display: block; }
+
+    .badge-pill {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 2px 7px; border-radius: 5px; font-size: 11px; font-weight: 700;
+      border: 1px solid transparent; white-space: nowrap;
+    }
+    .badge-ok { background: var(--ok-bg); color: var(--ok-text); border-color: var(--ok-border); }
+    .badge-warn { background: var(--warn-bg); color: var(--warn-text); border-color: var(--warn-border); }
+    .badge-err { background: var(--err-bg); color: var(--err-text); border-color: var(--err-border); }
+    .badge-skip { background: var(--surface-muted); color: var(--text-soft); border-color: var(--border); }
+    .badge-draft { background: #fef3c7; color: #92400e; border-color: #fcd34d; margin-left: 5px; }
+
+    .batch-tabs {
+      display: flex; gap: 6px; padding: 10px 16px 0;
+      border-bottom: 1px solid var(--border-soft); background: var(--surface-muted);
+    }
+    .batch-tab-btn {
+      border: 1px solid var(--border); border-bottom: 0; border-radius: 8px 8px 0 0;
+      background: #e2e8f0; color: var(--text-muted);
+      padding: 8px 14px; font-size: 12.5px; font-weight: 700; cursor: pointer;
+    }
+    .batch-tab-btn.is-active { background: var(--surface); color: var(--accent-hover); margin-bottom: -1px; padding-bottom: 9px; }
+    .batch-stats {
+      display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+      padding: 8px 11px; border-radius: 8px; background: var(--surface-muted); border: 1px solid var(--border-soft);
+      font-size: 12px; font-weight: 600;
+    }
   </style>
 </head>
 <body>
@@ -242,6 +269,7 @@
       </div>
       <div class="topbar-actions">
         <button type="button" id="openRegistryBtn" class="btn">Реестр позиций</button>
+        <button type="button" id="openBatchModalBtn" class="btn btn-accent-soft" title="Массовая загрузка прайсов CSV/JSON с валидацией + пакетный экспорт/импорт переводов">Пакетный импорт / прайсы</button>
         <button type="button" id="exportBundleBtn" class="btn" title="Скачать всю текущую связку языков в JSON">Экспорт связки</button>
         <button type="button" id="openSettingsBtn" class="btn">Настройки цен и команды</button>
         <button type="button" id="openCommentsBtn" class="btn">Комментарии</button>
@@ -267,10 +295,16 @@
         <div class="panel-section">
           <div class="section-head">
             <h2 class="section-title">1. Языковая связка каталога</h2>
-            <label class="checkbox-row" title="Разрешить перезапись существующих карточек">
-              <input type="checkbox" id="overwriteToggle" checked />
-              <span>Перезапись</span>
-            </label>
+            <div class="inline-row">
+              <label class="checkbox-row" title="Скрыть карточку с публичной витрины (видна в реестре админки)">
+                <input type="checkbox" id="draftToggle" />
+                <span>Черновик</span>
+              </label>
+              <label class="checkbox-row" title="Разрешить перезапись существующих карточек">
+                <input type="checkbox" id="overwriteToggle" checked />
+                <span>Перезапись</span>
+              </label>
+            </div>
           </div>
           <div class="field">
             <label class="field-label" for="anchorLangSelect">Якорный язык</label>
@@ -510,7 +544,15 @@
         </div>
       </div>
       <div class="modal-body">
-        <input type="search" id="registrySearchInput" class="input" placeholder="Фильтр по названию, SKU или translationKey..." />
+        <div class="inline-row" style="flex-wrap:wrap;">
+          <input type="search" id="registrySearchInput" class="input" style="flex:1; min-width:220px;" placeholder="Фильтр по названию, SKU или translationKey..." />
+          <select id="registryFilterSelect" class="select" style="width:220px;">
+            <option value="all">Все позиции</option>
+            <option value="draft">Черновики / Карантин</option>
+            <option value="published">Только опубликованные</option>
+            <option value="no_image">Без изображения</option>
+          </select>
+        </div>
         <div style="overflow:auto; max-height:60vh;">
           <table class="reg-table">
             <thead>
@@ -669,6 +711,154 @@
     </div>
   </div>
 
+  <!-- BATCH IMPORT / VENDOR QUARANTINE / TRANSLATION PACK MODAL -->
+  <div id="batchModal" class="modal-backdrop">
+    <div class="modal" style="max-width:1100px;" role="dialog" aria-modal="true" aria-labelledby="batchModalTitle">
+      <div class="modal-head">
+        <h3 id="batchModalTitle" class="modal-title">Пакетный импорт прайсов и переводов</h3>
+        <button type="button" class="btn btn-sm" data-close-modal="batchModal">&times;</button>
+      </div>
+      <div class="batch-tabs">
+        <button type="button" class="batch-tab-btn is-active" data-batch-tab="vendor">1. Прайс-лист вендора (CSV / TSV / JSON + Карантин)</button>
+        <button type="button" class="batch-tab-btn" data-batch-tab="translations">2. Пакет переводов (Экспорт / Импорт по translationKey)</button>
+      </div>
+
+      <!-- TAB 1: VENDOR CSV/JSON BATCH IMPORT -->
+      <div id="batchTabVendor" class="modal-body">
+        <div class="dyn-row" style="background:#f0f9ff; border-color:#bae6fd;">
+          <div class="inline-row" style="justify-content:space-between; flex-wrap:wrap;">
+            <div>
+              <strong style="font-size:12.5px;">Шаг 1. Шаблон для производителя (UTF-8 CSV для Excel)</strong>
+              <div style="font-size:11.5px; color:var(--text-muted);">Отправьте этот файл вендору — колонки ТТХ подобраны под выбранный класс оборудования/меток.</div>
+            </div>
+            <div class="inline-row" style="flex-wrap:wrap;">
+              <select id="batchTemplateType" class="select" style="width:170px;">
+                <option value="tag">Метки / Transponders</option>
+                <option value="reader">Считыватели / Readers</option>
+                <option value="antenna">Антенны / Antennas</option>
+                <option value="software">ПО / Software & SDK</option>
+                <option value="accessory">Аксессуары</option>
+              </select>
+              <select id="batchAnchorLangSelect" class="select" style="width:165px;"></select>
+              <button type="button" id="downloadVendorTemplateBtn" class="btn btn-sm btn-accent-soft">Скачать шаблон CSV</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="field">
+            <label class="field-label" for="batchImportMode">Режим при совпадении SKU / translationKey</label>
+            <select id="batchImportMode" class="select">
+              <option value="create_only">Только новые SKU (существующие не трогать)</option>
+              <option value="price_only">Обновить ТОЛЬКО цены и наличие по SKU (сохранить тексты, ТТХ, фото и переводы)</option>
+              <option value="full_upsert">Создать новые + перезаписать якорные карточки</option>
+            </select>
+          </div>
+          <div class="field" style="justify-content:flex-end; gap:6px;">
+            <label class="checkbox-row">
+              <input type="checkbox" id="batchAsDraftCheck" checked />
+              <span>Загрузить новые как черновики (карантин draft: true, скрыть с витрины)</span>
+            </label>
+            <label class="checkbox-row">
+              <input type="checkbox" id="batchAutoCleanCheck" checked />
+              <span>Авто-нормализация мусора (CAPS LOCK, запятые в цене, IP, обрезка формул Excel)</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="inline-row" style="justify-content:space-between; flex-wrap:wrap;">
+          <div class="inline-row">
+            <label class="btn btn-sm btn-accent-soft" style="cursor:pointer;">
+              Выбрать прайс (.csv / .tsv / .json)
+              <input type="file" id="batchFileInput" accept=".csv,.tsv,.txt,.json" style="display:none;" />
+            </label>
+            <button type="button" id="runBatchDryRunBtn" class="btn btn-sm btn-primary">Проверить прайс (Dry-Run)</button>
+          </div>
+          <button type="button" id="downloadBatchErrorsBtn" class="btn btn-sm btn-danger" style="display:none;">Скачать отчёт об ошибках (.csv)</button>
+        </div>
+
+        <textarea id="batchRawInput" class="textarea is-mono" rows="5" spellcheck="false" placeholder="Вставьте CSV (разделитель , ; или Tab) или JSON-массив позиций, либо выберите файл выше..."></textarea>
+
+        <div id="batchSummaryBar" class="batch-stats" style="display:none;"></div>
+
+        <div id="batchPreviewWrap" style="display:none; overflow:auto; max-height:36vh; border:1px solid var(--border-soft); border-radius:8px;">
+          <table class="reg-table">
+            <thead>
+              <tr>
+                <th style="width:32px;"><input type="checkbox" id="batchCheckAll" checked /></th>
+                <th>Статус</th>
+                <th>SKU / Ключ</th>
+                <th>Название</th>
+                <th>Цена / Diff</th>
+                <th>ТТХ</th>
+                <th>Аудит и замечания</th>
+              </tr>
+            </thead>
+            <tbody id="batchPreviewTbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- TAB 2: TRANSLATION PACK EXPORT / IMPORT -->
+      <div id="batchTabTranslations" class="modal-body" style="display:none;">
+        <div class="dyn-row" style="background:#f0fdf4; border-color:#bbf7d0;">
+          <div class="inline-row" style="justify-content:space-between; flex-wrap:wrap;">
+            <div>
+              <strong style="font-size:12.5px;">Шаг 1. Выгрузить пакет карточек для перевода</strong>
+              <div style="font-size:11.5px; color:var(--text-muted);">Выгружаются только текстовые поля (title, slug, description, highlights, tags, body) без ТТХ и цен.</div>
+            </div>
+            <div class="inline-row" style="flex-wrap:wrap;">
+              <select id="trExportLangSelect" class="select" style="width:160px;"></select>
+              <select id="trExportScopeSelect" class="select" style="width:210px;">
+                <option value="missing">Только без перевода на этот язык</option>
+                <option value="all">Все позиции каталога</option>
+              </select>
+              <button type="button" id="exportTranslationPackBtn" class="btn btn-sm btn-accent-soft">Скачать пакет (.json)</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="inline-row" style="justify-content:space-between; flex-wrap:wrap;">
+          <div class="inline-row">
+            <label class="btn btn-sm btn-accent-soft" style="cursor:pointer;">
+              Загрузить переведённый пакет (.json)
+              <input type="file" id="trImportFileInput" accept=".json" style="display:none;" />
+            </label>
+            <button type="button" id="runTrDryRunBtn" class="btn btn-sm btn-primary">Проверить переводы (Dry-Run)</button>
+          </div>
+          <span id="trSummaryText" style="font-size:12px; color:var(--text-muted); font-weight:600;"></span>
+        </div>
+
+        <textarea id="trImportRawInput" class="textarea is-mono" rows="6" spellcheck="false" placeholder="Вставьте переведённый JSON-пакет формата rfid-catalog-translation-pack-v1..."></textarea>
+
+        <div id="trPreviewWrap" style="display:none; overflow:auto; max-height:34vh; border:1px solid var(--border-soft); border-radius:8px;">
+          <table class="reg-table">
+            <thead>
+              <tr>
+                <th>Статус</th>
+                <th>Язык</th>
+                <th>translationKey</th>
+                <th>Переведённое название</th>
+                <th>Слаг</th>
+                <th>Проверка</th>
+              </tr>
+            </thead>
+            <tbody id="trPreviewTbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="modal-foot">
+        <span style="font-size:12px; color:var(--text-soft);">Ошибочные строки блокируются автоматически и не попадают в каталог.</span>
+        <div class="inline-row">
+          <button type="button" class="btn" data-close-modal="batchModal">Закрыть</button>
+          <button type="button" id="applyBatchImportBtn" class="btn btn-primary" disabled>Применить валидные (0)</button>
+          <button type="button" id="applyTrBatchBtn" class="btn btn-primary" style="display:none;" disabled>Применить переводы (0)</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div id="toast" class="toast"></div>
 
   <script>
@@ -769,6 +959,7 @@
           currency: 'EUR',
           priceUnit: '',
           commentsMode: 'all',
+          draft: false,
           specs: [],
           documents: [],
           linkedArticles: []
@@ -1061,6 +1252,7 @@
         document.getElementById('priceUnitInput').value = c.priceUnit || '';
         document.getElementById('imageUrlInput').value = c.image || '';
         document.getElementById('galleryInput').value = (c.gallery || []).join('\n');
+        document.getElementById('draftToggle').checked = Boolean(c.draft);
         document.getElementById('overwriteToggle').checked = state.overwrite;
 
         var thumb = document.getElementById('imageThumbPreview');
@@ -1205,6 +1397,7 @@
         state.activeTabLang = next;
         renderAll();
       });
+      document.getElementById('draftToggle').addEventListener('change', function () { state.constants.draft = this.checked; });
       document.getElementById('overwriteToggle').addEventListener('change', function () { state.overwrite = this.checked; });
       document.getElementById('tkInput').addEventListener('input', function () { state.constants.translationKey = this.value.trim(); updateReadiness(); });
       document.getElementById('genTkBtn').addEventListener('click', function () {
@@ -1476,6 +1669,7 @@
               currency: c.currency || '',
               priceUnit: c.priceUnit || '',
               commentsMode: c.commentsMode || '',
+              draft: Boolean(c.draft),
               specs: Array.isArray(c.specs) ? c.specs : undefined,
               documents: Array.isArray(c.documents) ? c.documents : undefined,
               linkedArticles: Array.isArray(c.linkedArticles) ? c.linkedArticles : undefined
@@ -1515,6 +1709,7 @@
             currency: fm.currency || '',
             priceUnit: fm.priceUnit || '',
             commentsMode: fm.commentsMode || '',
+            draft: fm.draft === true,
             specs: Array.isArray(fm.specs) ? fm.specs : undefined,
             documents: Array.isArray(fm.documents) ? fm.documents : undefined,
             linkedArticles: Array.isArray(fm.linkedArticles) ? fm.linkedArticles : undefined
@@ -1776,7 +1971,7 @@
         state.constants = {
           translationKey: '', catalogType: 'reader', sku: '', manufacturer: '', availability: 'in_stock',
           date: new Date().toISOString(), weight: 10, image: '', gallery: [],
-          showPrice: false, price: null, currency: 'EUR', priceUnit: '', commentsMode: 'all',
+          showPrice: false, price: null, currency: 'EUR', priceUnit: '', commentsMode: 'all', draft: false,
           specs: [], documents: [], linkedArticles: []
         };
         state.entries = {};
@@ -1883,6 +2078,7 @@
         lines.push('currency: ' + yamlStr(c.currency || 'EUR'));
         if (c.priceUnit) lines.push('priceUnit: ' + yamlStr(c.priceUnit));
         lines.push('commentsMode: ' + yamlStr(c.commentsMode || 'all'));
+        if (c.draft === true) lines.push('draft: true');
         lines.push('math: true');
         if (e.highlights && e.highlights.length) {
           lines.push('highlights:');
@@ -2044,6 +2240,7 @@
               currency: c.currency || 'EUR',
               priceUnit: c.priceUnit || '',
               commentsMode: c.commentsMode || 'all',
+              draft: Boolean(c.draft),
               highlights: parsed.highlights || [],
               tags: parsed.tags || [],
               specs: Array.isArray(c.specs) ? c.specs : [],
@@ -2216,9 +2413,13 @@
 
       function renderRegistryTable(filter) {
         var q = String(filter || '').trim().toLowerCase();
+        var modeFilter = document.getElementById('registryFilterSelect').value || 'all';
         var tb = document.getElementById('registryTbody');
         tb.innerHTML = '';
         var filtered = state.catalogItems.filter(function (it) {
+          if (modeFilter === 'draft' && !it.draft) return false;
+          if (modeFilter === 'published' && it.draft) return false;
+          if (modeFilter === 'no_image' && it.image) return false;
           if (!q) return true;
           return (it.title + ' ' + it.sku + ' ' + it.translationKey + ' ' + it.lang).toLowerCase().indexOf(q) !== -1;
         });
@@ -2246,6 +2447,12 @@
           var langStrong = document.createElement('strong');
           langStrong.textContent = it.lang.toUpperCase();
           tdLang.appendChild(langStrong);
+          if (it.draft) {
+            var dBadge = document.createElement('span');
+            dBadge.className = 'badge-pill badge-draft';
+            dBadge.textContent = 'ЧЕРНОВИК';
+            tdLang.appendChild(dBadge);
+          }
           tr.appendChild(tdLang);
           var tdSku = document.createElement('td');
           tdSku.style.fontFamily = 'var(--mono)';
@@ -2347,6 +2554,7 @@
                 currency: detail.currency || 'EUR',
                 priceUnit: detail.priceUnit || '',
                 commentsMode: detail.commentsMode || 'all',
+                draft: Boolean(detail.draft),
                 specs: (detail.specs || []).map(function (s) { return Object.assign({}, s); }),
                 documents: (detail.documents || []).map(function (d) { return Object.assign({}, d); }),
                 linkedArticles: (detail.linkedArticles || []).map(function (a) { return Object.assign({}, a); })
@@ -2369,10 +2577,13 @@
       }
 
       document.getElementById('openRegistryBtn').addEventListener('click', function () {
-        renderRegistryTable('');
+        renderRegistryTable(document.getElementById('registrySearchInput').value);
         openModal('registryModal');
       });
       document.getElementById('registrySearchInput').addEventListener('input', function () { renderRegistryTable(this.value); });
+      document.getElementById('registryFilterSelect').addEventListener('change', function () {
+        renderRegistryTable(document.getElementById('registrySearchInput').value);
+      });
 
       // Global Settings Modal
       document.getElementById('openSettingsBtn').addEventListener('click', function () {
@@ -2540,6 +2751,878 @@
         renderAll();
         updateDeleteButtonVisibility();
       }
+
+      // =========================================================================
+      // BATCH VENDOR IMPORT + QUARANTINE DRY-RUN + TRANSLATION PACK
+      // =========================================================================
+      var batchState = {
+        activeTab: 'vendor',
+        rows: [],
+        trRows: []
+      };
+
+      function csvSafeCell(v) {
+        var s = String(v === undefined || v === null ? '' : v);
+        if (/^[=+\-@]/.test(s)) s = "'" + s;
+        if (/[",\r\n;]/.test(s)) return '"' + s.replace(/"/g, '""') + '"';
+        return s;
+      }
+
+      function detectDelimiter(sample) {
+        var firstLine = String(sample || '').split(/\r?\n/).find(function (l) { return l.trim().length > 0; }) || '';
+        var tabs = (firstLine.match(/\t/g) || []).length;
+        var semis = (firstLine.match(/;/g) || []).length;
+        var commas = (firstLine.match(/,/g) || []).length;
+        if (tabs >= semis && tabs >= commas && tabs > 0) return '\t';
+        if (semis > commas) return ';';
+        return ',';
+      }
+
+      function parseDelimitedTable(rawText) {
+        var text = String(rawText || '').replace(/^\uFEFF/, '');
+        var delim = detectDelimiter(text);
+        var rows = [];
+        var row = [];
+        var cell = '';
+        var inQuote = false;
+        for (var i = 0; i < text.length; i++) {
+          var ch = text.charAt(i);
+          if (inQuote) {
+            if (ch === '"') {
+              if (text.charAt(i + 1) === '"') { cell += '"'; i++; }
+              else inQuote = false;
+            } else {
+              cell += ch;
+            }
+          } else {
+            if (ch === '"') {
+              inQuote = true;
+            } else if (ch === delim) {
+              row.push(cell);
+              cell = '';
+            } else if (ch === '\r') {
+              if (text.charAt(i + 1) === '\n') i++;
+              row.push(cell);
+              if (row.some(function (c) { return c.trim() !== ''; })) rows.push(row);
+              row = [];
+              cell = '';
+            } else if (ch === '\n') {
+              row.push(cell);
+              if (row.some(function (c) { return c.trim() !== ''; })) rows.push(row);
+              row = [];
+              cell = '';
+            } else {
+              cell += ch;
+            }
+          }
+        }
+        row.push(cell);
+        if (row.some(function (c) { return c.trim() !== ''; })) rows.push(row);
+        if (rows.length < 2) throw new Error('Файл должен содержать строку заголовков и минимум 1 строку данных');
+        var headers = rows[0].map(function (h) { return h.trim().toLowerCase().replace(/[\s-]+/g, '_'); });
+        var objects = [];
+        for (var r = 1; r < rows.length; r++) {
+          var obj = {};
+          for (var c = 0; c < headers.length; c++) {
+            if (headers[c]) obj[headers[c]] = String(rows[r][c] || '').trim();
+          }
+          objects.push(obj);
+        }
+        return objects;
+      }
+
+      function stripDangerPrefix(val, allowNegNumber) {
+        var s = String(val || '').replace(/<script[\s\S]*?<\/script>/gi, '').replace(/<[^>]+>/g, '').trim();
+        if (allowNegNumber && /^-\d/.test(s)) return s;
+        return s.replace(/^[=+@]+/, '').trim();
+      }
+
+      function isSafeAssetUrl(u) {
+        if (!u) return true;
+        var low = u.trim().toLowerCase();
+        if (low.indexOf('javascript:') === 0 || low.indexOf('data:') === 0 || low.indexOf('vbscript:') === 0) return false;
+        return low.indexOf('https://') === 0 || low.indexOf('http://') === 0 || low.charAt(0) === '/';
+      }
+
+      function smartTitleCaseIfAllCaps(text) {
+        var letters = text.replace(/[^A-Za-zА-Яа-яЁёІіЇїЄєҐґ]/g, '');
+        if (letters.length < 8) return { value: text, changed: false };
+        var upper = letters.replace(/[^A-ZА-ЯЁІЇЄҐ]/g, '').length;
+        if (upper / letters.length < 0.72) return { value: text, changed: false };
+        var lowered = text.toLowerCase().replace(/(^|\s)([a-zа-яёіїєґ])/g, function (_, sp, ch) { return sp + ch.toUpperCase(); });
+        return { value: lowered, changed: true };
+      }
+
+      function normalizeVendorAvailability(raw) {
+        var v = String(raw || '').toLowerCase().trim();
+        if (!v) return { value: 'order', recognized: true };
+        if (/^(in_stock|instock|stock|available|yes|1|в наличии|є|на складі)$/.test(v)) return { value: 'in_stock', recognized: true };
+        if (/^(order|on_order|preorder|lead|custom|под заказ|під замовлення)$/.test(v)) return { value: 'order', recognized: true };
+        if (/^(discontinued|eol|archive|archived|архив|снято|знято)$/.test(v)) return { value: 'discontinued', recognized: true };
+        if (/^(software_license|license|subscription|sdk|лицензия|ліцензія)$/.test(v)) return { value: 'software_license', recognized: true };
+        return { value: 'order', recognized: false };
+      }
+
+      function normalizeVendorType(raw, fallback) {
+        var v = String(raw || '').toLowerCase().trim();
+        if (!v) return fallback || 'tag';
+        if (/^(tag|tags|label|transponder|inlay|метка|метки|мітка|мітки)$/.test(v)) return 'tag';
+        if (/^(reader|readers|fixed|handheld|portal|считыватель|зчитувач)$/.test(v)) return 'reader';
+        if (/^(antenna|antennas|антенна|антена)$/.test(v)) return 'antenna';
+        if (/^(software|sdk|middleware|по|пз)$/.test(v)) return 'software';
+        if (/^(accessory|cable|mount|bracket|аксессуар|оснащення)$/.test(v)) return 'accessory';
+        return null;
+      }
+
+      function pickAlias(obj, keys) {
+        for (var i = 0; i < keys.length; i++) {
+          if (obj[keys[i]] !== undefined && String(obj[keys[i]]).trim() !== '') return String(obj[keys[i]]).trim();
+        }
+        return '';
+      }
+
+      function analyzeVendorBatch() {
+        var raw = document.getElementById('batchRawInput').value.trim();
+        if (!raw) { toast('Загрузите файл или вставьте CSV/JSON данные'); return; }
+        var anchorLang = document.getElementById('batchAnchorLangSelect').value || 'en';
+        var defaultType = document.getElementById('batchTemplateType').value || 'tag';
+        var importMode = document.getElementById('batchImportMode').value || 'create_only';
+        var asDraft = document.getElementById('batchAsDraftCheck').checked;
+        var autoClean = document.getElementById('batchAutoCleanCheck').checked;
+
+        var rawRows;
+        try {
+          if (raw.charAt(0) === '[' || raw.charAt(0) === '{') {
+            var parsedJson = JSON.parse(raw);
+            rawRows = Array.isArray(parsedJson) ? parsedJson : (Array.isArray(parsedJson.items) ? parsedJson.items : [parsedJson]);
+          } else {
+            rawRows = parseDelimitedTable(raw);
+          }
+        } catch (err) {
+          toast('Ошибка разбора файла: ' + err.message);
+          return;
+        }
+
+        // Index existing catalog by SKU (lowercased) and translationKey
+        var existingBySku = {};
+        var existingByTk = {};
+        state.catalogItems.forEach(function (it) {
+          if (it.sku) {
+            var sk = it.sku.trim().toLowerCase();
+            if (!existingBySku[sk] || it.lang === anchorLang) existingBySku[sk] = it;
+          }
+          if (it.translationKey) {
+            if (!existingByTk[it.translationKey] || it.lang === anchorLang) existingByTk[it.translationKey] = it;
+          }
+        });
+
+        var seenSkus = {};
+        var analyzed = [];
+
+        rawRows.forEach(function (rawRow, idx) {
+          var rowNum = idx + 1;
+          var obj = {};
+          Object.keys(rawRow || {}).forEach(function (k) { obj[k.toLowerCase().replace(/[\s-]+/g, '_')] = rawRow[k]; });
+
+          var warnings = [];
+          var errors = [];
+
+          var sku = stripDangerPrefix(pickAlias(obj, ['sku', 'part_number', 'articul', 'article', 'артикул', 'model']), false);
+          var mfg = stripDangerPrefix(pickAlias(obj, ['manufacturer', 'vendor', 'brand', 'производитель', 'вендор']), false);
+          var rawTitle = stripDangerPrefix(pickAlias(obj, ['title', 'name', 'product_name', 'название', 'назва']), false);
+          var rawTk = stripDangerPrefix(pickAlias(obj, ['translationkey', 'translation_key', 'key']), false);
+          var rawSlug = stripDangerPrefix(pickAlias(obj, ['slug', 'url_slug']), false);
+
+          if (!sku) errors.push('Отсутствует SKU');
+          if (sku) {
+            var skuKey = sku.toLowerCase();
+            if (seenSkus[skuKey]) errors.push('Дубль SKU внутри прайса (стр. ' + seenSkus[skuKey] + ')');
+            else seenSkus[skuKey] = rowNum;
+          }
+
+          if (!rawTitle && importMode !== 'price_only') {
+            errors.push('Пустое название');
+          } else if (rawTitle && rawTitle.length < 3 && importMode !== 'price_only') {
+            errors.push('Слишком короткое название (<3 симв.)');
+          }
+
+          if (autoClean && rawTitle) {
+            var tc = smartTitleCaseIfAllCaps(rawTitle);
+            if (tc.changed) {
+              rawTitle = tc.value;
+              warnings.push('CAPS → нормализовано');
+            }
+          }
+
+          var cType = normalizeVendorType(pickAlias(obj, ['catalogtype', 'catalog_type', 'type', 'class', 'класс']), defaultType);
+          if (!cType) {
+            errors.push('Неизвестный класс (catalogType)');
+            cType = defaultType;
+          }
+
+          var availCheck = normalizeVendorAvailability(pickAlias(obj, ['availability', 'status', 'stock', 'наличие', 'статус']));
+          if (!availCheck.recognized) warnings.push('Неясный статус наличия → order');
+
+          // Parse price cleanly (handles "1 240,50 EUR" or "0,38")
+          var rawPriceStr = pickAlias(obj, ['price', 'cost', 'unit_price', 'цена', 'ціна']);
+          var priceVal = null;
+          if (rawPriceStr !== '') {
+            var cleanedNum = rawPriceStr.replace(/[€$₴£\s]/g, '').replace(',', '.');
+            if (/^\d+(\.\d+)?$/.test(cleanedNum)) {
+              priceVal = Number(cleanedNum);
+              if (cleanedNum !== rawPriceStr.trim()) warnings.push('Цена приведена к числу');
+            } else {
+              errors.push('Некорректная цена: «' + rawPriceStr + '»');
+            }
+          }
+          var currency = stripDangerPrefix(pickAlias(obj, ['currency', 'valuta', 'валюта']) || 'EUR', false).toUpperCase();
+          if (!/^[A-Z]{3}$/.test(currency)) {
+            warnings.push('Валюта → EUR');
+            currency = 'EUR';
+          }
+          var priceUnit = stripDangerPrefix(pickAlias(obj, ['priceunit', 'price_unit', 'unit', 'единица']), false);
+          var rawShow = pickAlias(obj, ['showprice', 'show_price', 'показывать_цену']).toLowerCase();
+          var showPrice = rawShow ? /^(true|1|yes|да|так)$/.test(rawShow) : (priceVal !== null);
+
+          var imgUrl = stripDangerPrefix(pickAlias(obj, ['image_url', 'image', 'photo', 'фото']), false);
+          var dsUrl = stripDangerPrefix(pickAlias(obj, ['datasheet_url', 'datasheet', 'pdf', 'manual']), false);
+          if (!isSafeAssetUrl(imgUrl)) errors.push('Опасный/невалидный image_url');
+          if (!isSafeAssetUrl(dsUrl)) errors.push('Опасный/невалидный datasheet_url');
+
+          // Build normalized specs from vendor technical columns
+          var specs = [];
+          function addSpec(grp, lbl, rawVal, unit, normalizer) {
+            var v = stripDangerPrefix(rawVal, true);
+            if (!v) return;
+            if (autoClean && normalizer) {
+              var nr = normalizer(v);
+              if (nr.changed) warnings.push(lbl + ': ' + v + ' → ' + nr.val);
+              v = nr.val;
+            }
+            specs.push({ group: grp, label: lbl, value: v, unit: unit || undefined });
+          }
+
+          addSpec('RF & Chip', 'Frequency Band', pickAlias(obj, ['frequency_band', 'frequency', 'freq', 'частота']), 'MHz', function (v) {
+            var n = v.replace(/\s*mhz\s*/gi, '').replace(/(\d)\s*-\s*(\d)/g, '$1–$2');
+            return { val: n, changed: n !== v };
+          });
+          addSpec('RF & Chip', 'IC / Chip', pickAlias(obj, ['ic_chip', 'chip', 'ic', 'чип']), '', null);
+          addSpec('RF & Chip', 'Air Protocol', pickAlias(obj, ['protocol', 'air_protocol', 'протокол']), '', null);
+          addSpec('RF & Chip', 'Peak Read Range', pickAlias(obj, ['read_range_m', 'read_range', 'range', 'дальность']), 'm', null);
+          addSpec('Mechanics & Env', 'Mount Surface', pickAlias(obj, ['mount_surface', 'surface', 'поверхность']), '', function (v) {
+            var low = v.toLowerCase();
+            if (/on[\s_-]*metal|на метал/.test(low)) return { val: 'On-Metal (Ferrite/Ceramic)', changed: v !== 'On-Metal (Ferrite/Ceramic)' };
+            if (/laundry|текстиль|прачеч/.test(low)) return { val: 'Industrial Laundry Textile', changed: v !== 'Industrial Laundry Textile' };
+            if (/dielectric|non[\s_-]*metal|пластик|картон/.test(low)) return { val: 'Non-Metal / Dielectric', changed: v !== 'Non-Metal / Dielectric' };
+            return { val: v, changed: false };
+          });
+          addSpec('Mechanics & Env', 'IP Rating', pickAlias(obj, ['ip_rating', 'ip', 'защита']), '', function (v) {
+            var n = v.toUpperCase().replace(/^IP[\s_-]+(\d{2}K?)$/, 'IP$1');
+            return { val: n, changed: n !== v };
+          });
+          addSpec('Mechanics & Env', 'Dimensions', pickAlias(obj, ['dimensions_mm', 'dimensions', 'size', 'габариты']), 'mm', null);
+          addSpec('Mechanics & Env', 'Operating Temp', pickAlias(obj, ['temp_range', 'temperature', 'температура']), '°C', null);
+
+          var tk = toLatinSlug(rawTk || (mfg ? (mfg + '-' + sku) : sku) || rawTitle);
+          var slug = toLatinSlug(rawSlug || tk || rawTitle);
+          if (!tk || !SLUG_RE.test(tk)) errors.push('Не удалось сформировать валидный translationKey');
+
+          var existing = (sku && existingBySku[sku.toLowerCase()]) || (tk && existingByTk[tk]) || null;
+          var targetTk = existing ? existing.translationKey : tk;
+
+          var desc = stripDangerPrefix(pickAlias(obj, ['short_description', 'description', 'desc', 'описание']), false);
+          var rawHl = stripDangerPrefix(pickAlias(obj, ['highlights', 'features', 'особенности']), false);
+          var highlights = rawHl ? rawHl.split(/[;|]/).map(function (s) { return s.trim(); }).filter(Boolean) : [];
+          var rawTags = stripDangerPrefix(pickAlias(obj, ['tags', 'теги']), false);
+          var tags = rawTags ? rawTags.split(/[,;|]/).map(function (s) { return s.trim(); }).filter(Boolean) : [];
+          if (cType === 'tag' && tags.indexOf('RFID Tag') === -1) tags.push('RFID Tag');
+
+          var bodyMd = pickAlias(obj, ['body_markdown', 'body', 'markdown', 'текст']);
+          if (!bodyMd) {
+            var specLines = specs.map(function (s) { return '- **' + s.label + ':** ' + s.value + (s.unit ? ' ' + s.unit : ''); }).join('\n');
+            bodyMd = '## Engineering Overview\n\n' + (desc || (rawTitle + ' (' + sku + ') industrial RFID unit.')) +
+              (specLines ? ('\n\n### Key Parameters\n\n' + specLines + '\n') : '\n');
+            if (importMode !== 'price_only') warnings.push('Body сгенерирован из описания и ТТХ');
+          }
+
+          var documents = dsUrl ? [{
+            title: (sku || rawTitle) + ' — Vendor Datasheet',
+            docType: 'datasheet',
+            file: dsUrl,
+            version: 'v1.0',
+            lang: anchorLang.toUpperCase()
+          }] : [];
+
+          var status = 'NEW';
+          var diffText = (showPrice && priceVal !== null) ? (currency + ' ' + priceVal + (priceUnit ? ' ' + priceUnit : '')) : 'Запрос';
+
+          if (errors.length > 0) {
+            status = 'ERROR';
+          } else if (importMode === 'create_only' && existing) {
+            status = 'SKIP';
+            warnings.push('Уже существует в каталоге (' + existing.translationKey + ')');
+          } else if (importMode === 'price_only') {
+            if (!existing) {
+              status = 'SKIP';
+              warnings.push('SKU не найден в каталоге (пропущено)');
+            } else {
+              status = 'PRICE';
+              var oldP = existing.showPrice && existing.price !== null ? (existing.currency + ' ' + existing.price) : 'Запрос';
+              var newP = showPrice && priceVal !== null ? (currency + ' ' + priceVal) : 'Запрос';
+              diffText = oldP + ' → ' + newP + ' | ' + existing.availability + ' → ' + availCheck.value;
+            }
+          } else if (importMode === 'full_upsert' && existing) {
+            status = 'UPDATE';
+          }
+
+          analyzed.push({
+            rowNum: rowNum,
+            checked: status === 'NEW' || status === 'UPDATE' || status === 'PRICE',
+            status: status,
+            sku: sku,
+            translationKey: targetTk,
+            slug: slug,
+            title: rawTitle || (existing ? existing.title : sku),
+            diffText: diffText,
+            specsCount: specs.length,
+            warnings: warnings,
+            errors: errors,
+            payload: {
+              anchorLang: anchorLang,
+              followerLangs: [],
+              overwrite: importMode === 'full_upsert',
+              constants: {
+                translationKey: targetTk,
+                catalogType: cType,
+                sku: sku,
+                manufacturer: mfg,
+                availability: availCheck.value,
+                date: new Date().toISOString(),
+                weight: 50 + rowNum,
+                image: imgUrl,
+                gallery: [],
+                showPrice: showPrice,
+                price: priceVal,
+                currency: currency,
+                priceUnit: priceUnit,
+                commentsMode: 'all',
+                draft: asDraft,
+                specs: specs,
+                documents: documents,
+                linkedArticles: []
+              },
+              entries: [{
+                lang: anchorLang,
+                title: rawTitle || (existing ? existing.title : sku),
+                slug: existing ? existing.slug : slug,
+                description: desc,
+                highlights: highlights,
+                tags: tags,
+                body: bodyMd
+              }]
+            },
+            pricePatch: {
+              translationKey: targetTk,
+              showPrice: showPrice,
+              price: priceVal,
+              currency: currency,
+              priceUnit: priceUnit,
+              availability: availCheck.value
+            }
+          });
+        });
+
+        batchState.rows = analyzed;
+        renderBatchDryRunTable();
+      }
+
+      function renderBatchDryRunTable() {
+        var rows = batchState.rows;
+        var sumEl = document.getElementById('batchSummaryBar');
+        var wrapEl = document.getElementById('batchPreviewWrap');
+        var tb = document.getElementById('batchPreviewTbody');
+        var errBtn = document.getElementById('downloadBatchErrorsBtn');
+        tb.innerHTML = '';
+
+        var counts = { ready: 0, warn: 0, err: 0, skip: 0 };
+        rows.forEach(function (r) {
+          if (r.status === 'ERROR') counts.err++;
+          else if (r.status === 'SKIP') counts.skip++;
+          else {
+            counts.ready++;
+            if (r.warnings.length) counts.warn++;
+          }
+        });
+
+        sumEl.innerHTML = '';
+        var sItems = [
+          ['Всего строк: ' + rows.length, 'badge-skip'],
+          ['Готово к применению: ' + counts.ready, 'badge-ok'],
+          ['С авто-очисткой: ' + counts.warn, 'badge-warn'],
+          ['Ошибки (блокированы): ' + counts.err, 'badge-err'],
+          ['Пропущено: ' + counts.skip, 'badge-skip']
+        ];
+        sItems.forEach(function (pair) {
+          var b = document.createElement('span');
+          b.className = 'badge-pill ' + pair[1];
+          b.textContent = pair[0];
+          sumEl.appendChild(b);
+        });
+        sumEl.style.display = 'flex';
+        wrapEl.style.display = 'block';
+        errBtn.style.display = (counts.err + counts.warn) > 0 ? 'inline-flex' : 'none';
+
+        rows.forEach(function (r) {
+          var tr = document.createElement('tr');
+          var tdChk = document.createElement('td');
+          var cb = document.createElement('input');
+          cb.type = 'checkbox';
+          cb.checked = r.checked;
+          cb.disabled = (r.status === 'ERROR' || r.status === 'SKIP');
+          cb.addEventListener('change', function () {
+            r.checked = cb.checked;
+            updateBatchApplyBtn();
+          });
+          tdChk.appendChild(cb);
+
+          var tdSt = document.createElement('td');
+          var stBadge = document.createElement('span');
+          stBadge.className = 'badge-pill ' + (r.status === 'ERROR' ? 'badge-err' : r.status === 'SKIP' ? 'badge-skip' : r.warnings.length ? 'badge-warn' : 'badge-ok');
+          stBadge.textContent = r.status;
+          tdSt.appendChild(stBadge);
+
+          var tdSku = document.createElement('td');
+          tdSku.style.fontFamily = 'var(--mono)';
+          tdSku.textContent = (r.sku || '—') + ' / ' + r.translationKey;
+
+          var tdTitle = document.createElement('td');
+          tdTitle.textContent = r.title;
+
+          var tdDiff = document.createElement('td');
+          tdDiff.style.fontFamily = 'var(--mono)';
+          tdDiff.textContent = r.diffText;
+
+          var tdSpecs = document.createElement('td');
+          tdSpecs.textContent = String(r.specsCount);
+
+          var tdNotes = document.createElement('td');
+          tdNotes.style.fontSize = '11.5px';
+          var allNotes = r.errors.concat(r.warnings);
+          tdNotes.textContent = allNotes.length ? allNotes.join(' · ') : 'OK';
+          if (r.errors.length) tdNotes.style.color = 'var(--err-text)';
+          else if (r.warnings.length) tdNotes.style.color = 'var(--warn-text)';
+
+          tr.appendChild(tdChk); tr.appendChild(tdSt); tr.appendChild(tdSku); tr.appendChild(tdTitle);
+          tr.appendChild(tdDiff); tr.appendChild(tdSpecs); tr.appendChild(tdNotes);
+          tb.appendChild(tr);
+        });
+        updateBatchApplyBtn();
+      }
+
+      function updateBatchApplyBtn() {
+        var selected = batchState.rows.filter(function (r) { return r.checked && r.status !== 'ERROR' && r.status !== 'SKIP'; }).length;
+        var btn = document.getElementById('applyBatchImportBtn');
+        btn.disabled = selected === 0;
+        btn.textContent = 'Применить валидные (' + selected + ')';
+      }
+
+      document.getElementById('batchCheckAll').addEventListener('change', function () {
+        var checked = this.checked;
+        batchState.rows.forEach(function (r) {
+          if (r.status !== 'ERROR' && r.status !== 'SKIP') r.checked = checked;
+        });
+        renderBatchDryRunTable();
+      });
+
+      document.getElementById('downloadVendorTemplateBtn').addEventListener('click', function () {
+        var tp = document.getElementById('batchTemplateType').value || 'tag';
+        var headers = [
+          'sku','manufacturer','catalogType','availability','price','currency','priceUnit','showPrice',
+          'title','short_description','frequency_band','ic_chip','protocol','mount_surface','ip_rating',
+          'dimensions_mm','temp_range','read_range_m','highlights','tags','image_url','datasheet_url','body_markdown'
+        ];
+        var sampleRows = {
+          tag: [
+            ['TAG-CER-M730-85','RFID Lab','tag','in_stock','1.85','EUR','/ шт.','true','Ceramic On-Metal UHF Tag 25x9x3 mm (Impinj M730)','High-temperature sintered ceramic on-metal UHF transponder for steel assets and tooling.','865-868','Impinj M730','ISO 18000-63 Gen2v2','On-Metal','IP68','25 x 9 x 3','-40 to +180','5.4','Stable RF tuning on steel;200C thermal epoxy cure;Laser-etched TID option','UHF,On-Metal,Ceramic,IP68','','',''],
+            ['TAG-TEX-U9-LN','RFID Lab','tag','order','0.62','EUR','/ шт.','true','Industrial Laundry UHF Tag UCODE 9 (70x15 mm)','Flexible silicone UHF transponder rated for 200+ industrial wash and autoclave cycles.','860-960','NXP UCODE 9','EPC Gen2v2','Industrial Laundry','IP69K','70 x 15 x 1.8','-25 to +110','7.2','60 bar extractor survival;Chemical detergent resistant;Sew-on or heat-seal','Laundry,UHF,IP69K,UCODE9','','','']
+          ],
+          reader: [
+            ['RDR-XR200-2P','RFID Lab','reader','in_stock','940','EUR','/ unit','true','2-Port Compact PoE UHF RFID Reader XR200','Compact 2-port industrial RAIN UHF reader with LLRP 1.1 and MQTT EPCIS 2.0 streaming.','865.6-867.6','Impinj E510','EPC Gen2v2 / Gen2X','Fixed Portal','IP65','160 x 110 x 32','-20 to +55','10.5','IEEE 802.3af/at PoE;2x RP-TNC ports;Built-in MQTT edge filter','Reader,UHF,PoE','','','']
+          ]
+        };
+        var rows = sampleRows[tp] || sampleRows.tag;
+        var csv = '\uFEFF' + headers.map(csvSafeCell).join(',') + '\n' +
+          rows.map(function (r) { return r.map(csvSafeCell).join(','); }).join('\n') + '\n';
+        downloadTextFile('vendor-catalog-template-' + tp + '.csv', csv, 'text/csv;charset=utf-8');
+        toast('Скачан шаблон прайса для вендора (' + tp + ')');
+      });
+
+      document.getElementById('downloadBatchErrorsBtn').addEventListener('click', function () {
+        var problemRows = batchState.rows.filter(function (r) { return r.errors.length > 0 || r.warnings.length > 0; });
+        if (!problemRows.length) return;
+        var lines = ['row,status,sku,title,errors,warnings'];
+        problemRows.forEach(function (r) {
+          lines.push([r.rowNum, r.status, r.sku, r.title, r.errors.join(' | '), r.warnings.join(' | ')].map(csvSafeCell).join(','));
+        });
+        downloadTextFile('batch-import-audit-report.csv', '\uFEFF' + lines.join('\n') + '\n', 'text/csv;charset=utf-8');
+        toast('Скачан отчёт аудита для поставщика');
+      });
+
+      document.getElementById('batchFileInput').addEventListener('change', function () {
+        var f = this.files && this.files[0]; this.value = '';
+        if (!f) return;
+        var reader = new FileReader();
+        reader.onload = function () {
+          document.getElementById('batchRawInput').value = String(reader.result || '');
+          analyzeVendorBatch();
+        };
+        reader.readAsText(f, 'utf-8');
+      });
+      document.getElementById('runBatchDryRunBtn').addEventListener('click', analyzeVendorBatch);
+
+      async function commitFilesToGithubTree(fileMap, commitMsg) {
+        if (!state.ghToken) throw new Error('Подключите GitHub Token или сессию CMS');
+        var repo = state.ghRepo, br = state.ghBranch;
+        var ref = await ghApi('/repos/' + repo + '/git/ref/heads/' + encodeURIComponent(br));
+        var headSha = ref.object.sha;
+        var commitObj = await ghApi('/repos/' + repo + '/git/commits/' + headSha);
+        var treeItems = [];
+        var paths = Object.keys(fileMap);
+        for (var i = 0; i < paths.length; i++) {
+          var p = paths[i];
+          var blob = await ghApi('/repos/' + repo + '/git/blobs', {
+            method: 'POST',
+            body: JSON.stringify({ content: fileMap[p], encoding: 'utf-8' })
+          });
+          treeItems.push({ path: p, mode: '100644', type: 'blob', sha: blob.sha });
+        }
+        var tree = await ghApi('/repos/' + repo + '/git/trees', {
+          method: 'POST',
+          body: JSON.stringify({ base_tree: commitObj.tree.sha, tree: treeItems })
+        });
+        var newCommit = await ghApi('/repos/' + repo + '/git/commits', {
+          method: 'POST',
+          body: JSON.stringify({ message: commitMsg, tree: tree.sha, parents: [headSha] })
+        });
+        await ghApi('/repos/' + repo + '/git/refs/heads/' + encodeURIComponent(br), {
+          method: 'PATCH',
+          body: JSON.stringify({ sha: newCommit.sha })
+        });
+      }
+
+      document.getElementById('applyBatchImportBtn').addEventListener('click', async function () {
+        var importMode = document.getElementById('batchImportMode').value || 'create_only';
+        var selected = batchState.rows.filter(function (r) { return r.checked && r.status !== 'ERROR' && r.status !== 'SKIP'; });
+        if (!selected.length) return;
+        this.disabled = true;
+
+        try {
+          if (state.mode === 'local') {
+            var bodyPayload = importMode === 'price_only'
+              ? { mode: 'price_only', pricePatches: selected.map(function (r) { return r.pricePatch; }) }
+              : { mode: importMode, items: selected.map(function (r) { return r.payload; }) };
+            var res = await fetch('/api/catalog/batch-save', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(bodyPayload)
+            });
+            var data = await res.json();
+            if (!data.ok) throw new Error(data.error || 'Ошибка пакетного сохранения');
+            toast('Готово! Создано: ' + data.createdCount + ' · Обновлено: ' + data.updatedCount + ' · Ошибок: ' + (data.errors ? data.errors.length : 0));
+            await loadLocalState();
+          } else {
+            var fileMap = {};
+            if (importMode === 'price_only') {
+              selected.forEach(function (r) {
+                var patch = r.pricePatch;
+                var matching = state.catalogItems.filter(function (it) { return it.translationKey === patch.translationKey; });
+                matching.forEach(function (it) {
+                  var updatedConst = Object.assign({}, it, {
+                    showPrice: Boolean(patch.showPrice),
+                    price: patch.price,
+                    currency: patch.currency || it.currency,
+                    priceUnit: patch.priceUnit !== undefined ? patch.priceUnit : it.priceUnit,
+                    availability: patch.availability
+                  });
+                  fileMap[it.relPath] = serializeMdClient(updatedConst, it);
+                });
+              });
+            } else {
+              selected.forEach(function (r) {
+                var ent = r.payload.entries[0];
+                fileMap['content/' + ent.lang + '/catalog/' + ent.slug + '/index.md'] = serializeMdClient(r.payload.constants, ent);
+              });
+            }
+            await commitFilesToGithubTree(fileMap, 'feat(catalog): batch import (' + importMode + ', ' + Object.keys(fileMap).length + ' files)');
+            toast('Коммит в GitHub выполнен (' + Object.keys(fileMap).length + ' файлов)');
+            await loadFromGithub();
+          }
+          closeModal('batchModal');
+        } catch (err) {
+          toast('Ошибка пакетного импорта: ' + err.message);
+        } finally {
+          updateBatchApplyBtn();
+        }
+      });
+
+      // Tab 2: Batch Translation Pack Export / Dry-Run / Import
+      document.getElementById('exportTranslationPackBtn').addEventListener('click', async function () {
+        var targetLang = document.getElementById('trExportLangSelect').value;
+        var scope = document.getElementById('trExportScopeSelect').value;
+        var groups = {};
+        state.catalogItems.forEach(function (it) {
+          if (!groups[it.translationKey]) groups[it.translationKey] = [];
+          groups[it.translationKey].push(it);
+        });
+
+        var itemsToExport = [];
+        var tks = Object.keys(groups);
+        for (var i = 0; i < tks.length; i++) {
+          var tk = tks[i];
+          var grp = groups[tk];
+          var hasTarget = grp.some(function (g) { return g.lang === targetLang; });
+          if (scope === 'missing' && hasTarget) continue;
+          var anchor = grp.find(function (g) { return g.lang === 'en'; }) || grp.find(function (g) { return g.lang === 'uk'; }) || grp[0];
+          var detail = anchor;
+          if (state.mode === 'local') {
+            try {
+              var res = await fetch('/api/catalog/item?relPath=' + encodeURIComponent(anchor.relPath));
+              var d = await res.json();
+              if (d.ok && d.item) detail = d.item;
+            } catch (_) {}
+          }
+          itemsToExport.push({
+            translationKey: tk,
+            anchorLang: anchor.lang,
+            targetLang: targetLang,
+            sku: detail.sku || '',
+            title: detail.title || '',
+            slug: detail.slug || tk,
+            description: detail.description || '',
+            highlights: detail.highlights || [],
+            tags: detail.tags || [],
+            body: detail.body || ''
+          });
+        }
+
+        if (!itemsToExport.length) {
+          toast('Нет позиций для выгрузки на язык ' + targetLang.toUpperCase());
+          return;
+        }
+        var pack = {
+          format: 'rfid-catalog-translation-pack-v1',
+          exportedAt: new Date().toISOString(),
+          targetLang: targetLang,
+          count: itemsToExport.length,
+          items: itemsToExport
+        };
+        downloadTextFile('catalog-translations-' + targetLang + '.json', JSON.stringify(pack, null, 2) + '\n', 'application/json;charset=utf-8');
+        toast('Выгружен пакет на перевод: ' + itemsToExport.length + ' поз. (' + targetLang.toUpperCase() + ')');
+      });
+
+      function analyzeTranslationPack() {
+        var raw = document.getElementById('trImportRawInput').value.trim();
+        if (!raw) { toast('Загрузите или вставьте JSON-пакет переводов'); return; }
+        var parsed;
+        try {
+          parsed = JSON.parse(raw);
+        } catch (err) {
+          toast('Некорректный JSON: ' + err.message);
+          return;
+        }
+        var items = Array.isArray(parsed) ? parsed : (Array.isArray(parsed.items) ? parsed.items : []);
+        var defaultTarget = parsed.targetLang || document.getElementById('trExportLangSelect').value;
+
+        var validLangs = {};
+        SITE_LANGUAGES.forEach(function (l) { validLangs[l.code] = true; });
+        var groups = {};
+        state.catalogItems.forEach(function (it) {
+          if (!groups[it.translationKey]) groups[it.translationKey] = [];
+          groups[it.translationKey].push(it);
+        });
+
+        var out = [];
+        items.forEach(function (row) {
+          var tk = String(row.translationKey || '').trim();
+          var tl = String(row.targetLang || defaultTarget || '').toLowerCase().trim();
+          var title = String(row.title || '').trim();
+          var slug = toLatinSlug(row.slug || tk || title);
+          var body = String(row.body || '').trim();
+          var grp = groups[tk] || [];
+          var anchor = grp.find(function (g) { return g.lang === 'uk'; }) || grp.find(function (g) { return g.lang === 'en'; }) || grp[0];
+          var err = '';
+          if (!tk || !anchor) err = 'Связка translationKey не найдена в каталоге';
+          else if (!validLangs[tl]) err = 'Неизвестный язык: ' + tl;
+          else if (!title || !slug || !body) err = 'Пустой title, slug или body';
+          out.push({
+            ok: !err,
+            error: err || 'OK (константы якоря сохраняются)',
+            targetLang: tl,
+            translationKey: tk,
+            title: title,
+            slug: slug,
+            description: String(row.description || '').trim(),
+            highlights: Array.isArray(row.highlights) ? row.highlights.map(String) : [],
+            tags: Array.isArray(row.tags) ? row.tags.map(String) : [],
+            body: body,
+            anchorRelPath: anchor ? anchor.relPath : ''
+          });
+        });
+
+        batchState.trRows = out;
+        var tb = document.getElementById('trPreviewTbody');
+        tb.innerHTML = '';
+        var okCount = 0;
+        out.forEach(function (r) {
+          if (r.ok) okCount++;
+          var tr = document.createElement('tr');
+          var tdS = document.createElement('td');
+          var b = document.createElement('span');
+          b.className = 'badge-pill ' + (r.ok ? 'badge-ok' : 'badge-err');
+          b.textContent = r.ok ? 'READY' : 'ERROR';
+          tdS.appendChild(b);
+
+          var tdL = document.createElement('td'); tdL.textContent = r.targetLang.toUpperCase();
+          var tdTk = document.createElement('td'); tdTk.style.fontFamily = 'var(--mono)'; tdTk.textContent = r.translationKey;
+          var tdT = document.createElement('td'); tdT.textContent = r.title;
+          var tdSl = document.createElement('td'); tdSl.style.fontFamily = 'var(--mono)'; tdSl.textContent = r.slug;
+          var tdM = document.createElement('td'); tdM.textContent = r.error;
+          if (!r.ok) tdM.style.color = 'var(--err-text)';
+          tr.appendChild(tdS); tr.appendChild(tdL); tr.appendChild(tdTk); tr.appendChild(tdT); tr.appendChild(tdSl); tr.appendChild(tdM);
+          tb.appendChild(tr);
+        });
+        document.getElementById('trPreviewWrap').style.display = 'block';
+        document.getElementById('trSummaryText').textContent = 'Проверено: ' + out.length + ' · Готово: ' + okCount;
+        var applyBtn = document.getElementById('applyTrBatchBtn');
+        applyBtn.disabled = okCount === 0;
+        applyBtn.textContent = 'Применить переводы (' + okCount + ')';
+      }
+
+      document.getElementById('trImportFileInput').addEventListener('change', function () {
+        var f = this.files && this.files[0]; this.value = '';
+        if (!f) return;
+        var reader = new FileReader();
+        reader.onload = function () {
+          document.getElementById('trImportRawInput').value = String(reader.result || '');
+          analyzeTranslationPack();
+        };
+        reader.readAsText(f, 'utf-8');
+      });
+      document.getElementById('runTrDryRunBtn').addEventListener('click', analyzeTranslationPack);
+
+      document.getElementById('applyTrBatchBtn').addEventListener('click', async function () {
+        var ready = batchState.trRows.filter(function (r) { return r.ok; });
+        if (!ready.length) return;
+        this.disabled = true;
+        try {
+          var payloads = [];
+          var ghFiles = {};
+          for (var i = 0; i < ready.length; i++) {
+            var r = ready[i];
+            var anchor = state.catalogItems.find(function (it) { return it.relPath === r.anchorRelPath; });
+            if (!anchor) continue;
+            var detail = anchor;
+            if (state.mode === 'local') {
+              var res = await fetch('/api/catalog/item?relPath=' + encodeURIComponent(anchor.relPath));
+              var d = await res.json();
+              if (d.ok && d.item) detail = d.item;
+            }
+            var constObj = {
+              translationKey: detail.translationKey,
+              catalogType: detail.catalogType,
+              sku: detail.sku || '',
+              manufacturer: detail.manufacturer || '',
+              availability: detail.availability || 'order',
+              date: detail.date,
+              weight: detail.weight || 100,
+              image: detail.image || '',
+              gallery: detail.gallery || [],
+              showPrice: Boolean(detail.showPrice),
+              price: detail.price,
+              currency: detail.currency || 'EUR',
+              priceUnit: detail.priceUnit || '',
+              commentsMode: detail.commentsMode || 'all',
+              draft: Boolean(detail.draft),
+              specs: detail.specs || [],
+              documents: detail.documents || [],
+              linkedArticles: detail.linkedArticles || []
+            };
+            var entObj = {
+              lang: r.targetLang,
+              title: r.title,
+              slug: r.slug,
+              description: r.description,
+              highlights: r.highlights,
+              tags: r.tags,
+              body: r.body
+            };
+            if (state.mode === 'local') {
+              payloads.push({
+                anchorLang: r.targetLang,
+                followerLangs: [],
+                overwrite: true,
+                constants: constObj,
+                entries: [entObj]
+              });
+            } else {
+              ghFiles['content/' + r.targetLang + '/catalog/' + r.slug + '/index.md'] = serializeMdClient(constObj, entObj);
+            }
+          }
+
+          if (state.mode === 'local') {
+            var saveRes = await fetch('/api/catalog/batch-save', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ mode: 'full_upsert', items: payloads })
+            });
+            var saveData = await saveRes.json();
+            if (!saveData.ok) throw new Error(saveData.error || 'Ошибка сохранения переводов');
+            toast('Сохранено переводов: ' + saveData.updatedCount);
+            await loadLocalState();
+          } else {
+            await commitFilesToGithubTree(ghFiles, 'feat(catalog): batch translations (' + Object.keys(ghFiles).length + ' files)');
+            toast('Переводы закоммичены в GitHub (' + Object.keys(ghFiles).length + ' файлов)');
+            await loadFromGithub();
+          }
+          closeModal('batchModal');
+        } catch (err) {
+          toast('Ошибка импорта переводов: ' + err.message);
+        } finally {
+          document.getElementById('applyTrBatchBtn').disabled = false;
+        }
+      });
+
+      document.querySelectorAll('[data-batch-tab]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          document.querySelectorAll('[data-batch-tab]').forEach(function (b) { b.classList.remove('is-active'); });
+          btn.classList.add('is-active');
+          var tab = btn.getAttribute('data-batch-tab');
+          batchState.activeTab = tab;
+          document.getElementById('batchTabVendor').style.display = tab === 'vendor' ? 'flex' : 'none';
+          document.getElementById('batchTabTranslations').style.display = tab === 'translations' ? 'flex' : 'none';
+          document.getElementById('applyBatchImportBtn').style.display = tab === 'vendor' ? 'inline-flex' : 'none';
+          document.getElementById('applyTrBatchBtn').style.display = tab === 'translations' ? 'inline-flex' : 'none';
+        });
+      });
+
+      document.getElementById('openBatchModalBtn').addEventListener('click', function () {
+        var bSel = document.getElementById('batchAnchorLangSelect');
+        var tSel = document.getElementById('trExportLangSelect');
+        if (!bSel.options.length) {
+          SITE_LANGUAGES.forEach(function (l) {
+            var o1 = document.createElement('option');
+            o1.value = l.code; o1.textContent = 'Якорь: ' + l.label;
+            if (l.code === 'en') o1.selected = true;
+            bSel.appendChild(o1);
+
+            var o2 = document.createElement('option');
+            o2.value = l.code; o2.textContent = 'Язык: ' + l.label;
+            if (l.code === 'uk') o2.selected = true;
+            tSel.appendChild(o2);
+          });
+        }
+        openModal('batchModal');
+      });
 
       (async function init() {
         try {

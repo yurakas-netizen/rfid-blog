@@ -64,6 +64,7 @@ import {
   loadCatalogAdminState,
   loadCatalogDetail,
   saveMultilangCatalogBundle,
+  batchSaveCatalog,
   deleteCatalogItem,
   saveCatalogUpload,
   getCommentsForPublic,
@@ -644,6 +645,15 @@ app.post('/api/catalog/save', (req: Request, res: Response) => {
     return;
   }
   const result = saveMultilangCatalogBundle(req.body);
+  res.status(result.status).json(result);
+});
+
+app.post('/api/catalog/batch-save', (req: Request, res: Response) => {
+  if (!verifySameOrigin(req)) {
+    res.status(403).json({ ok: false, error: 'Запрос отклонён (несовпадение Origin)' });
+    return;
+  }
+  const result = batchSaveCatalog(req.body);
   res.status(result.status).json(result);
 });
 

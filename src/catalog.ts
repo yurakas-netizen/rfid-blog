@@ -123,6 +123,7 @@ export interface CatalogItem {
   bundleDir: string;
   permalink: string;
   rawBody: string;
+  draft: boolean;
 }
 
 export interface CatalogGlobalSettings {
@@ -385,12 +386,13 @@ export function saveCatalogSettings(rawInput: unknown, expectedHash?: string): {
   };
 }
 
-function parseCatalogFile(filePath: string, lang: LangCode, folder: string): CatalogItem | null {
+function parseCatalogFile(filePath: string, lang: LangCode, folder: string, includeDrafts = false): CatalogItem | null {
   try {
     const raw = fs.readFileSync(filePath, 'utf-8');
     const parsed = matter(raw);
     const data = parsed.data as Record<string, unknown>;
-    if (data.draft === true) return null;
+    const isDraft = data.draft === true;
+    if (isDraft && !includeDrafts) return null;
 
     const bundleDir = path.dirname(filePath);
     const slug = cleanStr(data.slug, 120) || folder;
@@ -533,16 +535,18 @@ function parseCatalogFile(filePath: string, lang: LangCode, folder: string): Cat
       bundleDir,
       permalink,
       rawBody: parsed.content,
+      draft: isDraft,
     };
   } catch {
     return null;
   }
 }
 
-export function loadAllCatalogItems(): {
+export function loadAllCatalogItems(options?: { includeDrafts?: boolean }): {
   allItems: CatalogItem[];
   itemsByLang: Record<LangCode, CatalogItem[]>;
 } {
+  const includeDrafts = Boolean(options?.includeDrafts);
   const allItems: CatalogItem[] = [];
   const itemsByLang = {} as Record<LangCode, CatalogItem[]>;
   for (const l of ORDERED_LANGUAGES) {
@@ -557,7 +561,7 @@ export function loadAllCatalogItems(): {
       if (!entry.isDirectory()) continue;
       const idxPath = path.join(dir, entry.name, 'index.md');
       if (!fs.existsSync(idxPath)) continue;
-      const item = parseCatalogFile(idxPath, langCfg.code, entry.name);
+      const item = parseCatalogFile(idxPath, langCfg.code, entry.name, includeDrafts);
       if (item) {
         allItems.push(item);
         itemsByLang[langCfg.code].push(item);
@@ -812,6 +816,7 @@ export interface CatalogSaveConstantsInput {
   currency: string;
   priceUnit: string;
   commentsMode: CommentsMode;
+  draft?: boolean;
   specs: CatalogSpecRow[];
   documents: CatalogDocument[];
   linkedArticles: CatalogLinkedArticleRef[];
@@ -851,6 +856,9 @@ function serializeCatalogMarkdown(c: CatalogSaveConstantsInput, e: CatalogSaveEn
   lines.push(`currency: ${formatYamlScalar(c.currency || 'EUR')}`);
   if (c.priceUnit) lines.push(`priceUnit: ${formatYamlScalar(c.priceUnit)}`);
   lines.push(`commentsMode: ${formatYamlScalar(c.commentsMode)}`);
+  if (c.draft === true) {
+    lines.push('draft: true');
+  }
   lines.push('math: true');
 
   if (e.highlights.length > 0) {
@@ -1015,8 +1023,129 @@ export function deleteCatalogItem(relPath: string): { ok: boolean; status: numbe
   }
 }
 
+export interface BatchCatalogPricePatchInput {
+  translationKey: string;
+  showPrice: boolean;
+  price: number | null;
+  currency: string;
+  priceUnit?: string;
+  availability: AvailabilityStatus;
+}
+
+export interface BatchCatalogSaveInput {
+  mode: 'create_only' | 'price_only' | 'full_upsert';
+  items?: CatalogSavePayload[];
+  pricePatches?: BatchCatalogPricePatchInput[];
+}
+
+export function batchSaveCatalog(input: BatchCatalogSaveInput): {
+  ok: boolean;
+  status: number;
+  error?: string;
+  createdCount: number;
+  updatedCount: number;
+  skippedCount: number;
+  errors: Array<{ key: string; error: string }>;
+} {
+  const mode = input?.mode;
+  if (mode !== 'create_only' && mode !== 'price_only' && mode !== 'full_upsert') {
+    return { ok: false, status: 400, error: 'Некорректный режим пакетного импорта', createdCount: 0, updatedCount: 0, skippedCount: 0, errors: [] };
+  }
+
+  let createdCount = 0;
+  let updatedCount = 0;
+  let skippedCount = 0;
+  const errors: Array<{ key: string; error: string }> = [];
+
+  if (mode === 'price_only') {
+    const patches = Array.isArray(input.pricePatches) ? input.pricePatches : [];
+    const { allItems } = loadAllCatalogItems({ includeDrafts: true });
+
+    for (const patch of patches) {
+      const tk = cleanStr(patch.translationKey, 120);
+      if (!tk) {
+        errors.push({ key: '(empty)', error: 'Пустой translationKey для обновления цены' });
+        continue;
+      }
+      const matching = allItems.filter((it) => it.translationKey === tk);
+      if (matching.length === 0) {
+        skippedCount++;
+        continue;
+      }
+      for (const item of matching) {
+        try {
+          const abs = resolveSafeCatalogContentPath(item.relPath);
+          const nextPrice =
+            typeof patch.price === 'number' && Number.isFinite(patch.price) && patch.price >= 0
+              ? patch.price
+              : null;
+          const md = serializeCatalogMarkdown(
+            {
+              translationKey: item.translationKey,
+              catalogType: item.catalogType,
+              sku: item.sku,
+              manufacturer: item.manufacturer,
+              availability: normalizeAvailability(patch.availability),
+              date: item.date.toISOString(),
+              weight: item.weight,
+              image: item.image || '',
+              gallery: item.gallery,
+              showPrice: Boolean(patch.showPrice),
+              price: nextPrice,
+              currency: cleanStr(patch.currency, 12).toUpperCase() || item.currency || 'EUR',
+              priceUnit: patch.priceUnit !== undefined ? cleanStr(patch.priceUnit, 40) : item.priceUnit,
+              commentsMode: item.commentsMode,
+              draft: item.draft,
+              specs: item.specs,
+              documents: item.documents,
+              linkedArticles: item.linkedArticles,
+            },
+            {
+              lang: item.lang,
+              title: item.title,
+              slug: item.slug,
+              description: item.description,
+              highlights: item.highlights,
+              tags: item.tags,
+              body: item.rawBody,
+            },
+            item.date.toISOString()
+          );
+          const tmpPath = `${abs}.tmp-${process.pid}-${Date.now()}`;
+          fs.writeFileSync(tmpPath, md, 'utf-8');
+          fs.renameSync(tmpPath, abs);
+          updatedCount++;
+        } catch (err) {
+          errors.push({ key: item.relPath, error: err instanceof Error ? err.message : String(err) });
+        }
+      }
+    }
+
+    return { ok: true, status: 200, createdCount, updatedCount, skippedCount, errors };
+  }
+
+  const payloads = Array.isArray(input.items) ? input.items : [];
+  for (const payload of payloads) {
+    const key = cleanStr(payload?.constants?.translationKey, 120) || cleanStr(payload?.constants?.sku, 80) || 'row';
+    const res = saveMultilangCatalogBundle({
+      ...payload,
+      overwrite: mode === 'full_upsert' ? true : Boolean(payload.overwrite),
+    });
+    if (res.ok && res.created) {
+      if (mode === 'full_upsert') updatedCount += res.created.length;
+      else createdCount += res.created.length;
+    } else if (res.status === 409 && mode === 'create_only') {
+      skippedCount++;
+    } else {
+      errors.push({ key, error: res.error || 'Ошибка сохранения позиции' });
+    }
+  }
+
+  return { ok: true, status: 200, createdCount, updatedCount, skippedCount, errors };
+}
+
 export function loadCatalogAdminState() {
-  const { allItems } = loadAllCatalogItems();
+  const { allItems } = loadAllCatalogItems({ includeDrafts: true });
   const settingsState = loadCatalogSettings();
   const siteContent = loadSiteContent();
 
@@ -1100,6 +1229,7 @@ export function loadCatalogAdminState() {
       currency: it.currency,
       priceUnit: it.priceUnit,
       commentsMode: it.commentsMode,
+      draft: it.draft,
       specsCount: it.specs.length,
       docsCount: it.documents.length,
       articlesCount: it.linkedArticles.length,
@@ -1120,7 +1250,7 @@ export function loadCatalogDetail(relPath: string) {
   const parts = relPath.replace(/\\/g, '/').split('/');
   const lang = parts[1] as LangCode;
   const folder = parts[3];
-  const item = parseCatalogFile(abs, lang, folder);
+  const item = parseCatalogFile(abs, lang, folder, true);
   if (!item) {
     throw new Error('Не удалось прочитать карточку');
   }
@@ -1144,6 +1274,7 @@ export function loadCatalogDetail(relPath: string) {
     currency: item.currency,
     priceUnit: item.priceUnit,
     commentsMode: item.commentsMode,
+    draft: item.draft,
     highlights: item.highlights,
     specs: item.specs,
     documents: item.documents,
