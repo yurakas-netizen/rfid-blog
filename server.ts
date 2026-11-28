@@ -49,6 +49,10 @@ import {
   loadMultilangPostDetail,
   publishMultilangBundle,
 } from './src/multilang.js';
+import {
+  loadTaxonomyDictionary,
+  saveTaxonomyDictionary,
+} from './src/taxonomy.js';
 
 const ROOT_DIR = process.cwd();
 const PORT = 3000;
@@ -494,6 +498,19 @@ app.get('/api/multilang/post', (req: Request, res: Response) => {
       error: err instanceof Error ? err.message : String(err),
     });
   }
+});
+
+app.get('/api/multilang/taxonomy', (_req: Request, res: Response) => {
+  res.json({ ok: true, taxonomy: loadTaxonomyDictionary() });
+});
+
+app.post('/api/multilang/taxonomy', (req: Request, res: Response) => {
+  if (!verifySameOrigin(req)) {
+    res.status(403).json({ ok: false, error: 'Запрос отклонён (несовпадение Origin)' });
+    return;
+  }
+  const result = saveTaxonomyDictionary(req.body);
+  res.status(result.status).json(result);
 });
 
 app.post('/api/multilang/publish', (req: Request, res: Response) => {

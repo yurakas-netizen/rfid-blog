@@ -633,6 +633,20 @@
       color: var(--accent-hover);
     }
 
+    button.badge-clickable {
+      font-family: inherit;
+      cursor: pointer;
+      transition: filter 0.12s ease, box-shadow 0.12s ease, transform 0.08s ease;
+    }
+
+    button.badge-clickable:hover {
+      filter: brightness(0.95);
+    }
+
+    button.badge-clickable.is-filter-active {
+      box-shadow: 0 0 0 2px var(--accent);
+    }
+
     .empty-state {
       padding: 40px 20px;
       text-align: center;
@@ -857,11 +871,14 @@
       <select id="problemSelect" class="select">
         <option value="">Любой статус</option>
         <option value="any">Все проблемные</option>
+        <option value="ok">Связка ОК</option>
         <option value="orphan">Сироты (нет пары)</option>
         <option value="no_tk">Нет translationKey</option>
         <option value="cat_mismatch">Разные категории в связке</option>
         <option value="tag_drift">Разнобой / дубли тегов</option>
         <option value="empty_tax">Пустые категории или теги</option>
+        <option value="no_cat">Нет категории</option>
+        <option value="no_tags">Нет тегов</option>
         <option value="no_slug">Нет латинского slug</option>
         <option value="dup_tk_lang">Дубль языка в translationKey</option>
         <option value="dirty">Только изменённые в сессии</option>
@@ -1792,6 +1809,8 @@
           if (f.problem) {
             if (f.problem === 'dirty') {
               if (!flags.dirty) return false;
+            } else if (f.problem === 'ok') {
+              if (flags.any) return false;
             } else if (!flags[f.problem]) {
               return false;
             }
@@ -1865,11 +1884,38 @@
         document.getElementById('bulkCountLabel').textContent = 'Выбрано: ' + count;
       }
 
-      function makeBadge(text, cls) {
-        var sp = document.createElement('span');
-        sp.className = 'badge ' + cls;
-        sp.textContent = text;
-        return sp;
+      function toggleStatusFilter(filterKey) {
+        if (!filterKey) return;
+        var next = state.filters.problem === filterKey ? '' : filterKey;
+        state.filters.problem = next;
+        if (next === 'ok' && state.filters.onlyProblems) {
+          state.filters.onlyProblems = false;
+          document.getElementById('onlyProblemsCb').checked = false;
+          document.getElementById('onlyProblemsLabel').classList.remove('is-active');
+        }
+        document.getElementById('problemSelect').value = next;
+        renderTableOnly();
+      }
+
+      function makeBadge(text, cls, filterKey) {
+        if (!filterKey) {
+          var sp = document.createElement('span');
+          sp.className = 'badge ' + cls;
+          sp.textContent = text;
+          return sp;
+        }
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        var active = state.filters.problem === filterKey;
+        btn.className = 'badge ' + cls + ' badge-clickable' + (active ? ' is-filter-active' : '');
+        btn.textContent = text;
+        btn.title = active
+          ? 'Нажмите, чтобы сбросить фильтр по этому статусу'
+          : 'Нажмите, чтобы отфильтровать статьи со статусом «' + text + '»';
+        btn.addEventListener('click', function () {
+          toggleStatusFilter(filterKey);
+        });
+        return btn;
       }
 
       function buildRowElement(post, analysis) {
@@ -2128,16 +2174,16 @@
         if (!flags.any) {
           var diag = analysis.tkDiagnostics.get(post.translationKey);
           var langsLabel = diag ? diag.langs.map(function (c) { return (state.langMap[c] && state.langMap[c].shortLabel) || c.toUpperCase(); }).join(', ') : '';
-          stack.appendChild(makeBadge('ОК · ' + (diag ? diag.count : 1) + ' яз. (' + langsLabel + ')', 'badge-ok'));
+          stack.appendChild(makeBadge('ОК · ' + (diag ? diag.count : 1) + ' яз. (' + langsLabel + ')', 'badge-ok', 'ok'));
         } else {
-          if (flags.dup_tk_lang) stack.appendChild(makeBadge('Дубль языка в связке', 'badge-err'));
-          if (flags.cat_mismatch) stack.appendChild(makeBadge('Разные категории в связке', 'badge-err'));
-          if (flags.no_tk) stack.appendChild(makeBadge('Нет translationKey', 'badge-warn'));
-          else if (flags.orphan) stack.appendChild(makeBadge('Сирота (1 яз.)', 'badge-warn'));
-          if (flags.tag_drift) stack.appendChild(makeBadge('Разнобой написания', 'badge-warn'));
-          if (flags.no_cat) stack.appendChild(makeBadge('Нет категории', 'badge-warn'));
-          if (flags.no_tags) stack.appendChild(makeBadge('Нет тегов', 'badge-warn'));
-          if (flags.no_slug) stack.appendChild(makeBadge('Нет лат. slug', 'badge-warn'));
+          if (flags.dup_tk_lang) stack.appendChild(makeBadge('Дубль языка в связке', 'badge-err', 'dup_tk_lang'));
+          if (flags.cat_mismatch) stack.appendChild(makeBadge('Разные категории в связке', 'badge-err', 'cat_mismatch'));
+          if (flags.no_tk) stack.appendChild(makeBadge('Нет translationKey', 'badge-warn', 'no_tk'));
+          else if (flags.orphan) stack.appendChild(makeBadge('Сирота (1 яз.)', 'badge-warn', 'orphan'));
+          if (flags.tag_drift) stack.appendChild(makeBadge('Разнобой написания', 'badge-warn', 'tag_drift'));
+          if (flags.no_cat) stack.appendChild(makeBadge('Нет категории', 'badge-warn', 'no_cat'));
+          if (flags.no_tags) stack.appendChild(makeBadge('Нет тегов', 'badge-warn', 'no_tags'));
+          if (flags.no_slug) stack.appendChild(makeBadge('Нет лат. slug', 'badge-warn', 'no_slug'));
         }
 
         if (flags.dirty) {
@@ -2145,7 +2191,7 @@
           dirtyWrap.style.display = 'flex';
           dirtyWrap.style.gap = '4px';
           dirtyWrap.style.alignItems = 'center';
-          dirtyWrap.appendChild(makeBadge('Изменено', 'badge-dirty'));
+          dirtyWrap.appendChild(makeBadge('Изменено', 'badge-dirty', 'dirty'));
           var undoBtn = document.createElement('button');
           undoBtn.type = 'button';
           undoBtn.className = 'mini-icon-btn';
@@ -2282,9 +2328,9 @@
 
             if (tk !== '__NO_TK__') {
               var diag = analysis.tkDiagnostics.get(tk);
-              if (diag && diag.catMismatch) leftInfo.appendChild(makeBadge('Разные категории в связке', 'badge-err'));
-              if (diag && diag.dupLang) leftInfo.appendChild(makeBadge('Дубль языка', 'badge-err'));
-              if (diag && diag.count === 1) leftInfo.appendChild(makeBadge('Сирота', 'badge-warn'));
+              if (diag && diag.catMismatch) leftInfo.appendChild(makeBadge('Разные категории в связке', 'badge-err', 'cat_mismatch'));
+              if (diag && diag.dupLang) leftInfo.appendChild(makeBadge('Дубль языка', 'badge-err', 'dup_tk_lang'));
+              if (diag && diag.count === 1) leftInfo.appendChild(makeBadge('Сирота', 'badge-warn', 'orphan'));
             }
 
             var rightBtns = document.createElement('div');

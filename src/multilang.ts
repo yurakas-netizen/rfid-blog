@@ -9,6 +9,7 @@ import {
 } from './config.js';
 import { loadSiteContent } from './content.js';
 import { resolveSafePostPath } from './registry.js';
+import { loadTaxonomyDictionary, resolveTaxonomyListForLang } from './taxonomy.js';
 
 const ROOT_DIR = process.cwd();
 const CONTENT_ROOT = path.resolve(ROOT_DIR, 'content');
@@ -35,6 +36,7 @@ export interface MultilangEntryInput {
   title: string;
   slug: string;
   description: string;
+  tags?: string[];
   body: string;
 }
 
@@ -247,6 +249,8 @@ export function loadMultilangState() {
     .map(([key, langs]) => ({ key, langs, count: langs.length }))
     .sort((a, b) => b.count - a.count || a.key.localeCompare(b.key));
 
+  const taxonomy = loadTaxonomyDictionary();
+
   return {
     mode: 'local' as const,
     repo: 'yurakas-netizen/rfid-blog',
@@ -257,6 +261,7 @@ export function loadMultilangState() {
       label: l.label,
       urlPrefix: l.urlPrefix,
     })),
+    taxonomy,
     categories: Array.from(catSet).sort((a, b) => a.localeCompare(b)),
     tags: Array.from(tagSet).sort((a, b) => a.localeCompare(b)),
     translationKeys,
@@ -305,7 +310,14 @@ export function publishMultilangBundle(rawPayload: unknown): {
   ok: boolean;
   status: number;
   error?: string;
-  created?: Array<{ lang: LangCode; relPath: string; folder: string; permalink: string }>;
+  created?: Array<{
+    lang: LangCode;
+    relPath: string;
+    folder: string;
+    permalink: string;
+    categories: string[];
+    tags: string[];
+  }>;
 } {
   if (!rawPayload || typeof rawPayload !== 'object') {
     return { ok: false, status: 400, error: 'Некорректное тело запроса' };
@@ -435,12 +447,14 @@ export function publishMultilangBundle(rawPayload: unknown): {
       title: String(rawEntry.title || '').trim(),
       slug: String(rawEntry.slug || '').trim().toLowerCase(),
       description: String(rawEntry.description || '').trim(),
+      tags: rawEntry.tags !== undefined ? normalizeStringArray(rawEntry.tags) : undefined,
       body: String(rawEntry.body || '').trim(),
     });
   }
 
   // Strict enforcement: anchor + EVERY selected follower language must be complete
   const siteContent = loadSiteContent();
+  const taxonomy = loadTaxonomyDictionary();
   const stagedWrites: Array<{
     lang: LangCode;
     folder: string;
@@ -449,6 +463,8 @@ export function publishMultilangBundle(rawPayload: unknown): {
     absIndexPath: string;
     markdown: string;
     permalink: string;
+    categories: string[];
+    tags: string[];
     existedBefore: boolean;
   }> = [];
 
@@ -506,14 +522,22 @@ export function publishMultilangBundle(rawPayload: unknown): {
       };
     }
 
+    const localizedCategories = resolveTaxonomyListForLang(categories, lang, taxonomy.categories);
+    const localizedTags =
+      entry.tags !== undefined
+        ? entry.tags
+        : lang === anchorLang
+          ? resolveTaxonomyListForLang(tags, lang, taxonomy.tags)
+          : [];
+
     const markdown = serializePostMarkdown({
       title: entry.title,
       slug: entry.slug,
       description: entry.description,
       dateIso,
       image: coverImage,
-      categories,
-      tags,
+      categories: localizedCategories,
+      tags: localizedTags,
       translationKey,
       body: entry.body,
     });
@@ -527,6 +551,8 @@ export function publishMultilangBundle(rawPayload: unknown): {
       absIndexPath,
       markdown,
       permalink: `${prefix}/p/${encodeURIComponent(entry.slug)}/`,
+      categories: localizedCategories,
+      tags: localizedTags,
       existedBefore: fs.existsSync(absDir),
     });
   }
@@ -569,6 +595,8 @@ export function publishMultilangBundle(rawPayload: unknown): {
       relPath: s.relPath,
       folder: s.folder,
       permalink: s.permalink,
+      categories: s.categories,
+      tags: s.tags,
     })),
   };
 }

@@ -416,6 +416,66 @@
       background: var(--accent-soft);
     }
 
+    .taxonomy-preview-list {
+      margin-top: 6px;
+      padding: 8px 10px;
+      border-radius: 7px;
+      border: 1px solid var(--border-soft);
+      background: var(--bg);
+      display: none;
+      flex-direction: column;
+      gap: 4px;
+      font-size: 11.5px;
+      line-height: 1.4;
+    }
+    .taxonomy-preview-list.is-visible { display: flex; }
+
+    .taxonomy-preview-row {
+      display: flex;
+      gap: 6px;
+      color: var(--text-muted);
+    }
+    .taxonomy-preview-code {
+      font-family: var(--mono);
+      font-weight: 700;
+      color: var(--text);
+      min-width: 26px;
+      flex-shrink: 0;
+    }
+    .taxonomy-unmapped-row {
+      margin-top: 4px;
+      padding-top: 6px;
+      border-top: 1px dashed var(--border);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      color: var(--warn-text);
+    }
+
+    .dict-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px 12px;
+    }
+    @media (max-width: 720px) {
+      .dict-grid { grid-template-columns: 1fr; }
+    }
+    .dict-lang-field {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .dict-lang-tag {
+      font-family: var(--mono);
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--text-muted);
+      width: 34px;
+      flex-shrink: 0;
+    }
+
     /* Image Dropzone */
     .cover-box {
       border: 1px dashed var(--border);
@@ -651,33 +711,62 @@
       background: #ffffff;
     }
 
-    /* Prompt Helper (Collapsible inside Anchor) */
-    .prompt-details {
-      border-top: 1px solid var(--border-soft);
-      padding: 12px 18px;
-      background: #f8fafc;
+    /* Top Prompt Card */
+    .top-prompt-card {
+      background: var(--surface);
+      border: 1px solid #bae6fd;
+      border-radius: 10px;
+      padding: 10px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
     }
 
-    .prompt-summary-btn {
+    .top-prompt-bar {
       display: flex;
+      flex-wrap: wrap;
       align-items: center;
       justify-content: space-between;
-      width: 100%;
-      border: 0;
-      background: transparent;
-      padding: 0;
-      font-family: inherit;
-      font-size: 12.5px;
-      font-weight: 600;
-      color: var(--text-muted);
-      cursor: pointer;
+      gap: 8px 12px;
+    }
+
+    .top-prompt-title-wrap {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .top-prompt-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .top-prompt-controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px;
     }
 
     .prompt-box {
-      margin-top: 10px;
       display: flex;
       flex-direction: column;
       gap: 8px;
+      padding-top: 8px;
+      border-top: 1px solid var(--border-soft);
+    }
+
+    .prompt-template-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      padding: 8px 10px;
+      border-radius: 7px;
+      background: var(--bg);
+      border: 1px solid var(--border-soft);
     }
 
     /* Modals */
@@ -891,6 +980,7 @@
       </div>
 
       <div class="topbar-actions">
+        <button type="button" id="openTaxonomyDictBtn" class="btn">Словарь категорий</button>
         <button type="button" id="resetBtn" class="btn">Очистить форму</button>
         <button type="button" id="publishAllBtn" class="btn btn-primary" disabled>Опубликовать все</button>
       </div>
@@ -980,15 +1070,13 @@
           </div>
 
           <div class="field">
-            <label class="field-label" for="constCategoriesInput">Категории (через запятую)</label>
-            <input type="text" id="constCategoriesInput" class="input" placeholder="RFID Solutions, Technical Guides" />
+            <div class="field-label-row">
+              <label class="field-label" for="constCategoriesInput">Категории (через запятую)</label>
+              <button type="button" id="openTaxonomyDictInlineBtn" class="btn btn-sm">Словарь</button>
+            </div>
+            <input type="text" id="constCategoriesInput" class="input" placeholder="UHF RFID, Промышленная автоматизация" />
             <div id="categorySuggestions" class="quick-list"></div>
-          </div>
-
-          <div class="field">
-            <label class="field-label" for="constTagsInput">Теги (через запятую)</label>
-            <input type="text" id="constTagsInput" class="input" placeholder="UHF RFID, EPC Gen2v2, ISO/IEC 18000-63" />
-            <div id="tagSuggestions" class="quick-list"></div>
+            <div id="categoryResolvedPreview" class="taxonomy-preview-list"></div>
           </div>
 
           <div class="field">
@@ -1000,8 +1088,40 @@
         </section>
       </aside>
 
-      <!-- Right Column: Language Tabs & Active Editor -->
+      <!-- Right Column: Prompt Generator, Language Tabs & Active Editor -->
       <section class="editor-col">
+        <div id="topPromptCard" class="top-prompt-card">
+          <div class="top-prompt-bar">
+            <div class="top-prompt-title-wrap">
+              <span class="top-prompt-title">Промпт обложки (из якоря на все языки)</span>
+              <span id="promptSourceInfo" class="field-hint"></span>
+            </div>
+            <div class="top-prompt-controls">
+              <select id="promptSourceSelect" class="select" style="width:auto; height:28px; font-size:12px;">
+                <option value="auto">Авто (1-й абзац / заголовок)</option>
+                <option value="paragraph">Первый абзац якоря</option>
+                <option value="title_desc">Заголовок + описание</option>
+              </select>
+              <button type="button" id="copyPromptBtn" class="btn btn-sm btn-primary">Скопировать промпт</button>
+              <button type="button" id="togglePromptBtn" class="btn btn-sm">Показать</button>
+            </div>
+          </div>
+          <div id="promptBox" class="prompt-box" style="display:none;">
+            <textarea id="coverPromptOutput" class="textarea is-mono" rows="4" readonly></textarea>
+            <div class="inline-row" style="justify-content: space-between;">
+              <span class="field-hint">Сгенерируйте 1 обложку по этому промпту и загрузите в «Обложку» слева — она скопируется во все языки.</span>
+              <button type="button" id="togglePromptTemplateBtn" class="btn btn-sm">Шаблон</button>
+            </div>
+            <div id="promptTemplateWrap" class="prompt-template-wrap" style="display:none;">
+              <div class="field-label-row">
+                <span class="field-label">Базовый шаблон промпта</span>
+                <button type="button" id="resetPromptTemplateBtn" class="btn btn-sm">Сбросить</button>
+              </div>
+              <textarea id="promptTemplateInput" class="textarea is-mono" rows="4"></textarea>
+            </div>
+          </div>
+        </div>
+
         <div id="langTabsBar" class="tabs-bar" role="tablist" aria-label="Языки публикации"></div>
 
         <div id="validationStrip" class="validation-strip" role="status"></div>
@@ -1039,9 +1159,20 @@
               </div>
             </div>
 
-            <div class="field" style="margin-bottom:0;">
-              <label class="field-label" for="entryDescInput">Описание (SEO / краткий анонс)</label>
-              <input type="text" id="entryDescInput" class="input" placeholder="Краткое техническое резюме статьи..." />
+            <div class="two-col-fields">
+              <div class="field" style="margin-bottom:0;">
+                <label class="field-label" for="entryDescInput">Описание (SEO / краткий анонс)</label>
+                <input type="text" id="entryDescInput" class="input" placeholder="Краткое техническое резюме статьи..." />
+              </div>
+
+              <div class="field" style="margin-bottom:0;">
+                <div class="field-label-row">
+                  <label class="field-label" for="entryTagsInput">Теги этого языка (через запятую)</label>
+                  <button type="button" id="copyTagsFromAnchorBtn" class="btn btn-sm" style="display:none;">Взять из якоря</button>
+                </div>
+                <input type="text" id="entryTagsInput" class="input" placeholder="Импортируются из .md или вводятся для этого языка" />
+                <div id="entryTagSuggestions" class="quick-list"></div>
+              </div>
             </div>
 
             <div class="field" style="margin-bottom:0;">
@@ -1064,20 +1195,6 @@
               <iframe id="bodyPreviewFrame" class="preview-frame" sandbox="" style="display:none;" title="Предпросмотр текста"></iframe>
             </div>
           </div>
-
-          <div id="anchorPromptWrap" class="prompt-details">
-            <button type="button" id="togglePromptBtn" class="prompt-summary-btn">
-              <span>Промпт для генерации обложки (по 1-му абзацу якоря)</span>
-              <span id="promptToggleLabel">Показать</span>
-            </button>
-            <div id="promptBox" class="prompt-box" style="display:none;">
-              <textarea id="coverPromptOutput" class="textarea is-mono" rows="5" readonly></textarea>
-              <div class="inline-row" style="justify-content: space-between;">
-                <span id="promptSourceInfo" class="field-hint"></span>
-                <button type="button" id="copyPromptBtn" class="btn btn-sm">Скопировать промпт</button>
-              </div>
-            </div>
-          </div>
         </div>
       </section>
     </main>
@@ -1092,7 +1209,7 @@
       </div>
       <div class="modal-body">
         <div id="importFollowerNotice" class="notice-box is-info" style="display:none;">
-          <strong>Режим ведомого языка:</strong> импортируются только языковые переменные (Заголовок, URL-слаг, Описание, Текст статьи). Поля констант (Дата, Ключ перевода, Категории, Теги, Обложка) из файла игнорируются и берутся из якорной статьи.
+          <strong>Режим ведомого языка:</strong> импортируются языковые поля этого перевода (Заголовок, URL-слаг, Описание, Теги, Текст статьи). Общие константы (Дата, Ключ перевода, Категории, Обложка) из файла игнорируются и берутся из якорной статьи.
         </div>
         <div class="check-row">
           <input type="file" id="importFileInput" accept=".md,.markdown,.txt,.json" />
@@ -1108,7 +1225,7 @@
           <label class="check-label" data-const-wrap="1"><input type="checkbox" data-ifield="date" checked /><span>Дата</span></label>
           <label class="check-label" data-const-wrap="1"><input type="checkbox" data-ifield="translationKey" checked /><span>Ключ перевода</span></label>
           <label class="check-label" data-const-wrap="1"><input type="checkbox" data-ifield="categories" checked /><span>Категории</span></label>
-          <label class="check-label" data-const-wrap="1"><input type="checkbox" data-ifield="tags" checked /><span>Теги</span></label>
+          <label class="check-label"><input type="checkbox" data-ifield="tags" checked /><span>Теги</span></label>
           <label class="check-label"><input type="checkbox" data-ifield="body" checked /><span>Текст статьи</span></label>
         </div>
         <textarea id="importTextarea" class="textarea is-mono" rows="12" spellcheck="false" placeholder="Вставьте содержимое .md (с --- YAML ---) или .json, либо выберите файл выше..."></textarea>
@@ -1199,6 +1316,43 @@
     </div>
   </div>
 
+  <!-- Taxonomy Translation Dictionary Modal -->
+  <div id="taxonomyModalBackdrop" class="modal-backdrop">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="taxonomyModalTitle">
+      <div class="modal-head">
+        <h3 id="taxonomyModalTitle" class="modal-title">Словарь переводов категорий и тегов (20 языков)</h3>
+        <button type="button" id="taxonomyCloseBtn" class="modal-close" aria-label="Закрыть">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="notice-box is-info">
+          Любая категория или тег из якорной статьи при публикации автоматически переводится в локальное название для каждого выбранного языка (с фоллбеком на EN).
+        </div>
+        <div class="inline-row">
+          <select id="dictTypeSelect" class="select" style="max-width: 150px;">
+            <option value="categories">Категория</option>
+            <option value="tags">Тег</option>
+          </select>
+          <select id="dictTermSelect" class="select"></select>
+          <button type="button" id="dictNewTermBtn" class="btn btn-accent-soft">+ Новый термин</button>
+          <button type="button" id="dictDeleteTermBtn" class="btn btn-danger">Удалить</button>
+        </div>
+        <div class="field" style="margin-bottom:0;">
+          <label class="field-label" for="dictTermIdInput">Системный ID (латиницей, например: industrial-automation)</label>
+          <input type="text" id="dictTermIdInput" class="input is-mono" placeholder="industrial-automation" />
+        </div>
+        <div id="dictTranslationsGrid" class="dict-grid"></div>
+        <div id="dictStatusBox" class="notice-box" style="display:none;"></div>
+      </div>
+      <div class="modal-foot">
+        <span id="dictModalStatus" class="field-hint">data/taxonomy.json</span>
+        <div class="inline-row">
+          <button type="button" id="taxonomyCancelBtn" class="btn">Закрыть</button>
+          <button type="button" id="taxonomySaveBtn" class="btn btn-primary">Сохранить словарь</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div id="toast" class="toast" role="status"></div>
 
   <script>
@@ -1238,6 +1392,113 @@
         'Visual constraints: completely clean surfaces with zero text, no words, no letters, no numbers, no signs, no labels, no screens with readable text, no barcodes, no QR codes, and no logos anywhere in the image.\n' +
         'Source context:';
 
+      var DEFAULT_TAXONOMY = {
+        version: 1,
+        categories: [
+          {
+            id: 'uhf-rfid',
+            translations: {
+              uk: 'UHF RFID', en: 'UHF RFID', da: 'UHF RFID', de: 'UHF RFID', fr: 'UHF RFID',
+              ru: 'UHF RFID', pl: 'UHF RFID', es: 'UHF RFID', it: 'UHF RFID', nl: 'UHF RFID',
+              pt: 'UHF RFID', sv: 'UHF RFID', no: 'UHF RFID', fi: 'UHF RFID', cs: 'UHF RFID',
+              sk: 'UHF RFID', ro: 'UHF RFID', bg: 'UHF RFID', et: 'UHF RFID', lt: 'UHF RFID'
+            }
+          },
+          {
+            id: 'industrial-automation',
+            translations: {
+              uk: 'Промислова автоматизація', en: 'Industrial Automation', da: 'Industriel automation',
+              de: 'Industrieautomation', fr: 'Automatisation industrielle', ru: 'Промышленная автоматизация',
+              pl: 'Automatyka przemysłowa', es: 'Automatización industrial', it: 'Automazione industriale',
+              nl: 'Industriële automatisering', pt: 'Automação Industrial', sv: 'Industriell automation',
+              no: 'Industriell automasjon', fi: 'Teollinen automaatio', cs: 'Průmyslová automatizace',
+              sk: 'Priemyselná automatizácia', ro: 'Automatizare industrială', bg: 'Индустриална автоматизация',
+              et: 'Tööstusautomaatika', lt: 'Pramonės automatizavimas'
+            }
+          },
+          {
+            id: 'rtls',
+            translations: {
+              uk: 'RTLS', en: 'RTLS', da: 'RTLS', de: 'RTLS', fr: 'RTLS',
+              ru: 'RTLS', pl: 'RTLS', es: 'RTLS', it: 'RTLS', nl: 'RTLS',
+              pt: 'RTLS', sv: 'RTLS', no: 'RTLS', fi: 'RTLS', cs: 'RTLS',
+              sk: 'RTLS', ro: 'RTLS', bg: 'RTLS', et: 'RTLS', lt: 'RTLS'
+            }
+          },
+          {
+            id: 'rfid-technologies',
+            translations: {
+              uk: 'RFID технології', en: 'RFID Technologies', da: 'RFID-teknologier', de: 'RFID-Technologien',
+              fr: 'Technologies RFID', ru: 'RFID Технологии', pl: 'Technologie RFID', es: 'Tecnologías RFID',
+              it: 'Tecnologie RFID', nl: 'RFID-technologieën', pt: 'Tecnologias RFID', sv: 'RFID-teknik',
+              no: 'RFID-teknologi', fi: 'RFID-teknologiat', cs: 'RFID technologie', sk: 'RFID technológie',
+              ro: 'Tehnologii RFID', bg: 'RFID технологии', et: 'RFID-tehnoloogiad', lt: 'RFID technologijos'
+            }
+          },
+          {
+            id: 'rfid-solutions',
+            translations: {
+              uk: 'RFID-рішення', en: 'RFID Solutions', da: 'RFID Solutions', de: 'RFID Solutions',
+              fr: 'RFID Solutions', ru: 'RFID-решения', pl: 'RFID Solutions', es: 'RFID Solutions',
+              it: 'RFID Solutions', nl: 'RFID Solutions', pt: 'Soluções RFID', sv: 'RFID-lösningar',
+              no: 'RFID Solutions', fi: 'RFID-ratkaisut', cs: 'RFID řešení', sk: 'RFID riešenia',
+              ro: 'Soluții RFID', bg: 'RFID решения', et: 'RFID-lahendused', lt: 'RFID sprendimai'
+            }
+          },
+          {
+            id: 'cybersecurity',
+            translations: {
+              uk: 'Кібербезпека', en: 'Cybersecurity', da: 'Cybersikkerhed', de: 'Cybersicherheit',
+              fr: 'Cybersécurité', ru: 'Кибербезопасность', pl: 'Cyberbezpieczeństwo', es: 'Ciberseguridad',
+              it: 'Sicurezza informatica', nl: 'Cyberbeveiliging', pt: 'Cibersegurança', sv: 'Cybersäkerhet',
+              no: 'Cybersikkerhet', fi: 'Tietoturva', cs: 'Kybernetická bezpečnost', sk: 'Kybernetická bezpečnosť',
+              ro: 'Securitate cibernetică', bg: 'Киберсигурност', et: 'Küberturvalisus', lt: 'Kibernetinis saugumas'
+            }
+          },
+          {
+            id: 'logistics-supply-chain',
+            translations: {
+              uk: 'Логістика та ланцюги постачання', en: 'Logistics & Supply Chain',
+              da: 'Logistik og forsyningskæde', de: 'Logistik & Lieferkette',
+              fr: "Logistique et chaîne d'approvisionnement", ru: 'Логистика и цепи поставок',
+              pl: 'Logistyka i łańcuch dostaw', es: 'Logística y cadena de suministro',
+              it: 'Logistica e catena di fornitura', nl: 'Logistiek en toeleveringsketen',
+              pt: 'Logística e Cadeia de Suprimentos', sv: 'Logistik och leveranskedja',
+              no: 'Logistikk og forsyningskjede', fi: 'Logistiikka ja toimitusketju',
+              cs: 'Logistika a dodavatelský řetězec', sk: 'Logistika a dodávateľský reťazec',
+              ro: 'Logistică și lanț de aprovizionare', bg: 'Логистика и вериги за доставки',
+              et: 'Logistika ja tarneahel', lt: 'Logistika ir tiekimo grandinė'
+            }
+          },
+          {
+            id: 'railway-transport',
+            translations: {
+              uk: 'Залізниця та транспорт', en: 'Railway & Transport', da: 'Jernbane og transport',
+              de: 'Schienenverkehr & Transport', fr: 'Ferroviaire et transport', ru: 'Железные дороги и транспорт',
+              pl: 'Kolej i transport', es: 'Ferrocarril y transporte', it: 'Ferrovie e trasporti',
+              nl: 'Spoorwegen en transport', pt: 'Ferrovias e Transporte', sv: 'Järnväg och transport',
+              no: 'Jernbane og transport', fi: 'Rautatie ja liikenne', cs: 'Železnice a doprava',
+              sk: 'Železnice a doprava', ro: 'Căi ferate și transport', bg: 'Железници и транспорт',
+              et: 'Raudtee ja transport', lt: 'Geležinkeliai ir transportas'
+            }
+          }
+        ],
+        tags: [
+          {
+            id: 'cold-chain',
+            translations: { uk: 'Холодовий ланцюг', en: 'Cold Chain', ru: 'Холодовая цепь', de: 'Kühlkette' }
+          },
+          {
+            id: 'high-temperature-rfid',
+            translations: { uk: 'Високотемпературний RFID', en: 'High-Temperature RFID', ru: 'Высокотемпературный RFID', de: 'Hochtemperatur-RFID' }
+          },
+          {
+            id: 'railway-rfid',
+            translations: { uk: 'Залізничний RFID', en: 'Railway RFID', ru: 'Железнодорожный RFID', de: 'Schienen-RFID' }
+          }
+        ]
+      };
+
       var state = {
         mode: 'local',
         ghRepo: 'yurakas-netizen/rfid-blog',
@@ -1245,6 +1506,8 @@
         ghToken: '',
         ghHeadCommitSha: '',
         ghHeadTreeSha: '',
+        taxonomy: JSON.parse(JSON.stringify(DEFAULT_TAXONOMY)),
+        taxonomyGhSha: '',
         categoriesPool: [],
         tagsPool: [],
         existingSlugsByLang: {},
@@ -1254,6 +1517,9 @@
         activeTabLang: 'ru',
         previewOpen: false,
         promptOpen: false,
+        promptTemplateOpen: false,
+        promptTemplate: DEFAULT_PROMPT_TEMPLATE,
+        promptSourceMode: 'auto',
         overwrite: false,
         constants: {
           dateLocal: toLocalDatetimeValue(new Date()),
@@ -1261,11 +1527,10 @@
           tkManual: false,
           image: '',
           categoriesText: '',
-          tagsText: '',
           coverAsset: null, // { filename, base64, previewUrl, size, sourceRelPath, ghBlobSha }
           extraAssets: []   // from loaded bundle
         },
-        entries: {} // [lang]: { title, slug, slugManual, description, body }
+        entries: {} // [lang]: { title, slug, slugManual, description, tagsText, body }
       };
 
       /* ---------- Utilities ---------- */
@@ -1276,6 +1541,7 @@
             slug: '',
             slugManual: false,
             description: '',
+            tagsText: '',
             body: ''
           };
         }
@@ -1676,7 +1942,6 @@
         document.getElementById('constDateInput').value = state.constants.dateLocal;
         document.getElementById('constImageInput').value = state.constants.image;
         document.getElementById('constCategoriesInput').value = state.constants.categoriesText;
-        document.getElementById('constTagsInput').value = state.constants.tagsText;
         document.getElementById('overwriteCheck').checked = state.overwrite;
 
         var previewWrap = document.getElementById('coverPreviewWrap');
@@ -1698,28 +1963,209 @@
           clearBtn.style.display = 'none';
         }
 
-        renderSuggestions('categorySuggestions', state.categoriesPool.slice(0, 12), 'constCategoriesInput', 'categoriesText');
-        renderSuggestions('tagSuggestions', state.tagsPool.slice(0, 14), 'constTagsInput', 'tagsText');
+        renderCategorySuggestions();
+        renderCategoryResolvedPreview();
       }
 
-      function renderSuggestions(containerId, items, inputId, stateKey) {
-        var box = document.getElementById(containerId);
+      /* ---------- Taxonomy Dictionary Resolution ---------- */
+      function findTaxonomyMatchClient(rawTerm, items) {
+        var needle = String(rawTerm || '').trim().toLowerCase();
+        if (!needle || !Array.isArray(items)) return null;
+        for (var i = 0; i < items.length; i++) {
+          var item = items[i];
+          if (item.id && item.id.toLowerCase() === needle) return item;
+          var trans = item.translations || {};
+          var keys = Object.keys(trans);
+          for (var j = 0; j < keys.length; j++) {
+            var val = trans[keys[j]];
+            if (typeof val === 'string' && val.trim().toLowerCase() === needle) {
+              return item;
+            }
+          }
+        }
+        return null;
+      }
+
+      function resolveTermForLangClient(rawTerm, targetLang, items) {
+        var clean = String(rawTerm || '').trim();
+        if (!clean) return { value: '', matchedId: null, usedFallback: false };
+        var match = findTaxonomyMatchClient(clean, items);
+        if (!match) return { value: clean, matchedId: null, usedFallback: false };
+
+        var trans = match.translations || {};
+        if (trans[targetLang] && String(trans[targetLang]).trim()) {
+          return { value: String(trans[targetLang]).trim(), matchedId: match.id, usedFallback: false };
+        }
+        if (trans.en && String(trans.en).trim()) {
+          return { value: String(trans.en).trim(), matchedId: match.id, usedFallback: true };
+        }
+        var keys = Object.keys(trans);
+        for (var i = 0; i < keys.length; i++) {
+          if (trans[keys[i]] && String(trans[keys[i]]).trim()) {
+            return { value: String(trans[keys[i]]).trim(), matchedId: match.id, usedFallback: true };
+          }
+        }
+        return { value: clean, matchedId: match.id, usedFallback: true };
+      }
+
+      function resolveTaxonomyListClient(rawList, targetLang, items) {
+        var seen = {};
+        var out = [];
+        (rawList || []).forEach(function (raw) {
+          var res = resolveTermForLangClient(raw, targetLang, items).value;
+          if (!res) return;
+          var key = res.toLowerCase();
+          if (seen[key]) return;
+          seen[key] = true;
+          out.push(res);
+        });
+        return out;
+      }
+
+      function renderCategorySuggestions() {
+        var box = document.getElementById('categorySuggestions');
         box.innerHTML = '';
-        var current = splitCsvList(state.constants[stateKey]);
-        items.forEach(function (item) {
+
+        var dictItems = (state.taxonomy && state.taxonomy.categories) || [];
+        var currentRaw = splitCsvList(state.constants.categoriesText);
+        var currentMatchedIds = {};
+        var currentLower = {};
+        currentRaw.forEach(function (c) {
+          currentLower[c.toLowerCase()] = true;
+          var m = findTaxonomyMatchClient(c, dictItems);
+          if (m) currentMatchedIds[m.id] = true;
+        });
+
+        var options = [];
+        var seenLabels = {};
+        dictItems.forEach(function (item) {
+          var label = resolveTermForLangClient(item.id, state.anchorLang, dictItems).value;
+          if (!label || seenLabels[label.toLowerCase()]) return;
+          seenLabels[label.toLowerCase()] = true;
+          options.push({
+            label: label,
+            matchedId: item.id,
+            active: Boolean(currentMatchedIds[item.id] || currentLower[label.toLowerCase()])
+          });
+        });
+
+        state.categoriesPool.slice(0, 10).forEach(function (poolCat) {
+          var m = findTaxonomyMatchClient(poolCat, dictItems);
+          if (m) return; // already listed via dictionary in anchor language
+          if (seenLabels[poolCat.toLowerCase()]) return;
+          seenLabels[poolCat.toLowerCase()] = true;
+          options.push({
+            label: poolCat,
+            matchedId: null,
+            active: Boolean(currentLower[poolCat.toLowerCase()])
+          });
+        });
+
+        options.forEach(function (opt) {
           var btn = document.createElement('button');
           btn.type = 'button';
           btn.className = 'quick-item-btn';
-          btn.textContent = (current.indexOf(item) !== -1 ? '✓ ' : '+ ') + item;
+          btn.textContent = (opt.active ? '✓ ' : '+ ') + opt.label;
+          btn.title = opt.matchedId ? 'ID в словаре: ' + opt.matchedId : 'Локальный термин';
           btn.addEventListener('click', function () {
-            var list = splitCsvList(state.constants[stateKey]);
-            var idx = list.indexOf(item);
+            var list = splitCsvList(state.constants.categoriesText);
+            if (opt.active) {
+              list = list.filter(function (c) {
+                if (c.toLowerCase() === opt.label.toLowerCase()) return false;
+                if (opt.matchedId) {
+                  var m = findTaxonomyMatchClient(c, dictItems);
+                  if (m && m.id === opt.matchedId) return false;
+                }
+                return true;
+              });
+            } else {
+              list.push(opt.label);
+            }
+            state.constants.categoriesText = list.join(', ');
+            document.getElementById('constCategoriesInput').value = state.constants.categoriesText;
+            renderCategorySuggestions();
+            renderCategoryResolvedPreview();
+            renderInheritedBar();
+          });
+          box.appendChild(btn);
+        });
+      }
+
+      function renderCategoryResolvedPreview() {
+        var box = document.getElementById('categoryResolvedPreview');
+        box.innerHTML = '';
+        var rawCats = splitCsvList(state.constants.categoriesText);
+        if (!rawCats.length) {
+          box.classList.remove('is-visible');
+          return;
+        }
+        box.classList.add('is-visible');
+
+        var dictItems = (state.taxonomy && state.taxonomy.categories) || [];
+        var langs = [state.anchorLang].concat(state.followerLangs);
+
+        langs.forEach(function (code) {
+          var resolved = resolveTaxonomyListClient(rawCats, code, dictItems);
+          var row = document.createElement('div');
+          row.className = 'taxonomy-preview-row';
+
+          var codeSpan = document.createElement('span');
+          codeSpan.className = 'taxonomy-preview-code';
+          codeSpan.textContent = LANG_MAP[code].shortLabel + ':';
+
+          var valSpan = document.createElement('span');
+          valSpan.textContent = resolved.join(', ');
+
+          row.appendChild(codeSpan);
+          row.appendChild(valSpan);
+          box.appendChild(row);
+        });
+
+        var unmapped = rawCats.filter(function (c) {
+          return !findTaxonomyMatchClient(c, dictItems);
+        });
+
+        if (unmapped.length) {
+          var warnRow = document.createElement('div');
+          warnRow.className = 'taxonomy-unmapped-row';
+          var txt = document.createElement('span');
+          txt.textContent = 'Нет в словаре: ' + unmapped.join(', ') + ' (уйдёт без перевода)';
+          var addBtn = document.createElement('button');
+          addBtn.type = 'button';
+          addBtn.className = 'btn btn-sm';
+          addBtn.textContent = '+ В словарь';
+          addBtn.addEventListener('click', function () {
+            openTaxonomyModalWithSeed('categories', unmapped[0]);
+          });
+          warnRow.appendChild(txt);
+          warnRow.appendChild(addBtn);
+          box.appendChild(warnRow);
+        }
+      }
+
+      function renderEntryTagSuggestions() {
+        var box = document.getElementById('entryTagSuggestions');
+        if (!box) return;
+        box.innerHTML = '';
+        var entry = getEntry(state.activeTabLang);
+        var current = splitCsvList(entry.tagsText);
+        var currentLower = {};
+        current.forEach(function (t) { currentLower[t.toLowerCase()] = true; });
+        var items = state.tagsPool.slice(0, 12);
+        items.forEach(function (item) {
+          var isAct = Boolean(currentLower[item.toLowerCase()]);
+          var btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'quick-item-btn';
+          btn.textContent = (isAct ? '✓ ' : '+ ') + item;
+          btn.addEventListener('click', function () {
+            var list = splitCsvList(entry.tagsText);
+            var idx = list.findIndex(function (x) { return x.toLowerCase() === item.toLowerCase(); });
             if (idx === -1) list.push(item);
             else list.splice(idx, 1);
-            state.constants[stateKey] = list.join(', ');
-            document.getElementById(inputId).value = state.constants[stateKey];
-            renderSuggestions(containerId, items, inputId, stateKey);
-            renderInheritedBar();
+            entry.tagsText = list.join(', ');
+            document.getElementById('entryTagsInput').value = entry.tagsText;
+            renderEntryTagSuggestions();
           });
           box.appendChild(btn);
         });
@@ -1818,38 +2264,79 @@
         bar.style.display = 'block';
         bar.innerHTML = '';
 
-        var cats = splitCsvList(state.constants.categoriesText);
-        var tags = splitCsvList(state.constants.tagsText);
+        var targetLang = state.activeTabLang;
+        var targetShort = LANG_MAP[targetLang].shortLabel;
+        var rawCats = splitCsvList(state.constants.categoriesText);
+        var resolvedCats = resolveTaxonomyListClient(rawCats, targetLang, (state.taxonomy && state.taxonomy.categories) || []);
+
         var parts = [
           'Ключ: ' + (state.constants.translationKey.trim() || '—'),
           'Дата: ' + (state.constants.dateLocal ? state.constants.dateLocal.replace('T', ' ') : '—'),
           'Обложка: ' + (state.constants.image.trim() || 'нет'),
-          'Категории: ' + (cats.length ? cats.join(', ') : 'нет'),
-          'Теги: ' + (tags.length ? tags.join(', ') : 'нет')
+          'Категории (' + targetShort + '): ' + (resolvedCats.length ? resolvedCats.join(', ') : 'нет')
         ];
 
         var lead = document.createElement('strong');
-        lead.textContent = 'Константы наследуются из якоря: ';
+        lead.textContent = 'Константы из якоря (теги — свои у каждого языка): ';
         var text = document.createElement('span');
         text.textContent = parts.join(' · ');
         bar.appendChild(lead);
         bar.appendChild(text);
       }
 
-      function renderPromptHelper() {
-        var wrap = document.getElementById('anchorPromptWrap');
-        if (state.activeTabLang !== state.anchorLang) {
-          wrap.style.display = 'none';
-          return;
-        }
-        wrap.style.display = 'block';
+      function buildCoverPrompt() {
         var anchorEntry = getEntry(state.anchorLang);
+        var anchorShort = LANG_MAP[state.anchorLang] ? LANG_MAP[state.anchorLang].shortLabel : state.anchorLang.toUpperCase();
+        var mode = state.promptSourceMode || 'auto';
         var para = extractFirstParagraph(anchorEntry.body);
-        var fullPrompt = DEFAULT_PROMPT_TEMPLATE + '\n' + (para || '[Добавьте первый абзац в текст якорной статьи]');
-        document.getElementById('coverPromptOutput').value = fullPrompt;
-        document.getElementById('promptSourceInfo').textContent = para
-          ? 'Источник: первый абзац якоря (' + para.length + ' симв.)'
-          : 'Первый абзац пока не найден';
+        var titleDesc = [anchorEntry.title.trim(), anchorEntry.description.trim()].filter(Boolean).join('. ');
+        var context = '';
+        var info = '';
+
+        if (mode === 'title_desc') {
+          context = titleDesc;
+          info = context
+            ? anchorShort + ': заголовок + описание (' + context.length + ' симв.)'
+            : 'Добавьте заголовок или описание в якорную статью';
+        } else if (mode === 'paragraph') {
+          context = para;
+          info = context
+            ? anchorShort + ': первый абзац (' + context.length + ' симв.)'
+            : 'Первый абзац в якорной статье пока пуст';
+        } else {
+          if (para) {
+            context = para;
+            info = anchorShort + ': первый абзац (' + context.length + ' симв.)';
+          } else if (titleDesc) {
+            context = titleDesc;
+            info = anchorShort + ': заголовок + описание (' + context.length + ' симв.)';
+          } else {
+            info = 'Заполните заголовок или первый абзац якорной статьи';
+          }
+        }
+
+        var tpl = (state.promptTemplate || DEFAULT_PROMPT_TEMPLATE).trim();
+        return {
+          prompt: tpl + '\n' + (context || '[Добавьте текст или описание в якорную статью]'),
+          hasContext: Boolean(context),
+          info: info
+        };
+      }
+
+      function renderPromptHelper() {
+        var built = buildCoverPrompt();
+        document.getElementById('coverPromptOutput').value = built.prompt;
+        document.getElementById('promptSourceInfo').textContent = built.info;
+        document.getElementById('promptSourceSelect').value = state.promptSourceMode || 'auto';
+        document.getElementById('copyPromptBtn').disabled = !built.hasContext;
+
+        var tplInput = document.getElementById('promptTemplateInput');
+        if (tplInput.value !== state.promptTemplate) {
+          tplInput.value = state.promptTemplate;
+        }
+        document.getElementById('promptBox').style.display = state.promptOpen ? 'flex' : 'none';
+        document.getElementById('togglePromptBtn').textContent = state.promptOpen ? 'Свернуть' : 'Показать';
+        document.getElementById('promptTemplateWrap').style.display = state.promptTemplateOpen ? 'flex' : 'none';
       }
 
       function renderActiveEditor() {
@@ -1871,18 +2358,24 @@
           ? 'Импорт в якорь (.md / .json)'
           : 'Импорт в ' + l.shortLabel + ' (только переменные)';
 
+        document.getElementById('copyTagsFromAnchorBtn').style.display = isAnchor ? 'none' : 'inline-flex';
+
         renderInheritedBar();
 
         var titleEl = document.getElementById('entryTitleInput');
         var slugEl = document.getElementById('entrySlugInput');
         var descEl = document.getElementById('entryDescInput');
+        var tagsEl = document.getElementById('entryTagsInput');
         var bodyEl = document.getElementById('entryBodyInput');
         var slugErrEl = document.getElementById('entrySlugErr');
 
         titleEl.value = entry.title;
         slugEl.value = entry.slug;
         descEl.value = entry.description;
+        tagsEl.value = entry.tagsText || '';
         bodyEl.value = entry.body;
+
+        renderEntryTagSuggestions();
 
         titleEl.classList.toggle('is-invalid', !entry.title.trim());
         var slugOk = Boolean(entry.slug.trim() && SLUG_RE.test(entry.slug.trim()));
@@ -2073,13 +2566,8 @@
 
       document.getElementById('constCategoriesInput').addEventListener('input', function () {
         state.constants.categoriesText = this.value;
-        renderSuggestions('categorySuggestions', state.categoriesPool.slice(0, 12), 'constCategoriesInput', 'categoriesText');
-        renderInheritedBar();
-      });
-
-      document.getElementById('constTagsInput').addEventListener('input', function () {
-        state.constants.tagsText = this.value;
-        renderSuggestions('tagSuggestions', state.tagsPool.slice(0, 14), 'constTagsInput', 'tagsText');
+        renderCategorySuggestions();
+        renderCategoryResolvedPreview();
         renderInheritedBar();
       });
 
@@ -2140,6 +2628,27 @@
 
       document.getElementById('entryDescInput').addEventListener('input', function () {
         getEntry(state.activeTabLang).description = this.value;
+        if (state.activeTabLang === state.anchorLang) {
+          renderPromptHelper();
+        }
+      });
+
+      document.getElementById('entryTagsInput').addEventListener('input', function () {
+        getEntry(state.activeTabLang).tagsText = this.value;
+        renderEntryTagSuggestions();
+      });
+
+      document.getElementById('copyTagsFromAnchorBtn').addEventListener('click', function () {
+        var anchorTags = getEntry(state.anchorLang).tagsText || '';
+        if (!anchorTags.trim()) {
+          showToast('В якорной статье теги пока не заполнены');
+          return;
+        }
+        var current = getEntry(state.activeTabLang);
+        current.tagsText = anchorTags;
+        document.getElementById('entryTagsInput').value = anchorTags;
+        renderEntryTagSuggestions();
+        showToast('Теги скопированы из якоря для редактирования');
       });
 
       var bodyTa = document.getElementById('entryBodyInput');
@@ -2180,13 +2689,13 @@
               date: isAnchor,
               translationKey: isAnchor,
               categories: isAnchor,
-              tags: isAnchor,
+              tags: true,
               body: true,
               stripImages: false
             });
             showToast(isAnchor
               ? 'Импортировано в якорь из файла ' + file.name
-              : 'Переменные языка ' + LANG_MAP[state.activeTabLang].shortLabel + ' импортированы (константы сохранены из якоря)');
+              : 'Поля и теги ' + LANG_MAP[state.activeTabLang].shortLabel + ' импортированы (константы сохранены из якоря)');
           } catch (err) {
             showToast('Ошибка импорта: ' + err.message);
           }
@@ -2201,22 +2710,52 @@
 
       document.getElementById('togglePromptBtn').addEventListener('click', function () {
         state.promptOpen = !state.promptOpen;
-        document.getElementById('promptBox').style.display = state.promptOpen ? 'flex' : 'none';
-        document.getElementById('promptToggleLabel').textContent = state.promptOpen ? 'Свернуть' : 'Показать';
+        renderPromptHelper();
+      });
+
+      document.getElementById('promptSourceSelect').addEventListener('change', function () {
+        state.promptSourceMode = this.value || 'auto';
+        renderPromptHelper();
+      });
+
+      document.getElementById('togglePromptTemplateBtn').addEventListener('click', function () {
+        state.promptTemplateOpen = !state.promptTemplateOpen;
+        renderPromptHelper();
+      });
+
+      document.getElementById('promptTemplateInput').addEventListener('input', function () {
+        state.promptTemplate = this.value;
+        var built = buildCoverPrompt();
+        document.getElementById('coverPromptOutput').value = built.prompt;
+      });
+
+      document.getElementById('resetPromptTemplateBtn').addEventListener('click', function () {
+        state.promptTemplate = DEFAULT_PROMPT_TEMPLATE;
+        document.getElementById('promptTemplateInput').value = DEFAULT_PROMPT_TEMPLATE;
+        renderPromptHelper();
       });
 
       document.getElementById('copyPromptBtn').addEventListener('click', function () {
+        var built = buildCoverPrompt();
+        if (!built.hasContext) {
+          showToast('Сначала заполните первый абзац или заголовок якорной статьи');
+          return;
+        }
         var ta = document.getElementById('coverPromptOutput');
-        navigator.clipboard.writeText(ta.value).then(function () {
-          showToast('Промпт скопирован в буфер обмена');
+        ta.value = built.prompt;
+        navigator.clipboard.writeText(built.prompt).then(function () {
+          showToast('Промпт обложки скопирован (из якоря)');
         }).catch(function () {
+          var prevDisplay = document.getElementById('promptBox').style.display;
+          document.getElementById('promptBox').style.display = 'flex';
           ta.select();
           document.execCommand('copy');
+          document.getElementById('promptBox').style.display = prevDisplay;
           showToast('Промпт скопирован');
         });
       });
 
-      /* ---------- Import Modal (Anchor = Full, Follower = Variables ONLY) ---------- */
+      /* ---------- Import Modal (Anchor = Full, Follower = Localized Variables Including Tags) ---------- */
       function applyParsedImportToLang(lang, parsed, opts) {
         var entry = getEntry(lang);
         if (opts.title && parsed.hasTitle) {
@@ -2234,11 +2773,14 @@
         if (opts.description && parsed.hasDescription) {
           entry.description = parsed.description;
         }
+        if (opts.tags && parsed.hasTags) {
+          entry.tagsText = parsed.tags.join(', ');
+        }
         if (opts.body && parsed.hasBody) {
           entry.body = opts.stripImages ? stripBodyImages(parsed.body) : parsed.body;
         }
 
-        // STRICT RULE: Only Anchor may import constants! Followers NEVER touch constants.
+        // STRICT RULE: Only Anchor may import shared constants! Followers NEVER touch constants.
         if (opts.isAnchor && lang === state.anchorLang) {
           if (opts.date && parsed.hasDate) {
             state.constants.dateLocal = toLocalDatetimeValue(parsed.date);
@@ -2252,9 +2794,6 @@
           if (opts.categories && parsed.hasCategories) {
             state.constants.categoriesText = parsed.categories.join(', ');
           }
-          if (opts.tags && parsed.hasTags) {
-            state.constants.tagsText = parsed.tags.join(', ');
-          }
         }
 
         renderAll();
@@ -2267,7 +2806,7 @@
         if (!ta.value.trim()) {
           sum.textContent = isAnchor
             ? 'Выберите файл .md / .json или вставьте текст. Для якоря доступны все поля, включая константы.'
-            : 'Выберите файл .md / .json или вставьте перевод. Константы (дата, категории, теги, ключ, обложка) будут проигнорированы.';
+            : 'Выберите файл .md / .json или вставьте перевод. Теги возьмутся из этого файла, а константы (дата, категории, ключ, обложка) сохранятся из якоря.';
           return;
         }
         try {
@@ -2276,6 +2815,7 @@
           if (parsed.hasTitle) applied.push('Заголовок');
           if (parsed.hasSlug) applied.push('URL-слаг');
           if (parsed.hasDescription) applied.push('Описание');
+          if (parsed.hasTags) applied.push('Теги (' + parsed.tags.length + ')');
           if (parsed.hasBody) applied.push('Текст (' + parsed.body.length + ' симв.)');
 
           var skipped = [];
@@ -2283,13 +2823,11 @@
             if (parsed.hasDate) skipped.push('Дата');
             if (parsed.hasTranslationKey) skipped.push('Ключ перевода');
             if (parsed.hasCategories) skipped.push('Категории');
-            if (parsed.hasTags) skipped.push('Теги');
             if (parsed.hasImage) skipped.push('Обложка');
           } else {
             if (parsed.hasDate) applied.push('Дата');
             if (parsed.hasTranslationKey) applied.push('Ключ перевода');
             if (parsed.hasCategories) applied.push('Категории (' + parsed.categories.length + ')');
-            if (parsed.hasTags) applied.push('Теги (' + parsed.tags.length + ')');
           }
 
           var msg = 'Будет применено: ' + (applied.length ? applied.join(' · ') : 'только текст');
@@ -2308,7 +2846,7 @@
         var l = LANG_MAP[lang];
         document.getElementById('importModalTitle').textContent = isAnchor
           ? 'Импорт якорной статьи · ' + l.label
-          : 'Импорт перевода · ' + l.label + ' (только переменные)';
+          : 'Импорт перевода · ' + l.label + ' (переменные + теги)';
         document.getElementById('importFollowerNotice').style.display = isAnchor ? 'none' : 'block';
         document.getElementById('importTextarea').value = '';
         document.getElementById('importFileInput').value = '';
@@ -2367,14 +2905,14 @@
             date: isAnchor && checked('date'),
             translationKey: isAnchor && checked('translationKey'),
             categories: isAnchor && checked('categories'),
-            tags: isAnchor && checked('tags'),
+            tags: checked('tags'),
             body: checked('body'),
             stripImages: document.getElementById('importStripImagesCheck').checked
           });
           document.getElementById('importModalBackdrop').classList.remove('is-open');
           showToast(isAnchor
             ? 'Поля и константы якорной статьи заполнены'
-            : 'Переменные ' + LANG_MAP[state.activeTabLang].shortLabel + ' заполнены (константы сохранены)');
+            : 'Переменные и теги ' + LANG_MAP[state.activeTabLang].shortLabel + ' заполнены');
         } catch (err) {
           document.getElementById('importStatus').textContent = 'Ошибка: ' + err.message;
         }
@@ -2500,13 +3038,13 @@
           anchorEntry.slug = detail.slug;
           anchorEntry.slugManual = true;
           anchorEntry.description = detail.description;
+          anchorEntry.tagsText = (detail.tags || []).join(', ');
           anchorEntry.body = detail.body;
 
           state.constants.dateLocal = toLocalDatetimeValue(detail.date);
           state.constants.translationKey = detail.translationKey || detail.slug;
           state.constants.tkManual = Boolean(detail.translationKey);
           state.constants.categoriesText = (detail.categories || []).join(', ');
-          state.constants.tagsText = (detail.tags || []).join(', ');
           state.constants.image = detail.image || '';
           state.constants.extraAssets = [];
 
@@ -2560,7 +3098,6 @@
       function buildPublishPayload() {
         var isoDate = normalizeIsoDate(state.constants.dateLocal) || new Date().toISOString();
         var cats = splitCsvList(state.constants.categoriesText);
-        var tags = splitCsvList(state.constants.tagsText);
         var assets = [];
         if (state.constants.coverAsset) {
           assets.push({
@@ -2583,7 +3120,7 @@
             translationKey: state.constants.translationKey.trim(),
             image: state.constants.image.trim(),
             categories: cats,
-            tags: tags,
+            tags: [],
             assets: assets
           },
           entries: langs.map(function (code) {
@@ -2593,6 +3130,7 @@
               title: e.title.trim(),
               slug: e.slug.trim().toLowerCase(),
               description: e.description.trim(),
+              tags: splitCsvList(e.tagsText),
               body: e.body.trim()
             };
           })
@@ -2614,6 +3152,13 @@
       }
 
       function serializePostClient(entry, constants) {
+        var resolvedCats = resolveTaxonomyListClient(
+          constants.categories,
+          entry.lang,
+          (state.taxonomy && state.taxonomy.categories) || []
+        );
+        var entryTags = Array.isArray(entry.tags) ? entry.tags : [];
+
         var lines = ['---'];
         lines.push('title: ' + formatYamlScalarClient(entry.title));
         lines.push('slug: ' + formatYamlScalarClient(entry.slug));
@@ -2624,15 +3169,15 @@
         if (constants.image) {
           lines.push('image: ' + formatYamlScalarClient(constants.image));
         }
-        if (constants.categories.length > 0) {
+        if (resolvedCats.length > 0) {
           lines.push('categories:');
-          constants.categories.forEach(function (c) {
+          resolvedCats.forEach(function (c) {
             lines.push('  - ' + formatYamlScalarClient(c));
           });
         }
-        if (constants.tags.length > 0) {
+        if (entryTags.length > 0) {
           lines.push('tags:');
-          constants.tags.forEach(function (t) {
+          entryTags.forEach(function (t) {
             lines.push('  - ' + formatYamlScalarClient(t));
           });
         }
@@ -2653,8 +3198,7 @@
           'Ключ: ' + payload.constants.translationKey +
           ' · Дата: ' + datePrefix +
           ' · Обложка: ' + (payload.constants.image || 'нет') +
-          ' · Категории: ' + (payload.constants.categories.join(', ') || 'нет') +
-          ' · Теги: ' + (payload.constants.tags.join(', ') || 'нет');
+          ' · Категории (автоперевод по языкам): ' + (payload.constants.categories.join(', ') || 'нет');
 
         var listEl = document.getElementById('publishTargetList');
         listEl.innerHTML = '';
@@ -2672,7 +3216,14 @@
 
           var right = document.createElement('div');
           right.className = 'publish-row-path';
-          right.textContent = 'content/' + item.lang + '/post/' + datePrefix + '-' + item.slug + '/index.md';
+          var localCats = resolveTaxonomyListClient(
+            payload.constants.categories,
+            item.lang,
+            (state.taxonomy && state.taxonomy.categories) || []
+          );
+          var tagsPart = item.tags && item.tags.length ? ' · теги: ' + item.tags.join(', ') : '';
+          right.textContent = 'content/' + item.lang + '/post/' + datePrefix + '-' + item.slug + '/index.md' +
+            (localCats.length ? ' · [' + localCats.join(', ') + ']' : '') + tagsPart;
 
           row.appendChild(left);
           row.appendChild(right);
@@ -2847,7 +3398,6 @@
           tkManual: false,
           image: '',
           categoriesText: '',
-          tagsText: '',
           coverAsset: null,
           extraAssets: []
         };
@@ -2888,7 +3438,12 @@
 
         var headers = { Accept: 'application/vnd.github+json', Authorization: 'Bearer ' + state.ghToken };
         var refRes = await fetch('https://api.github.com/repos/' + state.ghRepo + '/git/ref/heads/' + encodeURIComponent(state.ghBranch), { headers: headers });
-        if (!refRes.ok) throw new Error('GitHub HTTP ' + refRes.status);
+        if (!refRes.ok) {
+          if (refRes.status === 401) {
+            throw new Error('GitHub HTTP 401 — сессия устарела или токен недействителен. Войдите заново в /admin или вставьте новый PAT.');
+          }
+          throw new Error('GitHub HTTP ' + refRes.status);
+        }
         var refJson = await refRes.json();
         state.ghHeadCommitSha = refJson.object.sha;
 
@@ -2928,11 +3483,219 @@
           state.existingPosts = posts;
         }
 
+        try {
+          var taxRes = await fetch('https://api.github.com/repos/' + state.ghRepo + '/contents/data/taxonomy.json?ref=' + encodeURIComponent(state.ghBranch), { headers: headers });
+          if (taxRes.ok) {
+            var taxJson = await taxRes.json();
+            state.taxonomyGhSha = taxJson.sha || '';
+            var parsedTax = JSON.parse(decodeBase64Utf8(taxJson.content || ''));
+            if (parsedTax && Array.isArray(parsedTax.categories)) {
+              state.taxonomy = {
+                version: parsedTax.version || 1,
+                categories: parsedTax.categories || [],
+                tags: parsedTax.tags || []
+              };
+            }
+          }
+        } catch (_) {}
+
         state.mode = 'github';
         document.getElementById('modeBadge').textContent = 'GitHub · ' + state.ghRepo + '@' + state.ghBranch;
         statusEl.textContent = 'Подключено (' + state.existingPosts.length + ' постов в индексе)';
         renderAll();
       }
+
+      /* ---------- Taxonomy Dictionary Modal ---------- */
+      var dictEditingType = 'categories';
+      var dictEditingIndex = 0;
+
+      function getDictList() {
+        if (!state.taxonomy) state.taxonomy = JSON.parse(JSON.stringify(DEFAULT_TAXONOMY));
+        if (!Array.isArray(state.taxonomy[dictEditingType])) state.taxonomy[dictEditingType] = [];
+        return state.taxonomy[dictEditingType];
+      }
+
+      function renderTaxonomyModalFields() {
+        var list = getDictList();
+        var termSel = document.getElementById('dictTermSelect');
+        termSel.innerHTML = '';
+
+        list.forEach(function (item, idx) {
+          var label = (item.translations && (item.translations[state.anchorLang] || item.translations.en)) || item.id;
+          termSel.appendChild(new Option(label + ' (' + item.id + ')', String(idx)));
+        });
+
+        if (dictEditingIndex >= list.length) dictEditingIndex = Math.max(0, list.length - 1);
+        termSel.value = list.length ? String(dictEditingIndex) : '';
+
+        var current = list[dictEditingIndex] || null;
+        document.getElementById('dictTermIdInput').value = current ? current.id : '';
+        document.getElementById('dictDeleteTermBtn').disabled = !current;
+
+        var grid = document.getElementById('dictTranslationsGrid');
+        grid.innerHTML = '';
+        SITE_LANGUAGES.forEach(function (l) {
+          var row = document.createElement('div');
+          row.className = 'dict-lang-field';
+
+          var codeEl = document.createElement('span');
+          codeEl.className = 'dict-lang-tag';
+          codeEl.textContent = l.shortLabel;
+
+          var inp = document.createElement('input');
+          inp.type = 'text';
+          inp.className = 'input';
+          inp.dataset.dictLang = l.code;
+          inp.placeholder = l.label;
+          inp.value = current && current.translations && current.translations[l.code] ? current.translations[l.code] : '';
+          inp.disabled = !current;
+
+          row.appendChild(codeEl);
+          row.appendChild(inp);
+          grid.appendChild(row);
+        });
+      }
+
+      function syncCurrentDictDraftFromDom() {
+        var list = getDictList();
+        var current = list[dictEditingIndex];
+        if (!current) return;
+        var cleanId = toLatinSlug(document.getElementById('dictTermIdInput').value);
+        if (cleanId) current.id = cleanId;
+        var nextTrans = {};
+        document.querySelectorAll('#dictTranslationsGrid input[data-dict-lang]').forEach(function (inp) {
+          var v = inp.value.trim();
+          if (v) nextTrans[inp.dataset.dictLang] = v;
+        });
+        current.translations = nextTrans;
+      }
+
+      function openTaxonomyModalWithSeed(type, seedValue) {
+        dictEditingType = type === 'tags' ? 'tags' : 'categories';
+        document.getElementById('dictTypeSelect').value = dictEditingType;
+        document.getElementById('dictStatusBox').style.display = 'none';
+
+        var list = getDictList();
+        if (seedValue) {
+          var existingIdx = list.findIndex(function (it) {
+            return findTaxonomyMatchClient(seedValue, [it]) !== null;
+          });
+          if (existingIdx !== -1) {
+            dictEditingIndex = existingIdx;
+          } else {
+            var newId = toLatinSlug(seedValue) || ('term-' + Date.now());
+            var trans = {};
+            trans[state.anchorLang] = seedValue.trim();
+            list.push({ id: newId, translations: trans });
+            dictEditingIndex = list.length - 1;
+          }
+        } else {
+          dictEditingIndex = 0;
+        }
+
+        renderTaxonomyModalFields();
+        document.getElementById('taxonomyModalBackdrop').classList.add('is-open');
+      }
+
+      document.getElementById('openTaxonomyDictBtn').addEventListener('click', function () {
+        openTaxonomyModalWithSeed('categories', '');
+      });
+      document.getElementById('openTaxonomyDictInlineBtn').addEventListener('click', function () {
+        openTaxonomyModalWithSeed('categories', '');
+      });
+      document.getElementById('taxonomyCloseBtn').addEventListener('click', function () {
+        document.getElementById('taxonomyModalBackdrop').classList.remove('is-open');
+      });
+      document.getElementById('taxonomyCancelBtn').addEventListener('click', function () {
+        document.getElementById('taxonomyModalBackdrop').classList.remove('is-open');
+      });
+      document.getElementById('dictTypeSelect').addEventListener('change', function () {
+        syncCurrentDictDraftFromDom();
+        dictEditingType = this.value === 'tags' ? 'tags' : 'categories';
+        dictEditingIndex = 0;
+        renderTaxonomyModalFields();
+      });
+      document.getElementById('dictTermSelect').addEventListener('change', function () {
+        syncCurrentDictDraftFromDom();
+        dictEditingIndex = parseInt(this.value, 10) || 0;
+        renderTaxonomyModalFields();
+      });
+      document.getElementById('dictNewTermBtn').addEventListener('click', function () {
+        syncCurrentDictDraftFromDom();
+        var list = getDictList();
+        var newId = 'custom-term-' + (list.length + 1);
+        var initTrans = {};
+        initTrans[state.anchorLang] = 'Новый термин';
+        list.push({ id: newId, translations: initTrans });
+        dictEditingIndex = list.length - 1;
+        renderTaxonomyModalFields();
+        document.getElementById('dictTermIdInput').focus();
+      });
+      document.getElementById('dictDeleteTermBtn').addEventListener('click', function () {
+        var list = getDictList();
+        if (!list.length) return;
+        list.splice(dictEditingIndex, 1);
+        dictEditingIndex = Math.max(0, dictEditingIndex - 1);
+        renderTaxonomyModalFields();
+      });
+      document.getElementById('taxonomySaveBtn').addEventListener('click', async function () {
+        var btn = this;
+        var box = document.getElementById('dictStatusBox');
+        btn.disabled = true;
+        box.style.display = 'none';
+        try {
+          syncCurrentDictDraftFromDom();
+          if (state.mode === 'local') {
+            var res = await fetch('/api/multilang/taxonomy', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(state.taxonomy)
+            });
+            var json = await res.json();
+            if (!res.ok || !json.ok) throw new Error(json.error || 'Не удалось сохранить словарь');
+            state.taxonomy = json.taxonomy;
+          } else {
+            if (!state.ghToken) throw new Error('Не задан GitHub Token');
+            var headers = {
+              Accept: 'application/vnd.github+json',
+              'Content-Type': 'application/json',
+              Authorization: 'Bearer ' + state.ghToken
+            };
+            var payloadJson = JSON.stringify(state.taxonomy, null, 2) + '\n';
+            var bytes = new TextEncoder().encode(payloadJson);
+            var binStr = '';
+            for (var bi = 0; bi < bytes.length; bi++) binStr += String.fromCharCode(bytes[bi]);
+            var b64 = btoa(binStr);
+            var putBody = {
+              message: 'chore(taxonomy): update multilingual taxonomy dictionary',
+              content: b64,
+              branch: state.ghBranch
+            };
+            if (state.taxonomyGhSha) putBody.sha = state.taxonomyGhSha;
+            var putRes = await fetch('https://api.github.com/repos/' + state.ghRepo + '/contents/data/taxonomy.json', {
+              method: 'PUT',
+              headers: headers,
+              body: JSON.stringify(putBody)
+            });
+            var putJson = await putRes.json();
+            if (!putRes.ok) throw new Error((putJson && putJson.message) || 'GitHub HTTP ' + putRes.status);
+            if (putJson && putJson.content && putJson.content.sha) {
+              state.taxonomyGhSha = putJson.content.sha;
+            }
+          }
+          box.className = 'notice-box is-ok';
+          box.textContent = 'Словарь сохранён в data/taxonomy.json';
+          box.style.display = 'block';
+          renderAll();
+          showToast('Словарь категорий обновлён');
+        } catch (err) {
+          box.className = 'notice-box is-err';
+          box.textContent = 'Ошибка: ' + err.message;
+          box.style.display = 'block';
+        } finally {
+          btn.disabled = false;
+        }
+      });
 
       async function loadState() {
         try {
@@ -2941,6 +3704,9 @@
             var json = await res.json();
             if (json && json.mode === 'local') {
               state.mode = 'local';
+              if (json.taxonomy && Array.isArray(json.taxonomy.categories)) {
+                state.taxonomy = json.taxonomy;
+              }
               state.categoriesPool = json.categories || [];
               state.tagsPool = json.tags || [];
               state.existingSlugsByLang = json.existingSlugsByLang || {};
@@ -2993,6 +3759,7 @@
           document.getElementById('htmlModalBackdrop').classList.remove('is-open');
           document.getElementById('pickerModalBackdrop').classList.remove('is-open');
           document.getElementById('publishModalBackdrop').classList.remove('is-open');
+          document.getElementById('taxonomyModalBackdrop').classList.remove('is-open');
         }
       });
 
