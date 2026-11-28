@@ -5,9 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title><%= pageTitle %></title>
   <meta name="description" content="<%= pageDescription %>" />
+  <link rel="canonical" href="<%= canonicalUrl %>" />
   <meta property="og:title" content="<%= pageTitle %>" />
   <meta property="og:description" content="<%= pageDescription %>" />
+  <meta property="og:url" content="<%= canonicalUrl %>" />
+  <meta property="og:site_name" content="<%= site.title %>" />
+  <meta property="og:image" content="<%= ogImageUrl %>" />
   <meta property="og:type" content="<%= typeof isArticle !== 'undefined' && isArticle ? 'article' : 'website' %>" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="<%= pageTitle %>" />
+  <meta name="twitter:description" content="<%= pageDescription %>" />
+  <meta name="twitter:image" content="<%= ogImageUrl %>" />
   <link rel="icon" type="image/svg+xml" href="<%= site.favicon %>" />
   <link rel="stylesheet" href="/vendor/katex/katex.min.css" />
   <link rel="stylesheet" href="/vendor/hljs/github-dark.min.css" />

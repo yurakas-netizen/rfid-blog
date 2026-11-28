@@ -22,7 +22,7 @@ import {
   type SiteContent,
 } from './src/content.js';
 import { buildStylesheet } from './src/styles.js';
-import { buildSchemaJsonLd } from './src/schema.js';
+import { buildSchemaJsonLd, toAbsoluteSiteUrl } from './src/schema.js';
 import {
   loadRegistryEntries,
   previewRegistryChanges,
@@ -74,6 +74,8 @@ import {
   verifyMemberAuthHeader,
   setTeamAccessCode,
   isTeamAuthConfigured,
+  type CatalogItem,
+  type ResolvedCatalogRenderData,
 } from './src/catalog.js';
 
 const ROOT_DIR = process.cwd();
@@ -216,22 +218,48 @@ async function renderView(
   status = 200
 ): Promise<void> {
   const ctx = buildViewContext(siteContent, lang, data);
+  const catalogResolved = (ctx as { resolved?: ResolvedCatalogRenderData }).resolved;
+  const catalogList = (data as {
+    catalogList?: {
+      sectionTitle: string;
+      sectionUrlPath: string;
+      items: CatalogItem[];
+    };
+  }).catalogList;
   const reqUrlPath =
     typeof res.req?.originalUrl === 'string'
       ? res.req.originalUrl.split('?')[0]
       : LANGUAGES[lang].urlPrefix
       ? `${LANGUAGES[lang].urlPrefix}/`
       : '/';
+  const pageUrlPath =
+    (ctx as { post?: PostItem }).post?.permalink ||
+    catalogResolved?.item.permalink ||
+    reqUrlPath;
+  const ogImageRel =
+    (ctx as { post?: PostItem }).post?.imageUrl ||
+    catalogResolved?.item.imageUrl ||
+    '/assets/img/avatar.png';
+  const canonicalUrl = toAbsoluteSiteUrl(pageUrlPath);
+  const ogImageUrl = toAbsoluteSiteUrl(ogImageRel);
   const jsonLd = buildSchemaJsonLd({
     lang,
     isHome: Boolean((data as Record<string, unknown>).isHome),
     isArticle: Boolean(ctx.isArticle),
-    pageUrlPath: (ctx as { post?: PostItem }).post?.permalink || reqUrlPath,
+    pageUrlPath,
     pageTitle: String(ctx.pageTitle || LANGUAGES[lang].title),
+    pageDescription: String(ctx.pageDescription || ''),
     post: (ctx as { post?: PostItem }).post,
     translatedPosts: (ctx as { translatedPosts?: PostItem[] }).translatedPosts,
+    catalogResolved,
+    catalogList,
   });
-  const html = await ejs.renderFile(path.join(viewsDir, `${viewName}.ejs`), { ...ctx, jsonLd });
+  const html = await ejs.renderFile(path.join(viewsDir, `${viewName}.ejs`), {
+    ...ctx,
+    canonicalUrl,
+    ogImageUrl,
+    jsonLd,
+  });
   res.status(status).type('html').send(html);
 }
 
@@ -254,6 +282,51 @@ app.use(express.static(path.join(ROOT_DIR, 'static')));
 app.get('/health', (_req: Request, res: Response) => {
   const siteContent = loadSiteContent();
   res.json({ status: 'ok', posts: siteContent.allPosts.length });
+});
+
+// AI-crawler / LLM discovery manifest (llms.txt)
+app.get('/llms.txt', (_req: Request, res: Response) => {
+  const siteContent = loadSiteContent();
+  const { allItems } = loadAllCatalogItems();
+  const settings = loadCatalogSettings().settings;
+  const origin = SITE_CONFIG.baseUrl.replace(/\/+$/, '');
+  const lines: string[] = [
+    '# RFID Ukraine (rfid.org.ua)',
+    '',
+    '> Independent engineering platform and technical catalog for UHF RFID, RTLS, NFC, RAIN RFID readers, directional antennas, industrial transponders, and GS1 EPCIS 2.0 middleware.',
+    '',
+    `- Canonical Origin: ${origin}/`,
+    `- Languages (${ORDERED_LANGUAGES.length}): ${ORDERED_LANGUAGES.map((l) => `${l.code} (${l.urlPrefix || '/'})`).join(', ')}`,
+    '',
+    '## Engineering Equipment & Software Catalog',
+    '',
+  ];
+  for (const item of allItems) {
+    const showPrice = computeEffectiveShowPrice(item, settings);
+    const priceNote = showPrice && item.price !== null
+      ? ` | Price: ${formatCatalogPrice(item.price, item.currency || settings.defaultCurrency, item.priceUnit)}`
+      : '';
+    lines.push(
+      `- [${item.title}](${origin}${item.permalink}) — Lang: \`${item.lang.toUpperCase()}\` | Type: \`${item.catalogType}\`${item.sku ? ` | SKU: \`${item.sku}\`` : ''}${priceNote} | Specs: ${item.specs.length} | Docs: ${item.documents.length}`
+    );
+    if (item.description) {
+      lines.push(`  ${item.description}`);
+    }
+    for (const doc of item.documents) {
+      if (doc.file) {
+        lines.push(`  - Datasheet/Doc (${doc.docType}): [${doc.title}](${toAbsoluteSiteUrl(doc.file)})`);
+      }
+    }
+  }
+  lines.push('', '## Latest Technical Articles (UK / EN / RU)', '');
+  const featured = siteContent.allPosts
+    .filter((p) => p.lang === 'uk' || p.lang === 'en' || p.lang === 'ru')
+    .slice(0, 15);
+  for (const post of featured) {
+    lines.push(`- [${post.title}](${origin}${post.permalink}) (\`${post.lang.toUpperCase()}\`) — ${post.description || post.summary}`);
+  }
+  lines.push('');
+  res.type('text/markdown; charset=utf-8').send(lines.join('\n'));
 });
 
 // Taxonomy & Translation Registry API (local filesystem mode)
@@ -999,12 +1072,18 @@ app.get(['/catalog', '/catalog/', '/:lang/catalog', '/:lang/catalog/'], async (r
       })
     : [];
 
+  const sectionUrlPath = req.path.endsWith('/') ? req.path : `${req.path}/`;
   await renderView(res, siteContent, 'catalog-list', lang, {
     activeNav: 'catalog',
     pageTitle: `${catalogUi.sectionTitle} — ${LANGUAGES[lang].title}`,
     pageDescription: catalogUi.sectionSubtitle,
     catalogUi,
     catalogCards,
+    catalogList: {
+      sectionTitle: catalogUi.sectionTitle,
+      sectionUrlPath,
+      items: catalogCards,
+    },
     availableCatalogLangs,
     fallbackAllCards,
     settings,

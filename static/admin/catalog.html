@@ -486,7 +486,10 @@
           </div>
 
           <div class="field">
-            <label class="field-label" for="entryBodyInput">Полное инженерное описание (Markdown / KaTeX) <span class="req-star">*</span></label>
+            <div class="inline-row" style="justify-content:space-between; margin-bottom:4px;">
+              <label class="field-label" for="entryBodyInput" style="margin-bottom:0;">Полное инженерное описание (Markdown / KaTeX) <span class="req-star">*</span></label>
+              <button type="button" id="insertFaqBtn" class="btn btn-sm" title="Вставить секцию H2 FAQ + H3 вопросы для автоматической генерации Schema.org FAQPage">+ Шаблон FAQ (Schema.org)</button>
+            </div>
             <textarea id="entryBodyInput" class="textarea is-mono" rows="15" placeholder="## Архітектура та RF-тракт&#10;&#10;Детальний інженерний розбір, схема підключення та рекомендації щодо впровадження..."></textarea>
           </div>
         </div>
@@ -1302,6 +1305,22 @@
       document.getElementById('entryBodyInput').addEventListener('input', function () {
         ensureEntry(state.activeTabLang).body = this.value;
         renderLangTabsAndEditor();
+      });
+      document.getElementById('insertFaqBtn').addEventListener('click', function () {
+        var lang = state.activeTabLang;
+        var tplByLang = {
+          uk: '\n\n## Часті питання (FAQ)\n\n### Які вимоги до живлення та захисту (IP/PoE)?\n\nКоротка інженерна відповідь з напругою, потужністю та умовами експлуатації.\n\n### Які протоколи інтеграції підтримуються без проміжного ПЗ?\n\nОпис LLRP, MQTT, REST або GS1 EPCIS 2.0.\n',
+          ru: '\n\n## Частые вопросы (FAQ)\n\n### Какие требования к питанию и классу защиты (IP/PoE)?\n\nКраткий инженерный ответ с напряжением, мощностью и условиями эксплуатации.\n\n### Какие протоколы интеграции поддерживаются без промежуточного ПО?\n\nОписание LLRP, MQTT, REST или GS1 EPCIS 2.0.\n'
+        };
+        var tpl = tplByLang[lang] || '\n\n## Frequently Asked Questions (FAQ)\n\n### What are the power and environmental requirements?\n\nConcise engineering specification covering PoE+/DC input, power budget, and IP rating.\n\n### Which host integration protocols are supported natively?\n\nDetails on LLRP v1.1, MQTT, REST API, or GS1 EPCIS 2.0 support.\n';
+        var ta = document.getElementById('entryBodyInput');
+        var pos = typeof ta.selectionStart === 'number' ? ta.selectionStart : ta.value.length;
+        var before = ta.value.slice(0, pos).replace(/\s+$/, '');
+        var after = ta.value.slice(pos).replace(/^\s+/, '');
+        ta.value = before + tpl + (after ? '\n' + after : '');
+        ensureEntry(lang).body = ta.value;
+        renderLangTabsAndEditor();
+        toast('Вставлен шаблон FAQ для Schema.org FAQPage');
       });
 
       document.querySelectorAll('.subtab-btn').forEach(function (btn) {

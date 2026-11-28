@@ -131,3 +131,18 @@ The M12 12-pin industrial A-coded receptacle interfaces directly with optical li
 1. **LLRP v1.1 / Native Engine:** Sub-millisecond control over Gen2 RF modes (Miller M=4 / M=8, Session S2/S3, Dynamic Q) without external middleware dependencies.
 2. **Embedded EPCIS 2.0 Emitter:** Translates validated portal crossings into schema-compliant `ObjectEvent` JSON-LD payloads carrying `bizLocation`, `readPoint`, directional disposition, and NTP/PTP timestamps.
 3. **Store-and-Forward Resilience:** During WAN or broker outages, up to 2.5 million tag events are persisted to on-board industrial eMMC and flushed sequentially via MQTT QoS 1 upon reconnect.
+
+## Frequently Asked Questions (FAQ)
+
+### Does the XR400 require an external 24 VDC supply when powered via PoE+?
+
+No. When connected to an IEEE 802.3at (PoE+ Type 2) switch port, the XR400 delivers full +33.0 dBm conducted RF output across all 4 antenna ports alongside opto-isolated GPIO signaling and up to 300 mA auxiliary sensor power. The M12 24 VDC input is optional for redundant dual-power failover or legacy 802.3af installations.
+
+### How does the RF front-end handle disconnected or damaged antennas?
+
+Prior to enabling transmission on any port, the internal directional coupler measures antenna return loss. If the measured standing wave ratio exceeds $\text{VSWR} > 2.2:1$ (coax fault, moisture ingress, or open port), the PA stage is immediately muted and a fault alert is emitted over SNMP and MQTT.
+
+### How many tag events can the reader buffer offline during a network outage?
+
+The embedded 8 GB industrial eMMC functions as a persistent store-and-forward queue holding up to 2.5 million deduplicated GS1 EPCIS 2.0 tag events with NTP/PTP timestamps. Once MQTT or HTTP connectivity is restored, buffered payloads flush in chronological order with QoS 1 delivery confirmation.
+
