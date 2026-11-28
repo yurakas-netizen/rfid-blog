@@ -2896,18 +2896,43 @@ html[data-scheme="dark"] .rfid-cat-section {
     font-size: 13.5px;
     color: var(--card-text-color-tertiary);
 }
-/* Вписываем фото оборудования целиком без обрезки краёв */
-.catalog-card__media img,
-.catalog-item__media img,
-.catalog-hero__media img,
-.article-list--catalog .article-image img,
-.catalog-detail__image img,
+/* Адаптивная студийная витрина для фото оборудования (PNG и JPG) */
 [class*="catalog"] img {
     object-fit: contain !important;
     width: 100% !important;
     height: 100% !important;
-    padding: 14px;
-    background: radial-gradient(circle at center, rgba(30, 41, 59, 0.7) 0%, rgba(11, 17, 32, 0.95) 100%);
+    border-radius: 10px;
     box-sizing: border-box;
+    transition: transform 0.25s ease;
 }
+
+/* Тёмная тема: мягкий графитовый подиум, чтобы чёрный корпус не сливался с фоном */
+html[data-scheme="dark"] .catalog-card__media,
+html[data-scheme="dark"] .catalog-hero__media,
+html[data-scheme="dark"] [class*="catalog"] [class*="media"],
+html[data-scheme="dark"] [class*="catalog"] [class*="image"] {
+    background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%) !important;
+    padding: 12px !important;
+    border-bottom: 1px solid rgba(56, 189, 248, 0.15);
+}
+
+/* Светлая тема: чистый светло-серый студийный лайтбокс вместо тёмного пятна */
+html[data-scheme="light"] .catalog-card__media,
+html[data-scheme="light"] .catalog-hero__media,
+html[data-scheme="light"] [class*="catalog"] [class*="media"],
+html[data-scheme="light"] [class*="catalog"] [class*="image"] {
+    background: radial-gradient(circle at center, #f8fafc 0%, #e2e8f0 100%) !important;
+    padding: 12px !important;
+    border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+/* Тонкая рамка вокруг самой фотографии, чтобы прямоугольные фото смотрелись аккуратно */
+html[data-scheme="dark"] [class*="catalog"] img {
+    border: 1px solid rgba(148, 163, 184, 0.16);
+}
+
+html[data-scheme="light"] [class*="catalog"] img {
+    border: 1px solid rgba(15, 23, 42, 0.08);
+}
+
 
