@@ -242,9 +242,11 @@
       </div>
       <div class="topbar-actions">
         <button type="button" id="openRegistryBtn" class="btn">Реестр позиций</button>
+        <button type="button" id="exportBundleBtn" class="btn" title="Скачать всю текущую связку языков в JSON">Экспорт связки</button>
         <button type="button" id="openSettingsBtn" class="btn">Настройки цен и команды</button>
         <button type="button" id="openCommentsBtn" class="btn">Комментарии</button>
         <button type="button" id="clearFormBtn" class="btn">Новая позиция</button>
+        <button type="button" id="deleteCurrentBtn" class="btn btn-danger" style="display:none;">Удалить...</button>
         <button type="button" id="publishBtn" class="btn btn-primary" disabled>Сохранить связку</button>
       </div>
     </header>
@@ -448,11 +450,10 @@
         <div id="editPane" class="editor-pane">
           <div class="inline-row" style="justify-content:space-between; flex-wrap:wrap; padding-bottom:8px; border-bottom:1px solid var(--border-soft);">
             <span id="currentLangBanner" style="font-weight:700; font-size:13px;"></span>
-            <div class="inline-row">
-              <label class="btn btn-sm" style="cursor:pointer;">
-                Импорт .md/.json
-                <input type="file" id="importLangFileInput" accept=".md,.markdown,.json" style="display:none;" />
-              </label>
+            <div class="inline-row" style="flex-wrap:wrap;">
+              <button type="button" id="openImportModalBtn" class="btn btn-sm btn-accent-soft">Импорт .md/.json</button>
+              <button type="button" id="exportLangMdBtn" class="btn btn-sm" title="Скачать карточку активного языка в формате Hugo Markdown (.md — совместим с импортом)">Экспорт .md</button>
+              <button type="button" id="exportLangJsonBtn" class="btn btn-sm" title="Скачать карточку активного языка в формате JSON (совместим с импортом)">Экспорт .json</button>
               <button type="button" id="genSlugBtn" class="btn btn-sm">Slug из заголовка</button>
             </div>
           </div>
@@ -500,7 +501,10 @@
     <div class="modal" role="dialog" aria-modal="true" aria-labelledby="registryModalTitle">
       <div class="modal-head">
         <h3 id="registryModalTitle" class="modal-title">Реестр позиций каталога</h3>
-        <button type="button" class="btn btn-sm" data-close-modal="registryModal">&times;</button>
+        <div class="inline-row">
+          <button type="button" id="exportAllCatalogBtn" class="btn btn-sm btn-accent-soft">Экспорт всего каталога (.json)</button>
+          <button type="button" class="btn btn-sm" data-close-modal="registryModal">&times;</button>
+        </div>
       </div>
       <div class="modal-body">
         <input type="search" id="registrySearchInput" class="input" placeholder="Фильтр по названию, SKU или translationKey..." />
@@ -518,6 +522,65 @@
             </thead>
             <tbody id="registryTbody"></tbody>
           </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- IMPORT MODAL -->
+  <div id="importModal" class="modal-backdrop">
+    <div class="modal" style="max-width:780px;" role="dialog" aria-modal="true" aria-labelledby="importModalTitle">
+      <div class="modal-head">
+        <h3 id="importModalTitle" class="modal-title">Импорт карточки (.md или .json)</h3>
+        <button type="button" class="btn btn-sm" data-close-modal="importModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div id="importRoleNotice" style="padding:9px 12px; border-radius:8px; font-size:12.5px;"></div>
+        <div class="inline-row" style="justify-content:space-between; flex-wrap:wrap;">
+          <label class="btn btn-sm btn-accent-soft" style="cursor:pointer;">
+            Выбрать файл (.md / .json)
+            <input type="file" id="importLangFileInput" accept=".md,.markdown,.txt,.json" style="display:none;" />
+          </label>
+          <button type="button" id="downloadImportSampleBtn" class="btn btn-sm">Скачать шаблон формата (.md)</button>
+        </div>
+        <div id="importChecksRow" class="inline-row" style="flex-wrap:wrap; gap:12px;">
+          <label class="checkbox-row"><input type="checkbox" data-imp-field="title" checked /><span>Название</span></label>
+          <label class="checkbox-row"><input type="checkbox" data-imp-field="slug" checked /><span>URL-слаг</span></label>
+          <label class="checkbox-row"><input type="checkbox" data-imp-field="description" checked /><span>Описание</span></label>
+          <label class="checkbox-row"><input type="checkbox" data-imp-field="highlights" checked /><span>Особенности</span></label>
+          <label class="checkbox-row"><input type="checkbox" data-imp-field="tags" checked /><span>Теги</span></label>
+          <label class="checkbox-row"><input type="checkbox" data-imp-field="body" checked /><span>Текст (Markdown)</span></label>
+          <label class="checkbox-row" id="importConstantsWrap"><input type="checkbox" id="importConstantsCheck" checked /><span>Константы и ТТХ (только для якоря)</span></label>
+        </div>
+        <textarea id="importRawTextarea" class="textarea is-mono" rows="12" spellcheck="false" placeholder="Вставьте содержимое экспортированного .md (с --- YAML ---) или .json файла, либо выберите файл выше..."></textarea>
+        <div id="importPreviewStatus" style="font-size:12px; color:var(--text-muted);"></div>
+      </div>
+      <div class="modal-foot">
+        <span style="font-size:12px; color:var(--text-soft);">Для добавления нового языка: выберите чип языка &rarr; Экспорт якоря &rarr; перевод &rarr; Импорт в новый язык.</span>
+        <div class="inline-row">
+          <button type="button" class="btn" data-close-modal="importModal">Отмена</button>
+          <button type="button" id="applyImportBtn" class="btn btn-primary">Применить</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DELETE CONFIRM MODAL -->
+  <div id="deleteModal" class="modal-backdrop">
+    <div class="modal" style="max-width:540px;" role="dialog" aria-modal="true" aria-labelledby="deleteModalTitle">
+      <div class="modal-head">
+        <h3 id="deleteModalTitle" class="modal-title">Удаление позиции каталога</h3>
+        <button type="button" class="btn btn-sm" data-close-modal="deleteModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div id="deleteTargetSummary" style="font-size:13px; line-height:1.5;"></div>
+        <div style="font-size:12px; color:var(--text-soft);">Выберите, удалить только выбранную языковую версию или всю мультиязычную связку.</div>
+      </div>
+      <div class="modal-foot" style="flex-wrap:wrap;">
+        <button type="button" class="btn" data-close-modal="deleteModal">Отмена</button>
+        <div class="inline-row">
+          <button type="button" id="confirmDeleteSingleBtn" class="btn btn-danger">Удалить только язык</button>
+          <button type="button" id="confirmDeleteBundleBtn" class="btn btn-primary" style="background:#be123c; border-color:#be123c;">Удалить всю связку</button>
         </div>
       </div>
     </div>
@@ -714,6 +777,11 @@
         settingsHash: '',
         teamAuthConfigured: false,
         stagedUploads: {},
+        loadedOriginals: {},
+        settingsGhSha: '',
+        ghHeadCommitSha: '',
+        ghHeadTreeSha: '',
+        pendingDelete: null,
         modToken: '',
         ghRepo: 'yurakas-netizen/rfid-blog',
         ghBranch: 'master',
@@ -1247,46 +1315,375 @@
         });
       });
 
-      // Import .md / .json into active language tab (locks shared constants if follower!)
+      function downloadTextFile(filename, text, mime) {
+        var blob = new Blob([text], { type: (mime || 'text/plain;charset=utf-8') });
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+      }
+
+      function stripQuotesClient(val) {
+        var s = String(val || '').trim();
+        if (s.length >= 2 && s[0] === '"' && s[s.length - 1] === '"') {
+          try { return JSON.parse(s); } catch (_) { return s.slice(1, -1); }
+        }
+        if (s.length >= 2 && s[0] === "'" && s[s.length - 1] === "'") {
+          return s.slice(1, -1).replace(/''/g, "'");
+        }
+        return s;
+      }
+
+      function parseInlineYamlArrayClient(raw) {
+        var inner = raw.slice(1, -1).trim();
+        if (!inner) return [];
+        var out = [], cur = '', quote = '';
+        for (var i = 0; i < inner.length; i++) {
+          var ch = inner[i];
+          if (quote) {
+            if (ch === '\\' && quote === '"' && i + 1 < inner.length) { cur += ch + inner[++i]; continue; }
+            if (ch === quote) quote = '';
+            cur += ch;
+          } else {
+            if (ch === '"' || ch === "'") { quote = ch; cur += ch; }
+            else if (ch === ',') { if (cur.trim()) out.push(stripQuotesClient(cur)); cur = ''; }
+            else cur += ch;
+          }
+        }
+        if (cur.trim()) out.push(stripQuotesClient(cur));
+        return out;
+      }
+
+      function parseYamlFrontmatterClient(yamlText) {
+        var data = {};
+        var lines = String(yamlText || '').replace(/\r\n/g, '\n').split('\n');
+        var i = 0;
+        while (i < lines.length) {
+          var line = lines[i];
+          var trimmed = line.trim();
+          if (!trimmed || trimmed.charAt(0) === '#') { i++; continue; }
+          var topMatch = line.match(/^([A-Za-z0-9_.-]+):\s*(.*)$/);
+          if (!topMatch) { i++; continue; }
+          var key = topMatch[1];
+          var rest = topMatch[2].trim();
+
+          if (rest !== '') {
+            if (rest.charAt(0) === '[' && rest.charAt(rest.length - 1) === ']') {
+              data[key] = parseInlineYamlArrayClient(rest);
+            } else if (rest === 'true') {
+              data[key] = true;
+            } else if (rest === 'false') {
+              data[key] = false;
+            } else if (/^-?\d+(\.\d+)?$/.test(rest)) {
+              data[key] = Number(rest);
+            } else {
+              data[key] = stripQuotesClient(rest);
+            }
+            i++;
+            continue;
+          }
+
+          // Block list or nested object list
+          i++;
+          var items = [];
+          var isObjList = false;
+          while (i < lines.length) {
+            var nextLine = lines[i];
+            if (!nextLine.trim()) { i++; continue; }
+            if (!/^\s+/.test(nextLine)) break;
+            var objStart = nextLine.match(/^\s+-\s+([A-Za-z0-9_.-]+):\s*(.*)$/);
+            if (objStart) {
+              isObjList = true;
+              var obj = {};
+              obj[objStart[1]] = stripQuotesClient(objStart[2]);
+              i++;
+              while (i < lines.length) {
+                var subLine = lines[i];
+                if (!subLine.trim()) { i++; continue; }
+                if (/^\s+-\s+/.test(subLine) || !/^\s{2,}/.test(subLine)) break;
+                var subMatch = subLine.match(/^\s+([A-Za-z0-9_.-]+):\s*(.*)$/);
+                if (subMatch) {
+                  obj[subMatch[1]] = stripQuotesClient(subMatch[2]);
+                }
+                i++;
+              }
+              items.push(obj);
+              continue;
+            }
+            var strItem = nextLine.match(/^\s+-\s+(.*)$/);
+            if (strItem) {
+              items.push(stripQuotesClient(strItem[1]));
+              i++;
+              continue;
+            }
+            i++;
+          }
+          data[key] = items;
+          void isObjList;
+        }
+        return data;
+      }
+
+      function parseCatalogDocumentClient(rawText) {
+        var clean = String(rawText || '').replace(/^\uFEFF/, '');
+        var trimmed = clean.trim();
+        if (trimmed.charAt(0) === '{') {
+          var obj = JSON.parse(trimmed);
+          var c = obj.constants && typeof obj.constants === 'object' ? obj.constants : obj;
+          return {
+            isJson: true,
+            title: String(obj.title || ''),
+            slug: String(obj.slug || ''),
+            description: String(obj.description || ''),
+            highlights: Array.isArray(obj.highlights) ? obj.highlights.map(String) : [],
+            tags: Array.isArray(obj.tags) ? obj.tags.map(String) : [],
+            body: String(obj.body || obj.content || ''),
+            constants: {
+              translationKey: c.translationKey || '',
+              catalogType: c.catalogType || '',
+              sku: c.sku || '',
+              manufacturer: c.manufacturer || '',
+              availability: c.availability || '',
+              date: c.date || '',
+              weight: c.weight,
+              image: c.image || '',
+              gallery: Array.isArray(c.gallery) ? c.gallery.map(String) : undefined,
+              showPrice: c.showPrice,
+              price: c.price,
+              currency: c.currency || '',
+              priceUnit: c.priceUnit || '',
+              commentsMode: c.commentsMode || '',
+              specs: Array.isArray(c.specs) ? c.specs : undefined,
+              documents: Array.isArray(c.documents) ? c.documents : undefined,
+              linkedArticles: Array.isArray(c.linkedArticles) ? c.linkedArticles : undefined
+            }
+          };
+        }
+
+        var fmMatch = clean.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n?([\s\S]*)$/);
+        if (!fmMatch) {
+          return {
+            isJson: false,
+            title: '', slug: '', description: '', highlights: [], tags: [],
+            body: clean.trim(), constants: {}
+          };
+        }
+        var fm = parseYamlFrontmatterClient(fmMatch[1]);
+        return {
+          isJson: false,
+          title: String(fm.title || ''),
+          slug: String(fm.slug || ''),
+          description: String(fm.description || ''),
+          highlights: Array.isArray(fm.highlights) ? fm.highlights.map(String) : [],
+          tags: Array.isArray(fm.tags) ? fm.tags.map(String) : [],
+          body: fmMatch[2].trim(),
+          constants: {
+            translationKey: fm.translationKey || fm.translationkey || '',
+            catalogType: fm.catalogType || '',
+            sku: fm.sku || '',
+            manufacturer: fm.manufacturer || '',
+            availability: fm.availability || '',
+            date: fm.date || '',
+            weight: fm.weight,
+            image: fm.image || '',
+            gallery: Array.isArray(fm.gallery) ? fm.gallery.map(String) : undefined,
+            showPrice: fm.showPrice,
+            price: fm.price,
+            currency: fm.currency || '',
+            priceUnit: fm.priceUnit || '',
+            commentsMode: fm.commentsMode || '',
+            specs: Array.isArray(fm.specs) ? fm.specs : undefined,
+            documents: Array.isArray(fm.documents) ? fm.documents : undefined,
+            linkedArticles: Array.isArray(fm.linkedArticles) ? fm.linkedArticles : undefined
+          }
+        };
+      }
+
+      // Export Active Language (.md / .json) & Bundle (.json)
+      document.getElementById('exportLangMdBtn').addEventListener('click', function () {
+        var e = ensureEntry(state.activeTabLang);
+        var baseSlug = e.slug || state.constants.translationKey || 'catalog-item';
+        var md = serializeMdClient(state.constants, e);
+        downloadTextFile(baseSlug + '.' + state.activeTabLang + '.md', md, 'text/markdown;charset=utf-8');
+        toast('Экспортирован файл ' + baseSlug + '.' + state.activeTabLang + '.md');
+      });
+
+      document.getElementById('exportLangJsonBtn').addEventListener('click', function () {
+        var e = ensureEntry(state.activeTabLang);
+        var baseSlug = e.slug || state.constants.translationKey || 'catalog-item';
+        var payload = {
+          format: 'rfid-catalog-item-v1',
+          lang: state.activeTabLang,
+          role: state.activeTabLang === state.anchorLang ? 'anchor' : 'follower',
+          title: e.title,
+          slug: e.slug,
+          description: e.description,
+          highlights: e.highlights || [],
+          tags: e.tags || [],
+          body: e.body,
+          constants: JSON.parse(JSON.stringify(state.constants))
+        };
+        downloadTextFile(baseSlug + '.' + state.activeTabLang + '.json', JSON.stringify(payload, null, 2) + '\n', 'application/json;charset=utf-8');
+        toast('Экспортирован файл ' + baseSlug + '.' + state.activeTabLang + '.json');
+      });
+
+      document.getElementById('exportBundleBtn').addEventListener('click', function () {
+        var langs = targetLangs();
+        var entries = langs.map(function (lc) { return Object.assign({}, ensureEntry(lc)); });
+        var baseKey = state.constants.translationKey || 'catalog-bundle';
+        var bundle = {
+          format: 'rfid-catalog-bundle-v1',
+          exportedAt: new Date().toISOString(),
+          anchorLang: state.anchorLang,
+          followerLangs: state.followerLangs.slice(),
+          constants: JSON.parse(JSON.stringify(state.constants)),
+          entries: entries
+        };
+        downloadTextFile(baseKey + '.bundle.json', JSON.stringify(bundle, null, 2) + '\n', 'application/json;charset=utf-8');
+        toast('Экспортирована связка (' + langs.length + ' яз.)');
+      });
+
+      // Import Modal (.md / .json)
+      function openImportModal() {
+        var isFollower = state.activeTabLang !== state.anchorLang;
+        var notice = document.getElementById('importRoleNotice');
+        var constWrap = document.getElementById('importConstantsWrap');
+        var constCheck = document.getElementById('importConstantsCheck');
+        notice.innerHTML = '';
+        var strong = document.createElement('strong');
+        if (isFollower) {
+          notice.style.background = '#eff6ff';
+          notice.style.border = '1px solid #bfdbfe';
+          notice.style.color = '#1e3a8a';
+          strong.textContent = 'Ведомый язык (' + state.activeTabLang.toUpperCase() + '): ';
+          notice.appendChild(strong);
+          notice.appendChild(document.createTextNode('импортируются только переводимые поля (Название, Слаг, Описание, Особенности, Теги, Текст). Все константы якоря (SKU, цена, фото, ТТХ, даташиты, translationKey) сохраняются без изменений.'));
+          constCheck.checked = false;
+          constCheck.disabled = true;
+          constWrap.style.opacity = '0.5';
+        } else {
+          notice.style.background = '#f0fdf4';
+          notice.style.border = '1px solid #bbf7d0';
+          notice.style.color = '#166534';
+          strong.textContent = 'Якорный язык (' + state.activeTabLang.toUpperCase() + '): ';
+          notice.appendChild(strong);
+          notice.appendChild(document.createTextNode('можно импортировать как переводимые поля, так и общие константы / ТТХ из файла.'));
+          constCheck.disabled = false;
+          constCheck.checked = true;
+          constWrap.style.opacity = '1';
+        }
+        document.getElementById('importPreviewStatus').textContent = '';
+        openModal('importModal');
+      }
+
+      document.getElementById('openImportModalBtn').addEventListener('click', openImportModal);
+
+      document.getElementById('downloadImportSampleBtn').addEventListener('click', function () {
+        var sampleConst = Object.assign({}, state.constants, {
+          translationKey: state.constants.translationKey || 'rfid-sample-device',
+          sku: state.constants.sku || 'XR-SAMPLE-01',
+          manufacturer: state.constants.manufacturer || 'RFID Lab Engineering'
+        });
+        var sampleEntry = {
+          title: ensureEntry(state.activeTabLang).title || 'Sample Industrial UHF RFID Reader',
+          slug: ensureEntry(state.activeTabLang).slug || 'rfid-sample-device',
+          description: ensureEntry(state.activeTabLang).description || 'Short engineering summary of the unit.',
+          highlights: (ensureEntry(state.activeTabLang).highlights && ensureEntry(state.activeTabLang).highlights.length)
+            ? ensureEntry(state.activeTabLang).highlights
+            : ['4 RP-TNC antenna ports', 'IEEE 802.3at PoE+ and IP67 enclosure'],
+          tags: (ensureEntry(state.activeTabLang).tags && ensureEntry(state.activeTabLang).tags.length)
+            ? ensureEntry(state.activeTabLang).tags
+            : ['UHF RFID', 'PoE+', 'IP67'],
+          body: ensureEntry(state.activeTabLang).body || '## Engineering Overview\n\nDetailed architecture and RF link budget ($\\text{EIRP} = P_{\\text{TX}} - L_{\\text{cable}} + G_{\\text{ant}}$).\n'
+        };
+        downloadTextFile('catalog-import-template.md', serializeMdClient(sampleConst, sampleEntry), 'text/markdown;charset=utf-8');
+        toast('Скачан шаблон формата .md');
+      });
+
+      function refreshImportPreviewStatus() {
+        var txt = document.getElementById('importRawTextarea').value;
+        if (!txt.trim()) { document.getElementById('importPreviewStatus').textContent = ''; return; }
+        try {
+          var parsed = parseCatalogDocumentClient(txt);
+          document.getElementById('importPreviewStatus').textContent =
+            'Распознано: заголовок=' + (parsed.title ? 'да' : 'нет') +
+            ', особенностей=' + parsed.highlights.length +
+            ', тегов=' + parsed.tags.length +
+            ', ТТХ=' + (parsed.constants.specs ? parsed.constants.specs.length : 0);
+        } catch (err) {
+          document.getElementById('importPreviewStatus').textContent = 'Ошибка разбора: ' + err.message;
+        }
+      }
+
+      document.getElementById('importRawTextarea').addEventListener('input', refreshImportPreviewStatus);
+
       document.getElementById('importLangFileInput').addEventListener('change', function () {
         var file = this.files && this.files[0];
         this.value = '';
         if (!file) return;
         var reader = new FileReader();
         reader.onload = function () {
-          var txt = String(reader.result || '');
-          var isFollower = state.activeTabLang !== state.anchorLang;
-          var e = ensureEntry(state.activeTabLang);
-          if (file.name.endsWith('.json')) {
-            try {
-              var obj = JSON.parse(txt);
-              e.title = obj.title || e.title;
-              e.slug = obj.slug || toLatinSlug(e.title);
-              e.description = obj.description || '';
-              e.highlights = Array.isArray(obj.highlights) ? obj.highlights : e.highlights;
-              e.tags = Array.isArray(obj.tags) ? obj.tags : e.tags;
-              e.body = obj.body || obj.content || '';
-            } catch { toast('Некорректный JSON'); return; }
-          } else {
-            var fmMatch = txt.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n?([\s\S]*)$/);
-            if (fmMatch) {
-              var fm = fmMatch[1];
-              e.body = fmMatch[2].trim();
-              var mTitle = fm.match(/^title:\s*(.+)$/m);
-              var mSlug = fm.match(/^slug:\s*(.+)$/m);
-              var mDesc = fm.match(/^description:\s*(.+)$/m);
-              if (mTitle) e.title = mTitle[1].replace(/^["']|["']$/g, '').trim();
-              if (mSlug) e.slug = mSlug[1].replace(/^["']|["']$/g, '').trim();
-              else if (e.title) e.slug = toLatinSlug(e.title);
-              if (mDesc) e.description = mDesc[1].replace(/^["']|["']$/g, '').trim();
-            } else {
-              e.body = txt.trim();
-            }
-          }
-          renderLangTabsAndEditor();
-          toast(isFollower ? 'Импортированы только языковые поля (константы якоря сохранены)' : 'Импортировано в якорную карточку');
+          document.getElementById('importRawTextarea').value = String(reader.result || '');
+          refreshImportPreviewStatus();
         };
         reader.readAsText(file, 'utf-8');
+      });
+
+      document.getElementById('applyImportBtn').addEventListener('click', function () {
+        var raw = document.getElementById('importRawTextarea').value;
+        if (!raw.trim()) { toast('Вставьте текст или выберите файл .md/.json'); return; }
+        var parsed;
+        try {
+          parsed = parseCatalogDocumentClient(raw);
+        } catch (err) {
+          toast('Ошибка разбора: ' + err.message);
+          return;
+        }
+        var checked = {};
+        document.querySelectorAll('#importChecksRow input[data-imp-field]').forEach(function (inp) {
+          checked[inp.getAttribute('data-imp-field')] = inp.checked;
+        });
+
+        var isFollower = state.activeTabLang !== state.anchorLang;
+        var e = ensureEntry(state.activeTabLang);
+        if (checked.title && parsed.title) e.title = parsed.title;
+        if (checked.slug) {
+          if (parsed.slug) e.slug = parsed.slug.trim().toLowerCase();
+          else if (e.title && !e.slug) e.slug = toLatinSlug(e.title);
+        }
+        if (checked.description && parsed.description !== undefined && parsed.description !== '') e.description = parsed.description;
+        if (checked.highlights && parsed.highlights.length) e.highlights = parsed.highlights.slice();
+        if (checked.tags && parsed.tags.length) e.tags = parsed.tags.slice();
+        if (checked.body && parsed.body) e.body = parsed.body;
+
+        if (!isFollower && document.getElementById('importConstantsCheck').checked) {
+          var pc = parsed.constants || {};
+          if (pc.translationKey) state.constants.translationKey = String(pc.translationKey).trim();
+          if (pc.catalogType) state.constants.catalogType = String(pc.catalogType);
+          if (pc.sku) state.constants.sku = String(pc.sku);
+          if (pc.manufacturer) state.constants.manufacturer = String(pc.manufacturer);
+          if (pc.availability) state.constants.availability = String(pc.availability);
+          if (pc.date) state.constants.date = String(pc.date);
+          if (typeof pc.weight === 'number' && Number.isFinite(pc.weight)) state.constants.weight = pc.weight;
+          if (pc.image) state.constants.image = String(pc.image);
+          if (Array.isArray(pc.gallery)) state.constants.gallery = pc.gallery.slice();
+          if (typeof pc.showPrice === 'boolean') state.constants.showPrice = pc.showPrice;
+          if (pc.price !== undefined && pc.price !== null && pc.price !== '') state.constants.price = Number(pc.price);
+          if (pc.currency) state.constants.currency = String(pc.currency);
+          if (pc.priceUnit !== undefined && pc.priceUnit !== '') state.constants.priceUnit = String(pc.priceUnit);
+          if (pc.commentsMode) state.constants.commentsMode = String(pc.commentsMode);
+          if (Array.isArray(pc.specs) && pc.specs.length) state.constants.specs = pc.specs;
+          if (Array.isArray(pc.documents) && pc.documents.length) state.constants.documents = pc.documents;
+          if (Array.isArray(pc.linkedArticles) && pc.linkedArticles.length) state.constants.linkedArticles = pc.linkedArticles;
+        }
+
+        closeModal('importModal');
+        renderAll();
+        toast(isFollower ? 'Импортированы только языковые поля (константы якоря сохранены)' : 'Импортировано в якорную карточку');
       });
 
       // Upload Image or Datasheet Document
@@ -1348,6 +1745,13 @@
         if (f) handleBinaryUpload(f, 'doc');
       });
 
+      function updateDeleteButtonVisibility() {
+        var delBtn = document.getElementById('deleteCurrentBtn');
+        var tk = state.constants.translationKey.trim();
+        var hasSaved = tk && state.catalogItems.some(function (it) { return it.translationKey === tk; });
+        delBtn.style.display = hasSaved ? 'inline-flex' : 'none';
+      }
+
       // Clear / New item
       document.getElementById('clearFormBtn').addEventListener('click', function () {
         state.constants = {
@@ -1357,7 +1761,9 @@
           specs: [], documents: [], linkedArticles: []
         };
         state.entries = {};
+        state.loadedOriginals = {};
         renderAll();
+        updateDeleteButtonVisibility();
         toast('Форма очищена для новой позиции');
       });
 
@@ -1383,21 +1789,51 @@
           if (!data.ok) { toast(data.error || 'Ошибка сохранения'); return; }
           toast('Сохранено позиций: ' + (data.created ? data.created.length : langs.length));
           await loadLocalState();
+          updateDeleteButtonVisibility();
         } else {
           await commitCatalogToGithub(payload);
         }
       });
 
-      // GitHub Atomic Blob/Tree/Commit helper
+      // GitHub Atomic Blob/Tree/Commit helpers
+      function readDecapToken() {
+        var keys = ['decap-cms-user', 'netlify-cms-user'];
+        for (var i = 0; i < keys.length; i++) {
+          try {
+            var raw = localStorage.getItem(keys[i]);
+            if (!raw) continue;
+            var obj = JSON.parse(raw);
+            if (obj && obj.token) return obj;
+          } catch (_) {}
+        }
+        return null;
+      }
+
+      function decodeBase64Utf8(b64) {
+        var bin = atob(String(b64 || '').replace(/\n/g, ''));
+        var bytes = new Uint8Array(bin.length);
+        for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+        return new TextDecoder('utf-8').decode(bytes);
+      }
+
+      function encodeUtf8Base64(text) {
+        var bytes = new TextEncoder().encode(text);
+        var binStr = '';
+        for (var i = 0; i < bytes.length; i++) binStr += String.fromCharCode(bytes[i]);
+        return btoa(binStr);
+      }
+
       async function ghApi(url, opts) {
-        var res = await fetch('https://api.github.com' + url, Object.assign({}, opts, {
-          headers: Object.assign({
-            'Authorization': 'token ' + state.ghToken,
-            'Accept': 'application/vnd.github.v3+json',
-            'Content-Type': 'application/json'
-          }, (opts && opts.headers) || {})
-        }));
-        if (!res.ok) throw new Error('GitHub HTTP ' + res.status);
+        var headers = Object.assign({
+          'Accept': 'application/vnd.github+json',
+          'Content-Type': 'application/json'
+        }, (opts && opts.headers) || {});
+        if (state.ghToken) headers['Authorization'] = 'Bearer ' + state.ghToken;
+        var res = await fetch('https://api.github.com' + url, Object.assign({}, opts, { headers: headers }));
+        if (!res.ok) {
+          if (res.status === 401) throw new Error('GitHub HTTP 401 — сессия устарела, перелогиньтесь или введите PAT');
+          throw new Error('GitHub HTTP ' + res.status);
+        }
         return res.json();
       }
 
@@ -1415,13 +1851,20 @@
           c.sku ? ('sku: ' + yamlStr(c.sku)) : null,
           c.manufacturer ? ('manufacturer: ' + yamlStr(c.manufacturer)) : null,
           'availability: ' + yamlStr(c.availability),
-          c.image ? ('image: ' + yamlStr(c.image)) : null,
-          'showPrice: ' + (c.showPrice ? 'true' : 'false'),
-          c.price !== null && c.price !== '' ? ('price: ' + Number(c.price)) : null,
-          'currency: ' + yamlStr(c.currency || 'EUR'),
-          c.priceUnit ? ('priceUnit: ' + yamlStr(c.priceUnit)) : null,
-          'commentsMode: ' + yamlStr(c.commentsMode)
+          c.image ? ('image: ' + yamlStr(c.image)) : null
         ].filter(Boolean);
+        if (c.gallery && c.gallery.length) {
+          lines.push('gallery:');
+          c.gallery.forEach(function (g) { lines.push('  - ' + yamlStr(g)); });
+        }
+        lines.push('showPrice: ' + (c.showPrice ? 'true' : 'false'));
+        if (c.price !== null && c.price !== '' && !Number.isNaN(Number(c.price))) {
+          lines.push('price: ' + Number(c.price));
+        }
+        lines.push('currency: ' + yamlStr(c.currency || 'EUR'));
+        if (c.priceUnit) lines.push('priceUnit: ' + yamlStr(c.priceUnit));
+        lines.push('commentsMode: ' + yamlStr(c.commentsMode || 'all'));
+        lines.push('math: true');
         if (e.highlights && e.highlights.length) {
           lines.push('highlights:');
           e.highlights.forEach(function (h) { lines.push('  - ' + yamlStr(h)); });
@@ -1455,6 +1898,7 @@
           c.linkedArticles.forEach(function (a) {
             lines.push('  - kind: ' + yamlStr(a.kind));
             lines.push('    translationKey: ' + yamlStr(a.translationKey));
+            if (a.slug) lines.push('    slug: ' + yamlStr(a.slug));
             if (a.customTitle) lines.push('    customTitle: ' + yamlStr(a.customTitle));
           });
         }
@@ -1466,7 +1910,7 @@
         if (!state.ghToken) { toast('Подключите токен GitHub или сессию CMS'); return; }
         try {
           var repo = state.ghRepo, br = state.ghBranch;
-          var ref = await ghApi('/repos/' + repo + '/git/ref/heads/' + br);
+          var ref = await ghApi('/repos/' + repo + '/git/ref/heads/' + encodeURIComponent(br));
           var headSha = ref.object.sha;
           var commitObj = await ghApi('/repos/' + repo + '/git/commits/' + headSha);
           var treeItems = [];
@@ -1506,34 +1950,284 @@
               parents: [headSha]
             })
           });
-          await ghApi('/repos/' + repo + '/git/refs/heads/' + br, {
+          await ghApi('/repos/' + repo + '/git/refs/heads/' + encodeURIComponent(br), {
             method: 'PATCH',
             body: JSON.stringify({ sha: newCommit.sha })
           });
           state.stagedUploads = {};
           toast('Коммит в GitHub выполнен (' + treeItems.length + ' файлов)');
+          await loadFromGithub();
         } catch (err) {
           toast('Ошибка GitHub: ' + err.message);
         }
       }
 
-      // Registry Modal
+      async function loadFromGithub() {
+        var repo = (document.getElementById('ghRepoInput').value || state.ghRepo).trim();
+        var br = (document.getElementById('ghBranchInput').value || state.ghBranch).trim() || 'master';
+        var tokIn = document.getElementById('ghTokenInput').value.trim();
+        if (tokIn) state.ghToken = tokIn;
+        state.ghRepo = repo;
+        state.ghBranch = br;
+        if (!state.ghToken) throw new Error('Введите GitHub Token или войдите в Decap CMS');
+
+        var statusEl = document.getElementById('ghAuthStatus');
+        statusEl.textContent = 'Загрузка каталога из GitHub...';
+
+        var ref = await ghApi('/repos/' + repo + '/git/ref/heads/' + encodeURIComponent(br));
+        state.ghHeadCommitSha = ref.object.sha;
+        var commitObj = await ghApi('/repos/' + repo + '/git/commits/' + state.ghHeadCommitSha);
+        state.ghHeadTreeSha = commitObj.tree.sha;
+
+        var treeObj = await ghApi('/repos/' + repo + '/git/trees/' + state.ghHeadTreeSha + '?recursive=1');
+        var allNodes = treeObj.tree || [];
+
+        var catalogNodes = allNodes.filter(function (n) {
+          return n.type === 'blob' && /^content\/([a-z]{2})\/catalog\/([^/]+)\/index\.md$/.test(n.path);
+        });
+
+        var loadedItems = [];
+        var cCursor = 0;
+        async function catalogWorker() {
+          while (cCursor < catalogNodes.length) {
+            var idx = cCursor++;
+            var node = catalogNodes[idx];
+            var m = node.path.match(/^content\/([a-z]{2})\/catalog\/([^/]+)\/index\.md$/);
+            if (!m) continue;
+            var lang = m[1];
+            var folder = m[2];
+            var blobJson = await ghApi('/repos/' + repo + '/git/blobs/' + node.sha);
+            var rawMd = decodeBase64Utf8(blobJson.content || '');
+            var parsed = parseCatalogDocumentClient(rawMd);
+            var c = parsed.constants || {};
+            var slug = (parsed.slug || folder).trim();
+            var langCfg = SITE_LANGUAGES.find(function (x) { return x.code === lang; }) || { urlPrefix: '/' + lang };
+            loadedItems.push({
+              relPath: node.path,
+              sha: node.sha,
+              lang: lang,
+              folder: folder,
+              slug: slug,
+              translationKey: String(c.translationKey || slug),
+              linkedLangs: [lang],
+              title: parsed.title || slug,
+              description: parsed.description || '',
+              date: c.date || new Date().toISOString(),
+              weight: typeof c.weight === 'number' ? c.weight : 100,
+              catalogType: c.catalogType || 'reader',
+              sku: c.sku || '',
+              manufacturer: c.manufacturer || '',
+              availability: c.availability || 'order',
+              image: c.image || '',
+              gallery: Array.isArray(c.gallery) ? c.gallery : [],
+              showPrice: Boolean(c.showPrice),
+              price: c.price !== undefined && c.price !== '' && c.price !== null ? Number(c.price) : null,
+              currency: c.currency || 'EUR',
+              priceUnit: c.priceUnit || '',
+              commentsMode: c.commentsMode || 'all',
+              highlights: parsed.highlights || [],
+              tags: parsed.tags || [],
+              specs: Array.isArray(c.specs) ? c.specs : [],
+              documents: Array.isArray(c.documents) ? c.documents : [],
+              linkedArticles: Array.isArray(c.linkedArticles) ? c.linkedArticles : [],
+              body: parsed.body || '',
+              permalink: (langCfg.urlPrefix || '') + '/catalog/' + encodeURIComponent(slug) + '/'
+            });
+          }
+        }
+        var workers = [];
+        for (var w = 0; w < 8; w++) workers.push(catalogWorker());
+        await Promise.all(workers);
+
+        var tkLangs = {};
+        loadedItems.forEach(function (it) {
+          if (!tkLangs[it.translationKey]) tkLangs[it.translationKey] = [];
+          if (tkLangs[it.translationKey].indexOf(it.lang) === -1) tkLangs[it.translationKey].push(it.lang);
+        });
+        loadedItems.forEach(function (it) { it.linkedLangs = tkLangs[it.translationKey] || [it.lang]; });
+        loadedItems.sort(function (a, b) { return (a.weight - b.weight) || a.title.localeCompare(b.title); });
+        state.catalogItems = loadedItems;
+
+        // Build linked articles selector options from post nodes
+        var postNodes = allNodes.filter(function (n) {
+          return n.type === 'blob' && /^content\/([a-z]{2})\/post\/([^/]+)\/index\.md$/.test(n.path);
+        });
+        var artMap = {};
+        postNodes.forEach(function (n) {
+          var pm = n.path.match(/^content\/([a-z]{2})\/post\/([^/]+)\/index\.md$/);
+          if (!pm) return;
+          var pl = pm[1], pfolder = pm[2];
+          var pslug = pfolder.replace(/^\d{4}-\d{2}-\d{2}-/, '');
+          if (!artMap[pslug]) {
+            artMap[pslug] = { translationKey: pslug, langs: [pl], primaryTitle: pslug, primaryLang: pl, date: '' };
+          } else if (artMap[pslug].langs.indexOf(pl) === -1) {
+            artMap[pslug].langs.push(pl);
+          }
+        });
+        state.availableArticles = Object.keys(artMap).map(function (k) { return artMap[k]; });
+
+        // Load global settings from GitHub
+        try {
+          var cfgRes = await ghApi('/repos/' + repo + '/contents/data/catalog-settings.json?ref=' + encodeURIComponent(br));
+          if (cfgRes && cfgRes.content) {
+            state.settingsGhSha = cfgRes.sha || '';
+            state.settings = JSON.parse(decodeBase64Utf8(cfgRes.content));
+          }
+        } catch (_) {}
+
+        document.getElementById('modeMeta').textContent = 'GitHub (' + repo + ') · ' + state.catalogItems.length + ' карточек';
+        statusEl.textContent = 'Подключено: ' + state.catalogItems.length + ' карточек каталога';
+        renderAll();
+        updateDeleteButtonVisibility();
+      }
+
+      // Registry & Delete Modals
       function openModal(id) { document.getElementById(id).classList.add('is-open'); }
       function closeModal(id) { document.getElementById(id).classList.remove('is-open'); }
       document.querySelectorAll('[data-close-modal]').forEach(function (btn) {
         btn.addEventListener('click', function () { closeModal(btn.getAttribute('data-close-modal')); });
       });
 
+      function openDeleteModalForTarget(translationKey, lang, relPath) {
+        var group = state.catalogItems.filter(function (it) { return it.translationKey === translationKey; });
+        var single = group.find(function (it) { return it.relPath === relPath || it.lang === lang; }) || group[0];
+        if (!single) { toast('Позиция не найдена в реестре'); return; }
+        state.pendingDelete = {
+          translationKey: translationKey,
+          single: single,
+          group: group
+        };
+        var langsStr = group.map(function (g) { return g.lang.toUpperCase(); }).join(', ');
+        var sumEl = document.getElementById('deleteTargetSummary');
+        sumEl.innerHTML = '';
+        var titleStrong = document.createElement('strong');
+        titleStrong.textContent = single.title || single.slug;
+        var pathSpan = document.createElement('div');
+        pathSpan.style.fontFamily = 'var(--mono)';
+        pathSpan.style.fontSize = '12px';
+        pathSpan.textContent = single.relPath;
+        var tkLine = document.createElement('div');
+        tkLine.appendChild(document.createTextNode('Связка: '));
+        var tkCode = document.createElement('code');
+        tkCode.className = 'is-mono';
+        tkCode.textContent = translationKey;
+        tkLine.appendChild(tkCode);
+        tkLine.appendChild(document.createTextNode(' (' + langsStr + ')'));
+        sumEl.appendChild(titleStrong);
+        sumEl.appendChild(pathSpan);
+        sumEl.appendChild(tkLine);
+        document.getElementById('confirmDeleteSingleBtn').textContent = 'Удалить только ' + single.lang.toUpperCase();
+        document.getElementById('confirmDeleteBundleBtn').style.display = group.length > 1 ? 'inline-flex' : 'none';
+        document.getElementById('confirmDeleteBundleBtn').textContent = 'Удалить всю связку (' + group.length + ' яз.)';
+        openModal('deleteModal');
+      }
+
+      async function executeDelete(relPaths, label) {
+        if (!relPaths || !relPaths.length) return;
+        try {
+          if (state.mode === 'local') {
+            for (var i = 0; i < relPaths.length; i++) {
+              var res = await fetch('/api/catalog/item?relPath=' + encodeURIComponent(relPaths[i]), { method: 'DELETE' });
+              var d = await res.json();
+              if (!d.ok) throw new Error(d.error || 'Ошибка удаления');
+            }
+            closeModal('deleteModal');
+            toast('Удалено: ' + label);
+            await loadLocalState();
+          } else {
+            if (!state.ghToken) throw new Error('Подключите токен GitHub или сессию CMS');
+            var repo = state.ghRepo, br = state.ghBranch;
+            var ref = await ghApi('/repos/' + repo + '/git/ref/heads/' + encodeURIComponent(br));
+            var headSha = ref.object.sha;
+            var commitObj = await ghApi('/repos/' + repo + '/git/commits/' + headSha);
+            var treeItems = relPaths.map(function (p) {
+              return { path: p, mode: '100644', type: 'blob', sha: null };
+            });
+            var tree = await ghApi('/repos/' + repo + '/git/trees', {
+              method: 'POST',
+              body: JSON.stringify({ base_tree: commitObj.tree.sha, tree: treeItems })
+            });
+            var newCommit = await ghApi('/repos/' + repo + '/git/commits', {
+              method: 'POST',
+              body: JSON.stringify({
+                message: 'chore(catalog): delete ' + label,
+                tree: tree.sha,
+                parents: [headSha]
+              })
+            });
+            await ghApi('/repos/' + repo + '/git/refs/heads/' + encodeURIComponent(br), {
+              method: 'PATCH',
+              body: JSON.stringify({ sha: newCommit.sha })
+            });
+            closeModal('deleteModal');
+            toast('Удалено в GitHub: ' + label);
+            await loadFromGithub();
+          }
+
+          if (state.pendingDelete && relPaths.length >= state.pendingDelete.group.length) {
+            document.getElementById('clearFormBtn').click();
+          } else if (state.pendingDelete) {
+            var remaining = state.catalogItems.filter(function (it) { return it.translationKey === state.pendingDelete.translationKey; });
+            if (remaining.length) await loadCatalogGroup(state.pendingDelete.translationKey, remaining[0].lang);
+          }
+          renderRegistryTable(document.getElementById('registrySearchInput').value);
+          updateDeleteButtonVisibility();
+        } catch (err) {
+          toast('Ошибка удаления: ' + err.message);
+        }
+      }
+
+      document.getElementById('confirmDeleteSingleBtn').addEventListener('click', function () {
+        if (!state.pendingDelete) return;
+        executeDelete([state.pendingDelete.single.relPath], state.pendingDelete.single.lang.toUpperCase() + ' · ' + state.pendingDelete.translationKey);
+      });
+
+      document.getElementById('confirmDeleteBundleBtn').addEventListener('click', function () {
+        if (!state.pendingDelete) return;
+        executeDelete(state.pendingDelete.group.map(function (g) { return g.relPath; }), state.pendingDelete.translationKey);
+      });
+
+      document.getElementById('deleteCurrentBtn').addEventListener('click', function () {
+        var tk = state.constants.translationKey.trim();
+        var item = state.catalogItems.find(function (it) { return it.translationKey === tk && it.lang === state.activeTabLang; })
+          || state.catalogItems.find(function (it) { return it.translationKey === tk; });
+        if (!item) { toast('Сначала сохраните или загрузите позицию'); return; }
+        openDeleteModalForTarget(tk, item.lang, item.relPath);
+      });
+
       function renderRegistryTable(filter) {
         var q = String(filter || '').trim().toLowerCase();
         var tb = document.getElementById('registryTbody');
         tb.innerHTML = '';
-        state.catalogItems.filter(function (it) {
+        var filtered = state.catalogItems.filter(function (it) {
           if (!q) return true;
-          return (it.title + ' ' + it.sku + ' ' + it.translationKey).toLowerCase().indexOf(q) !== -1;
-        }).forEach(function (it) {
+          return (it.title + ' ' + it.sku + ' ' + it.translationKey + ' ' + it.lang).toLowerCase().indexOf(q) !== -1;
+        });
+
+        if (filtered.length === 0) {
+          var emptyTr = document.createElement('tr');
+          var emptyTd = document.createElement('td');
+          emptyTd.colSpan = 6;
+          emptyTd.style.textAlign = 'center';
+          emptyTd.style.padding = '22px 12px';
+          emptyTd.style.color = 'var(--text-soft)';
+          emptyTd.textContent = state.catalogItems.length === 0
+            ? (state.mode === 'github' && !state.ghToken
+              ? 'Подключите сессию CMS или GitHub Token сверху, чтобы загрузить позиции каталога.'
+              : 'В каталоге пока нет опубликованных позиций.')
+            : 'По вашему запросу ничего не найдено.';
+          emptyTr.appendChild(emptyTd);
+          tb.appendChild(emptyTr);
+          return;
+        }
+
+        filtered.forEach(function (it) {
           var tr = document.createElement('tr');
-          tr.innerHTML = '<td><strong>' + it.lang.toUpperCase() + '</strong></td>';
+          var tdLang = document.createElement('td');
+          var langStrong = document.createElement('strong');
+          langStrong.textContent = it.lang.toUpperCase();
+          tdLang.appendChild(langStrong);
+          tr.appendChild(tdLang);
           var tdSku = document.createElement('td');
           tdSku.style.fontFamily = 'var(--mono)';
           tdSku.textContent = (it.sku || '—') + ' · ' + it.catalogType;
@@ -1549,17 +2243,52 @@
           tdPrice.textContent = (it.showPrice && it.price !== null ? (it.currency + ' ' + it.price) : 'Запрос') + ' · ' + it.commentsMode;
 
           var tdAct = document.createElement('td');
+          tdAct.style.whiteSpace = 'nowrap';
           var loadBtn = document.createElement('button');
-          loadBtn.type = 'button'; loadBtn.className = 'btn btn-sm btn-accent-soft'; loadBtn.textContent = 'Загрузить связку';
+          loadBtn.type = 'button'; loadBtn.className = 'btn btn-sm btn-accent-soft'; loadBtn.textContent = 'Редактировать';
           loadBtn.addEventListener('click', function () { loadCatalogGroup(it.translationKey, it.lang); closeModal('registryModal'); });
           var openLink = document.createElement('a');
-          openLink.href = it.permalink; openLink.target = '_blank'; openLink.className = 'btn btn-sm'; openLink.style.marginLeft = '4px'; openLink.textContent = '↗';
-          tdAct.appendChild(loadBtn); tdAct.appendChild(openLink);
+          openLink.href = it.permalink; openLink.target = '_blank'; openLink.rel = 'noopener noreferrer';
+          openLink.className = 'btn btn-sm'; openLink.style.marginLeft = '4px'; openLink.textContent = '↗';
+          var delBtn = document.createElement('button');
+          delBtn.type = 'button'; delBtn.className = 'btn btn-sm btn-danger'; delBtn.style.marginLeft = '4px'; delBtn.textContent = 'Удалить';
+          delBtn.addEventListener('click', function () {
+            openDeleteModalForTarget(it.translationKey, it.lang, it.relPath);
+          });
+          tdAct.appendChild(loadBtn); tdAct.appendChild(openLink); tdAct.appendChild(delBtn);
 
           tr.appendChild(tdSku); tr.appendChild(tdTitle); tr.appendChild(tdTk); tr.appendChild(tdPrice); tr.appendChild(tdAct);
           tb.appendChild(tr);
         });
       }
+
+      document.getElementById('exportAllCatalogBtn').addEventListener('click', async function () {
+        if (!state.catalogItems.length) { toast('Каталог пуст'); return; }
+        var fullItems = [];
+        if (state.mode === 'local') {
+          for (var i = 0; i < state.catalogItems.length; i++) {
+            var it = state.catalogItems[i];
+            try {
+              var res = await fetch('/api/catalog/item?relPath=' + encodeURIComponent(it.relPath));
+              var d = await res.json();
+              fullItems.push(d.ok && d.item ? d.item : it);
+            } catch (_) {
+              fullItems.push(it);
+            }
+          }
+        } else {
+          fullItems = state.catalogItems.slice();
+        }
+        var dump = {
+          format: 'rfid-catalog-full-export-v1',
+          exportedAt: new Date().toISOString(),
+          count: fullItems.length,
+          items: fullItems
+        };
+        var dateTag = new Date().toISOString().slice(0, 10);
+        downloadTextFile('rfid-catalog-export-' + dateTag + '.json', JSON.stringify(dump, null, 2) + '\n', 'application/json;charset=utf-8');
+        toast('Выгружен весь каталог (' + fullItems.length + ' карточек)');
+      });
 
       async function loadCatalogGroup(translationKey, preferredAnchor) {
         var group = state.catalogItems.filter(function (it) { return it.translationKey === translationKey; });
@@ -1569,46 +2298,55 @@
         state.followerLangs = group.filter(function (g) { return g.lang !== anchor.lang; }).map(function (g) { return g.lang; });
         state.activeTabLang = anchor.lang;
         state.entries = {};
+        state.loadedOriginals = {};
 
         for (var i = 0; i < group.length; i++) {
           var g = group[i];
-          var res = await fetch('/api/catalog/item?relPath=' + encodeURIComponent(g.relPath));
-          var data = await res.json();
-          if (data.ok && data.item) {
+          var detail = null;
+          if (state.mode === 'local') {
+            var res = await fetch('/api/catalog/item?relPath=' + encodeURIComponent(g.relPath));
+            var data = await res.json();
+            if (data.ok && data.item) detail = data.item;
+          } else {
+            detail = g;
+          }
+          if (detail) {
+            state.loadedOriginals[g.lang] = g.relPath;
             if (g.lang === anchor.lang) {
               state.constants = {
-                translationKey: data.item.translationKey,
-                catalogType: data.item.catalogType,
-                sku: data.item.sku || '',
-                manufacturer: data.item.manufacturer || '',
-                availability: data.item.availability || 'order',
-                date: data.item.date,
-                weight: data.item.weight || 100,
-                image: data.item.image || '',
-                gallery: data.item.gallery || [],
-                showPrice: Boolean(data.item.showPrice),
-                price: data.item.price,
-                currency: data.item.currency || 'EUR',
-                priceUnit: data.item.priceUnit || '',
-                commentsMode: data.item.commentsMode || 'all',
-                specs: data.item.specs || [],
-                documents: data.item.documents || [],
-                linkedArticles: data.item.linkedArticles || []
+                translationKey: detail.translationKey,
+                catalogType: detail.catalogType,
+                sku: detail.sku || '',
+                manufacturer: detail.manufacturer || '',
+                availability: detail.availability || 'order',
+                date: detail.date,
+                weight: detail.weight || 100,
+                image: detail.image || '',
+                gallery: detail.gallery || [],
+                showPrice: Boolean(detail.showPrice),
+                price: detail.price,
+                currency: detail.currency || 'EUR',
+                priceUnit: detail.priceUnit || '',
+                commentsMode: detail.commentsMode || 'all',
+                specs: (detail.specs || []).map(function (s) { return Object.assign({}, s); }),
+                documents: (detail.documents || []).map(function (d) { return Object.assign({}, d); }),
+                linkedArticles: (detail.linkedArticles || []).map(function (a) { return Object.assign({}, a); })
               };
             }
             state.entries[g.lang] = {
               lang: g.lang,
-              title: data.item.title || '',
-              slug: data.item.slug || '',
-              description: data.item.description || '',
-              highlights: data.item.highlights || [],
-              tags: data.item.tags || [],
-              body: data.item.body || ''
+              title: detail.title || '',
+              slug: detail.slug || '',
+              description: detail.description || '',
+              highlights: (detail.highlights || []).slice(),
+              tags: (detail.tags || []).slice(),
+              body: detail.body || ''
             };
           }
         }
         renderAll();
-        toast('Загружена связка: ' + translationKey);
+        updateDeleteButtonVisibility();
+        toast('Загружена связка: ' + translationKey + ' (' + group.map(function (x) { return x.lang.toUpperCase(); }).join(', ') + ')');
       }
 
       document.getElementById('openRegistryBtn').addEventListener('click', function () {
@@ -1625,35 +2363,58 @@
         document.getElementById('gsCommentsMode').value = s.defaultCommentsMode || 'all';
         document.getElementById('gsEmail').value = s.engineeringInquiryEmail || '';
         document.getElementById('gsTelegram').value = s.engineeringInquiryTelegram || '';
-        document.getElementById('teamCodeStatusText').textContent = state.teamAuthConfigured
-          ? 'Код команды настроен на сервере.'
-          : 'Код команды ещё не задан (необходим для режима «Только от своих»).';
+        document.getElementById('teamCodeStatusText').textContent = state.mode === 'github'
+          ? 'В статическом GitHub-режиме код команды задаётся на сервере или через переменную окружения CATALOG_TEAM_CODE.'
+          : (state.teamAuthConfigured
+            ? 'Код команды настроен на сервере.'
+            : 'Код команды ещё не задан (необходим для режима «Только от своих»).');
         openModal('settingsModal');
       });
 
       document.getElementById('saveGlobalSettingsBtn').addEventListener('click', async function () {
-        var payload = {
-          expectedHash: state.settingsHash,
-          settings: {
-            priceVisibilityMode: document.getElementById('gsPriceMode').value,
-            defaultCurrency: document.getElementById('gsCurrency').value,
-            defaultCommentsMode: document.getElementById('gsCommentsMode').value,
-            engineeringInquiryEmail: document.getElementById('gsEmail').value.trim(),
-            engineeringInquiryTelegram: document.getElementById('gsTelegram').value.trim()
-          }
+        var nextSettings = {
+          version: 1,
+          priceVisibilityMode: document.getElementById('gsPriceMode').value,
+          defaultCurrency: document.getElementById('gsCurrency').value,
+          defaultCommentsMode: document.getElementById('gsCommentsMode').value,
+          engineeringInquiryEmail: document.getElementById('gsEmail').value.trim(),
+          engineeringInquiryTelegram: document.getElementById('gsTelegram').value.trim()
         };
-        var res = await fetch('/api/catalog/settings', {
-          method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
-        });
-        var data = await res.json();
-        if (!data.ok) { toast(data.error || 'Ошибка'); return; }
-        state.settings = data.settings;
-        state.settingsHash = data.fileHash;
+        if (state.mode === 'local') {
+          var res = await fetch('/api/catalog/settings', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ expectedHash: state.settingsHash, settings: nextSettings })
+          });
+          var data = await res.json();
+          if (!data.ok) { toast(data.error || 'Ошибка'); return; }
+          state.settings = data.settings;
+          state.settingsHash = data.fileHash;
+        } else {
+          if (!state.ghToken) { toast('Подключите GitHub Token'); return; }
+          try {
+            var putBody = {
+              message: 'chore(catalog): update catalog-settings.json',
+              content: encodeUtf8Base64(JSON.stringify(nextSettings, null, 2) + '\n'),
+              branch: state.ghBranch
+            };
+            if (state.settingsGhSha) putBody.sha = state.settingsGhSha;
+            var putRes = await ghApi('/repos/' + state.ghRepo + '/contents/data/catalog-settings.json', {
+              method: 'PUT',
+              body: JSON.stringify(putBody)
+            });
+            if (putRes && putRes.content && putRes.content.sha) state.settingsGhSha = putRes.content.sha;
+            state.settings = nextSettings;
+          } catch (err) {
+            toast('Ошибка GitHub: ' + err.message);
+            return;
+          }
+        }
         closeModal('settingsModal');
         toast('Глобальные настройки каталога сохранены');
       });
 
       document.getElementById('saveTeamCodeBtn').addEventListener('click', async function () {
+        if (state.mode !== 'local') { toast('Код команды задаётся на сервере'); return; }
         var code = document.getElementById('teamCodeInput').value.trim();
         var res = await fetch('/api/catalog/team-code/set', {
           method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ code: code })
@@ -1721,24 +2482,29 @@
       });
 
       // GitHub Auth Banner bindings
-      document.getElementById('ghFromDecapBtn').addEventListener('click', function () {
-        try {
-          var raw = localStorage.getItem('decap-cms-user') || localStorage.getItem('netlify-cms-user');
-          if (!raw) { toast('Сессия CMS не найдена в localStorage'); return; }
-          var parsed = JSON.parse(raw);
-          if (parsed && parsed.token) {
-            state.ghToken = parsed.token;
-            document.getElementById('ghTokenInput').value = parsed.token;
-            document.getElementById('ghAuthStatus').textContent = 'Токен CMS подключён';
-            toast('Токен из сессии CMS загружен');
+      document.getElementById('ghFromDecapBtn').addEventListener('click', async function () {
+        var decap = readDecapToken();
+        if (decap && decap.token) {
+          state.ghToken = decap.token;
+          document.getElementById('ghTokenInput').value = decap.token;
+          await loadFromGithub().catch(function (err) {
+            document.getElementById('ghAuthStatus').textContent = 'Ошибка: ' + err.message;
+          });
+          if (state.catalogItems.length > 0 && !state.constants.translationKey) {
+            await loadCatalogGroup(state.catalogItems[0].translationKey, 'uk');
           }
-        } catch { toast('Ошибка чтения сессии CMS'); }
+          toast('Токен из сессии CMS загружен');
+        } else {
+          toast('Сессия CMS не найдена в localStorage');
+        }
       });
-      document.getElementById('ghConnectBtn').addEventListener('click', function () {
-        state.ghRepo = document.getElementById('ghRepoInput').value.trim();
-        state.ghBranch = document.getElementById('ghBranchInput').value.trim() || 'master';
-        state.ghToken = document.getElementById('ghTokenInput').value.trim();
-        document.getElementById('ghAuthStatus').textContent = state.ghToken ? 'Токен применён' : 'Введите токен';
+      document.getElementById('ghConnectBtn').addEventListener('click', async function () {
+        await loadFromGithub().catch(function (err) {
+          document.getElementById('ghAuthStatus').textContent = 'Ошибка: ' + err.message;
+        });
+        if (state.catalogItems.length > 0 && !state.constants.translationKey) {
+          await loadCatalogGroup(state.catalogItems[0].translationKey, 'uk');
+        }
       });
 
       async function loadLocalState() {
@@ -1753,20 +2519,33 @@
         state.teamAuthConfigured = Boolean(data.teamAuthConfigured);
         document.getElementById('modeMeta').textContent = 'Локальный сервер · ' + state.catalogItems.length + ' карточек';
         renderAll();
+        updateDeleteButtonVisibility();
       }
 
       (async function init() {
         try {
           await loadLocalState();
-          // Auto-load first group if catalog already has items so admin sees a live example immediately
           if (state.catalogItems.length > 0 && !state.constants.translationKey) {
             await loadCatalogGroup(state.catalogItems[0].translationKey, 'uk');
           }
-        } catch {
+        } catch (_) {
           state.mode = 'github';
           document.getElementById('modeMeta').textContent = 'GitHub API (Production)';
           document.getElementById('githubAuthBanner').classList.add('is-visible');
-          renderAll();
+          var decap = readDecapToken();
+          if (decap && decap.token) {
+            state.ghToken = decap.token;
+            await loadFromGithub().catch(function (err) {
+              document.getElementById('ghAuthStatus').textContent = 'Ошибка: ' + err.message;
+              renderAll();
+            });
+            if (state.catalogItems.length > 0 && !state.constants.translationKey) {
+              await loadCatalogGroup(state.catalogItems[0].translationKey, 'uk');
+            }
+          } else {
+            document.getElementById('ghAuthStatus').textContent = 'Войдите в CMS или введите GitHub Token';
+            renderAll();
+          }
         }
       })();
     })();
