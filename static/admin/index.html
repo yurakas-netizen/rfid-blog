@@ -2642,6 +2642,18 @@
           ensureMultilangOverlay().open();
         });
 
+        var catalogBtn = document.createElement('button');
+        catalogBtn.type = 'button';
+        catalogBtn.className = 'rfid-io-btn';
+        catalogBtn.title = 'Открыть админку каталога оборудования, меток и ПО';
+        catalogBtn.innerHTML =
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="6" width="12" height="12" rx="2"/><rect x="9.5" y="9.5" width="5" height="5" rx="0.5"/><path d="M9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4"/></svg>' +
+          '<span>Каталог</span>';
+        catalogBtn.addEventListener('click', function () {
+          ensureCatalogOverlay().open();
+        });
+
+        group.appendChild(catalogBtn);
         group.appendChild(multilangBtn);
         group.appendChild(sidebarBtn);
         group.appendChild(homeBtn);
@@ -2968,6 +2980,84 @@
           }
         };
         return multilangOverlayEl;
+      }
+
+      var catalogOverlayEl = null;
+
+      function ensureCatalogOverlay() {
+        if (catalogOverlayEl) return catalogOverlayEl;
+
+        var backdrop = document.createElement('div');
+        backdrop.className = 'rfid-modal-backdrop';
+
+        var dialog = document.createElement('div');
+        dialog.className = 'rfid-modal is-registry';
+        dialog.setAttribute('role', 'dialog');
+        dialog.setAttribute('aria-modal', 'true');
+
+        var header = document.createElement('div');
+        header.className = 'rfid-modal-header';
+
+        var leftHead = document.createElement('div');
+        leftHead.style.display = 'flex';
+        leftHead.style.alignItems = 'center';
+        leftHead.style.gap = '12px';
+        var titleEl = document.createElement('h3');
+        titleEl.className = 'rfid-modal-title';
+        titleEl.textContent = 'Каталог оборудования, меток и ПО';
+        var extLink = document.createElement('a');
+        extLink.href = '/admin/catalog.html';
+        extLink.target = '_blank';
+        extLink.rel = 'noopener noreferrer';
+        extLink.className = 'rfid-btn-secondary';
+        extLink.style.display = 'inline-flex';
+        extLink.style.alignItems = 'center';
+        extLink.style.height = '28px';
+        extLink.style.fontSize = '12px';
+        extLink.style.textDecoration = 'none';
+        extLink.textContent = 'Открыть в отдельной вкладке ↗';
+        leftHead.appendChild(titleEl);
+        leftHead.appendChild(extLink);
+
+        var closeBtn = document.createElement('button');
+        closeBtn.type = 'button';
+        closeBtn.className = 'rfid-modal-close';
+        closeBtn.innerHTML = '&times;';
+        closeBtn.title = 'Закрыть каталог';
+
+        header.appendChild(leftHead);
+        header.appendChild(closeBtn);
+
+        var iframe = document.createElement('iframe');
+        iframe.className = 'rfid-registry-frame';
+        iframe.title = 'Каталог оборудования, меток и ПО';
+
+        dialog.appendChild(header);
+        dialog.appendChild(iframe);
+        backdrop.appendChild(dialog);
+        document.body.appendChild(backdrop);
+
+        function close() {
+          backdrop.classList.remove('is-open');
+        }
+
+        closeBtn.addEventListener('click', close);
+        backdrop.addEventListener('click', function (e) {
+          if (e.target === backdrop) close();
+        });
+        document.addEventListener('keydown', function (e) {
+          if (e.key === 'Escape' && backdrop.classList.contains('is-open')) {
+            close();
+          }
+        });
+
+        catalogOverlayEl = {
+          open: function () {
+            iframe.src = '/admin/catalog.html?t=' + Date.now();
+            backdrop.classList.add('is-open');
+          }
+        };
+        return catalogOverlayEl;
       }
 
       function attachHeaderRegistryButton(headerEl) {

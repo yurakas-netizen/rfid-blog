@@ -34,6 +34,7 @@ export interface LanguageConfig {
 export interface I18nStrings {
   subtitle: string;
   home: string;
+  catalog: string;
   archives: string;
   search: string;
   links: string;
@@ -310,6 +311,7 @@ export const I18N: Record<LangCode, I18nStrings> = {
   uk: {
     subtitle: 'Інженерна платформа UHF RFID, RTLS та IIoT',
     home: 'Головна',
+    catalog: 'Обладнання та ПЗ',
     archives: 'Архіви',
     search: 'Пошук',
     links: 'Посилання',
@@ -348,6 +350,7 @@ export const I18N: Record<LangCode, I18nStrings> = {
   ru: {
     subtitle: 'Инженерная платформа UHF RFID, RTLS и IIoT',
     home: 'Главная',
+    catalog: 'Оборудование и ПО',
     archives: 'Архивы',
     search: 'Поиск',
     links: 'Ссылки',
@@ -386,6 +389,7 @@ export const I18N: Record<LangCode, I18nStrings> = {
   en: {
     subtitle: 'UHF RFID, RTLS & IIoT Engineering Platform',
     home: 'Home',
+    catalog: 'Hardware & SW',
     archives: 'Archives',
     search: 'Search',
     links: 'Links',
@@ -424,6 +428,7 @@ export const I18N: Record<LangCode, I18nStrings> = {
   da: {
     subtitle: 'UHF RFID, RTLS & IIoT-ingeniørplatform',
     home: 'Hjem',
+    catalog: 'Udstyr & Software',
     archives: 'Arkiv',
     search: 'Søg',
     links: 'Links',
@@ -462,6 +467,7 @@ export const I18N: Record<LangCode, I18nStrings> = {
   de: {
     subtitle: 'Ingenieurplattform für UHF RFID, RTLS & IIoT',
     home: 'Startseite',
+    catalog: 'Hardware & SW',
     archives: 'Archiv',
     search: 'Suche',
     links: 'Links',
@@ -500,6 +506,7 @@ export const I18N: Record<LangCode, I18nStrings> = {
   fr: {
     subtitle: 'Plateforme d’ingénierie UHF RFID, RTLS & IIoT',
     home: 'Accueil',
+    catalog: 'Matériel & Logiciels',
     archives: 'Archives',
     search: 'Recherche',
     links: 'Liens',
@@ -538,6 +545,7 @@ export const I18N: Record<LangCode, I18nStrings> = {
   pl: {
     subtitle: 'Platforma inżynieryjna UHF RFID, RTLS i IIoT',
     home: 'Strona główna',
+    catalog: 'Sprzęt i Software',
     archives: 'Archiwum',
     search: 'Szukaj',
     links: 'Linki',
@@ -576,6 +584,7 @@ export const I18N: Record<LangCode, I18nStrings> = {
   es: {
     subtitle: 'Plataforma de ingeniería UHF RFID, RTLS e IIoT',
     home: 'Inicio',
+    catalog: 'Hardware y SW',
     archives: 'Archivos',
     search: 'Buscar',
     links: 'Enlaces',
@@ -614,6 +623,7 @@ export const I18N: Record<LangCode, I18nStrings> = {
   it: {
     subtitle: 'Piattaforma ingegneristica UHF RFID, RTLS e IIoT',
     home: 'Home',
+    catalog: 'Hardware e SW',
     archives: 'Archivio',
     search: 'Cerca',
     links: 'Link',
@@ -652,6 +662,7 @@ export const I18N: Record<LangCode, I18nStrings> = {
   nl: {
     subtitle: 'Engineeringplatform voor UHF RFID, RTLS & IIoT',
     home: 'Start',
+    catalog: 'Hardware & SW',
     archives: 'Archief',
     search: 'Zoeken',
     links: 'Links',
@@ -690,6 +701,7 @@ export const I18N: Record<LangCode, I18nStrings> = {
   pt: {
     subtitle: 'Plataforma de engenharia UHF RFID, RTLS e IIoT',
     home: 'Início',
+    catalog: 'Hardware e SW',
     archives: 'Arquivos',
     search: 'Pesquisar',
     links: 'Links',
@@ -728,6 +740,7 @@ export const I18N: Record<LangCode, I18nStrings> = {
   sv: {
     subtitle: 'Ingenjörsplattform för UHF RFID, RTLS och IIoT',
     home: 'Hem',
+    catalog: 'Hårdvara & Mjukvara',
     archives: 'Arkiv',
     search: 'Sök',
     links: 'Länkar',
@@ -766,6 +779,7 @@ export const I18N: Record<LangCode, I18nStrings> = {
   no: {
     subtitle: 'Ingeniørplattform for UHF RFID, RTLS og IIoT',
     home: 'Hjem',
+    catalog: 'Maskinvare & SW',
     archives: 'Arkiv',
     search: 'Søk',
     links: 'Lenker',
@@ -804,6 +818,7 @@ export const I18N: Record<LangCode, I18nStrings> = {
   fi: {
     subtitle: 'UHF RFID-, RTLS- ja IIoT-suunnittelualusta',
     home: 'Etusivu',
+    catalog: 'Laitteet & Ohjelmistot',
     archives: 'Arkisto',
     search: 'Haku',
     links: 'Linkit',
@@ -842,6 +857,7 @@ export const I18N: Record<LangCode, I18nStrings> = {
   cs: {
     subtitle: 'Inženýrská platforma UHF RFID, RTLS a IIoT',
     home: 'Domů',
+    catalog: 'Hardware a SW',
     archives: 'Archiv',
     search: 'Hledat',
     links: 'Odkazy',
@@ -880,6 +896,7 @@ export const I18N: Record<LangCode, I18nStrings> = {
   sk: {
     subtitle: 'Inžinierska platforma UHF RFID, RTLS a IIoT',
     home: 'Domov',
+    catalog: 'Hardvér a SW',
     archives: 'Archív',
     search: 'Hľadať',
     links: 'Odkazy',
@@ -918,6 +935,7 @@ export const I18N: Record<LangCode, I18nStrings> = {
   ro: {
     subtitle: 'Platformă de inginerie UHF RFID, RTLS și IIoT',
     home: 'Acasă',
+    catalog: 'Hardware și SW',
     archives: 'Arhivă',
     search: 'Căutare',
     links: 'Linkuri',
@@ -956,6 +974,7 @@ export const I18N: Record<LangCode, I18nStrings> = {
   bg: {
     subtitle: 'Инженерна платформа за UHF RFID, RTLS и IIoT',
     home: 'Начало',
+    catalog: 'Хардуер и Софтуер',
     archives: 'Архив',
     search: 'Търсене',
     links: 'Връзки',
@@ -994,6 +1013,7 @@ export const I18N: Record<LangCode, I18nStrings> = {
   et: {
     subtitle: 'UHF RFID, RTLS ja IIoT inseneriplatvorm',
     home: 'Avaleht',
+    catalog: 'Riistvara ja Tarkvara',
     archives: 'Arhiiv',
     search: 'Otsing',
     links: 'Lingid',
@@ -1032,6 +1052,7 @@ export const I18N: Record<LangCode, I18nStrings> = {
   lt: {
     subtitle: 'UHF RFID, RTLS ir IIoT inžinerinė platforma',
     home: 'Pradžia',
+    catalog: 'Įranga ir PĮ',
     archives: 'Archyvas',
     search: 'Paieška',
     links: 'Nuorodos',

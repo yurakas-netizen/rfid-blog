@@ -87,7 +87,7 @@ function escapeHtml(text: string): string {
     .replace(/'/g, '&#39;');
 }
 
-function stripMarkdown(md: string): string {
+export function stripMarkdown(md: string): string {
   return md
     .replace(/```[\s\S]*?```/g, ' ')
     .replace(/`[^`]*`/g, ' ')
@@ -164,7 +164,7 @@ function processShortcodes(md: string): string {
   return md;
 }
 
-function renderMarkdownWithMath(
+export function renderMarkdownWithMath(
   rawMd: string,
   permalinkBase: string
 ): { html: string; toc: TocItem[] } {

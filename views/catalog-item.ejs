@@ -1,0 +1,533 @@
+<%- include('partials/head') %>
+<%- include('partials/left-sidebar') %>
+
+<%
+const item = resolved.item;
+const settings = resolved.settings;
+
+function typeLabel(type) {
+  switch (type) {
+    case 'reader': return catalogUi.typeReader;
+    case 'antenna': return catalogUi.typeAntenna;
+    case 'tag': return catalogUi.typeTag;
+    case 'software': return catalogUi.typeSoftware;
+    case 'accessory': return catalogUi.typeAccessory;
+    default: return catalogUi.typeReader;
+  }
+}
+
+function availLabel(av) {
+  switch (av) {
+    case 'in_stock': return catalogUi.availInStock;
+    case 'order': return catalogUi.availOrder;
+    case 'discontinued': return catalogUi.availDiscontinued;
+    case 'software_license': return catalogUi.availLicense;
+    default: return catalogUi.availOrder;
+  }
+}
+
+function docKindCode(dt) {
+  switch (dt) {
+    case 'datasheet': return 'DATASHEET';
+    case 'manual': return 'MANUAL';
+    case 'sdk': return 'SDK';
+    case 'cad': return 'CAD / STEP';
+    case 'certificate': return 'CERT';
+    case 'firmware': return 'FW';
+    default: return 'DOC';
+  }
+}
+
+function articleKindLabel(kind) {
+  switch (kind) {
+    case 'comparison': return catalogUi.kindComparison;
+    case 'guide': return catalogUi.kindGuide;
+    case 'case': return catalogUi.kindCase;
+    default: return catalogUi.kindReview;
+  }
+}
+
+var allMedia = [];
+if (item.imageUrl) allMedia.push(item.imageUrl);
+item.galleryUrls.forEach(function(g) {
+  if (allMedia.indexOf(g) === -1) allMedia.push(g);
+});
+%>
+
+<main class="main full-width">
+  <div class="rfid-cat-crumb">
+    <a href="<%= langPrefix %>/catalog/">&larr; <%= catalogUi.backToCatalog %></a>
+    <span class="rfid-cat-crumb__sep">/</span>
+    <span class="rfid-cat-mono"><%= typeLabel(item.catalogType) %></span>
+    <% if (item.sku) { %>
+      <span class="rfid-cat-crumb__sep">/</span>
+      <span class="rfid-cat-mono"><%= item.sku %></span>
+    <% } %>
+  </div>
+
+  <!-- Split Studio Hardware Showcase + Translation Switcher Under Hero Media -->
+  <section class="rfid-cat-detail-hero">
+    <div class="rfid-cat-detail-hero__left">
+      <div class="rfid-cat-stage">
+        <% if (allMedia.length > 0) { %>
+          <img id="catHeroImg" src="<%= allMedia[0] %>" alt="<%= item.title %>" class="rfid-cat-stage__img" />
+        <% } else { %>
+          <div class="rfid-cat-card__placeholder"><%= item.sku || item.catalogType.toUpperCase() %></div>
+        <% } %>
+      </div>
+
+      <% if (allMedia.length > 1) { %>
+        <div class="rfid-cat-thumbs" id="catMediaThumbs">
+          <% allMedia.forEach(function(mUrl, idx) { %>
+            <button type="button" class="rfid-cat-thumb<%= idx === 0 ? ' is-active' : '' %>" data-src="<%= mUrl %>" aria-label="Media <%= idx + 1 %>">
+              <img src="<%= mUrl %>" alt="" loading="lazy" />
+            </button>
+          <% }); %>
+        </div>
+      <% } %>
+
+      <% if (resolved.translations.length > 0) { %>
+        <nav class="article-translations rfid-cat-translations" aria-label="<%= catalogUi.otherLanguagesLabel %>">
+          <span class="article-translations__icon" aria-hidden="true">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 5h7"></path>
+              <path d="M9 3v2c0 4.418 -2.239 8 -5 8"></path>
+              <path d="M5 9c0 2.144 2.952 3.908 6.7 4"></path>
+              <path d="M12 20l4 -9l4 9"></path>
+              <path d="M19.1 18h-6.2"></path>
+            </svg>
+          </span>
+          <div class="article-translations__list">
+            <% resolved.translations.forEach(function(tr) { %>
+              <% var tpLangCfg = languagesMap[tr.lang]; var cleanLangName = (tpLangCfg ? tpLangCfg.label : tr.lang).replace(/\s*\([^)]+\)$/, ''); %>
+              <a href="<%= tr.permalink %>" class="translation-badge" title="<%= tr.title %>" hreflang="<%= tr.lang %>">
+                <span class="translation-badge__code"><%= tr.lang.toUpperCase() %></span>
+                <span class="translation-badge__name"><%= cleanLangName %></span>
+              </a>
+            <% }); %>
+          </div>
+        </nav>
+      <% } %>
+    </div>
+
+    <div class="rfid-cat-detail-hero__right">
+      <div class="rfid-cat-card__meta">
+        <span class="rfid-cat-mono"><%= item.lang.toUpperCase() %></span>
+        <span>&middot;</span>
+        <span class="rfid-cat-mono"><%= typeLabel(item.catalogType) %></span>
+        <% if (item.sku) { %>
+          <span>&middot;</span>
+          <span class="rfid-cat-mono"><%= item.sku %></span>
+        <% } %>
+        <% if (item.manufacturer) { %>
+          <span>&middot;</span>
+          <span><%= item.manufacturer %></span>
+        <% } %>
+      </div>
+
+      <h1 class="rfid-cat-detail__title"><%= item.title %></h1>
+      <% if (item.description) { %>
+        <p class="rfid-cat-detail__desc"><%= item.description %></p>
+      <% } %>
+
+      <div class="rfid-cat-detail__status-line">
+        <span class="rfid-cat-status is-<%= item.availability %>">
+          <i class="rfid-cat-dot" aria-hidden="true"></i><%= availLabel(item.availability) %>
+        </span>
+      </div>
+
+      <% if (item.highlights.length > 0) { %>
+        <ul class="rfid-cat-highlights" aria-label="<%= catalogUi.highlightsHeading %>">
+          <% item.highlights.forEach(function(hl) { %>
+            <li><%= hl %></li>
+          <% }); %>
+        </ul>
+      <% } %>
+
+      <div class="rfid-cat-commercial">
+        <div class="rfid-cat-commercial__price">
+          <% if (resolved.effectiveShowPrice && resolved.formattedPrice) { %>
+            <span class="rfid-cat-commercial__label"><%= catalogUi.referencePrice %></span>
+            <span class="rfid-cat-commercial__value"><%= resolved.formattedPrice %></span>
+          <% } else { %>
+            <span class="rfid-cat-commercial__label"><%= catalogUi.inquiryHeading %></span>
+            <span class="rfid-cat-commercial__req"><%= catalogUi.priceOnRequest %></span>
+          <% } %>
+        </div>
+        <div class="rfid-cat-commercial__actions">
+          <a href="mailto:<%= settings.engineeringInquiryEmail %>?subject=<%= encodeURIComponent((item.sku ? item.sku + ' — ' : '') + item.title) %>" class="sc-btn sc-btn-primary">
+            <%= catalogUi.inquiryAction %>
+          </a>
+          <% if (settings.engineeringInquiryTelegram) { %>
+            <a href="<%= settings.engineeringInquiryTelegram %>" target="_blank" rel="noopener noreferrer" class="sc-btn sc-btn-ghost">
+              Telegram
+            </a>
+          <% } %>
+        </div>
+      </div>
+
+      <nav class="rfid-cat-quicknav" aria-label="Specification sections">
+        <% if (resolved.specGroups.length > 0) { %><a href="#cat-specs"><%= catalogUi.specsHeading %></a><% } %>
+        <% if (item.documents.length > 0) { %><a href="#cat-docs"><%= catalogUi.docsHeading %></a><% } %>
+        <% if (resolved.resolvedArticles.length > 0) { %><a href="#cat-articles"><%= catalogUi.articlesHeading %></a><% } %>
+        <% if (item.html) { %><a href="#cat-overview"><%= catalogUi.overviewHeading %></a><% } %>
+        <% if (resolved.effectiveCommentsMode !== 'disabled') { %><a href="#cat-comments"><%= catalogUi.commentsHeading %></a><% } %>
+      </nav>
+    </div>
+  </section>
+
+  <!-- Technical Specifications Matrix -->
+  <% if (resolved.specGroups.length > 0) { %>
+    <section class="rfid-cat-section" id="cat-specs">
+      <header class="rfid-cat-section__head">
+        <h2 class="rfid-cat-section__title"><%= catalogUi.specsHeading %></h2>
+        <% if (item.sku) { %><span class="rfid-cat-mono rfid-cat-section__meta"><%= item.sku %></span><% } %>
+      </header>
+      <div class="rfid-cat-specs-wrap">
+        <% resolved.specGroups.forEach(function(grp) { %>
+          <div class="rfid-cat-spec-group">
+            <h3 class="rfid-cat-spec-group__title"><%= grp.group %></h3>
+            <dl class="rfid-cat-spec-table">
+              <% grp.rows.forEach(function(row) { %>
+                <div class="rfid-cat-spec-row">
+                  <dt><%= row.label %></dt>
+                  <dd><%= row.value %><%= row.unit ? ' ' + row.unit : '' %></dd>
+                </div>
+              <% }); %>
+            </dl>
+          </div>
+        <% }); %>
+      </div>
+    </section>
+  <% } %>
+
+  <!-- Datasheets, CAD & Technical Documentation -->
+  <% if (item.documents.length > 0) { %>
+    <section class="rfid-cat-section" id="cat-docs">
+      <header class="rfid-cat-section__head">
+        <h2 class="rfid-cat-section__title"><%= catalogUi.docsHeading %></h2>
+        <span class="rfid-cat-mono rfid-cat-section__meta"><%= item.documents.length %> files</span>
+      </header>
+      <div class="rfid-cat-docs-list">
+        <% item.documents.forEach(function(doc) { %>
+          <a href="<%= doc.file %>" target="_blank" rel="noopener noreferrer" class="rfid-cat-doc-row">
+            <div class="rfid-cat-doc-row__left">
+              <span class="rfid-cat-doc-row__kind"><%= docKindCode(doc.docType) %></span>
+              <span class="rfid-cat-doc-row__title"><%= doc.title %></span>
+            </div>
+            <div class="rfid-cat-doc-row__right">
+              <span class="rfid-cat-doc-row__meta">
+                <%= [doc.version, doc.size, doc.lang ? doc.lang.toUpperCase() : ''].filter(Boolean).join(' · ') %>
+              </span>
+              <span class="rfid-cat-doc-row__dl"><%= catalogUi.downloadFile %> &nearr;</span>
+            </div>
+          </a>
+        <% }); %>
+      </div>
+    </section>
+  <% } %>
+
+  <!-- Linked Engineering Reviews & Benchmark Comparisons -->
+  <% if (resolved.resolvedArticles.length > 0) { %>
+    <section class="rfid-cat-section" id="cat-articles">
+      <header class="rfid-cat-section__head">
+        <h2 class="rfid-cat-section__title"><%= catalogUi.articlesHeading %></h2>
+      </header>
+      <div class="rfid-cat-articles-grid">
+        <% resolved.resolvedArticles.forEach(function(art) { %>
+          <a href="<%= art.permalink %>" class="rfid-cat-article-card">
+            <div class="rfid-cat-article-card__meta">
+              <span class="rfid-cat-mono rfid-cat-article-card__kind"><%= articleKindLabel(art.kind) %></span>
+              <span>&middot;</span>
+              <span><%= art.readingTime %> <%= t.minRead %></span>
+              <% if (art.isFallbackLang) { %>
+                <span>&middot;</span>
+                <span class="rfid-cat-mono"><%= art.lang.toUpperCase() %></span>
+              <% } %>
+            </div>
+            <h3 class="rfid-cat-article-card__title"><%= art.title %></h3>
+            <p class="rfid-cat-article-card__desc"><%= art.description %></p>
+          </a>
+        <% }); %>
+      </div>
+    </section>
+  <% } %>
+
+  <!-- Architecture & Deployment Engineering Article Body -->
+  <% if (item.html) { %>
+    <article class="main-article rfid-cat-prose" id="cat-overview">
+      <header class="rfid-cat-section__head" style="padding: 20px 26px 14px; border-bottom: 1px solid var(--card-separator-color);">
+        <h2 class="rfid-cat-section__title"><%= catalogUi.overviewHeading %></h2>
+      </header>
+      <section class="article-content">
+        <%- item.html %>
+      </section>
+      <% if (item.tags.length > 0) { %>
+        <footer class="article-footer">
+          <div class="rfid-cat-tags-line">
+            <%= item.tags.map(function(tg){ return '#' + tg; }).join('  ·  ') %>
+          </div>
+          <section class="article-copyright"><%= site.license %></section>
+        </footer>
+      <% } %>
+    </article>
+  <% } %>
+
+  <!-- Policy-Controlled Engineering Comments (all | members | disabled) -->
+  <section
+    class="rfid-cat-section rfid-cat-comments"
+    id="cat-comments"
+    data-key="<%= item.translationKey %>"
+    data-lang="<%= item.lang %>"
+    data-mode="<%= resolved.effectiveCommentsMode %>"
+  >
+    <header class="rfid-cat-section__head">
+      <div>
+        <h2 class="rfid-cat-section__title"><%= catalogUi.commentsHeading %></h2>
+        <p class="rfid-cat-comments__policy">
+          <% if (resolved.effectiveCommentsMode === 'disabled') { %>
+            <%= catalogUi.commentsDisabledHint %>
+          <% } else if (resolved.effectiveCommentsMode === 'members') { %>
+            <%= catalogUi.commentsMembersHint %>
+          <% } else { %>
+            <%= catalogUi.commentsAllHint %>
+          <% } %>
+        </p>
+      </div>
+      <span class="rfid-cat-mono rfid-cat-section__meta" id="catCommentsModeLabel"><%= resolved.effectiveCommentsMode.toUpperCase() %></span>
+    </header>
+
+    <% if (resolved.effectiveCommentsMode !== 'disabled') { %>
+      <div class="rfid-cat-comments__body">
+        <div id="catMembersGate" class="rfid-cat-gate" style="display:none;">
+          <p class="rfid-cat-gate__msg"><%= catalogUi.commentsMembersLocked %></p>
+          <form id="catUnlockForm" class="rfid-cat-gate__form">
+            <label for="catTeamCodeInput" class="sr-only"><%= catalogUi.teamUnlockLabel %></label>
+            <input
+              type="password"
+              id="catTeamCodeInput"
+              placeholder="<%= catalogUi.teamCodePlaceholder %>"
+              autocomplete="off"
+              required
+            />
+            <button type="submit" class="sc-btn sc-btn-primary"><%= catalogUi.teamUnlockBtn %></button>
+          </form>
+          <p id="catGateErr" class="rfid-cat-form-err" style="display:none;"></p>
+        </div>
+
+        <div id="catTeamUnlockedBanner" class="rfid-cat-unlocked" style="display:none;">
+          <span class="rfid-cat-mono"><%= catalogUi.teamUnlockedBadge %></span>
+        </div>
+
+        <form id="catCommentForm" class="rfid-cat-comment-form" style="display:none;">
+          <div class="rfid-cat-comment-form__row">
+            <div class="rfid-cat-field">
+              <label for="catAuthorInput"><%= catalogUi.commentAuthorLabel %></label>
+              <input type="text" id="catAuthorInput" required maxlength="80" />
+            </div>
+            <div class="rfid-cat-field">
+              <label for="catRoleInput"><%= catalogUi.commentRoleLabel %></label>
+              <input type="text" id="catRoleInput" maxlength="60" />
+            </div>
+          </div>
+          <div class="rfid-cat-field">
+            <label for="catBodyInput"><%= catalogUi.commentBodyLabel %></label>
+            <textarea id="catBodyInput" rows="3" required maxlength="2000"></textarea>
+          </div>
+          <div class="rfid-cat-comment-form__foot">
+            <span id="catCommentFormErr" class="rfid-cat-form-err" style="display:none;"></span>
+            <button type="submit" class="sc-btn sc-btn-primary" id="catCommentSubmitBtn"><%= catalogUi.commentSubmitBtn %></button>
+          </div>
+        </form>
+
+        <div id="catCommentsList" class="rfid-cat-comment-list"></div>
+        <p id="catCommentsEmpty" class="rfid-cat-comments__empty" style="display:none;"><%= catalogUi.commentsEmpty %></p>
+      </div>
+    <% } %>
+  </section>
+
+  <script>
+    (function () {
+      // Gallery thumbnail switching
+      var heroImg = document.getElementById('catHeroImg');
+      var thumbs = document.querySelectorAll('#catMediaThumbs .rfid-cat-thumb');
+      thumbs.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var src = btn.getAttribute('data-src');
+          if (heroImg && src) heroImg.src = src;
+          thumbs.forEach(function (t) { t.classList.remove('is-active'); });
+          btn.classList.add('is-active');
+        });
+      });
+
+      // Comments controller (strictly in-memory Bearer token for team mode; safe textContent rendering)
+      var root = document.getElementById('cat-comments');
+      if (!root) return;
+      var key = root.getAttribute('data-key') || '';
+      var lang = root.getAttribute('data-lang') || 'uk';
+      var mode = root.getAttribute('data-mode') || 'all';
+      if (mode === 'disabled' || !key) return;
+
+      var memberToken = ''; // intentionally kept in volatile JS memory only
+      var gateEl = document.getElementById('catMembersGate');
+      var unlockForm = document.getElementById('catUnlockForm');
+      var codeInput = document.getElementById('catTeamCodeInput');
+      var gateErr = document.getElementById('catGateErr');
+      var unlockedBanner = document.getElementById('catTeamUnlockedBanner');
+      var commentForm = document.getElementById('catCommentForm');
+      var formErr = document.getElementById('catCommentFormErr');
+      var listEl = document.getElementById('catCommentsList');
+      var emptyEl = document.getElementById('catCommentsEmpty');
+
+      function renderComments(items) {
+        if (!listEl) return;
+        listEl.innerHTML = '';
+        if (!items || items.length === 0) {
+          if (emptyEl) emptyEl.style.display = 'block';
+          return;
+        }
+        if (emptyEl) emptyEl.style.display = 'none';
+
+        items.forEach(function (c) {
+          var card = document.createElement('div');
+          card.className = 'rfid-cat-comment-item';
+
+          var head = document.createElement('div');
+          head.className = 'rfid-cat-comment-item__head';
+
+          var author = document.createElement('strong');
+          author.textContent = c.author || '';
+          head.appendChild(author);
+
+          if (c.role) {
+            var role = document.createElement('span');
+            role.className = 'rfid-cat-comment-item__role';
+            role.textContent = ' · ' + c.role;
+            head.appendChild(role);
+          }
+
+          if (c.memberVerified) {
+            var tag = document.createElement('span');
+            tag.className = 'rfid-cat-mono rfid-cat-comment-item__team';
+            tag.textContent = ' · TEAM';
+            head.appendChild(tag);
+          }
+
+          var dateEl = document.createElement('time');
+          dateEl.className = 'rfid-cat-comment-item__date';
+          dateEl.textContent = (c.createdAt || '').slice(0, 10);
+          head.appendChild(dateEl);
+
+          var body = document.createElement('p');
+          body.className = 'rfid-cat-comment-item__body';
+          body.textContent = c.body || '';
+
+          card.appendChild(head);
+          card.appendChild(body);
+          listEl.appendChild(card);
+        });
+      }
+
+      function fetchComments() {
+        var headers = {};
+        if (memberToken) headers['Authorization'] = 'Bearer ' + memberToken;
+        fetch('/api/catalog/comments?key=' + encodeURIComponent(key) + '&lang=' + encodeURIComponent(lang), {
+          headers: headers
+        })
+          .then(function (r) { return r.json(); })
+          .then(function (data) {
+            if (!data || !data.ok) return;
+            if (data.mode === 'disabled') {
+              if (gateEl) gateEl.style.display = 'none';
+              if (commentForm) commentForm.style.display = 'none';
+              return;
+            }
+            if (data.locked) {
+              if (gateEl) gateEl.style.display = 'block';
+              if (commentForm) commentForm.style.display = 'none';
+              if (unlockedBanner) unlockedBanner.style.display = 'none';
+              if (emptyEl) emptyEl.style.display = 'none';
+              if (listEl) listEl.innerHTML = '';
+              return;
+            }
+            if (gateEl) gateEl.style.display = 'none';
+            if (commentForm) commentForm.style.display = 'block';
+            if (unlockedBanner) unlockedBanner.style.display = data.isMember && data.mode === 'members' ? 'block' : 'none';
+            renderComments(data.comments || []);
+          })
+          .catch(function () { /* graceful static fallback */ });
+      }
+
+      if (unlockForm) {
+        unlockForm.addEventListener('submit', function (e) {
+          e.preventDefault();
+          if (gateErr) gateErr.style.display = 'none';
+          var code = (codeInput ? codeInput.value : '').trim();
+          fetch('/api/catalog/comments/auth', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ code: code })
+          })
+            .then(function (r) { return r.json(); })
+            .then(function (res) {
+              if (!res.ok || !res.token) {
+                if (gateErr) {
+                  gateErr.textContent = res.error || 'Auth failed';
+                  gateErr.style.display = 'block';
+                }
+                return;
+              }
+              memberToken = res.token;
+              if (codeInput) codeInput.value = '';
+              fetchComments();
+            })
+            .catch(function () {
+              if (gateErr) {
+                gateErr.textContent = 'Network error';
+                gateErr.style.display = 'block';
+              }
+            });
+        });
+      }
+
+      if (commentForm) {
+        commentForm.addEventListener('submit', function (e) {
+          e.preventDefault();
+          if (formErr) formErr.style.display = 'none';
+          var author = (document.getElementById('catAuthorInput').value || '').trim();
+          var role = (document.getElementById('catRoleInput').value || '').trim();
+          var body = (document.getElementById('catBodyInput').value || '').trim();
+          var headers = { 'Content-Type': 'application/json' };
+          if (memberToken) headers['Authorization'] = 'Bearer ' + memberToken;
+
+          fetch('/api/catalog/comments', {
+            method: 'POST',
+            headers: headers,
+            body: JSON.stringify({ key: key, lang: lang, author: author, role: role, body: body })
+          })
+            .then(function (r) { return r.json(); })
+            .then(function (res) {
+              if (!res.ok) {
+                if (formErr) {
+                  formErr.textContent = res.error || 'Error';
+                  formErr.style.display = 'block';
+                }
+                return;
+              }
+              document.getElementById('catBodyInput').value = '';
+              fetchComments();
+            })
+            .catch(function () {
+              if (formErr) {
+                formErr.textContent = 'Network error';
+                formErr.style.display = 'block';
+              }
+            });
+        });
+      }
+
+      fetchComments();
+    })();
+  </script>
+
+<%- include('partials/footer') %>

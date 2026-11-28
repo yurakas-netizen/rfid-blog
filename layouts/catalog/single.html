@@ -1,0 +1,192 @@
+{{ define "body-class" }}article-page catalog-item-page{{ end }}
+
+{{ define "main" }}
+{{- $page := . -}}
+{{- $lang := .Language.Lang -}}
+{{- $cfg := index hugo.Data "catalog-settings" -}}
+{{- $pm := "item" -}}
+{{- $defCur := "EUR" -}}
+{{- $inquiryEmail := "info@rfid.org.ua" -}}
+{{- $inquiryTg := "https://t.me/+380661536030" -}}
+{{- if $cfg -}}
+  {{- $pm = default "item" $cfg.priceVisibilityMode -}}
+  {{- $defCur = default "EUR" $cfg.defaultCurrency -}}
+  {{- if $cfg.engineeringInquiryEmail -}}{{- $inquiryEmail = $cfg.engineeringInquiryEmail -}}{{- end -}}
+  {{- if $cfg.engineeringInquiryTelegram -}}{{- $inquiryTg = $cfg.engineeringInquiryTelegram -}}{{- end -}}
+{{- end -}}
+
+{{- $ctype := default "reader" .Params.catalogType -}}
+{{- $sku := default "" .Params.sku -}}
+{{- $mfg := default "" .Params.manufacturer -}}
+{{- $avail := default "order" .Params.availability -}}
+{{- $cur := default $defCur .Params.currency -}}
+{{- $showPrice := false -}}
+{{- if isset .Params "price" -}}
+  {{- if eq $pm "force_show" -}}{{- $showPrice = true -}}{{- else if eq $pm "item" -}}{{- $showPrice = default false .Params.showPrice -}}{{- end -}}
+{{- end -}}
+{{- $cMode := default "all" .Params.commentsMode -}}
+
+<div class="rfid-cat-crumb">
+  <a href="{{ printf "/%s/catalog/" $lang | strings.TrimPrefix (printf "/%s" (cond (eq $lang "uk") "uk" "")) }}">&larr; {{ if eq $lang "uk" }}Весь каталог обладнання{{ else if eq $lang "ru" }}Весь каталог оборудования{{ else }}All Catalog Equipment{{ end }}</a>
+  <span class="rfid-cat-crumb__sep">/</span>
+  <span class="rfid-cat-mono">{{ upper $ctype }}</span>
+  {{- if $sku -}}<span class="rfid-cat-crumb__sep">/</span><span class="rfid-cat-mono">{{ $sku }}</span>{{- end -}}
+</div>
+
+<section class="rfid-cat-detail-hero">
+  <div class="rfid-cat-detail-hero__left">
+    <div class="rfid-cat-stage">
+      {{- if .Params.image -}}
+        <img id="catHeroImg" src="{{ .Params.image | relURL }}" alt="{{ .Title }}" class="rfid-cat-stage__img" />
+      {{- else -}}
+        <div class="rfid-cat-card__placeholder">{{ $sku | default (upper $ctype) }}</div>
+      {{- end -}}
+    </div>
+    {{ partial "article/components/translations.html" . }}
+  </div>
+
+  <div class="rfid-cat-detail-hero__right">
+    <div class="rfid-cat-card__meta">
+      <span class="rfid-cat-mono">{{ upper $lang }}</span>
+      <span>&middot;</span>
+      <span class="rfid-cat-mono">{{ upper $ctype }}</span>
+      {{- if $sku -}}<span>&middot;</span><span class="rfid-cat-mono">{{ $sku }}</span>{{- end -}}
+      {{- if $mfg -}}<span>&middot;</span><span>{{ $mfg }}</span>{{- end -}}
+    </div>
+
+    <h1 class="rfid-cat-detail__title">{{ .Title }}</h1>
+    {{- with .Description -}}<p class="rfid-cat-detail__desc">{{ . }}</p>{{- end -}}
+
+    <div class="rfid-cat-detail__status-line">
+      <span class="rfid-cat-status is-{{ $avail }}"><i class="rfid-cat-dot" aria-hidden="true"></i>{{ $avail }}</span>
+    </div>
+
+    {{- with .Params.highlights -}}
+      <ul class="rfid-cat-highlights">
+        {{- range . -}}<li>{{ . }}</li>{{- end -}}
+      </ul>
+    {{- end -}}
+
+    <div class="rfid-cat-commercial">
+      <div class="rfid-cat-commercial__price">
+        {{- if and $showPrice (isset .Params "price") -}}
+          <span class="rfid-cat-commercial__label">{{ if eq $lang "uk" }}Орієнтовна вартість{{ else if eq $lang "ru" }}Ориентировочная цена{{ else }}Reference price{{ end }}</span>
+          <span class="rfid-cat-commercial__value">{{ $cur }} {{ .Params.price }}{{ with .Params.priceUnit }} {{ . }}{{ end }}</span>
+        {{- else -}}
+          <span class="rfid-cat-commercial__label">{{ if eq $lang "uk" }}Системна інтеграція{{ else if eq $lang "ru" }}Системная интеграция{{ else }}Engineering Specification{{ end }}</span>
+          <span class="rfid-cat-commercial__req">{{ if eq $lang "uk" }}Специфікація під проєкт{{ else if eq $lang "ru" }}Спецификация под проект{{ else }}Project / BOM specification{{ end }}</span>
+        {{- end -}}
+      </div>
+      <div class="rfid-cat-commercial__actions">
+        <a href="mailto:{{ $inquiryEmail }}?subject={{ urlquery (printf "%s — %s" $sku .Title) }}" class="sc-btn sc-btn-primary">
+          {{ if eq $lang "uk" }}Запросити інженерний розрахунок{{ else if eq $lang "ru" }}Запросить инженерный расчёт{{ else }}Request Engineering Spec{{ end }}
+        </a>
+        {{- if $inquiryTg -}}
+          <a href="{{ $inquiryTg }}" target="_blank" rel="noopener noreferrer" class="sc-btn sc-btn-ghost">Telegram</a>
+        {{- end -}}
+      </div>
+    </div>
+  </div>
+</section>
+
+{{- with .Params.specs -}}
+  {{- $seenGroups := slice -}}
+  {{- range . -}}
+    {{- $g := default "General" .group -}}
+    {{- if not (in $seenGroups $g) -}}{{- $seenGroups = $seenGroups | append $g -}}{{- end -}}
+  {{- end -}}
+  <section class="rfid-cat-section" id="cat-specs">
+    <header class="rfid-cat-section__head">
+      <h2 class="rfid-cat-section__title">{{ if eq $lang "uk" }}Технічні характеристики{{ else if eq $lang "ru" }}Технические характеристики{{ else }}Technical Specifications{{ end }}</h2>
+      {{- if $sku -}}<span class="rfid-cat-mono rfid-cat-section__meta">{{ $sku }}</span>{{- end -}}
+    </header>
+    <div class="rfid-cat-specs-wrap">
+      {{- range $grp := $seenGroups -}}
+        <div class="rfid-cat-spec-group">
+          <h3 class="rfid-cat-spec-group__title">{{ $grp }}</h3>
+          <dl class="rfid-cat-spec-table">
+            {{- range $page.Params.specs -}}
+              {{- if eq (default "General" .group) $grp -}}
+                <div class="rfid-cat-spec-row">
+                  <dt>{{ .label }}</dt>
+                  <dd>{{ .value }}{{ with .unit }} {{ . }}{{ end }}</dd>
+                </div>
+              {{- end -}}
+            {{- end -}}
+          </dl>
+        </div>
+      {{- end -}}
+    </div>
+  </section>
+{{- end -}}
+
+{{- with .Params.documents -}}
+  <section class="rfid-cat-section" id="cat-docs">
+    <header class="rfid-cat-section__head">
+      <h2 class="rfid-cat-section__title">{{ if eq $lang "uk" }}Даташити, схеми та документація{{ else if eq $lang "ru" }}Даташиты, схемы и документация{{ else }}Datasheets, CAD & Documentation{{ end }}</h2>
+    </header>
+    <div class="rfid-cat-docs-list">
+      {{- range . -}}
+        <a href="{{ .file | relURL }}" target="_blank" rel="noopener noreferrer" class="rfid-cat-doc-row">
+          <div class="rfid-cat-doc-row__left">
+            <span class="rfid-cat-doc-row__kind">{{ upper (default "doc" .docType) }}</span>
+            <span class="rfid-cat-doc-row__title">{{ .title }}</span>
+          </div>
+          <div class="rfid-cat-doc-row__right">
+            <span class="rfid-cat-doc-row__meta">{{ .version }}{{ with .size }} · {{ . }}{{ end }}{{ with .lang }} · {{ upper . }}{{ end }}</span>
+            <span class="rfid-cat-doc-row__dl">{{ if eq $lang "uk" }}Завантажити{{ else if eq $lang "ru" }}Скачать{{ else }}Download{{ end }} &nearr;</span>
+          </div>
+        </a>
+      {{- end -}}
+    </div>
+  </section>
+{{- end -}}
+
+{{- with .Params.linkedArticles -}}
+  <section class="rfid-cat-section" id="cat-articles">
+    <header class="rfid-cat-section__head">
+      <h2 class="rfid-cat-section__title">{{ if eq $lang "uk" }}Огляди та інженерні порівняння{{ else if eq $lang "ru" }}Инженерные обзоры и сравнения{{ else }}Engineering Reviews & Comparisons{{ end }}</h2>
+    </header>
+    <div class="rfid-cat-articles-grid">
+      {{- range $ref := . -}}
+        {{- $tk := $ref.translationKey -}}
+        {{- $matched := first 1 (where $page.Site.RegularPages "Params.translationKey" $tk) -}}
+        {{- if not $matched -}}
+          {{- range hugo.Sites -}}
+            {{- if not $matched -}}
+              {{- $matched = first 1 (where .RegularPages "Params.translationKey" $tk) -}}
+            {{- end -}}
+          {{- end -}}
+        {{- end -}}
+        {{- range $matched -}}
+          <a href="{{ .RelPermalink }}" class="rfid-cat-article-card">
+            <div class="rfid-cat-article-card__meta">
+              <span class="rfid-cat-mono rfid-cat-article-card__kind">{{ upper (default "review" $ref.kind) }}</span>
+              <span>&middot;</span>
+              <span>{{ .ReadingTime }} min</span>
+            </div>
+            <h3 class="rfid-cat-article-card__title">{{ $ref.customTitle | default .Title }}</h3>
+            <p class="rfid-cat-article-card__desc">{{ .Description | default .Summary }}</p>
+          </a>
+        {{- end -}}
+      {{- end -}}
+    </div>
+  </section>
+{{- end -}}
+
+{{- if .Content -}}
+  <article class="main-article rfid-cat-prose" id="cat-overview">
+    <section class="article-content">{{ .Content }}</section>
+  </article>
+{{- end -}}
+
+{{- if ne $cMode "disabled" -}}
+  {{ partial "comments/include" . }}
+{{- end -}}
+
+{{- partialCached "footer/footer" . -}}
+{{ end }}
+
+{{ define "right-sidebar" }}
+  {{ partial "sidebar/right.html" (dict "Context" . "Scope" "page") }}
+{{ end }}

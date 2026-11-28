@@ -1,0 +1,226 @@
+<%- include('partials/head') %>
+<%- include('partials/left-sidebar') %>
+
+<%
+function typeLabel(type) {
+  switch (type) {
+    case 'reader': return catalogUi.typeReader;
+    case 'antenna': return catalogUi.typeAntenna;
+    case 'tag': return catalogUi.typeTag;
+    case 'software': return catalogUi.typeSoftware;
+    case 'accessory': return catalogUi.typeAccessory;
+    default: return catalogUi.typeReader;
+  }
+}
+
+function availLabel(av) {
+  switch (av) {
+    case 'in_stock': return catalogUi.availInStock;
+    case 'order': return catalogUi.availOrder;
+    case 'discontinued': return catalogUi.availDiscontinued;
+    case 'software_license': return catalogUi.availLicense;
+    default: return catalogUi.availOrder;
+  }
+}
+%>
+
+<main class="main full-width">
+  <section class="rfid-cat-hero">
+    <div class="rfid-cat-hero__head">
+      <div class="rfid-cat-hero__copy">
+        <div class="rfid-cat-hero__kicker">UHF RFID · RTLS · IIoT</div>
+        <h1 class="rfid-cat-hero__title"><%= catalogUi.sectionTitle %></h1>
+        <p class="rfid-cat-hero__subtitle"><%= catalogUi.sectionSubtitle %></p>
+      </div>
+      <div class="rfid-cat-hero__counter">
+        <span class="rfid-cat-hero__count" id="catVisibleCount"><%= catalogCards.length %></span>
+        <span class="rfid-cat-hero__count-label"><%= catalogUi.itemsCountLabel %></span>
+      </div>
+    </div>
+
+    <div class="rfid-cat-toolbar" role="region" aria-label="Catalog Filter">
+      <div class="rfid-cat-tabs" role="tablist" id="catTypeTabs">
+        <button type="button" class="rfid-cat-tab is-active" data-type="all"><%= catalogUi.allTypes %></button>
+        <button type="button" class="rfid-cat-tab" data-type="reader"><%= catalogUi.typeReader %></button>
+        <button type="button" class="rfid-cat-tab" data-type="antenna"><%= catalogUi.typeAntenna %></button>
+        <button type="button" class="rfid-cat-tab" data-type="tag"><%= catalogUi.typeTag %></button>
+        <button type="button" class="rfid-cat-tab" data-type="software"><%= catalogUi.typeSoftware %></button>
+        <button type="button" class="rfid-cat-tab" data-type="accessory"><%= catalogUi.typeAccessory %></button>
+      </div>
+      <div class="rfid-cat-search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0"/>
+          <path d="M21 21l-6 -6"/>
+        </svg>
+        <input
+          type="search"
+          id="catSearchInput"
+          placeholder="<%= catalogUi.searchPlaceholder %>"
+          aria-label="<%= catalogUi.searchPlaceholder %>"
+        />
+      </div>
+    </div>
+  </section>
+
+  <% if (catalogCards.length === 0) { %>
+    <section class="rfid-cat-empty">
+      <p class="rfid-cat-empty__text"><%= t.noPostsInLang %></p>
+      <% if (availableCatalogLangs.length > 0) { %>
+        <div class="rfid-cat-empty__langs">
+          <% availableCatalogLangs.forEach(function(al) { %>
+            <a href="<%= al.url %>" class="sc-lang-jump">
+              <span><%= al.label %></span>
+              <span class="sc-lang-jump__count"><%= al.count %></span>
+            </a>
+          <% }); %>
+        </div>
+      <% } %>
+    </section>
+
+    <% if (fallbackAllCards && fallbackAllCards.length > 0) { %>
+      <div class="rfid-cat-grid" id="catGrid">
+        <% fallbackAllCards.forEach(function(card) { %>
+          <%
+            var searchText = [card.title, card.sku, card.manufacturer, card.description, card.tags.join(' '), card.specs.map(function(s){ return s.label + ' ' + s.value; }).join(' ')].join(' ').toLowerCase();
+          %>
+          <article class="rfid-cat-card" data-type="<%= card.catalogType %>" data-search="<%= searchText %>">
+            <a href="<%= card.permalink %>" class="rfid-cat-card__media">
+              <% if (card.imageUrl) { %>
+                <img src="<%= card.imageUrl %>" alt="<%= card.title %>" loading="lazy" />
+              <% } else { %>
+                <div class="rfid-cat-card__placeholder"><%= card.sku || card.catalogType.toUpperCase() %></div>
+              <% } %>
+            </a>
+            <div class="rfid-cat-card__body">
+              <div class="rfid-cat-card__meta">
+                <span class="rfid-cat-mono"><%= card.lang.toUpperCase() %></span>
+                <span>&middot;</span>
+                <span class="rfid-cat-mono"><%= card.sku || typeLabel(card.catalogType) %></span>
+                <span>&middot;</span>
+                <span class="rfid-cat-status is-<%= card.availability %>"><i class="rfid-cat-dot" aria-hidden="true"></i><%= availLabel(card.availability) %></span>
+              </div>
+              <h2 class="rfid-cat-card__title">
+                <a href="<%= card.permalink %>"><%= card.title %></a>
+              </h2>
+              <p class="rfid-cat-card__desc"><%= card.summary %></p>
+              <% if (card.specs.length > 0) { %>
+                <dl class="rfid-cat-card__specs">
+                  <% card.specs.slice(0, 3).forEach(function(sp) { %>
+                    <div class="rfid-cat-card__spec-row">
+                      <dt><%= sp.label %></dt>
+                      <dd><%= sp.value %><%= sp.unit ? ' ' + sp.unit : '' %></dd>
+                    </div>
+                  <% }); %>
+                </dl>
+              <% } %>
+              <div class="rfid-cat-card__foot">
+                <div class="rfid-cat-card__price">
+                  <% if (card.effectiveShowPrice && card.formattedPrice) { %>
+                    <span class="rfid-cat-price-val"><%= card.formattedPrice %></span>
+                  <% } else { %>
+                    <span class="rfid-cat-price-req"><%= catalogUi.priceOnRequest %></span>
+                  <% } %>
+                </div>
+                <a href="<%= card.permalink %>" class="rfid-cat-card__cta"><%= catalogUi.openCardLabel %> &rarr;</a>
+              </div>
+            </div>
+          </article>
+        <% }); %>
+      </div>
+    <% } %>
+  <% } else { %>
+    <div class="rfid-cat-grid" id="catGrid">
+      <% catalogCards.forEach(function(card) { %>
+        <%
+          var searchText = [card.title, card.sku, card.manufacturer, card.description, card.tags.join(' '), card.specs.map(function(s){ return s.label + ' ' + s.value; }).join(' ')].join(' ').toLowerCase();
+        %>
+        <article class="rfid-cat-card" data-type="<%= card.catalogType %>" data-search="<%= searchText %>">
+          <a href="<%= card.permalink %>" class="rfid-cat-card__media">
+            <% if (card.imageUrl) { %>
+              <img src="<%= card.imageUrl %>" alt="<%= card.title %>" loading="lazy" />
+            <% } else { %>
+              <div class="rfid-cat-card__placeholder"><%= card.sku || card.catalogType.toUpperCase() %></div>
+            <% } %>
+          </a>
+          <div class="rfid-cat-card__body">
+            <div class="rfid-cat-card__meta">
+              <span class="rfid-cat-mono"><%= card.sku || typeLabel(card.catalogType) %></span>
+              <% if (card.manufacturer) { %>
+                <span>&middot;</span>
+                <span><%= card.manufacturer %></span>
+              <% } %>
+              <span>&middot;</span>
+              <span class="rfid-cat-status is-<%= card.availability %>"><i class="rfid-cat-dot" aria-hidden="true"></i><%= availLabel(card.availability) %></span>
+            </div>
+            <h2 class="rfid-cat-card__title">
+              <a href="<%= card.permalink %>"><%= card.title %></a>
+            </h2>
+            <p class="rfid-cat-card__desc"><%= card.summary %></p>
+            <% if (card.specs.length > 0) { %>
+              <dl class="rfid-cat-card__specs">
+                <% card.specs.slice(0, 3).forEach(function(sp) { %>
+                  <div class="rfid-cat-card__spec-row">
+                    <dt><%= sp.label %></dt>
+                    <dd><%= sp.value %><%= sp.unit ? ' ' + sp.unit : '' %></dd>
+                  </div>
+                <% }); %>
+              </dl>
+            <% } %>
+            <div class="rfid-cat-card__foot">
+              <div class="rfid-cat-card__price">
+                <% if (card.effectiveShowPrice && card.formattedPrice) { %>
+                  <span class="rfid-cat-price-val"><%= card.formattedPrice %></span>
+                <% } else { %>
+                  <span class="rfid-cat-price-req"><%= catalogUi.priceOnRequest %></span>
+                <% } %>
+              </div>
+              <a href="<%= card.permalink %>" class="rfid-cat-card__cta"><%= catalogUi.openCardLabel %> &rarr;</a>
+            </div>
+          </div>
+        </article>
+      <% }); %>
+    </div>
+    <p id="catNoMatch" class="rfid-cat-empty__text" style="display:none; padding: 18px 0;"><%= catalogUi.noItemsFound %></p>
+  <% } %>
+
+  <script>
+    (function () {
+      var tabs = document.querySelectorAll('#catTypeTabs .rfid-cat-tab');
+      var input = document.getElementById('catSearchInput');
+      var cards = document.querySelectorAll('#catGrid .rfid-cat-card');
+      var countEl = document.getElementById('catVisibleCount');
+      var emptyEl = document.getElementById('catNoMatch');
+      var activeType = 'all';
+
+      function applyFilter() {
+        var q = (input ? input.value : '').trim().toLowerCase();
+        var shown = 0;
+        cards.forEach(function (card) {
+          var t = card.getAttribute('data-type') || '';
+          var s = card.getAttribute('data-search') || '';
+          var okType = activeType === 'all' || t === activeType;
+          var okSearch = !q || s.indexOf(q) !== -1;
+          var vis = okType && okSearch;
+          card.style.display = vis ? '' : 'none';
+          if (vis) shown++;
+        });
+        if (countEl) countEl.textContent = String(shown);
+        if (emptyEl) emptyEl.style.display = cards.length > 0 && shown === 0 ? 'block' : 'none';
+      }
+
+      tabs.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          tabs.forEach(function (b) { b.classList.remove('is-active'); });
+          btn.classList.add('is-active');
+          activeType = btn.getAttribute('data-type') || 'all';
+          applyFilter();
+        });
+      });
+
+      if (input) {
+        input.addEventListener('input', applyFilter);
+      }
+    })();
+  </script>
+
+<%- include('partials/footer') %>

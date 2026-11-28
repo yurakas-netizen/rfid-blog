@@ -1,0 +1,1775 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RFID Ukraine — Каталог оборудования, меток и ПО</title>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --surface-muted: #f1f5f9;
+      --border: #cbd5e1;
+      --border-soft: #e2e8f0;
+      --text: #0f172a;
+      --text-muted: #475569;
+      --text-soft: #64748b;
+      --accent: #0284c7;
+      --accent-hover: #0369a1;
+      --accent-soft: #e0f2fe;
+      --ok-bg: #dcfce7;
+      --ok-text: #166534;
+      --ok-border: #86efac;
+      --warn-bg: #fef3c7;
+      --warn-text: #92400e;
+      --warn-border: #fcd34d;
+      --err-bg: #fee2e2;
+      --err-text: #991b1b;
+      --err-border: #fca5a5;
+      --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      --sans: "Plus Jakarta Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0; padding: 0;
+      background: var(--bg); color: var(--text);
+      font-family: var(--sans); font-size: 13.5px; line-height: 1.48;
+    }
+
+    .app { min-height: 100vh; display: flex; flex-direction: column; }
+
+    .topbar {
+      position: sticky; top: 0; z-index: 40;
+      background: var(--surface); border-bottom: 1px solid var(--border);
+      padding: 10px 18px;
+      display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px;
+    }
+    .topbar-left, .topbar-center, .topbar-actions {
+      display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
+    }
+    .brand-title { margin: 0; font-size: 15.5px; font-weight: 700; letter-spacing: -0.01em; }
+    .mode-meta { font-family: var(--mono); font-size: 11.5px; color: var(--text-soft); }
+    .readiness-summary { font-size: 12.5px; font-weight: 600; color: var(--text-muted); font-variant-numeric: tabular-nums; }
+    .readiness-summary.is-ok { color: var(--ok-text); }
+    .readiness-summary.is-err { color: var(--err-text); }
+
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+      height: 33px; padding: 0 12px; border-radius: 7px;
+      border: 1px solid var(--border); background: var(--surface); color: var(--text);
+      font-family: inherit; font-size: 12.5px; font-weight: 600;
+      cursor: pointer; text-decoration: none; white-space: nowrap;
+    }
+    .btn:hover:not(:disabled) { background: var(--surface-muted); border-color: #94a3b8; }
+    .btn:disabled { opacity: 0.45; cursor: not-allowed; }
+    .btn-primary { background: var(--accent); border-color: var(--accent); color: #ffffff; }
+    .btn-primary:hover:not(:disabled) { background: var(--accent-hover); border-color: var(--accent-hover); }
+    .btn-accent-soft { background: var(--accent-soft); border-color: #7dd3fc; color: var(--accent-hover); }
+    .btn-sm { height: 27px; padding: 0 9px; font-size: 11.5px; }
+    .btn-danger { background: #fff1f2; border-color: #fecdd3; color: #be123c; }
+    .btn-danger:hover:not(:disabled) { background: #ffe4e6; }
+
+    .auth-banner {
+      display: none; align-items: center; flex-wrap: wrap; gap: 8px;
+      padding: 9px 18px; background: #eff6ff; border-bottom: 1px solid #bfdbfe;
+    }
+    .auth-banner.is-visible { display: flex; }
+
+    .input, .select, .textarea {
+      border: 1px solid var(--border); border-radius: 7px;
+      background: var(--surface); color: var(--text);
+      font-family: inherit; font-size: 13px; outline: none;
+    }
+    .input, .select { height: 33px; padding: 0 10px; width: 100%; }
+    .textarea { width: 100%; padding: 9px 11px; resize: vertical; line-height: 1.5; }
+    .input.is-mono, .textarea.is-mono { font-family: var(--mono); font-size: 12px; }
+    .input:focus, .select:focus, .textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.12); }
+    .input.is-invalid, .textarea.is-invalid { border-color: #ef4444; background: #fef2f2; }
+
+    .workspace {
+      display: grid; grid-template-columns: 470px minmax(0, 1fr);
+      gap: 18px; padding: 16px 20px 44px;
+      max-width: 1600px; width: 100%; margin: 0 auto; align-items: start;
+    }
+    @media (max-width: 1140px) {
+      .workspace { grid-template-columns: 1fr; padding: 14px 14px 36px; }
+    }
+
+    .panel {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 10px; overflow: hidden;
+    }
+    .panel-section { padding: 14px 16px; border-bottom: 1px solid var(--border-soft); }
+    .panel-section:last-child { border-bottom: 0; }
+
+    .section-head {
+      display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 10px;
+    }
+    .section-title { margin: 0; font-size: 13.5px; font-weight: 700; color: var(--text); }
+    .section-note { margin: 0 0 10px; font-size: 12px; color: var(--text-soft); line-height: 1.42; }
+
+    .field { display: flex; flex-direction: column; gap: 4px; margin-bottom: 10px; }
+    .field:last-child { margin-bottom: 0; }
+    .field-label-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+    .field-label { font-size: 12px; font-weight: 600; color: var(--text-muted); }
+    .req-star { color: #dc2626; }
+
+    .grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+    @media (max-width: 640px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } }
+
+    .inline-row { display: flex; align-items: center; gap: 8px; }
+    .checkbox-row { display: inline-flex; align-items: center; gap: 7px; font-size: 12.5px; font-weight: 600; cursor: pointer; }
+
+    .lang-chips { display: flex; flex-wrap: wrap; gap: 5px; }
+    .lang-chip {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 4px 8px; border-radius: 6px;
+      border: 1px solid var(--border); background: var(--surface);
+      font-size: 11.5px; font-weight: 600; cursor: pointer; user-select: none;
+    }
+    .lang-chip.is-anchor { background: #e0f2fe; border-color: #38bdf8; color: #0369a1; }
+    .lang-chip.is-follower { background: #dcfce7; border-color: #86efac; color: #166534; }
+
+    /* Spec / Doc / Article dynamic rows */
+    .dyn-list { display: flex; flex-direction: column; gap: 8px; }
+    .dyn-row {
+      padding: 9px 10px; border: 1px solid var(--border-soft);
+      border-radius: 8px; background: var(--surface-muted);
+      display: flex; flex-direction: column; gap: 7px;
+    }
+    .dyn-row-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+
+    .img-thumb-box {
+      display: flex; align-items: center; gap: 10px; padding: 8px;
+      border: 1px solid var(--border-soft); border-radius: 8px; background: #0f172a; color: #e2e8f0;
+    }
+    .img-thumb-box img { width: 72px; height: 54px; object-fit: cover; border-radius: 5px; background: #020617; }
+
+    /* Right Editor Column */
+    .lang-tabs-bar {
+      display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px;
+      padding: 12px 16px; border-bottom: 1px solid var(--border-soft); background: var(--surface-muted);
+    }
+    .lang-tabs { display: flex; flex-wrap: wrap; gap: 6px; }
+    .lang-tab {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 6px 11px; border-radius: 7px; border: 1px solid var(--border);
+      background: var(--surface); color: var(--text);
+      font-size: 12.5px; font-weight: 600; cursor: pointer;
+    }
+    .lang-tab.is-active { background: var(--accent); border-color: var(--accent); color: #ffffff; }
+    .lang-tab .dot { width: 7px; height: 7px; border-radius: 50%; background: #94a3b8; }
+    .lang-tab.is-ready .dot { background: #22c55e; }
+    .lang-tab.is-incomplete .dot { background: #ef4444; }
+    .lang-tab.is-active .dot { background: #ffffff; }
+
+    .editor-pane { padding: 16px 18px; display: flex; flex-direction: column; gap: 13px; }
+    .subtabs {
+      display: inline-flex; border: 1px solid var(--border); border-radius: 7px; overflow: hidden;
+    }
+    .subtab-btn {
+      border: 0; border-right: 1px solid var(--border); background: var(--surface);
+      padding: 5px 11px; font-size: 12px; font-weight: 600; cursor: pointer; color: var(--text-muted);
+    }
+    .subtab-btn:last-child { border-right: 0; }
+    .subtab-btn.is-active { background: var(--accent-soft); color: var(--accent-hover); }
+
+    /* Prompt Generator Drawer */
+    .prompt-box {
+      padding: 10px 12px; border: 1px solid #bae6fd; border-radius: 8px;
+      background: #f0f9ff; display: flex; flex-direction: column; gap: 7px;
+    }
+
+    /* Modals */
+    .modal-backdrop {
+      position: fixed; inset: 0; z-index: 100;
+      background: rgba(15, 23, 42, 0.56);
+      display: none; align-items: center; justify-content: center; padding: 18px;
+    }
+    .modal-backdrop.is-open { display: flex; }
+    .modal {
+      width: 100%; max-width: 960px; max-height: 90vh;
+      background: var(--surface); border-radius: 12px; border: 1px solid var(--border);
+      display: flex; flex-direction: column; overflow: hidden;
+      box-shadow: 0 24px 55px rgba(15, 23, 42, 0.35);
+    }
+    .modal-head {
+      padding: 12px 16px; border-bottom: 1px solid var(--border-soft);
+      display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    }
+    .modal-title { margin: 0; font-size: 14.5px; font-weight: 700; }
+    .modal-body { padding: 14px 16px; overflow: auto; display: flex; flex-direction: column; gap: 12px; }
+    .modal-foot {
+      padding: 10px 16px; border-top: 1px solid var(--border-soft);
+      background: var(--surface-muted); display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    }
+
+    table.reg-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+    table.reg-table th, table.reg-table td {
+      padding: 8px 10px; border-bottom: 1px solid var(--border-soft); text-align: left; vertical-align: middle;
+    }
+    table.reg-table th { font-size: 11.5px; color: var(--text-soft); text-transform: uppercase; letter-spacing: 0.04em; background: var(--surface-muted); }
+
+    .preview-card {
+      border: 1px solid #1e293b; border-radius: 12px; background: #0d1424; color: #f8fafc; overflow: hidden;
+    }
+    .preview-card-hero { display: grid; grid-template-columns: 240px 1fr; gap: 16px; padding: 16px; border-bottom: 1px solid #1e293b; }
+    @media (max-width: 680px) { .preview-card-hero { grid-template-columns: 1fr; } }
+    .preview-card-hero img { width: 100%; aspect-ratio: 4/3; object-fit: cover; border-radius: 8px; background: #020617; }
+    .preview-specs { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px 16px; padding: 14px 16px; font-size: 12px; }
+
+    .toast {
+      position: fixed; right: 18px; bottom: 18px; z-index: 200;
+      padding: 9px 14px; border-radius: 8px; background: #0f172a; color: #f8fafc;
+      font-size: 12.5px; font-weight: 600; box-shadow: 0 12px 30px rgba(15, 23, 42, 0.3);
+      display: none;
+    }
+    .toast.is-visible { display: block; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="topbar-left">
+        <a href="/admin/" class="btn btn-sm">&larr; В CMS</a>
+        <h1 class="brand-title">Каталог оборудования, меток и ПО</h1>
+        <span id="modeMeta" class="mode-meta">Определение режима...</span>
+      </div>
+      <div class="topbar-center">
+        <span id="readinessSummary" class="readiness-summary">Загрузка...</span>
+      </div>
+      <div class="topbar-actions">
+        <button type="button" id="openRegistryBtn" class="btn">Реестр позиций</button>
+        <button type="button" id="openSettingsBtn" class="btn">Настройки цен и команды</button>
+        <button type="button" id="openCommentsBtn" class="btn">Комментарии</button>
+        <button type="button" id="clearFormBtn" class="btn">Новая позиция</button>
+        <button type="button" id="publishBtn" class="btn btn-primary" disabled>Сохранить связку</button>
+      </div>
+    </header>
+
+    <div id="githubAuthBanner" class="auth-banner">
+      <strong>GitHub API:</strong>
+      <input type="text" id="ghRepoInput" class="input" style="width:210px;" value="yurakas-netizen/rfid-blog" placeholder="owner/repo" />
+      <input type="text" id="ghBranchInput" class="input" style="width:100px;" value="master" placeholder="branch" />
+      <input type="password" id="ghTokenInput" class="input" style="width:220px;" placeholder="GitHub Token (или сессия CMS)" />
+      <button type="button" id="ghConnectBtn" class="btn btn-primary btn-sm">Подключиться</button>
+      <button type="button" id="ghFromDecapBtn" class="btn btn-sm">Из сессии CMS</button>
+      <span id="ghAuthStatus" style="font-size:12px; color:var(--text-muted);"></span>
+    </div>
+
+    <div class="workspace">
+      <!-- LEFT COLUMN: SHARED ENGINEERING CONSTANTS -->
+      <aside class="panel">
+        <div class="panel-section">
+          <div class="section-head">
+            <h2 class="section-title">1. Языковая связка каталога</h2>
+            <label class="checkbox-row" title="Разрешить перезапись существующих карточек">
+              <input type="checkbox" id="overwriteToggle" checked />
+              <span>Перезапись</span>
+            </label>
+          </div>
+          <div class="field">
+            <label class="field-label" for="anchorLangSelect">Якорный язык</label>
+            <select id="anchorLangSelect" class="select"></select>
+          </div>
+          <div class="field">
+            <span class="field-label">Ведомые языки (синхронизация констант)</span>
+            <div id="followerChips" class="lang-chips"></div>
+          </div>
+        </div>
+
+        <div class="panel-section">
+          <div class="section-head">
+            <h2 class="section-title">2. Паспорт и классификация</h2>
+            <button type="button" id="genTkBtn" class="btn btn-sm">Ключ из SKU</button>
+          </div>
+          <div class="field">
+            <label class="field-label" for="tkInput">Ключ связи (translationKey) <span class="req-star">*</span></label>
+            <input type="text" id="tkInput" class="input is-mono" placeholder="rfid-gate-xr400-uhf-reader" />
+          </div>
+          <div class="grid-2">
+            <div class="field">
+              <label class="field-label" for="typeSelect">Класс решения</label>
+              <select id="typeSelect" class="select">
+                <option value="reader">Зчитувачі / Считыватели</option>
+                <option value="antenna">RFID-антени / Антенны</option>
+                <option value="tag">Мітки / Метки и inlays</option>
+                <option value="software">ПЗ / Software & SDK</option>
+                <option value="accessory">Оснащення / Аксессуары</option>
+              </select>
+            </div>
+            <div class="field">
+              <label class="field-label" for="availSelect">Статус</label>
+              <select id="availSelect" class="select">
+                <option value="in_stock">Доступно для пилота</option>
+                <option value="order">Под заказ / проект</option>
+                <option value="software_license">Лицензия ПО / SDK</option>
+                <option value="discontinued">Архивная модель</option>
+              </select>
+            </div>
+          </div>
+          <div class="grid-2">
+            <div class="field">
+              <label class="field-label" for="skuInput">Артикул / SKU</label>
+              <input type="text" id="skuInput" class="input is-mono" placeholder="XR400-UHF-ETSI-POE" />
+            </div>
+            <div class="field">
+              <label class="field-label" for="mfgInput">Платформа / Вендор</label>
+              <input type="text" id="mfgInput" class="input" placeholder="RFID Lab Engineering" />
+            </div>
+          </div>
+          <div class="grid-2">
+            <div class="field">
+              <label class="field-label" for="weightInput">Порядок (weight)</label>
+              <input type="number" id="weightInput" class="input is-mono" value="10" min="1" max="9999" />
+            </div>
+            <div class="field">
+              <label class="field-label" for="commentsModeSelect">Комментарии к позиции</label>
+              <select id="commentsModeSelect" class="select">
+                <option value="all">От всех (открытые)</option>
+                <option value="members">Только от своих (команда)</option>
+                <option value="disabled">Запретить комментарии</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel-section">
+          <div class="section-head">
+            <h2 class="section-title">3. Цена и коммерческий блок</h2>
+            <label class="checkbox-row">
+              <input type="checkbox" id="showPriceToggle" />
+              <span>Показывать цену</span>
+            </label>
+          </div>
+          <div class="grid-3">
+            <div class="field">
+              <label class="field-label" for="priceInput">Сумма</label>
+              <input type="number" id="priceInput" class="input is-mono" step="0.01" min="0" placeholder="1480" />
+            </div>
+            <div class="field">
+              <label class="field-label" for="currencySelect">Валюта</label>
+              <select id="currencySelect" class="select is-mono">
+                <option value="EUR">EUR (€)</option>
+                <option value="USD">USD ($)</option>
+                <option value="UAH">UAH (₴)</option>
+                <option value="PLN">PLN (zł)</option>
+                <option value="GBP">GBP (£)</option>
+              </select>
+            </div>
+            <div class="field">
+              <label class="field-label" for="priceUnitInput">Единица</label>
+              <input type="text" id="priceUnitInput" class="input" placeholder="/ шт." />
+            </div>
+          </div>
+        </div>
+
+        <div class="panel-section">
+          <div class="section-head">
+            <h2 class="section-title">4. Студийное фото и промпт обложки</h2>
+            <label class="btn btn-sm btn-accent-soft" style="cursor:pointer;">
+              Загрузить фото
+              <input type="file" id="uploadImageInput" accept=".png,.jpg,.jpeg,.webp,.svg,.avif" style="display:none;" />
+            </label>
+          </div>
+          <div class="field">
+            <label class="field-label" for="imageUrlInput">Основное изображение (URL или путь)</label>
+            <input type="text" id="imageUrlInput" class="input is-mono" placeholder="/uploads/catalog/rfid-gate-xr400/studio.jpg" />
+          </div>
+          <div id="imageThumbPreview" class="img-thumb-box" style="display:none; margin-bottom:10px;"></div>
+          <div class="field">
+            <label class="field-label" for="galleryInput">Галерея (доп. ракурсы, по строке на URL)</label>
+            <textarea id="galleryInput" class="textarea is-mono" rows="2" placeholder="/uploads/catalog/.../ports.jpg"></textarea>
+          </div>
+
+          <div class="prompt-box">
+            <div class="inline-row" style="justify-content:space-between;">
+              <strong style="font-size:12px;">Промпт студийного фото (без текста на корпусе)</strong>
+              <div class="inline-row">
+                <button type="button" id="genPromptBtn" class="btn btn-sm">Сгенерировать</button>
+                <button type="button" id="copyPromptBtn" class="btn btn-sm">Копировать</button>
+              </div>
+            </div>
+            <textarea id="coverPromptArea" class="textarea is-mono" rows="3" readonly placeholder="Нажмите «Сгенерировать», чтобы получить промпт из паспорта и характеристик..."></textarea>
+          </div>
+        </div>
+
+        <div class="panel-section">
+          <div class="section-head">
+            <h2 class="section-title">5. Технические характеристики</h2>
+            <div class="inline-row">
+              <select id="specTemplateSelect" class="select" style="width:140px; height:27px; font-size:11.5px;">
+                <option value="">Шаблон specs...</option>
+                <option value="reader">4-портовый Reader</option>
+                <option value="antenna">UHF Антенна</option>
+                <option value="tag">On-Metal Метка</option>
+                <option value="software">RFID Middleware</option>
+              </select>
+              <button type="button" id="addSpecBtn" class="btn btn-sm">+ Строка</button>
+            </div>
+          </div>
+          <div id="specsList" class="dyn-list"></div>
+        </div>
+
+        <div class="panel-section">
+          <div class="section-head">
+            <h2 class="section-title">6. Даташиты, мануалы, CAD</h2>
+            <label class="btn btn-sm btn-accent-soft" style="cursor:pointer;">
+              + Файл (PDF/STEP/ZIP)
+              <input type="file" id="uploadDocInput" accept=".pdf,.zip,.step,.stp,.dwg,.dxf,.doc,.docx,.txt,.json,.csv" style="display:none;" />
+            </label>
+          </div>
+          <div id="docsList" class="dyn-list"></div>
+          <button type="button" id="addDocBtn" class="btn btn-sm" style="margin-top:8px;">+ Добавить документ по ссылке</button>
+        </div>
+
+        <div class="panel-section">
+          <div class="section-head">
+            <h2 class="section-title">7. Связанные статьи, обзоры, сравнения</h2>
+            <button type="button" id="addArticleLinkBtn" class="btn btn-sm">+ Привязать статью</button>
+          </div>
+          <p class="section-note">Выбирайте материал по ключу связки — на сайте он автоматически откроется на языке читателя.</p>
+          <div id="articlesList" class="dyn-list"></div>
+        </div>
+      </aside>
+
+      <!-- RIGHT COLUMN: LOCALIZED CONTENT PER LANGUAGE -->
+      <section class="panel">
+        <div class="lang-tabs-bar">
+          <div id="langTabs" class="lang-tabs"></div>
+          <div class="subtabs">
+            <button type="button" class="subtab-btn is-active" data-mode="edit">Редактор</button>
+            <button type="button" class="subtab-btn" data-mode="preview">Предпросмотр карточки</button>
+          </div>
+        </div>
+
+        <div id="editPane" class="editor-pane">
+          <div class="inline-row" style="justify-content:space-between; flex-wrap:wrap; padding-bottom:8px; border-bottom:1px solid var(--border-soft);">
+            <span id="currentLangBanner" style="font-weight:700; font-size:13px;"></span>
+            <div class="inline-row">
+              <label class="btn btn-sm" style="cursor:pointer;">
+                Импорт .md/.json
+                <input type="file" id="importLangFileInput" accept=".md,.markdown,.json" style="display:none;" />
+              </label>
+              <button type="button" id="genSlugBtn" class="btn btn-sm">Slug из заголовка</button>
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <div class="field">
+              <label class="field-label" for="entryTitleInput">Название оборудования / ПО <span class="req-star">*</span></label>
+              <input type="text" id="entryTitleInput" class="input" placeholder="Промисловий 4-портовий UHF RFID зчитувач XR-400 Pro" />
+            </div>
+            <div class="field">
+              <label class="field-label" for="entrySlugInput">URL-слаг (латиница) <span class="req-star">*</span></label>
+              <input type="text" id="entrySlugInput" class="input is-mono" placeholder="rfid-gate-xr400-uhf-reader" />
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="field-label" for="entryDescInput">Краткое инженерное описание</label>
+            <textarea id="entryDescInput" class="textarea" rows="2" placeholder="Ключевое назначение устройства, стандарты, мощность, интерфейсы..."></textarea>
+          </div>
+
+          <div class="grid-2">
+            <div class="field">
+              <label class="field-label" for="entryHighlightsInput">Ключевые особенности (по строке на пункт)</label>
+              <textarea id="entryHighlightsInput" class="textarea" rows="4" placeholder="Чутливість -88 dBm на рівні порталів&#10;PoE+ IEEE 802.3at та ізольовані GPIO&#10;Edge Linux + GS1 EPCIS 2.0 MQTT"></textarea>
+            </div>
+            <div class="field">
+              <label class="field-label" for="entryTagsInput">Теги (через запятую)</label>
+              <textarea id="entryTagsInput" class="textarea" rows="4" placeholder="UHF RFID, PoE+, EPC Gen2, LLRP, EPCIS 2.0"></textarea>
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="field-label" for="entryBodyInput">Полное инженерное описание (Markdown / KaTeX) <span class="req-star">*</span></label>
+            <textarea id="entryBodyInput" class="textarea is-mono" rows="15" placeholder="## Архітектура та RF-тракт&#10;&#10;Детальний інженерний розбір, схема підключення та рекомендації щодо впровадження..."></textarea>
+          </div>
+        </div>
+
+        <div id="previewPane" class="editor-pane" style="display:none;"></div>
+      </section>
+    </div>
+  </div>
+
+  <!-- REGISTRY MODAL -->
+  <div id="registryModal" class="modal-backdrop">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="registryModalTitle">
+      <div class="modal-head">
+        <h3 id="registryModalTitle" class="modal-title">Реестр позиций каталога</h3>
+        <button type="button" class="btn btn-sm" data-close-modal="registryModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <input type="search" id="registrySearchInput" class="input" placeholder="Фильтр по названию, SKU или translationKey..." />
+        <div style="overflow:auto; max-height:60vh;">
+          <table class="reg-table">
+            <thead>
+              <tr>
+                <th>Язык</th>
+                <th>SKU / Класс</th>
+                <th>Название</th>
+                <th>Связка</th>
+                <th>Цена / Комм.</th>
+                <th>Действия</th>
+              </tr>
+            </thead>
+            <tbody id="registryTbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GLOBAL SETTINGS MODAL -->
+  <div id="settingsModal" class="modal-backdrop">
+    <div class="modal" style="max-width:620px;" role="dialog" aria-modal="true" aria-labelledby="settingsModalTitle">
+      <div class="modal-head">
+        <h3 id="settingsModalTitle" class="modal-title">Глобальные настройки каталога и доступа команды</h3>
+        <button type="button" class="btn btn-sm" data-close-modal="settingsModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="field">
+          <label class="field-label" for="gsPriceMode">Глобальное отображение цен</label>
+          <select id="gsPriceMode" class="select">
+            <option value="item">По настройке каждой карточки (по умолчанию)</option>
+            <option value="force_show">Принудительно показывать цены везде (где заполнена сумма)</option>
+            <option value="force_hide">Принудительно скрыть все цены (только инженерный запрос)</option>
+          </select>
+        </div>
+        <div class="grid-2">
+          <div class="field">
+            <label class="field-label" for="gsCurrency">Валюта по умолчанию</label>
+            <select id="gsCurrency" class="select">
+              <option value="EUR">EUR</option>
+              <option value="USD">USD</option>
+              <option value="UAH">UAH</option>
+            </select>
+          </div>
+          <div class="field">
+            <label class="field-label" for="gsCommentsMode">Режим комментариев по умолчанию</label>
+            <select id="gsCommentsMode" class="select">
+              <option value="all">От всех (all)</option>
+              <option value="members">Только от своих (members)</option>
+              <option value="disabled">Отключены (disabled)</option>
+            </select>
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="field">
+            <label class="field-label" for="gsEmail">Инженерный Email для запросов</label>
+            <input type="text" id="gsEmail" class="input" />
+          </div>
+          <div class="field">
+            <label class="field-label" for="gsTelegram">Ссылка Telegram</label>
+            <input type="text" id="gsTelegram" class="input" />
+          </div>
+        </div>
+        <div style="border-top:1px solid var(--border-soft); padding-top:12px; margin-top:4px;">
+          <div class="field">
+            <label class="field-label" for="teamCodeInput">Код доступа команды для комментариев «Только от своих» (scrypt hash на сервере)</label>
+            <div class="inline-row">
+              <input type="password" id="teamCodeInput" class="input" placeholder="Минимум 6 символов..." />
+              <button type="button" id="saveTeamCodeBtn" class="btn btn-accent-soft">Установить код</button>
+            </div>
+            <span id="teamCodeStatusText" style="font-size:11.5px; color:var(--text-soft);"></span>
+          </div>
+        </div>
+      </div>
+      <div class="modal-foot">
+        <span style="font-size:12px; color:var(--text-soft);">Файл: <code class="is-mono">data/catalog-settings.json</code></span>
+        <button type="button" id="saveGlobalSettingsBtn" class="btn btn-primary">Сохранить настройки</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMMENTS MODERATION MODAL -->
+  <div id="commentsModal" class="modal-backdrop">
+    <div class="modal" style="max-width:700px;" role="dialog" aria-modal="true" aria-labelledby="commentsModalTitle">
+      <div class="modal-head">
+        <h3 id="commentsModalTitle" class="modal-title">Модерация комментариев к текущей позиции</h3>
+        <button type="button" class="btn btn-sm" data-close-modal="commentsModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div id="modCommentsMeta" style="font-size:12px; color:var(--text-muted);"></div>
+        <div id="modTeamUnlockRow" class="inline-row" style="display:none;">
+          <input type="password" id="modTeamPassInput" class="input" placeholder="Введите код команды для просмотра приватных комментариев..." />
+          <button type="button" id="modTeamUnlockBtn" class="btn btn-sm btn-primary">Разблокировать</button>
+        </div>
+        <div id="modCommentsList" class="dyn-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <script>
+    (function () {
+      var SITE_LANGUAGES = [
+        { code: 'uk', shortLabel: 'UA', label: 'Українська (UA)', urlPrefix: '' },
+        { code: 'en', shortLabel: 'EN', label: 'English (EN)', urlPrefix: '/en' },
+        { code: 'ru', shortLabel: 'RU', label: 'Русский (RU)', urlPrefix: '/ru' },
+        { code: 'pl', shortLabel: 'PL', label: 'Polski (PL)', urlPrefix: '/pl' },
+        { code: 'de', shortLabel: 'DE', label: 'Deutsch (DE)', urlPrefix: '/de' },
+        { code: 'da', shortLabel: 'DA', label: 'Dansk (DA)', urlPrefix: '/da' },
+        { code: 'fr', shortLabel: 'FR', label: 'Français (FR)', urlPrefix: '/fr' },
+        { code: 'es', shortLabel: 'ES', label: 'Español (ES)', urlPrefix: '/es' },
+        { code: 'it', shortLabel: 'IT', label: 'Italiano (IT)', urlPrefix: '/it' },
+        { code: 'nl', shortLabel: 'NL', label: 'Nederlands (NL)', urlPrefix: '/nl' },
+        { code: 'pt', shortLabel: 'PT', label: 'Português (PT)', urlPrefix: '/pt' },
+        { code: 'sv', shortLabel: 'SV', label: 'Svenska (SV)', urlPrefix: '/sv' },
+        { code: 'no', shortLabel: 'NO', label: 'Norsk (NO)', urlPrefix: '/no' },
+        { code: 'fi', shortLabel: 'FI', label: 'Suomi (FI)', urlPrefix: '/fi' },
+        { code: 'cs', shortLabel: 'CS', label: 'Čeština (CS)', urlPrefix: '/cs' },
+        { code: 'sk', shortLabel: 'SK', label: 'Slovenčina (SK)', urlPrefix: '/sk' },
+        { code: 'ro', shortLabel: 'RO', label: 'Română (RO)', urlPrefix: '/ro' },
+        { code: 'bg', shortLabel: 'BG', label: 'Български (BG)', urlPrefix: '/bg' },
+        { code: 'et', shortLabel: 'ET', label: 'Eesti (ET)', urlPrefix: '/et' },
+        { code: 'lt', shortLabel: 'LT', label: 'Lietuvių (LT)', urlPrefix: '/lt' }
+      ];
+
+      var SPEC_TEMPLATES = {
+        reader: [
+          { group: 'RF Architecture', label: 'Air Protocol', value: 'ISO/IEC 18000-63 (EPC Gen2v2)', unit: '' },
+          { group: 'RF Architecture', label: 'Operating Band', value: '865–868 / 902–928', unit: 'MHz' },
+          { group: 'RF Architecture', label: 'TX Conducted Power', value: '+10 to +33', unit: 'dBm' },
+          { group: 'RF Architecture', label: 'RX Sensitivity', value: '-88', unit: 'dBm' },
+          { group: 'RF Architecture', label: 'Antenna Ports', value: '4× RP-TNC Female (50 Ω)', unit: '' },
+          { group: 'Power & Mechanics', label: 'Supply', value: 'PoE+ 802.3at / 12–48V DC', unit: '' },
+          { group: 'Power & Mechanics', label: 'Ingress Protection', value: 'IP67 Die-Cast Aluminum', unit: '' },
+          { group: 'Edge & Protocols', label: 'Integration APIs', value: 'LLRP 1.1, MQTT v5, EPCIS 2.0', unit: '' }
+        ],
+        antenna: [
+          { group: 'RF Performance', label: 'Frequency Range', value: '865–868 (ETSI)', unit: 'MHz' },
+          { group: 'RF Performance', label: 'Polarization', value: 'Circular RHCP', unit: '' },
+          { group: 'RF Performance', label: 'Peak Gain', value: '8.5', unit: 'dBic' },
+          { group: 'RF Performance', label: '3 dB Beamwidth', value: '68 × 68', unit: 'deg' },
+          { group: 'RF Performance', label: 'Max VSWR', value: '≤ 1.3:1', unit: '' },
+          { group: 'Mechanics', label: 'Connector', value: 'N-Type Female (Rear)', unit: '' },
+          { group: 'Mechanics', label: 'Enclosure', value: 'IP67 UV-Stabilized ASA', unit: '' }
+        ],
+        tag: [
+          { group: 'Transponder IC', label: 'Silicon / IC', value: 'Impinj M730 / NXP UCODE 9', unit: '' },
+          { group: 'Transponder IC', label: 'EPC Memory', value: '128', unit: 'bit' },
+          { group: 'RF & Substrate', label: 'Substrate', value: 'Sintered Al₂O₃ Ceramic / Ferrite', unit: '' },
+          { group: 'RF & Substrate', label: 'Read Range on Steel', value: 'up to 6.8', unit: 'm' },
+          { group: 'Environment', label: 'Thermal Rating', value: '-40 to +220', unit: '°C' },
+          { group: 'Environment', label: 'IP Rating', value: 'IP68 / IP69K', unit: '' }
+        ],
+        software: [
+          { group: 'Core Engine', label: 'Runtime', value: 'Linux x86_64 / ARM64 Docker', unit: '' },
+          { group: 'Core Engine', label: 'Standards', value: 'GS1 EPCIS 2.0 JSON-LD, LLRP', unit: '' },
+          { group: 'Filtering', label: 'DSP Smoothing', value: 'RSSI + Phase Kalman Velocity Filter', unit: '' },
+          { group: 'Throughput', label: 'Peak Event Rate', value: '25,000', unit: 'events/s' },
+          { group: 'Security', label: 'Transport', value: 'TLS 1.3 / mTLS / OAuth2', unit: '' }
+        ]
+      };
+
+      var SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+      var CYR_MAP = {
+        а:'a',б:'b',в:'v',г:'g',ґ:'g',д:'d',е:'e',ё:'yo',є:'ye',ж:'zh',з:'z',и:'i',і:'i',ї:'yi',й:'y',
+        к:'k',л:'l',м:'m',н:'n',о:'o',п:'p',р:'r',с:'s',т:'t',у:'u',ф:'f',х:'kh',ц:'ts',ч:'ch',ш:'sh',
+        щ:'shch',ъ:'',ы:'y',ь:'',э:'e',ю:'yu',я:'ya',æ:'ae',ø:'o',å:'a',ß:'ss',ł:'l'
+      };
+
+      function toLatinSlug(text) {
+        var s = String(text || '').toLowerCase(), out = '';
+        for (var i = 0; i < s.length; i++) out += CYR_MAP[s[i]] !== undefined ? CYR_MAP[s[i]] : s[i];
+        return out.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/['’ʼ`]/g, '')
+          .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').replace(/-{2,}/g, '-').slice(0, 80).replace(/-+$/g, '');
+      }
+
+      var state = {
+        mode: 'local',
+        anchorLang: 'uk',
+        followerLangs: ['en'],
+        activeTabLang: 'uk',
+        rightMode: 'edit',
+        overwrite: true,
+        constants: {
+          translationKey: '',
+          catalogType: 'reader',
+          sku: '',
+          manufacturer: '',
+          availability: 'in_stock',
+          date: new Date().toISOString(),
+          weight: 10,
+          image: '',
+          gallery: [],
+          showPrice: false,
+          price: null,
+          currency: 'EUR',
+          priceUnit: '',
+          commentsMode: 'all',
+          specs: [],
+          documents: [],
+          linkedArticles: []
+        },
+        entries: {},
+        catalogItems: [],
+        availableArticles: [],
+        settings: {},
+        settingsHash: '',
+        teamAuthConfigured: false,
+        stagedUploads: {},
+        modToken: '',
+        ghRepo: 'yurakas-netizen/rfid-blog',
+        ghBranch: 'master',
+        ghToken: ''
+      };
+
+      function ensureEntry(lang) {
+        if (!state.entries[lang]) {
+          state.entries[lang] = { lang: lang, title: '', slug: '', description: '', highlights: [], tags: [], body: '' };
+        }
+        return state.entries[lang];
+      }
+
+      function toast(msg) {
+        var t = document.getElementById('toast');
+        t.textContent = msg;
+        t.classList.add('is-visible');
+        clearTimeout(t._tm);
+        t._tm = setTimeout(function () { t.classList.remove('is-visible'); }, 3400);
+      }
+
+      function targetLangs() {
+        var arr = [state.anchorLang];
+        state.followerLangs.forEach(function (l) { if (arr.indexOf(l) === -1) arr.push(l); });
+        return arr;
+      }
+
+      function isEntryReady(lang) {
+        var e = ensureEntry(lang);
+        return Boolean(e.title.trim() && SLUG_RE.test(e.slug.trim()) && e.body.trim());
+      }
+
+      function updateReadiness() {
+        var tkOk = SLUG_RE.test(state.constants.translationKey.trim());
+        var langs = targetLangs();
+        var readyCount = langs.filter(isEntryReady).length;
+        var allOk = tkOk && readyCount === langs.length;
+        var el = document.getElementById('readinessSummary');
+        el.textContent = allOk
+          ? ('Готово к публикации: ' + readyCount + '/' + langs.length + ' яз.')
+          : ('Заполнено ' + readyCount + '/' + langs.length + ' яз.' + (tkOk ? '' : ' · нужен translationKey'));
+        el.className = 'readiness-summary ' + (allOk ? 'is-ok' : 'is-err');
+        document.getElementById('publishBtn').disabled = !allOk;
+      }
+
+      function renderLanguageSelectors() {
+        var sel = document.getElementById('anchorLangSelect');
+        sel.innerHTML = '';
+        SITE_LANGUAGES.forEach(function (l) {
+          var opt = document.createElement('option');
+          opt.value = l.code;
+          opt.textContent = l.label;
+          if (l.code === state.anchorLang) opt.selected = true;
+          sel.appendChild(opt);
+        });
+
+        var chips = document.getElementById('followerChips');
+        chips.innerHTML = '';
+        SITE_LANGUAGES.forEach(function (l) {
+          var isAnchor = l.code === state.anchorLang;
+          var isFollower = state.followerLangs.indexOf(l.code) !== -1;
+          var btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'lang-chip' + (isAnchor ? ' is-anchor' : (isFollower ? ' is-follower' : ''));
+          btn.textContent = l.shortLabel + (isAnchor ? ' (якорь)' : '');
+          btn.disabled = isAnchor;
+          btn.addEventListener('click', function () {
+            var idx = state.followerLangs.indexOf(l.code);
+            if (idx === -1) state.followerLangs.push(l.code);
+            else state.followerLangs.splice(idx, 1);
+            if (targetLangs().indexOf(state.activeTabLang) === -1) state.activeTabLang = state.anchorLang;
+            renderAll();
+          });
+          chips.appendChild(btn);
+        });
+      }
+
+      function renderSpecs() {
+        var wrap = document.getElementById('specsList');
+        wrap.innerHTML = '';
+        if (state.constants.specs.length === 0) {
+          var p = document.createElement('div');
+          p.style.fontSize = '12px';
+          p.style.color = 'var(--text-soft)';
+          p.textContent = 'Нет строк. Выберите инженерный шаблон выше или нажмите «+ Строка».';
+          wrap.appendChild(p);
+          return;
+        }
+        state.constants.specs.forEach(function (row, idx) {
+          var box = document.createElement('div');
+          box.className = 'dyn-row';
+          var top = document.createElement('div');
+          top.className = 'grid-2';
+
+          var gIn = document.createElement('input');
+          gIn.className = 'input';
+          gIn.placeholder = 'Группа (напр. RF Architecture)';
+          gIn.value = row.group || '';
+          gIn.addEventListener('input', function () { row.group = gIn.value; });
+
+          var lIn = document.createElement('input');
+          lIn.className = 'input';
+          lIn.placeholder = 'Параметр (напр. TX Power)';
+          lIn.value = row.label || '';
+          lIn.addEventListener('input', function () { row.label = lIn.value; });
+          top.appendChild(gIn);
+          top.appendChild(lIn);
+
+          var bot = document.createElement('div');
+          bot.style.display = 'grid';
+          bot.style.gridTemplateColumns = '1fr 90px 30px';
+          bot.style.gap = '6px';
+
+          var vIn = document.createElement('input');
+          vIn.className = 'input is-mono';
+          vIn.placeholder = 'Значение';
+          vIn.value = row.value || '';
+          vIn.addEventListener('input', function () { row.value = vIn.value; });
+
+          var uIn = document.createElement('input');
+          uIn.className = 'input is-mono';
+          uIn.placeholder = 'Ед.';
+          uIn.value = row.unit || '';
+          uIn.addEventListener('input', function () { row.unit = uIn.value; });
+
+          var del = document.createElement('button');
+          del.type = 'button';
+          del.className = 'btn btn-sm btn-danger';
+          del.textContent = '×';
+          del.addEventListener('click', function () {
+            state.constants.specs.splice(idx, 1);
+            renderSpecs();
+          });
+
+          bot.appendChild(vIn);
+          bot.appendChild(uIn);
+          bot.appendChild(del);
+          box.appendChild(top);
+          box.appendChild(bot);
+          wrap.appendChild(box);
+        });
+      }
+
+      function renderDocs() {
+        var wrap = document.getElementById('docsList');
+        wrap.innerHTML = '';
+        state.constants.documents.forEach(function (doc, idx) {
+          var box = document.createElement('div');
+          box.className = 'dyn-row';
+          var head = document.createElement('div');
+          head.className = 'dyn-row-head';
+
+          var tIn = document.createElement('input');
+          tIn.className = 'input';
+          tIn.placeholder = 'Название документа (Datasheet PDF)';
+          tIn.value = doc.title || '';
+          tIn.addEventListener('input', function () { doc.title = tIn.value; });
+
+          var del = document.createElement('button');
+          del.type = 'button';
+          del.className = 'btn btn-sm btn-danger';
+          del.textContent = '×';
+          del.addEventListener('click', function () { state.constants.documents.splice(idx, 1); renderDocs(); });
+          head.appendChild(tIn);
+          head.appendChild(del);
+
+          var fIn = document.createElement('input');
+          fIn.className = 'input is-mono';
+          fIn.placeholder = '/uploads/catalog/.../datasheet.pdf';
+          fIn.value = doc.file || '';
+          fIn.addEventListener('input', function () { doc.file = fIn.value; });
+
+          var meta = document.createElement('div');
+          meta.className = 'grid-3';
+          var dtSel = document.createElement('select');
+          dtSel.className = 'select';
+          ['datasheet','manual','sdk','cad','certificate','firmware'].forEach(function (k) {
+            var o = document.createElement('option'); o.value = k; o.textContent = k.toUpperCase();
+            if (doc.docType === k) o.selected = true;
+            dtSel.appendChild(o);
+          });
+          dtSel.addEventListener('change', function () { doc.docType = dtSel.value; });
+
+          var verIn = document.createElement('input');
+          verIn.className = 'input is-mono';
+          verIn.placeholder = 'v2.4';
+          verIn.value = doc.version || '';
+          verIn.addEventListener('input', function () { doc.version = verIn.value; });
+
+          var langIn = document.createElement('input');
+          langIn.className = 'input is-mono';
+          langIn.placeholder = 'EN / UK';
+          langIn.value = doc.lang || '';
+          langIn.addEventListener('input', function () { doc.lang = langIn.value; });
+
+          meta.appendChild(dtSel);
+          meta.appendChild(verIn);
+          meta.appendChild(langIn);
+          box.appendChild(head);
+          box.appendChild(fIn);
+          box.appendChild(meta);
+          wrap.appendChild(box);
+        });
+      }
+
+      function renderLinkedArticles() {
+        var wrap = document.getElementById('articlesList');
+        wrap.innerHTML = '';
+        state.constants.linkedArticles.forEach(function (ref, idx) {
+          var box = document.createElement('div');
+          box.className = 'dyn-row';
+          var row1 = document.createElement('div');
+          row1.style.display = 'grid';
+          row1.style.gridTemplateColumns = '130px 1fr 30px';
+          row1.style.gap = '6px';
+
+          var kSel = document.createElement('select');
+          kSel.className = 'select';
+          [['review','Обзор'],['comparison','Сравнение'],['guide','Руководство'],['case','Кейс']].forEach(function (pair) {
+            var o = document.createElement('option'); o.value = pair[0]; o.textContent = pair[1];
+            if (ref.kind === pair[0]) o.selected = true;
+            kSel.appendChild(o);
+          });
+          kSel.addEventListener('change', function () { ref.kind = kSel.value; });
+
+          var aSel = document.createElement('select');
+          aSel.className = 'select';
+          var blank = document.createElement('option');
+          blank.value = ''; blank.textContent = '-- Выберите статью по связке --';
+          aSel.appendChild(blank);
+          state.availableArticles.forEach(function (ag) {
+            var o = document.createElement('option');
+            o.value = ag.translationKey;
+            o.textContent = '[' + ag.langs.join(',').toUpperCase() + '] ' + ag.primaryTitle;
+            if (ref.translationKey === ag.translationKey) o.selected = true;
+            aSel.appendChild(o);
+          });
+          aSel.addEventListener('change', function () { ref.translationKey = aSel.value; });
+
+          var del = document.createElement('button');
+          del.type = 'button';
+          del.className = 'btn btn-sm btn-danger';
+          del.textContent = '×';
+          del.addEventListener('click', function () { state.constants.linkedArticles.splice(idx, 1); renderLinkedArticles(); });
+
+          row1.appendChild(kSel);
+          row1.appendChild(aSel);
+          row1.appendChild(del);
+
+          var customIn = document.createElement('input');
+          customIn.className = 'input';
+          customIn.placeholder = 'Опциональный заголовок ссылки (иначе подтянется из статьи текущего языка)';
+          customIn.value = ref.customTitle || '';
+          customIn.addEventListener('input', function () { ref.customTitle = customIn.value; });
+
+          box.appendChild(row1);
+          box.appendChild(customIn);
+          wrap.appendChild(box);
+        });
+      }
+
+      function renderConstantsFields() {
+        var c = state.constants;
+        document.getElementById('tkInput').value = c.translationKey;
+        document.getElementById('typeSelect').value = c.catalogType;
+        document.getElementById('availSelect').value = c.availability;
+        document.getElementById('skuInput').value = c.sku;
+        document.getElementById('mfgInput').value = c.manufacturer;
+        document.getElementById('weightInput').value = String(c.weight);
+        document.getElementById('commentsModeSelect').value = c.commentsMode;
+        document.getElementById('showPriceToggle').checked = Boolean(c.showPrice);
+        document.getElementById('priceInput').value = c.price !== null && c.price !== undefined ? String(c.price) : '';
+        document.getElementById('currencySelect').value = c.currency || 'EUR';
+        document.getElementById('priceUnitInput').value = c.priceUnit || '';
+        document.getElementById('imageUrlInput').value = c.image || '';
+        document.getElementById('galleryInput').value = (c.gallery || []).join('\n');
+        document.getElementById('overwriteToggle').checked = state.overwrite;
+
+        var thumb = document.getElementById('imageThumbPreview');
+        if (c.image) {
+          thumb.style.display = 'flex';
+          thumb.innerHTML = '';
+          var im = document.createElement('img');
+          im.src = c.image;
+          var cap = document.createElement('span');
+          cap.style.fontSize = '11.5px';
+          cap.style.fontFamily = 'var(--mono)';
+          cap.textContent = c.image;
+          thumb.appendChild(im);
+          thumb.appendChild(cap);
+        } else {
+          thumb.style.display = 'none';
+        }
+        renderSpecs();
+        renderDocs();
+        renderLinkedArticles();
+      }
+
+      function renderLangTabsAndEditor() {
+        var langs = targetLangs();
+        if (langs.indexOf(state.activeTabLang) === -1) state.activeTabLang = state.anchorLang;
+
+        var tabs = document.getElementById('langTabs');
+        tabs.innerHTML = '';
+        langs.forEach(function (lc) {
+          var cfg = SITE_LANGUAGES.find(function (x) { return x.code === lc; }) || { shortLabel: lc.toUpperCase() };
+          var ready = isEntryReady(lc);
+          var btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'lang-tab ' + (lc === state.activeTabLang ? 'is-active ' : '') + (ready ? 'is-ready' : 'is-incomplete');
+          var dot = document.createElement('span'); dot.className = 'dot';
+          var txt = document.createElement('span');
+          txt.textContent = cfg.shortLabel + (lc === state.anchorLang ? ' · Якорь' : '');
+          btn.appendChild(dot);
+          btn.appendChild(txt);
+          btn.addEventListener('click', function () {
+            state.activeTabLang = lc;
+            renderLangTabsAndEditor();
+          });
+          tabs.appendChild(btn);
+        });
+
+        var lc = state.activeTabLang;
+        var e = ensureEntry(lc);
+        var langObj = SITE_LANGUAGES.find(function (x) { return x.code === lc; });
+        document.getElementById('currentLangBanner').textContent =
+          (lc === state.anchorLang ? 'Якорная карточка: ' : 'Ведомый перевод (константы синхронизированы): ') + (langObj ? langObj.label : lc.toUpperCase());
+
+        document.getElementById('entryTitleInput').value = e.title;
+        document.getElementById('entrySlugInput').value = e.slug;
+        document.getElementById('entryDescInput').value = e.description;
+        document.getElementById('entryHighlightsInput').value = (e.highlights || []).join('\n');
+        document.getElementById('entryTagsInput').value = (e.tags || []).join(', ');
+        document.getElementById('entryBodyInput').value = e.body;
+
+        if (state.rightMode === 'preview') renderPreview();
+        updateReadiness();
+      }
+
+      function renderPreview() {
+        var pane = document.getElementById('previewPane');
+        var c = state.constants;
+        var e = ensureEntry(state.activeTabLang);
+        pane.innerHTML = '';
+        var card = document.createElement('div');
+        card.className = 'preview-card';
+
+        var hero = document.createElement('div');
+        hero.className = 'preview-card-hero';
+        var img = document.createElement('img');
+        img.src = c.image || '/assets/img/logo-outline.svg';
+        img.alt = e.title || 'Preview';
+        hero.appendChild(img);
+
+        var right = document.createElement('div');
+        var meta = document.createElement('div');
+        meta.style.fontFamily = 'var(--mono)';
+        meta.style.fontSize = '11px';
+        meta.style.color = '#38bdf8';
+        meta.textContent = [state.activeTabLang.toUpperCase(), c.catalogType.toUpperCase(), c.sku].filter(Boolean).join(' · ');
+
+        var h3 = document.createElement('h3');
+        h3.style.margin = '6px 0';
+        h3.style.fontSize = '19px';
+        h3.textContent = e.title || 'Без названия';
+
+        var p = document.createElement('p');
+        p.style.margin = '0 0 10px';
+        p.style.fontSize = '13px';
+        p.style.color = '#94a3b8';
+        p.textContent = e.description || '';
+
+        var priceBox = document.createElement('div');
+        priceBox.style.fontFamily = 'var(--mono)';
+        priceBox.style.fontSize = '15px';
+        priceBox.style.fontWeight = '700';
+        priceBox.textContent = (c.showPrice && c.price !== null)
+          ? (c.currency + ' ' + c.price + (c.priceUnit ? ' ' + c.priceUnit : ''))
+          : 'Цена скрыта (инженерный запрос под проект)';
+
+        right.appendChild(meta);
+        right.appendChild(h3);
+        right.appendChild(p);
+        right.appendChild(priceBox);
+        hero.appendChild(right);
+        card.appendChild(hero);
+
+        if (c.specs.length > 0) {
+          var sp = document.createElement('div');
+          sp.className = 'preview-specs';
+          c.specs.slice(0, 8).forEach(function (row) {
+            var item = document.createElement('div');
+            item.style.display = 'flex';
+            item.style.justifyContent = 'space-between';
+            item.style.borderBottom = '1px solid #1e293b';
+            item.style.paddingBottom = '4px';
+            var l = document.createElement('span'); l.style.color = '#94a3b8'; l.textContent = row.label;
+            var v = document.createElement('span'); v.style.fontFamily = 'var(--mono)'; v.textContent = row.value + (row.unit ? ' ' + row.unit : '');
+            item.appendChild(l); item.appendChild(v);
+            sp.appendChild(item);
+          });
+          card.appendChild(sp);
+        }
+        pane.appendChild(card);
+      }
+
+      function renderAll() {
+        renderLanguageSelectors();
+        renderConstantsFields();
+        renderLangTabsAndEditor();
+      }
+
+      // Bind left constant inputs
+      document.getElementById('anchorLangSelect').addEventListener('change', function () {
+        var next = this.value;
+        state.followerLangs = state.followerLangs.filter(function (l) { return l !== next; });
+        state.anchorLang = next;
+        state.activeTabLang = next;
+        renderAll();
+      });
+      document.getElementById('overwriteToggle').addEventListener('change', function () { state.overwrite = this.checked; });
+      document.getElementById('tkInput').addEventListener('input', function () { state.constants.translationKey = this.value.trim(); updateReadiness(); });
+      document.getElementById('genTkBtn').addEventListener('click', function () {
+        var base = document.getElementById('skuInput').value || ensureEntry(state.anchorLang).title;
+        state.constants.translationKey = toLatinSlug(base);
+        document.getElementById('tkInput').value = state.constants.translationKey;
+        updateReadiness();
+      });
+      document.getElementById('typeSelect').addEventListener('change', function () { state.constants.catalogType = this.value; });
+      document.getElementById('availSelect').addEventListener('change', function () { state.constants.availability = this.value; });
+      document.getElementById('skuInput').addEventListener('input', function () { state.constants.sku = this.value.trim(); });
+      document.getElementById('mfgInput').addEventListener('input', function () { state.constants.manufacturer = this.value.trim(); });
+      document.getElementById('weightInput').addEventListener('input', function () { state.constants.weight = Number(this.value) || 100; });
+      document.getElementById('commentsModeSelect').addEventListener('change', function () { state.constants.commentsMode = this.value; });
+      document.getElementById('showPriceToggle').addEventListener('change', function () { state.constants.showPrice = this.checked; });
+      document.getElementById('priceInput').addEventListener('input', function () {
+        state.constants.price = this.value.trim() === '' ? null : Number(this.value);
+      });
+      document.getElementById('currencySelect').addEventListener('change', function () { state.constants.currency = this.value; });
+      document.getElementById('priceUnitInput').addEventListener('input', function () { state.constants.priceUnit = this.value; });
+      document.getElementById('imageUrlInput').addEventListener('input', function () {
+        state.constants.image = this.value.trim();
+        renderConstantsFields();
+      });
+      document.getElementById('galleryInput').addEventListener('input', function () {
+        state.constants.gallery = this.value.split(/\r?\n/).map(function (s) { return s.trim(); }).filter(Boolean);
+      });
+
+      document.getElementById('specTemplateSelect').addEventListener('change', function () {
+        var key = this.value;
+        if (key && SPEC_TEMPLATES[key]) {
+          state.constants.specs = SPEC_TEMPLATES[key].map(function (r) { return Object.assign({}, r); });
+          renderSpecs();
+          toast('Шаблон характеристик применён');
+        }
+        this.value = '';
+      });
+      document.getElementById('addSpecBtn').addEventListener('click', function () {
+        state.constants.specs.push({ group: 'General', label: '', value: '', unit: '' });
+        renderSpecs();
+      });
+      document.getElementById('addDocBtn').addEventListener('click', function () {
+        state.constants.documents.push({ title: '', docType: 'datasheet', file: '', version: '', lang: 'EN' });
+        renderDocs();
+      });
+      document.getElementById('addArticleLinkBtn').addEventListener('click', function () {
+        state.constants.linkedArticles.push({ kind: 'review', translationKey: '', customTitle: '' });
+        renderLinkedArticles();
+      });
+
+      // Cover image prompt generator
+      document.getElementById('genPromptBtn').addEventListener('click', function () {
+        var e = ensureEntry(state.anchorLang);
+        var c = state.constants;
+        var specsSummary = c.specs.slice(0, 4).map(function (s) { return s.label + ' ' + s.value + (s.unit || ''); }).join(', ');
+        var kindDesc = {
+          reader: 'rugged die-cast anodized gunmetal aluminum UHF RFID industrial fixed reader with machined heatsink fins, gold-plated RP-TNC coaxial antenna ports and M12 Ethernet PoE connector',
+          antenna: 'weatherproof IP67 industrial flat-panel UHF RFID directional antenna in matte dark gray ASA housing with N-type coaxial connector and articulated heavy-duty mounting bracket',
+          tag: 'precision industrial ceramic and rugged polymer on-metal UHF RFID transponder tags arranged cleanly on brushed steel and carbon engineering surface',
+          software: 'clean dark architectural engineering workstation monitor showing minimal RF signal spectrum and topology curves, zero readable interface text',
+          accessory: 'low-loss braided coaxial RF feeder cables with precision gold-plated RP-TNC and N-type machined connectors on matte slate workbench'
+        }[c.catalogType] || 'industrial UHF RFID hardware unit';
+        var prompt = 'Studio industrial product photography of ' + kindDesc +
+          (e.title ? ' (' + e.title.replace(/["`]/g, '') + ')' : '') +
+          (specsSummary ? '. Technical context: ' + specsSummary : '') +
+          '. Lighting: diffused overhead softbox with sharp metallic rim highlights on a dark matte slate engineering surface. Strict visual constraints: completely clean housing and surfaces with zero text, zero brand logos, zero letters, zero digits, zero serial stickers or screens anywhere.';
+        document.getElementById('coverPromptArea').value = prompt;
+      });
+      document.getElementById('copyPromptBtn').addEventListener('click', function () {
+        var v = document.getElementById('coverPromptArea').value;
+        if (!v) return;
+        navigator.clipboard.writeText(v).then(function () { toast('Промпт скопирован'); });
+      });
+
+      // Right localized editor inputs
+      document.getElementById('entryTitleInput').addEventListener('input', function () {
+        ensureEntry(state.activeTabLang).title = this.value;
+        renderLangTabsAndEditor();
+      });
+      document.getElementById('entrySlugInput').addEventListener('input', function () {
+        ensureEntry(state.activeTabLang).slug = this.value.trim().toLowerCase();
+        renderLangTabsAndEditor();
+      });
+      document.getElementById('genSlugBtn').addEventListener('click', function () {
+        var e = ensureEntry(state.activeTabLang);
+        e.slug = toLatinSlug(e.title || state.constants.sku || state.constants.translationKey);
+        renderLangTabsAndEditor();
+      });
+      document.getElementById('entryDescInput').addEventListener('input', function () {
+        ensureEntry(state.activeTabLang).description = this.value;
+      });
+      document.getElementById('entryHighlightsInput').addEventListener('input', function () {
+        ensureEntry(state.activeTabLang).highlights = this.value.split(/\r?\n/).map(function (s) { return s.trim(); }).filter(Boolean);
+      });
+      document.getElementById('entryTagsInput').addEventListener('input', function () {
+        ensureEntry(state.activeTabLang).tags = this.value.split(',').map(function (s) { return s.trim(); }).filter(Boolean);
+      });
+      document.getElementById('entryBodyInput').addEventListener('input', function () {
+        ensureEntry(state.activeTabLang).body = this.value;
+        renderLangTabsAndEditor();
+      });
+
+      document.querySelectorAll('.subtab-btn').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          document.querySelectorAll('.subtab-btn').forEach(function (b) { b.classList.remove('is-active'); });
+          btn.classList.add('is-active');
+          state.rightMode = btn.getAttribute('data-mode');
+          document.getElementById('editPane').style.display = state.rightMode === 'edit' ? 'flex' : 'none';
+          document.getElementById('previewPane').style.display = state.rightMode === 'preview' ? 'flex' : 'none';
+          if (state.rightMode === 'preview') renderPreview();
+        });
+      });
+
+      // Import .md / .json into active language tab (locks shared constants if follower!)
+      document.getElementById('importLangFileInput').addEventListener('change', function () {
+        var file = this.files && this.files[0];
+        this.value = '';
+        if (!file) return;
+        var reader = new FileReader();
+        reader.onload = function () {
+          var txt = String(reader.result || '');
+          var isFollower = state.activeTabLang !== state.anchorLang;
+          var e = ensureEntry(state.activeTabLang);
+          if (file.name.endsWith('.json')) {
+            try {
+              var obj = JSON.parse(txt);
+              e.title = obj.title || e.title;
+              e.slug = obj.slug || toLatinSlug(e.title);
+              e.description = obj.description || '';
+              e.highlights = Array.isArray(obj.highlights) ? obj.highlights : e.highlights;
+              e.tags = Array.isArray(obj.tags) ? obj.tags : e.tags;
+              e.body = obj.body || obj.content || '';
+            } catch { toast('Некорректный JSON'); return; }
+          } else {
+            var fmMatch = txt.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n?([\s\S]*)$/);
+            if (fmMatch) {
+              var fm = fmMatch[1];
+              e.body = fmMatch[2].trim();
+              var mTitle = fm.match(/^title:\s*(.+)$/m);
+              var mSlug = fm.match(/^slug:\s*(.+)$/m);
+              var mDesc = fm.match(/^description:\s*(.+)$/m);
+              if (mTitle) e.title = mTitle[1].replace(/^["']|["']$/g, '').trim();
+              if (mSlug) e.slug = mSlug[1].replace(/^["']|["']$/g, '').trim();
+              else if (e.title) e.slug = toLatinSlug(e.title);
+              if (mDesc) e.description = mDesc[1].replace(/^["']|["']$/g, '').trim();
+            } else {
+              e.body = txt.trim();
+            }
+          }
+          renderLangTabsAndEditor();
+          toast(isFollower ? 'Импортированы только языковые поля (константы якоря сохранены)' : 'Импортировано в якорную карточку');
+        };
+        reader.readAsText(file, 'utf-8');
+      });
+
+      // Upload Image or Datasheet Document
+      function handleBinaryUpload(file, kind) {
+        var folder = toLatinSlug(state.constants.translationKey || state.constants.sku || 'rfid-unit') || 'rfid-unit';
+        var reader = new FileReader();
+        reader.onload = async function () {
+          var base64 = String(reader.result || '');
+          if (state.mode === 'local') {
+            var res = await fetch('/api/catalog/upload', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ folder: folder, filename: file.name, base64: base64 })
+            });
+            var data = await res.json();
+            if (!data.ok) { toast(data.error || 'Ошибка загрузки'); return; }
+            if (kind === 'image') {
+              state.constants.image = data.url;
+            } else {
+              state.constants.documents.push({
+                title: file.name.replace(/\.[^.]+$/, ''),
+                docType: file.name.toLowerCase().endsWith('.pdf') ? 'datasheet' : 'sdk',
+                file: data.url,
+                version: 'v1.0',
+                size: data.size,
+                lang: state.activeTabLang.toUpperCase()
+              });
+            }
+            renderConstantsFields();
+            toast('Файл загружен: ' + data.url);
+          } else {
+            // GitHub mode stages binary upload for atomic commit
+            var url = '/uploads/catalog/' + folder + '/' + file.name.replace(/[^a-zA-Z0-9._-]+/g, '-');
+            var b64Clean = base64.indexOf('base64,') !== -1 ? base64.split('base64,')[1] : base64;
+            state.stagedUploads['static' + url] = b64Clean;
+            if (kind === 'image') state.constants.image = url;
+            else {
+              state.constants.documents.push({
+                title: file.name.replace(/\.[^.]+$/, ''),
+                docType: 'datasheet',
+                file: url,
+                version: 'v1.0',
+                lang: state.activeTabLang.toUpperCase()
+              });
+            }
+            renderConstantsFields();
+            toast('Файл подготовлен к коммиту GitHub: ' + url);
+          }
+        };
+        reader.readAsDataURL(file);
+      }
+
+      document.getElementById('uploadImageInput').addEventListener('change', function () {
+        var f = this.files && this.files[0]; this.value = '';
+        if (f) handleBinaryUpload(f, 'image');
+      });
+      document.getElementById('uploadDocInput').addEventListener('change', function () {
+        var f = this.files && this.files[0]; this.value = '';
+        if (f) handleBinaryUpload(f, 'doc');
+      });
+
+      // Clear / New item
+      document.getElementById('clearFormBtn').addEventListener('click', function () {
+        state.constants = {
+          translationKey: '', catalogType: 'reader', sku: '', manufacturer: '', availability: 'in_stock',
+          date: new Date().toISOString(), weight: 10, image: '', gallery: [],
+          showPrice: false, price: null, currency: 'EUR', priceUnit: '', commentsMode: 'all',
+          specs: [], documents: [], linkedArticles: []
+        };
+        state.entries = {};
+        renderAll();
+        toast('Форма очищена для новой позиции');
+      });
+
+      // Publish / Save Multilang Bundle
+      document.getElementById('publishBtn').addEventListener('click', async function () {
+        var langs = targetLangs();
+        var entries = langs.map(function (lc) { return ensureEntry(lc); });
+        var payload = {
+          anchorLang: state.anchorLang,
+          followerLangs: state.followerLangs.slice(),
+          overwrite: state.overwrite,
+          constants: state.constants,
+          entries: entries
+        };
+
+        if (state.mode === 'local') {
+          var res = await fetch('/api/catalog/save', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+          var data = await res.json();
+          if (!data.ok) { toast(data.error || 'Ошибка сохранения'); return; }
+          toast('Сохранено позиций: ' + (data.created ? data.created.length : langs.length));
+          await loadLocalState();
+        } else {
+          await commitCatalogToGithub(payload);
+        }
+      });
+
+      // GitHub Atomic Blob/Tree/Commit helper
+      async function ghApi(url, opts) {
+        var res = await fetch('https://api.github.com' + url, Object.assign({}, opts, {
+          headers: Object.assign({
+            'Authorization': 'token ' + state.ghToken,
+            'Accept': 'application/vnd.github.v3+json',
+            'Content-Type': 'application/json'
+          }, (opts && opts.headers) || {})
+        }));
+        if (!res.ok) throw new Error('GitHub HTTP ' + res.status);
+        return res.json();
+      }
+
+      function yamlStr(v) { return JSON.stringify(String(v || '')); }
+
+      function serializeMdClient(c, e) {
+        var lines = ['---',
+          'title: ' + yamlStr(e.title),
+          'slug: ' + yamlStr(e.slug),
+          e.description ? ('description: ' + yamlStr(e.description)) : null,
+          'translationKey: ' + yamlStr(c.translationKey),
+          'date: ' + (c.date || new Date().toISOString()),
+          'weight: ' + (Number(c.weight) || 100),
+          'catalogType: ' + yamlStr(c.catalogType),
+          c.sku ? ('sku: ' + yamlStr(c.sku)) : null,
+          c.manufacturer ? ('manufacturer: ' + yamlStr(c.manufacturer)) : null,
+          'availability: ' + yamlStr(c.availability),
+          c.image ? ('image: ' + yamlStr(c.image)) : null,
+          'showPrice: ' + (c.showPrice ? 'true' : 'false'),
+          c.price !== null && c.price !== '' ? ('price: ' + Number(c.price)) : null,
+          'currency: ' + yamlStr(c.currency || 'EUR'),
+          c.priceUnit ? ('priceUnit: ' + yamlStr(c.priceUnit)) : null,
+          'commentsMode: ' + yamlStr(c.commentsMode)
+        ].filter(Boolean);
+        if (e.highlights && e.highlights.length) {
+          lines.push('highlights:');
+          e.highlights.forEach(function (h) { lines.push('  - ' + yamlStr(h)); });
+        }
+        if (e.tags && e.tags.length) {
+          lines.push('tags:');
+          e.tags.forEach(function (t) { lines.push('  - ' + yamlStr(t)); });
+        }
+        if (c.specs && c.specs.length) {
+          lines.push('specs:');
+          c.specs.forEach(function (s) {
+            lines.push('  - group: ' + yamlStr(s.group || 'General'));
+            lines.push('    label: ' + yamlStr(s.label));
+            lines.push('    value: ' + yamlStr(s.value));
+            if (s.unit) lines.push('    unit: ' + yamlStr(s.unit));
+          });
+        }
+        if (c.documents && c.documents.length) {
+          lines.push('documents:');
+          c.documents.forEach(function (d) {
+            lines.push('  - title: ' + yamlStr(d.title));
+            lines.push('    docType: ' + yamlStr(d.docType));
+            lines.push('    file: ' + yamlStr(d.file));
+            if (d.version) lines.push('    version: ' + yamlStr(d.version));
+            if (d.size) lines.push('    size: ' + yamlStr(d.size));
+            if (d.lang) lines.push('    lang: ' + yamlStr(d.lang));
+          });
+        }
+        if (c.linkedArticles && c.linkedArticles.length) {
+          lines.push('linkedArticles:');
+          c.linkedArticles.forEach(function (a) {
+            lines.push('  - kind: ' + yamlStr(a.kind));
+            lines.push('    translationKey: ' + yamlStr(a.translationKey));
+            if (a.customTitle) lines.push('    customTitle: ' + yamlStr(a.customTitle));
+          });
+        }
+        lines.push('---', '');
+        return lines.join('\n') + String(e.body || '').trim() + '\n';
+      }
+
+      async function commitCatalogToGithub(payload) {
+        if (!state.ghToken) { toast('Подключите токен GitHub или сессию CMS'); return; }
+        try {
+          var repo = state.ghRepo, br = state.ghBranch;
+          var ref = await ghApi('/repos/' + repo + '/git/ref/heads/' + br);
+          var headSha = ref.object.sha;
+          var commitObj = await ghApi('/repos/' + repo + '/git/commits/' + headSha);
+          var treeItems = [];
+
+          for (var idx = 0; idx < payload.entries.length; idx++) {
+            var ent = payload.entries[idx];
+            var md = serializeMdClient(payload.constants, ent);
+            var blob = await ghApi('/repos/' + repo + '/git/blobs', {
+              method: 'POST',
+              body: JSON.stringify({ content: md, encoding: 'utf-8' })
+            });
+            treeItems.push({
+              path: 'content/' + ent.lang + '/catalog/' + ent.slug + '/index.md',
+              mode: '100644', type: 'blob', sha: blob.sha
+            });
+          }
+
+          var uploadPaths = Object.keys(state.stagedUploads);
+          for (var u = 0; u < uploadPaths.length; u++) {
+            var upPath = uploadPaths[u];
+            var uBlob = await ghApi('/repos/' + repo + '/git/blobs', {
+              method: 'POST',
+              body: JSON.stringify({ content: state.stagedUploads[upPath], encoding: 'base64' })
+            });
+            treeItems.push({ path: upPath, mode: '100644', type: 'blob', sha: uBlob.sha });
+          }
+
+          var tree = await ghApi('/repos/' + repo + '/git/trees', {
+            method: 'POST',
+            body: JSON.stringify({ base_tree: commitObj.tree.sha, tree: treeItems })
+          });
+          var newCommit = await ghApi('/repos/' + repo + '/git/commits', {
+            method: 'POST',
+            body: JSON.stringify({
+              message: 'feat(catalog): update ' + payload.constants.translationKey,
+              tree: tree.sha,
+              parents: [headSha]
+            })
+          });
+          await ghApi('/repos/' + repo + '/git/refs/heads/' + br, {
+            method: 'PATCH',
+            body: JSON.stringify({ sha: newCommit.sha })
+          });
+          state.stagedUploads = {};
+          toast('Коммит в GitHub выполнен (' + treeItems.length + ' файлов)');
+        } catch (err) {
+          toast('Ошибка GitHub: ' + err.message);
+        }
+      }
+
+      // Registry Modal
+      function openModal(id) { document.getElementById(id).classList.add('is-open'); }
+      function closeModal(id) { document.getElementById(id).classList.remove('is-open'); }
+      document.querySelectorAll('[data-close-modal]').forEach(function (btn) {
+        btn.addEventListener('click', function () { closeModal(btn.getAttribute('data-close-modal')); });
+      });
+
+      function renderRegistryTable(filter) {
+        var q = String(filter || '').trim().toLowerCase();
+        var tb = document.getElementById('registryTbody');
+        tb.innerHTML = '';
+        state.catalogItems.filter(function (it) {
+          if (!q) return true;
+          return (it.title + ' ' + it.sku + ' ' + it.translationKey).toLowerCase().indexOf(q) !== -1;
+        }).forEach(function (it) {
+          var tr = document.createElement('tr');
+          tr.innerHTML = '<td><strong>' + it.lang.toUpperCase() + '</strong></td>';
+          var tdSku = document.createElement('td');
+          tdSku.style.fontFamily = 'var(--mono)';
+          tdSku.textContent = (it.sku || '—') + ' · ' + it.catalogType;
+
+          var tdTitle = document.createElement('td');
+          tdTitle.textContent = it.title;
+
+          var tdTk = document.createElement('td');
+          tdTk.style.fontFamily = 'var(--mono)';
+          tdTk.textContent = it.translationKey + ' (' + (it.linkedLangs || []).join(',').toUpperCase() + ')';
+
+          var tdPrice = document.createElement('td');
+          tdPrice.textContent = (it.showPrice && it.price !== null ? (it.currency + ' ' + it.price) : 'Запрос') + ' · ' + it.commentsMode;
+
+          var tdAct = document.createElement('td');
+          var loadBtn = document.createElement('button');
+          loadBtn.type = 'button'; loadBtn.className = 'btn btn-sm btn-accent-soft'; loadBtn.textContent = 'Загрузить связку';
+          loadBtn.addEventListener('click', function () { loadCatalogGroup(it.translationKey, it.lang); closeModal('registryModal'); });
+          var openLink = document.createElement('a');
+          openLink.href = it.permalink; openLink.target = '_blank'; openLink.className = 'btn btn-sm'; openLink.style.marginLeft = '4px'; openLink.textContent = '↗';
+          tdAct.appendChild(loadBtn); tdAct.appendChild(openLink);
+
+          tr.appendChild(tdSku); tr.appendChild(tdTitle); tr.appendChild(tdTk); tr.appendChild(tdPrice); tr.appendChild(tdAct);
+          tb.appendChild(tr);
+        });
+      }
+
+      async function loadCatalogGroup(translationKey, preferredAnchor) {
+        var group = state.catalogItems.filter(function (it) { return it.translationKey === translationKey; });
+        if (!group.length) return;
+        var anchor = group.find(function (g) { return g.lang === preferredAnchor; }) || group[0];
+        state.anchorLang = anchor.lang;
+        state.followerLangs = group.filter(function (g) { return g.lang !== anchor.lang; }).map(function (g) { return g.lang; });
+        state.activeTabLang = anchor.lang;
+        state.entries = {};
+
+        for (var i = 0; i < group.length; i++) {
+          var g = group[i];
+          var res = await fetch('/api/catalog/item?relPath=' + encodeURIComponent(g.relPath));
+          var data = await res.json();
+          if (data.ok && data.item) {
+            if (g.lang === anchor.lang) {
+              state.constants = {
+                translationKey: data.item.translationKey,
+                catalogType: data.item.catalogType,
+                sku: data.item.sku || '',
+                manufacturer: data.item.manufacturer || '',
+                availability: data.item.availability || 'order',
+                date: data.item.date,
+                weight: data.item.weight || 100,
+                image: data.item.image || '',
+                gallery: data.item.gallery || [],
+                showPrice: Boolean(data.item.showPrice),
+                price: data.item.price,
+                currency: data.item.currency || 'EUR',
+                priceUnit: data.item.priceUnit || '',
+                commentsMode: data.item.commentsMode || 'all',
+                specs: data.item.specs || [],
+                documents: data.item.documents || [],
+                linkedArticles: data.item.linkedArticles || []
+              };
+            }
+            state.entries[g.lang] = {
+              lang: g.lang,
+              title: data.item.title || '',
+              slug: data.item.slug || '',
+              description: data.item.description || '',
+              highlights: data.item.highlights || [],
+              tags: data.item.tags || [],
+              body: data.item.body || ''
+            };
+          }
+        }
+        renderAll();
+        toast('Загружена связка: ' + translationKey);
+      }
+
+      document.getElementById('openRegistryBtn').addEventListener('click', function () {
+        renderRegistryTable('');
+        openModal('registryModal');
+      });
+      document.getElementById('registrySearchInput').addEventListener('input', function () { renderRegistryTable(this.value); });
+
+      // Global Settings Modal
+      document.getElementById('openSettingsBtn').addEventListener('click', function () {
+        var s = state.settings || {};
+        document.getElementById('gsPriceMode').value = s.priceVisibilityMode || 'item';
+        document.getElementById('gsCurrency').value = s.defaultCurrency || 'EUR';
+        document.getElementById('gsCommentsMode').value = s.defaultCommentsMode || 'all';
+        document.getElementById('gsEmail').value = s.engineeringInquiryEmail || '';
+        document.getElementById('gsTelegram').value = s.engineeringInquiryTelegram || '';
+        document.getElementById('teamCodeStatusText').textContent = state.teamAuthConfigured
+          ? 'Код команды настроен на сервере.'
+          : 'Код команды ещё не задан (необходим для режима «Только от своих»).';
+        openModal('settingsModal');
+      });
+
+      document.getElementById('saveGlobalSettingsBtn').addEventListener('click', async function () {
+        var payload = {
+          expectedHash: state.settingsHash,
+          settings: {
+            priceVisibilityMode: document.getElementById('gsPriceMode').value,
+            defaultCurrency: document.getElementById('gsCurrency').value,
+            defaultCommentsMode: document.getElementById('gsCommentsMode').value,
+            engineeringInquiryEmail: document.getElementById('gsEmail').value.trim(),
+            engineeringInquiryTelegram: document.getElementById('gsTelegram').value.trim()
+          }
+        };
+        var res = await fetch('/api/catalog/settings', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
+        });
+        var data = await res.json();
+        if (!data.ok) { toast(data.error || 'Ошибка'); return; }
+        state.settings = data.settings;
+        state.settingsHash = data.fileHash;
+        closeModal('settingsModal');
+        toast('Глобальные настройки каталога сохранены');
+      });
+
+      document.getElementById('saveTeamCodeBtn').addEventListener('click', async function () {
+        var code = document.getElementById('teamCodeInput').value.trim();
+        var res = await fetch('/api/catalog/team-code/set', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ code: code })
+        });
+        var data = await res.json();
+        if (!data.ok) { toast(data.error || 'Ошибка установки кода'); return; }
+        state.teamAuthConfigured = true;
+        document.getElementById('teamCodeInput').value = '';
+        document.getElementById('teamCodeStatusText').textContent = 'Код команды обновлён (scrypt hash сохранён).';
+        toast('Код команды обновлён');
+      });
+
+      // Comments Moderation Modal
+      async function loadModComments() {
+        var tk = state.constants.translationKey.trim();
+        if (!tk) { toast('Сначала откройте или введите translationKey позиции'); return; }
+        var headers = {};
+        if (state.modToken) headers['Authorization'] = 'Bearer ' + state.modToken;
+        var res = await fetch('/api/catalog/comments?key=' + encodeURIComponent(tk), { headers: headers });
+        var data = await res.json();
+        document.getElementById('modCommentsMeta').textContent = 'Позиция: ' + tk + ' · Политика: ' + (data.mode || 'all');
+        document.getElementById('modTeamUnlockRow').style.display = data.locked ? 'flex' : 'none';
+        var list = document.getElementById('modCommentsList');
+        list.innerHTML = '';
+        (data.comments || []).forEach(function (c) {
+          var row = document.createElement('div');
+          row.className = 'dyn-row';
+          var head = document.createElement('div');
+          head.className = 'dyn-row-head';
+          var who = document.createElement('strong');
+          who.textContent = c.author + (c.role ? ' (' + c.role + ')' : '') + ' · ' + (c.createdAt || '').slice(0, 10);
+          var del = document.createElement('button');
+          del.type = 'button'; del.className = 'btn btn-sm btn-danger'; del.textContent = 'Удалить';
+          del.addEventListener('click', async function () {
+            await fetch('/api/catalog/comments?key=' + encodeURIComponent(tk) + '&id=' + encodeURIComponent(c.id), { method: 'DELETE' });
+            loadModComments();
+          });
+          head.appendChild(who); head.appendChild(del);
+          var body = document.createElement('div');
+          body.style.fontSize = '12.5px';
+          body.textContent = c.body;
+          row.appendChild(head); row.appendChild(body);
+          list.appendChild(row);
+        });
+        if (!data.locked && (!data.comments || data.comments.length === 0)) {
+          list.textContent = 'Комментариев пока нет.';
+        }
+      }
+
+      document.getElementById('openCommentsBtn').addEventListener('click', function () {
+        if (!state.constants.translationKey.trim()) { toast('Откройте карточку из реестра или введите translationKey'); return; }
+        openModal('commentsModal');
+        loadModComments();
+      });
+
+      document.getElementById('modTeamUnlockBtn').addEventListener('click', async function () {
+        var code = document.getElementById('modTeamPassInput').value.trim();
+        var res = await fetch('/api/catalog/comments/auth', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ code: code })
+        });
+        var data = await res.json();
+        if (!data.ok) { toast(data.error || 'Неверный код'); return; }
+        state.modToken = data.token;
+        loadModComments();
+      });
+
+      // GitHub Auth Banner bindings
+      document.getElementById('ghFromDecapBtn').addEventListener('click', function () {
+        try {
+          var raw = localStorage.getItem('decap-cms-user') || localStorage.getItem('netlify-cms-user');
+          if (!raw) { toast('Сессия CMS не найдена в localStorage'); return; }
+          var parsed = JSON.parse(raw);
+          if (parsed && parsed.token) {
+            state.ghToken = parsed.token;
+            document.getElementById('ghTokenInput').value = parsed.token;
+            document.getElementById('ghAuthStatus').textContent = 'Токен CMS подключён';
+            toast('Токен из сессии CMS загружен');
+          }
+        } catch { toast('Ошибка чтения сессии CMS'); }
+      });
+      document.getElementById('ghConnectBtn').addEventListener('click', function () {
+        state.ghRepo = document.getElementById('ghRepoInput').value.trim();
+        state.ghBranch = document.getElementById('ghBranchInput').value.trim() || 'master';
+        state.ghToken = document.getElementById('ghTokenInput').value.trim();
+        document.getElementById('ghAuthStatus').textContent = state.ghToken ? 'Токен применён' : 'Введите токен';
+      });
+
+      async function loadLocalState() {
+        var res = await fetch('/api/catalog/state');
+        if (!res.ok) throw new Error('no local api');
+        var data = await res.json();
+        state.mode = 'local';
+        state.catalogItems = data.items || [];
+        state.availableArticles = data.availableArticles || [];
+        state.settings = data.settings || {};
+        state.settingsHash = data.settingsHash || '';
+        state.teamAuthConfigured = Boolean(data.teamAuthConfigured);
+        document.getElementById('modeMeta').textContent = 'Локальный сервер · ' + state.catalogItems.length + ' карточек';
+        renderAll();
+      }
+
+      (async function init() {
+        try {
+          await loadLocalState();
+          // Auto-load first group if catalog already has items so admin sees a live example immediately
+          if (state.catalogItems.length > 0 && !state.constants.translationKey) {
+            await loadCatalogGroup(state.catalogItems[0].translationKey, 'uk');
+          }
+        } catch {
+          state.mode = 'github';
+          document.getElementById('modeMeta').textContent = 'GitHub API (Production)';
+          document.getElementById('githubAuthBanner').classList.add('is-visible');
+          renderAll();
+        }
+      })();
+    })();
+  </script>
+</body>
+</html>

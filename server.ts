@@ -53,6 +53,28 @@ import {
   loadTaxonomyDictionary,
   saveTaxonomyDictionary,
 } from './src/taxonomy.js';
+import {
+  loadAllCatalogItems,
+  loadCatalogSettings,
+  saveCatalogSettings,
+  resolveCatalogItemForRender,
+  computeEffectiveShowPrice,
+  formatCatalogPrice,
+  getCatalogUiStrings,
+  loadCatalogAdminState,
+  loadCatalogDetail,
+  saveMultilangCatalogBundle,
+  deleteCatalogItem,
+  saveCatalogUpload,
+  getCommentsForPublic,
+  addCatalogComment,
+  deleteCatalogComment,
+  verifyTeamCode,
+  issueMemberToken,
+  verifyMemberAuthHeader,
+  setTeamAccessCode,
+  isTeamAuthConfigured,
+} from './src/catalog.js';
 
 const ROOT_DIR = process.cwd();
 const PORT = 3000;
@@ -526,6 +548,151 @@ app.get(['/multilang', '/multilang/'], (_req: Request, res: Response) => {
   res.redirect('/admin/multilang-publisher.html');
 });
 
+// Engineering Catalog API (Admin + Uploads + Comments + Member Auth)
+app.use('/api/catalog', express.json({ limit: '30mb' }));
+
+app.get('/api/catalog/state', (_req: Request, res: Response) => {
+  res.json(loadCatalogAdminState());
+});
+
+app.get('/api/catalog/item', (req: Request, res: Response) => {
+  try {
+    const relPath = String(req.query.relPath || '').trim();
+    const detail = loadCatalogDetail(relPath);
+    res.json({ ok: true, item: detail });
+  } catch (err) {
+    res.status(400).json({ ok: false, error: err instanceof Error ? err.message : String(err) });
+  }
+});
+
+app.post('/api/catalog/save', (req: Request, res: Response) => {
+  if (!verifySameOrigin(req)) {
+    res.status(403).json({ ok: false, error: 'Запрос отклонён (несовпадение Origin)' });
+    return;
+  }
+  const result = saveMultilangCatalogBundle(req.body);
+  res.status(result.status).json(result);
+});
+
+app.delete('/api/catalog/item', (req: Request, res: Response) => {
+  if (!verifySameOrigin(req)) {
+    res.status(403).json({ ok: false, error: 'Запрос отклонён (несовпадение Origin)' });
+    return;
+  }
+  const relPath = String(req.query.relPath || req.body?.relPath || '').trim();
+  const result = deleteCatalogItem(relPath);
+  res.status(result.status).json(result);
+});
+
+app.post('/api/catalog/settings', (req: Request, res: Response) => {
+  if (!verifySameOrigin(req)) {
+    res.status(403).json({ ok: false, error: 'Запрос отклонён (несовпадение Origin)' });
+    return;
+  }
+  const expectedHash = typeof req.body?.expectedHash === 'string' ? req.body.expectedHash : '';
+  const result = saveCatalogSettings(req.body?.settings ?? req.body, expectedHash);
+  res.status(result.status).json(result);
+});
+
+app.post('/api/catalog/upload', (req: Request, res: Response) => {
+  if (!verifySameOrigin(req)) {
+    res.status(403).json({ ok: false, error: 'Запрос отклонён (несовпадение Origin)' });
+    return;
+  }
+  try {
+    const result = saveCatalogUpload({
+      folder: String(req.body?.folder || ''),
+      filename: String(req.body?.filename || ''),
+      base64: String(req.body?.base64 || ''),
+    });
+    res.json(result);
+  } catch (err) {
+    res.status(400).json({ ok: false, error: err instanceof Error ? err.message : String(err) });
+  }
+});
+
+app.get('/api/catalog/team-code/status', (_req: Request, res: Response) => {
+  res.json({ ok: true, configured: isTeamAuthConfigured(), envManaged: Boolean(process.env.CATALOG_TEAM_CODE?.trim()) });
+});
+
+app.post('/api/catalog/team-code/set', (req: Request, res: Response) => {
+  if (!verifySameOrigin(req)) {
+    res.status(403).json({ ok: false, error: 'Запрос отклонён (несовпадение Origin)' });
+    return;
+  }
+  const result = setTeamAccessCode(String(req.body?.code || ''));
+  res.status(result.ok ? 200 : 400).json(result);
+});
+
+app.get('/api/catalog/comments', (req: Request, res: Response) => {
+  try {
+    const key = String(req.query.key || '').trim();
+    const isMember = verifyMemberAuthHeader(req.get('authorization'));
+    const data = getCommentsForPublic(key, isMember);
+    res.json({ ok: true, ...data, isMember });
+  } catch (err) {
+    res.status(400).json({ ok: false, error: err instanceof Error ? err.message : String(err) });
+  }
+});
+
+app.post('/api/catalog/comments/auth', (req: Request, res: Response) => {
+  if (!verifySameOrigin(req)) {
+    res.status(403).json({ ok: false, error: 'Запрос отклонён (несовпадение Origin)' });
+    return;
+  }
+  const code = String(req.body?.code || '');
+  if (!isTeamAuthConfigured()) {
+    res.status(400).json({ ok: false, error: 'Код доступа команды ещё не настроен в админке' });
+    return;
+  }
+  if (!verifyTeamCode(code)) {
+    res.status(401).json({ ok: false, error: 'Неверный код доступа команды' });
+    return;
+  }
+  const token = issueMemberToken();
+  res.json({ ok: true, token });
+});
+
+app.post('/api/catalog/comments', (req: Request, res: Response) => {
+  if (!verifySameOrigin(req)) {
+    res.status(403).json({ ok: false, error: 'Запрос отклонён (несовпадение Origin)' });
+    return;
+  }
+  try {
+    const isMember = verifyMemberAuthHeader(req.get('authorization'));
+    const result = addCatalogComment({
+      translationKey: String(req.body?.key || ''),
+      lang: String(req.body?.lang || 'uk'),
+      author: String(req.body?.author || ''),
+      role: String(req.body?.role || ''),
+      body: String(req.body?.body || ''),
+      isMember,
+    });
+    res.status(result.status).json(result);
+  } catch (err) {
+    res.status(400).json({ ok: false, error: err instanceof Error ? err.message : String(err) });
+  }
+});
+
+app.delete('/api/catalog/comments', (req: Request, res: Response) => {
+  if (!verifySameOrigin(req)) {
+    res.status(403).json({ ok: false, error: 'Запрос отклонён (несовпадение Origin)' });
+    return;
+  }
+  try {
+    const key = String(req.query.key || req.body?.key || '').trim();
+    const id = String(req.query.id || req.body?.id || '').trim();
+    const result = deleteCatalogComment(key, id);
+    res.status(result.status).json(result);
+  } catch (err) {
+    res.status(400).json({ ok: false, error: err instanceof Error ? err.message : String(err) });
+  }
+});
+
+app.get(['/catalog-admin', '/catalog-admin/'], (_req: Request, res: Response) => {
+  res.redirect('/admin/catalog.html');
+});
+
 // Serve page bundle assets at permalink/:filename
 function handleBundleAsset(req: Request, res: Response, next: NextFunction) {
   const siteContent = loadSiteContent();
@@ -553,6 +720,31 @@ function handleBundleAsset(req: Request, res: Response, next: NextFunction) {
 
 app.get('/p/:slug/:filename', handleBundleAsset);
 app.get('/:lang/p/:slug/:filename', handleBundleAsset);
+
+function handleCatalogBundleAsset(req: Request, res: Response, next: NextFunction) {
+  const { itemsByLang } = loadAllCatalogItems();
+  const rawSlug = decodeURIComponent(String(req.params.slug || ''));
+  const rawFile = path.basename(decodeURIComponent(String(req.params.filename || '')));
+  const reqLang = req.params.lang ? String(req.params.lang) : SITE_CONFIG.defaultLanguage;
+  if (!isValidLang(reqLang)) {
+    next();
+    return;
+  }
+  const item = itemsByLang[reqLang]?.find((it) => it.slug === rawSlug);
+  if (!item) {
+    next();
+    return;
+  }
+  const assetPath = path.resolve(item.bundleDir, rawFile);
+  if (!assetPath.startsWith(item.bundleDir + path.sep) || !fs.existsSync(assetPath) || !fs.statSync(assetPath).isFile()) {
+    res.status(404).send('Asset not found');
+    return;
+  }
+  res.sendFile(assetPath);
+}
+
+app.get('/catalog/:slug/:filename', handleCatalogBundleAsset);
+app.get('/:lang/catalog/:slug/:filename', handleCatalogBundleAsset);
 
 // JSON search index (strictly per-language)
 app.get(['/search/index.json', '/:lang/search/index.json'], (req: Request, res: Response, next: NextFunction) => {
@@ -761,6 +953,96 @@ app.get(
     });
   }
 );
+
+// Engineering Catalog Index
+app.get(['/catalog', '/catalog/', '/:lang/catalog', '/:lang/catalog/'], async (req: Request, res: Response, next: NextFunction) => {
+  const reqLang = req.params.lang ? String(req.params.lang) : undefined;
+  if (reqLang && !isValidLang(reqLang)) {
+    next();
+    return;
+  }
+  const siteContent = loadSiteContent();
+  const lang: LangCode = reqLang && isValidLang(reqLang) ? reqLang : SITE_CONFIG.defaultLanguage;
+  const catalogUi = getCatalogUiStrings(lang);
+  const { allItems, itemsByLang } = loadAllCatalogItems();
+  const settings = loadCatalogSettings().settings;
+  const rawItems = itemsByLang[lang] || [];
+
+  const catalogCards = rawItems.map((it) => {
+    const showPrice = computeEffectiveShowPrice(it, settings);
+    return {
+      ...it,
+      effectiveShowPrice: showPrice,
+      formattedPrice: showPrice ? formatCatalogPrice(it.price, it.currency || settings.defaultCurrency, it.priceUnit) : '',
+    };
+  });
+
+  // Available catalog languages summary if current branch has 0 items
+  const availableCatalogLangs = ORDERED_LANGUAGES
+    .filter((l) => (itemsByLang[l.code] || []).length > 0)
+    .map((l) => ({
+      code: l.code,
+      shortLabel: l.shortLabel,
+      label: l.label,
+      url: `${l.urlPrefix}/catalog/`,
+      count: itemsByLang[l.code].length,
+    }));
+
+  const fallbackAllCards = rawItems.length === 0
+    ? allItems.filter((it) => it.lang === 'en' || it.lang === 'uk').slice(0, 6).map((it) => {
+        const showPrice = computeEffectiveShowPrice(it, settings);
+        return {
+          ...it,
+          effectiveShowPrice: showPrice,
+          formattedPrice: showPrice ? formatCatalogPrice(it.price, it.currency || settings.defaultCurrency, it.priceUnit) : '',
+        };
+      })
+    : [];
+
+  await renderView(res, siteContent, 'catalog-list', lang, {
+    activeNav: 'catalog',
+    pageTitle: `${catalogUi.sectionTitle} — ${LANGUAGES[lang].title}`,
+    pageDescription: catalogUi.sectionSubtitle,
+    catalogUi,
+    catalogCards,
+    availableCatalogLangs,
+    fallbackAllCards,
+    settings,
+  });
+});
+
+// Engineering Catalog Item Detail
+app.get(['/catalog/:slug', '/catalog/:slug/', '/:lang/catalog/:slug', '/:lang/catalog/:slug/'], async (req: Request, res: Response, next: NextFunction) => {
+  const reqLang = req.params.lang ? String(req.params.lang) : SITE_CONFIG.defaultLanguage;
+  if (!isValidLang(reqLang)) {
+    next();
+    return;
+  }
+  const siteContent = loadSiteContent();
+  const rawSlug = decodeURIComponent(String(req.params.slug || ''));
+  const { allItems, itemsByLang } = loadAllCatalogItems();
+  const settings = loadCatalogSettings().settings;
+  const item = itemsByLang[reqLang]?.find((it) => it.slug === rawSlug);
+
+  if (!item) {
+    await renderView(res, siteContent, '404', reqLang, { pageTitle: I18N[reqLang].pageNotFound }, 404);
+    return;
+  }
+
+  const resolved = resolveCatalogItemForRender(item, allItems, siteContent, settings);
+  const catalogUi = getCatalogUiStrings(item.lang);
+
+  await renderView(res, siteContent, 'catalog-item', item.lang, {
+    activeNav: 'catalog',
+    isArticle: true,
+    pageTitle: `${item.title} — ${LANGUAGES[item.lang].title}`,
+    pageDescription: item.description || item.summary,
+    catalogUi,
+    resolved,
+    toc: item.toc,
+    languagesMap: LANGUAGES,
+  });
+});
 
 // Homepage and language homepages + pagination
 async function handleHome(res: Response, lang: LangCode, pageNum: number) {

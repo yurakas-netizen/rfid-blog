@@ -1,0 +1,143 @@
+{{ define "body-class" }}catalog-list-page{{ end }}
+
+{{ define "main" }}
+{{- $lang := .Language.Lang -}}
+{{- $cfg := index hugo.Data "catalog-settings" -}}
+{{- $pm := "item" -}}
+{{- $defCur := "EUR" -}}
+{{- if $cfg -}}
+  {{- $pm = default "item" $cfg.priceVisibilityMode -}}
+  {{- $defCur = default "EUR" $cfg.defaultCurrency -}}
+{{- end -}}
+{{- $title := .Title | default "Catalog: Hardware, Tags & Software" -}}
+{{- $subtitle := .Description | default "Industrial UHF RFID readers, directional antennas, specialized transponders, and middleware SDKs." -}}
+{{- $pages := sort .RegularPages "Weight" "asc" -}}
+
+<section class="rfid-cat-hero">
+  <div class="rfid-cat-hero__head">
+    <div class="rfid-cat-hero__copy">
+      <div class="rfid-cat-hero__kicker">UHF RFID · RTLS · IIoT</div>
+      <h1 class="rfid-cat-hero__title">{{ $title }}</h1>
+      <p class="rfid-cat-hero__subtitle">{{ $subtitle }}</p>
+    </div>
+    <div class="rfid-cat-hero__counter">
+      <span class="rfid-cat-hero__count" id="catVisibleCount">{{ len $pages }}</span>
+      <span class="rfid-cat-hero__count-label">items</span>
+    </div>
+  </div>
+
+  <div class="rfid-cat-toolbar" role="region" aria-label="Catalog Filter">
+    <div class="rfid-cat-tabs" role="tablist" id="catTypeTabs">
+      <button type="button" class="rfid-cat-tab is-active" data-type="all">{{ if eq $lang "uk" }}Усі позиції{{ else if eq $lang "ru" }}Все позиции{{ else }}All Equipment{{ end }}</button>
+      <button type="button" class="rfid-cat-tab" data-type="reader">{{ if eq $lang "uk" }}Зчитувачі{{ else if eq $lang "ru" }}Считыватели{{ else }}Readers{{ end }}</button>
+      <button type="button" class="rfid-cat-tab" data-type="antenna">{{ if eq $lang "uk" }}Антени{{ else if eq $lang "ru" }}Антенны{{ else }}Antennas{{ end }}</button>
+      <button type="button" class="rfid-cat-tab" data-type="tag">{{ if eq $lang "uk" }}Мітки{{ else if eq $lang "ru" }}Метки{{ else }}Tags{{ end }}</button>
+      <button type="button" class="rfid-cat-tab" data-type="software">{{ if eq $lang "uk" }}ПЗ та SDK{{ else if eq $lang "ru" }}ПО и SDK{{ else }}Software{{ end }}</button>
+      <button type="button" class="rfid-cat-tab" data-type="accessory">{{ if eq $lang "uk" }}Оснащення{{ else if eq $lang "ru" }}Оснастка{{ else }}Accessories{{ end }}</button>
+    </div>
+    <div class="rfid-cat-search">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0"/>
+        <path d="M21 21l-6 -6"/>
+      </svg>
+      <input type="search" id="catSearchInput" placeholder="{{ if eq $lang "uk" }}Пошук за моделлю, артикулом...{{ else if eq $lang "ru" }}Поиск по модели, артикулу...{{ else }}Filter by model, SKU, protocol...{{ end }}" />
+    </div>
+  </div>
+</section>
+
+<div class="rfid-cat-grid" id="catGrid">
+  {{- range $pages -}}
+    {{- $p := . -}}
+    {{- $ctype := default "reader" .Params.catalogType -}}
+    {{- $sku := default "" .Params.sku -}}
+    {{- $mfg := default "" .Params.manufacturer -}}
+    {{- $avail := default "order" .Params.availability -}}
+    {{- $showPrice := false -}}
+    {{- if isset .Params "price" -}}
+      {{- if eq $pm "force_show" -}}
+        {{- $showPrice = true -}}
+      {{- else if eq $pm "item" -}}
+        {{- $showPrice = default false .Params.showPrice -}}
+      {{- end -}}
+    {{- end -}}
+    {{- $cur := default $defCur .Params.currency -}}
+    {{- $specSearch := "" -}}
+    {{- range .Params.specs -}}{{- $specSearch = printf "%s %s %s" $specSearch .label .value -}}{{- end -}}
+    {{- $searchText := lower (printf "%s %s %s %s %s" .Title $sku $mfg .Description $specSearch) -}}
+    <article class="rfid-cat-card" data-type="{{ $ctype }}" data-search="{{ $searchText }}">
+      <a href="{{ .RelPermalink }}" class="rfid-cat-card__media">
+        {{- if .Params.image -}}
+          <img src="{{ .Params.image | relURL }}" alt="{{ .Title }}" loading="lazy" />
+        {{- else -}}
+          <div class="rfid-cat-card__placeholder">{{ $sku | default (upper $ctype) }}</div>
+        {{- end -}}
+      </a>
+      <div class="rfid-cat-card__body">
+        <div class="rfid-cat-card__meta">
+          <span class="rfid-cat-mono">{{ $sku | default (upper $ctype) }}</span>
+          {{- if $mfg -}}<span>&middot;</span><span>{{ $mfg }}</span>{{- end -}}
+          <span>&middot;</span>
+          <span class="rfid-cat-status is-{{ $avail }}"><i class="rfid-cat-dot" aria-hidden="true"></i>{{ $avail }}</span>
+        </div>
+        <h2 class="rfid-cat-card__title"><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>
+        <p class="rfid-cat-card__desc">{{ .Description | default .Summary }}</p>
+        {{- with .Params.specs -}}
+          <dl class="rfid-cat-card__specs">
+            {{- range first 3 . -}}
+              <div class="rfid-cat-card__spec-row">
+                <dt>{{ .label }}</dt>
+                <dd>{{ .value }}{{ with .unit }} {{ . }}{{ end }}</dd>
+              </div>
+            {{- end -}}
+          </dl>
+        {{- end -}}
+        <div class="rfid-cat-card__foot">
+          <div class="rfid-cat-card__price">
+            {{- if and $showPrice (isset .Params "price") -}}
+              <span class="rfid-cat-price-val">{{ $cur }} {{ .Params.price }}{{ with .Params.priceUnit }} {{ . }}{{ end }}</span>
+            {{- else -}}
+              <span class="rfid-cat-price-req">{{ if eq $lang "uk" }}Специфікація під проєкт{{ else if eq $lang "ru" }}Спецификация под проект{{ else }}Project / BOM specification{{ end }}</span>
+            {{- end -}}
+          </div>
+          <a href="{{ .RelPermalink }}" class="rfid-cat-card__cta">{{ if eq $lang "uk" }}Специфікація{{ else if eq $lang "ru" }}Спецификация{{ else }}Specification{{ end }} &rarr;</a>
+        </div>
+      </div>
+    </article>
+  {{- end -}}
+</div>
+
+<script>
+(function () {
+  var tabs = document.querySelectorAll('#catTypeTabs .rfid-cat-tab');
+  var input = document.getElementById('catSearchInput');
+  var cards = document.querySelectorAll('#catGrid .rfid-cat-card');
+  var countEl = document.getElementById('catVisibleCount');
+  var activeType = 'all';
+  function applyFilter() {
+    var q = (input ? input.value : '').trim().toLowerCase();
+    var shown = 0;
+    cards.forEach(function (card) {
+      var vis = (activeType === 'all' || card.getAttribute('data-type') === activeType) && (!q || (card.getAttribute('data-search') || '').indexOf(q) !== -1);
+      card.style.display = vis ? '' : 'none';
+      if (vis) shown++;
+    });
+    if (countEl) countEl.textContent = String(shown);
+  }
+  tabs.forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      tabs.forEach(function (b) { b.classList.remove('is-active'); });
+      btn.classList.add('is-active');
+      activeType = btn.getAttribute('data-type') || 'all';
+      applyFilter();
+    });
+  });
+  if (input) input.addEventListener('input', applyFilter);
+})();
+</script>
+
+{{- partialCached "footer/footer" . -}}
+{{ end }}
+
+{{ define "right-sidebar" }}
+  {{ partial "sidebar/right.html" (dict "Context" . "Scope" "homepage") }}
+{{ end }}

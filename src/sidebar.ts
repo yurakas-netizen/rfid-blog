@@ -17,6 +17,7 @@ const DATA_SIDEBAR_PATH = path.join(ROOT_DIR, DATA_SIDEBAR_REL);
 
 export type SidebarIconName =
   | 'home'
+  | 'catalog'
   | 'archives'
   | 'search'
   | 'links'
@@ -36,6 +37,7 @@ export type SidebarIconName =
 
 export const ALLOWED_SIDEBAR_ICONS: ReadonlySet<SidebarIconName> = new Set([
   'home',
+  'catalog',
   'archives',
   'search',
   'links',
@@ -271,6 +273,7 @@ export function buildDefaultSidebarConfig(): SidebarConfig {
   const titles: Record<string, string> = {};
   const subtitles: Record<string, string> = {};
   const homeLabels: Record<string, string> = {};
+  const catalogLabels: Record<string, string> = {};
   const archivesLabels: Record<string, string> = {};
   const searchLabels: Record<string, string> = {};
   const linksLabels: Record<string, string> = {};
@@ -281,6 +284,7 @@ export function buildDefaultSidebarConfig(): SidebarConfig {
     titles[l.code] = l.title;
     subtitles[l.code] = t.subtitle;
     homeLabels[l.code] = t.home;
+    catalogLabels[l.code] = t.catalog;
     archivesLabels[l.code] = t.archives;
     searchLabels[l.code] = t.search;
     linksLabels[l.code] = t.links;
@@ -315,6 +319,18 @@ export function buildDefaultSidebarConfig(): SidebarConfig {
         visibilityMode: 'all',
         visibilityLangs: [],
         labels: homeLabels,
+        urls: {},
+      },
+      {
+        id: 'catalog',
+        enabled: true,
+        icon: 'catalog',
+        defaultLabel: 'Catalog & Hardware',
+        defaultUrl: '/catalog/',
+        newTab: false,
+        visibilityMode: 'all',
+        visibilityLangs: [],
+        labels: catalogLabels,
         urls: {},
       },
       {

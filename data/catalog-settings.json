@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "priceVisibilityMode": "item",
+  "defaultCurrency": "EUR",
+  "defaultCommentsMode": "all",
+  "engineeringInquiryEmail": "info@rfid.org.ua",
+  "engineeringInquiryPhone": "+380 66 153 60 30",
+  "engineeringInquiryTelegram": "https://t.me/+380661536030"
+}
